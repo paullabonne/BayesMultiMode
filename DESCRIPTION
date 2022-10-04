@@ -1,0 +1,14 @@
+Package: BayesMultiMode
+Type: Package
+Title: Testing and Detecting Multimodality in Discrete Distributions using Bayesian Methods
+Version: 0.1
+Author: N. Basturk, J.L. Cross, P. de Knijff, L.F. Hoogerheide, P. Labonne, H.K. van Dijk
+Maintainer: P. Labonne <paul.labonne@bi.no>
+Description: Bayesian approach to estimate the number of modes and their locations in discrete data.
+License: GPL (>= 3)
+Imports: ggpubr, dplyr, tidyr, ggplot2, stringr, ggh4x, magrittr, gtools
+LazyData: true
+URL: https://github.com/paullabonne/BayesMultiMode
+BugReports: https://github.com/paullabonne/BayesMultiMode/issues
+NeedsCompilation: no
+RoxygenNote: 7.1.2
