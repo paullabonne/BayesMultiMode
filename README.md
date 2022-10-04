@@ -1,5 +1,5 @@
 # BayesMultiMode
-An R package for testing multimodality in discrete distributions using Bayesian methods
+An R package for testing the number of modes and their locations in mixture distributions using Bayesian methods. The number of components in the mixture is unknown a priori and estimated using Sparse Finite Mixture (SFM) techniques in the MCMC algorithm.
 
 ### Installing the development version of BayesMultiMode
 ```{r}
