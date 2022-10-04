@@ -1,6 +1,8 @@
 ---
 title: "BayesMultiMode"
 output: github_document
+fig_width: 6 
+fig_height: 4
 ---
 An R package for testing the number of modes and their locations in mixture distributions using Bayesian methods. The number of components in the mixture is unknown a priori and estimated using Sparse Finite Mixture (SFM) techniques in the MCMC algorithm.
 
@@ -57,7 +59,9 @@ Jmax = 6
 sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
 
 #Plots of the estimation output
-plots_mcmc(sfm_mcmc,S)
+graphs = plots_mcmc(sfm_mcmc,S)
+graphs[[3]]
+graphs[[4]]
 
 # Simple post-processing
 post_sfmmcmc = post_sfm_mcmc(sfm_mcmc,S)

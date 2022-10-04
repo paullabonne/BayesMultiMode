@@ -145,6 +145,7 @@ plots_mcmc <- function(sfm_mcmc, S){
   g2 = ggplot(data=df_g0, aes(x=nb, y=value)) +
     ggtitle("Posterior prob. nb. of components") +
     ylim(0, 1) +
+    scale_x_discrete(limits=unique(possible_nb_components)) +
     xlab("") + ylab("") +
     theme_gg +
     geom_bar(stat="identity")

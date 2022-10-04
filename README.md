@@ -77,7 +77,7 @@ sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
 
 ``` r
 #Plots of the estimation output
-plots_mcmc(sfm_mcmc,S)
+graphs = plots_mcmc(sfm_mcmc,S)
 ```
 
     ## New names:
@@ -90,32 +90,19 @@ plots_mcmc(sfm_mcmc,S)
     ## • `` -> `...5`
     ## • `` -> `...6`
 
-    ## [[1]]
-
-    ## Warning: Removed 9905 row(s) containing missing values (geom_path).
+``` r
+graphs[[3]]
+```
 
 ![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
-    ## 
-    ## [[2]]
-
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-
-    ## Warning: Removed 29715 rows containing non-finite values (stat_bin).
-
-![](README_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
-
-    ## 
-    ## [[3]]
-
-![](README_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->
-
-    ## 
-    ## [[4]]
+``` r
+graphs[[4]]
+```
 
     ## Warning: Removed 41 rows containing missing values (position_stack).
 
-![](README_files/figure-gfm/unnamed-chunk-5-4.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
 
 ``` r
 # Simple post-processing
