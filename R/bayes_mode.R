@@ -198,7 +198,7 @@ bayes_mode <- function(theta_draws, y, mixt="shifted_poisson"){
     ggtitle("Nb. modes > 1") +
     theme_gg + 
     ylim(0, 1) +
-    xlab("") + ylab("") +
+    xlab("") + ylab("Posterior probability") +
     geom_bar(stat="identity")
   
   df_g1 = as_tibble(t(table_location))
@@ -206,7 +206,7 @@ bayes_mode <- function(theta_draws, y, mixt="shifted_poisson"){
     theme_gg + 
     ggtitle("Location at the mode") +
     ylim(0, 1) +
-    xlab("") + ylab("") +
+    xlab("") + ylab("Posterior probability") +
     geom_bar(stat="identity",colour="white")
   
   df_g2 = as_tibble(t(table_nb_modes))
@@ -214,7 +214,7 @@ bayes_mode <- function(theta_draws, y, mixt="shifted_poisson"){
     theme_gg +
     ggtitle("Number of modes") +
     ylim(0, 1) +
-    xlab("") + ylab("") +
+    xlab("") + ylab("Posterior probability") +
     geom_bar(stat="identity")
   
   graphs <- ggarrange(g0, g2, g1,
