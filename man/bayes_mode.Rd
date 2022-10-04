@@ -48,7 +48,7 @@ length_data = 70
 y <- c(rpois(length_data*p1, lam1)+kap1, rpois(length_data*p2, lam2)+kap2)
 
 # Set parameters for the SFM MCMC estimation
-M = 1000 # Number of draws 
+M = 1000 # Number of MCMC iterations 
 Jmax = 4 # Maximum number of mixture components
 
 # Estimation with SFM MCMC

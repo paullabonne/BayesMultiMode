@@ -47,7 +47,7 @@ length_data = 70
 
 # Generate data
 y <- c(rpois(length_data*p1, lam1)+kap1, rpois(length_data*p2, lam2)+kap2)
-
+h
 # Set parameters for the SFM MCMC estimation
 M = 1000 # Number of MCMC iterations
 Jmax = 4 # Maximum number of mixture components
@@ -58,7 +58,7 @@ sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
 # Example with DNA data =====================================================
 \dontrun{
 y = d4z4
-M = 2000 # Number of MCMC iterations 
+M = 5000 # Number of MCMC iterations 
 Jmax = 10 # Maximum number of mixture components
 
 # Estimation with SFM MCMC
