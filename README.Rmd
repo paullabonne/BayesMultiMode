@@ -4,7 +4,8 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(dpi=400)
+knitr::opts_chunk$set(dpi=600)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 ```
 
 An R package for testing the number of modes and their locations in mixture distributions using Bayesian methods. The number of components in the mixture is unknown a priori and estimated using Sparse Finite Mixture (SFM) techniques in the MCMC algorithm.
@@ -34,7 +35,7 @@ length_data = 70
 simulated_data <- c(rpois(length_data*p1, lam1)+kap1, rpois(length_data*p2, lam2)+kap2)
 ```
 
-### Running the estimation on simulated or DNA data
+### Choosing either simulated or DNA data
 ```{r}
 # Select DNA data :
 data("d4z4")

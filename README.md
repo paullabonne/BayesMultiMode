@@ -33,7 +33,7 @@ length_data = 70
 simulated_data <- c(rpois(length_data*p1, lam1)+kap1, rpois(length_data*p2, lam2)+kap2)
 ```
 
-### Running the estimation on simulated or DNA data
+### Choosing either simulated or DNA data
 
 ``` r
 # Select DNA data :
@@ -78,22 +78,6 @@ sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
 ``` r
 #Plots of the estimation output
 graphs = plots_mcmc(sfm_mcmc,S)
-```
-
-    ## New names:
-    ## New names:
-    ## New names:
-    ## • `` -> `...1`
-    ## • `` -> `...2`
-    ## • `` -> `...3`
-    ## • `` -> `...4`
-    ## • `` -> `...5`
-    ## • `` -> `...6`
-
-    ## Warning: Continuous limits supplied to discrete scale.
-    ## Did you mean `limits = factor(...)` or `scale_*_continuous()`?
-
-``` r
 graphs[[3]]
 ```
 
@@ -102,8 +86,6 @@ graphs[[3]]
 ``` r
 graphs[[4]]
 ```
-
-    ## Warning: Removed 41 rows containing missing values (position_stack).
 
 <img src="README_files/figure-gfm/unnamed-chunk-5-2.png" width="70%" style="display: block; margin: auto;" />
 
