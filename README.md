@@ -1,7 +1,7 @@
 # BayesMultiMode
 An R package for testing multimodality in discrete distributions using Bayesian methods
 
-## Installing the development version of BayesMultiMode
+### Installing the development version of BayesMultiMode
 ```{r}
 #install.packages("devtools") #if needed
 library(devtools)
@@ -9,7 +9,7 @@ library(devtools)
 devtools::install_github("paullabonne/BayesMultiMode")
 ```
 
-### Simulated data
+### Generating data
 ```{r}
 set.seed(1)
 p1 = 0.3
@@ -22,7 +22,7 @@ length_data = 70
 simulated_data <- c(rpois(length_data*p1, lam1)+kap1, rpois(length_data*p2, lam2)+kap2)
 ```
 
-## Select data
+### Running the estimation on simulated or DNA data
 ```{r}
 # Select DNA data :
 y = d4z4
@@ -31,7 +31,7 @@ y = d4z4
 # y = simulated_data
 ```
 
-### Set parameters for MCMC
+### Setting parameters for MCMC
 ```{r}
 # Number of MCMC iterations 
 M = 5000 
