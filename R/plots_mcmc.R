@@ -113,7 +113,7 @@ plots_mcmc <- function(sfm_mcmc, S){
     theme_gg +
     theme(legend.position="none")
   
-  g_parameters = ggplot(df_parameters) +
+  g_parameters = ggplot(filter(df_parameters,draw>M*S)) +
     ggtitle("Posterior mixtribution of each parameter") +
     geom_histogram(aes(x=value, fill=component), colour="white") +
     facet_nested_wrap(~variable + component, scales="free",ncol=length(unique(df_parameters$component))) +
