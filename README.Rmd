@@ -1,9 +1,12 @@
 ---
 title: "BayesMultiMode"
 output: github_document
-fig_width: 6 
-fig_height: 4
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dpi=400)
+```
+
 An R package for testing the number of modes and their locations in mixture distributions using Bayesian methods. The number of components in the mixture is unknown a priori and estimated using Sparse Finite Mixture (SFM) techniques in the MCMC algorithm.
 
 ### Installing the development version of BayesMultiMode
@@ -54,7 +57,7 @@ Jmax = 6
 ```
 
 ### Estimation with SFM MCMC
-```{r}
+```{r, out.width = '70%', fig.align = "center"}
 #Bayesian estimation
 sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
 
@@ -68,7 +71,7 @@ post_sfmmcmc = post_sfm_mcmc(sfm_mcmc,S)
 ```
 
 ### Inference on modes
-```{r}
+```{r, out.width = '70%', fig.align = "center"}
 sfm_mcmc_modes = bayes_mode(post_sfmmcmc$theta_draws_slim,y)
 sfm_mcmc_modes$graphs
 ```

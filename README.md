@@ -90,11 +90,14 @@ graphs = plots_mcmc(sfm_mcmc,S)
     ## • `` -> `...5`
     ## • `` -> `...6`
 
+    ## Warning: Continuous limits supplied to discrete scale.
+    ## Did you mean `limits = factor(...)` or `scale_*_continuous()`?
+
 ``` r
 graphs[[3]]
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+<img src="README_files/figure-gfm/unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" />
 
 ``` r
 graphs[[4]]
@@ -102,7 +105,7 @@ graphs[[4]]
 
     ## Warning: Removed 41 rows containing missing values (position_stack).
 
-![](README_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
+<img src="README_files/figure-gfm/unnamed-chunk-5-2.png" width="70%" style="display: block; margin: auto;" />
 
 ``` r
 # Simple post-processing
@@ -116,4 +119,4 @@ sfm_mcmc_modes = bayes_mode(post_sfmmcmc$theta_draws_slim,y)
 sfm_mcmc_modes$graphs
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+<img src="README_files/figure-gfm/unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;" />
