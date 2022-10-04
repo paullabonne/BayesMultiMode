@@ -1,8 +1,6 @@
 BayesMultiMode
 ================
 
-# BayesMultiMode
-
 An R package for testing the number of modes and their locations in
 mixture distributions using Bayesian methods. The number of components
 in the mixture is unknown a priori and estimated using Sparse Finite
@@ -11,21 +9,12 @@ Mixture (SFM) techniques in the MCMC algorithm.
 ### Installing the development version of BayesMultiMode
 
 ``` r
-#install.packages("devtools") #if needed
-library(devtools)
-```
+# install.packages("devtools") #if not on the machine already
+# library(devtools)
 
-    ## Loading required package: usethis
+# Installing from github
+# devtools::install_github("paullabonne/BayesMultiMode")
 
-``` r
-# Installing from girhub
-devtools::install_github("paullabonne/BayesMultiMode")
-```
-
-    ## Skipping install of 'BayesMultiMode' from a github remote, the SHA1 (4a65b869) has not changed since last install.
-    ##   Use `force = TRUE` to force installation
-
-``` r
 # Loading the package
 library(BayesMultiMode)
 ```
@@ -105,7 +94,7 @@ plots_mcmc(sfm_mcmc,S)
 
     ## Warning: Removed 9905 row(s) containing missing values (geom_path).
 
-![](Untitled_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
     ## 
     ## [[2]]
@@ -114,19 +103,19 @@ plots_mcmc(sfm_mcmc,S)
 
     ## Warning: Removed 29715 rows containing non-finite values (stat_bin).
 
-![](Untitled_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
 
     ## 
     ## [[3]]
 
-![](Untitled_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->
 
     ## 
     ## [[4]]
 
     ## Warning: Removed 41 rows containing missing values (position_stack).
 
-![](Untitled_files/figure-gfm/unnamed-chunk-5-4.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-4.png)<!-- -->
 
 ``` r
 # Simple post-processing
@@ -140,4 +129,4 @@ sfm_mcmc_modes = bayes_mode(post_sfmmcmc$theta_draws_slim,y)
 sfm_mcmc_modes$graphs
 ```
 
-![](Untitled_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->

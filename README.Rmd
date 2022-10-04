@@ -2,17 +2,15 @@
 title: "BayesMultiMode"
 output: github_document
 ---
-
-# BayesMultiMode
 An R package for testing the number of modes and their locations in mixture distributions using Bayesian methods. The number of components in the mixture is unknown a priori and estimated using Sparse Finite Mixture (SFM) techniques in the MCMC algorithm.
 
 ### Installing the development version of BayesMultiMode
 ```{r}
-#install.packages("devtools") #if needed
-library(devtools)
+# install.packages("devtools") #if not on the machine already
+# library(devtools)
 
-# Installing from girhub
-devtools::install_github("paullabonne/BayesMultiMode")
+# Installing from github
+# devtools::install_github("paullabonne/BayesMultiMode")
 
 # Loading the package
 library(BayesMultiMode)
