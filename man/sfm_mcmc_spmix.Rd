@@ -66,6 +66,6 @@ sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
 }
 }
 \references{
-\insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}
+\insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
 \insertRef{basturk_bayes_2021}{BayesMultiMode}
 }

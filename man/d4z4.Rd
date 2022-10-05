@@ -5,7 +5,6 @@
 \alias{d4z4}
 \title{DNA data}
 \format{
-## `d4z4`
 A vector of counts with 410 elements.
 }
 \usage{

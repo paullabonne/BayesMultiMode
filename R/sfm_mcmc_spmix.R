@@ -20,7 +20,7 @@
 #' 
 #' @importFrom Rdpack reprompt
 #' @references
-#' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}
+#' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
 #' \insertRef{basturk_bayes_2021}{BayesMultiMode}
 #' @examples
 #'# Example with simulated data ================================================
