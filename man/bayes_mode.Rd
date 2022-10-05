@@ -79,3 +79,6 @@ S = 0.5
 bayes_mode(post_sfm_mcmc$theta_draws_slim,y)
 }
 }
+\references{
+\insertRef{basturk_bayes_2021}{BayesMultiMode}
+}

@@ -18,6 +18,10 @@
 #'   \item y, Jmax and M, given as input.
 #' }
 #' 
+#' @importFrom Rdpack reprompt
+#' @references
+#' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}
+#' \insertRef{basturk_bayes_2021}{BayesMultiMode}
 #' @examples
 #'# Example with simulated data ================================================
 #' #set seed for random number generation

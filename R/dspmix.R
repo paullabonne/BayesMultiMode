@@ -1,4 +1,4 @@
-#' Density function of a mixture of shifted poisson.
+#' Density function of a mixture of shifted poissons.
 #' 
 #' Bayesian estimation of a mixture of shifted poisson distributions using a Sparse Finite Mixture MCMC algorithm.
 #' @param x (an integer) Observation at which the density is evaluated.
@@ -8,6 +8,9 @@
 #' @returns 
 #' Returns the density evaluated at the observation.
 #' 
+#' @importFrom Rdpack reprompt
+#' @references
+#' \insertRef{basturk_bayes_2021}{BayesMultiMode}
 #' @examples
 #' 
 #' #two-component mixture

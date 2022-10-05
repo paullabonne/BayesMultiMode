@@ -8,14 +8,14 @@
 ## `d4z4`
 A vector of counts with 410 elements.
 }
-\source{
-?
-}
 \usage{
 d4z4
 }
 \description{
-Description
-Report ...
+Macrosatellite repeat D4Z4 (4q).
+Locus (hg18): 4q35.2; Unit (kb): 3.3; Encoded product: DUX4.
+}
+\references{
+\insertRef{schaap_genome-wide_2013}{BayesMultiMode}
 }
 \keyword{datasets}

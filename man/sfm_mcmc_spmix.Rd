@@ -65,3 +65,7 @@ Jmax = 10 # Maximum number of mixture components
 sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
 }
 }
+\references{
+\insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}
+\insertRef{basturk_bayes_2021}{BayesMultiMode}
+}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/dspmix.R
 \name{dspmix}
 \alias{dspmix}
-\title{Density function of a mixture of shifted poisson.}
+\title{Density function of a mixture of shifted poissons.}
 \usage{
 dspmix(x, p, lambda, kappa)
 }
@@ -31,4 +31,7 @@ dspmix(4,p,lambda,kappa)
 dspmix(2,p,lambda,kappa)
 dspmix(10,p,lambda,kappa)
 
+}
+\references{
+\insertRef{basturk_bayes_2021}{BayesMultiMode}
 }

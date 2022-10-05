@@ -23,6 +23,7 @@
 #' @importFrom magrittr %>%
 #' @import ggplot2
 #' @importFrom ggpubr ggarrange
+#' @importFrom Rdpack reprompt
 #' 
 #' @examples
 #' # Example with simulated data ================================================
@@ -73,6 +74,10 @@
 #' bayes_mode(post_sfm_mcmc$theta_draws_slim,y)
 #' }
 #' @export
+#' 
+#' @importFrom Rdpack reprompt
+#' @references
+#' \insertRef{basturk_bayes_2021}{BayesMultiMode}
 #' 
 
 bayes_mode <- function(theta_draws, y, mixt="shifted_poisson"){
