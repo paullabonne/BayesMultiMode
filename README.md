@@ -1,17 +1,12 @@
 BayesMultiMode
 ================
 
-This package provides functions for estimating the number of modes and
-their associated locations in mixtures of discrete distributions using
-Bayesian methods. The testing approach works in three stages. First, a
-mixture distribution is estimated on the data using MCMC methods. The
-number of mixture components is allowed to be unknown a priori and
-estimated using a Spare Finite Mixture (SFM) algorithm. Second, a simple
-post-processing is applied to the MCMC output where a given number of
-iterations are used for burn-in and empty components are discarded.
-Third, post-processed MCMC draws are used to compute the number of modes
-as well as their locations and posterior probabilities.
-
+Bayesian methods for estimating the number of modes, their locations and
+posterior probabilities in mixture distributions. Provides functions for
+(i) estimating a mixture distribution using MCMC methods; (ii) simple
+post-processing (burn-in and discarding empty components); (iii) mode
+inference. The number of mixture components is allowed to be unknown a
+priori and estimated using a Spare Finite Mixture (SFM) algorithm.
 Currently the package supports a flexible mixture of shifted poisson
 distributions. The shifted poisson augments the poisson distribution
 with a location parameter. More mixtures of discrete and continuous
@@ -117,3 +112,34 @@ sfm_mcmc_modes$graphs
 ```
 
 <img src="README_files/figure-gfm/unnamed-chunk-8-1.png" width="70%" style="display: block; margin: auto;" />
+
+#### References
+Basturk, Nalan, Lennart F. Hoogerheide, and Herman van Dijk. 2021.
+“Bayes Estimates of Multimodal Density Features Using DNA and Economic
+Data.” *SSRN Electronic Journal*.
+<https://doi.org/10.2139/ssrn.3783351>.
+
+</div>
+
+<div id="ref-malsiner-walli_model-based_2016" class="csl-entry">
+
+Malsiner-Walli, Gertraud, Sylvia Fruhwirth-Schnatter, and Bettina Grun.
+2016. “Model-Based Clustering Based on Sparse Finite Gaussian Mixtures.”
+*Statistics and Computing* 26 (1): 303–24.
+<https://doi.org/10.1007/s11222-014-9500-2>.
+
+</div>
+
+<div id="ref-schaap_genome-wide_2013" class="csl-entry">
+
+Schaap, Mireille, Richard JLF Lemmers, Roel Maassen, Patrick J. van der
+Vliet, Lennart F. Hoogerheide, Herman K. van Dijk, Nalan Basturk, Peter
+de Knijff, and Silvère M. van der Maarel. 2013. “Genome-Wide Analysis of
+Macrosatellite Repeat Copy Number Variation in Worldwide Populations:
+Evidence for Differences and Commonalities in Size Distributions and
+Size Restrictions.” *BMC Genomics* 14 (1): 143.
+<https://doi.org/10.1186/1471-2164-14-143>.
+
+</div>
+
+</div>

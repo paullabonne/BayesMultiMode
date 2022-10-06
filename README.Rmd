@@ -1,15 +1,14 @@
 ---
 title: "BayesMultiMode"
 output: github_document
+bibliography: inst/REFERENCES.bib
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dpi=600)
 ```
 
-This package provides functions for estimating the number of modes and their associated locations in mixtures of discrete distributions using Bayesian methods. The testing approach works in three stages. First, a mixture distribution is estimated on the data using MCMC methods. The number of mixture components is allowed to be unknown a priori and estimated using a Spare Finite Mixture (SFM) algorithm. Second, a simple post-processing is applied to the MCMC output where a given number of iterations are used for burn-in and empty components are discarded. Third, post-processed MCMC draws are used to compute the number of modes as well as their locations and posterior probabilities. 
-
-Currently the package supports a flexible mixture of shifted poisson distributions. The shifted poisson augments the poisson distribution with a location parameter. More mixtures of discrete and continuous distributions are in the pipeline.
+Bayesian methods for estimating the number of modes, their locations and posterior probabilities in mixture distributions. Provides functions for (i) estimating a mixture distribution using MCMC methods; (ii) simple post-processing (burn-in and discarding empty components); (iii) mode inference. The number of mixture components is allowed to be unknown a priori and estimated using a Spare Finite Mixture (SFM) algorithm. Currently the package supports a flexible mixture of shifted poisson distributions. The shifted poisson augments the poisson distribution with a location parameter. More mixtures of discrete and continuous distributions are in the pipeline.
 
 #### Installing BayesMultiMode
 ```{r, eval = FALSE}
@@ -79,3 +78,8 @@ post_sfmmcmc = post_sfm_mcmc(sfm_mcmc,S)
 sfm_mcmc_modes = bayes_mode(post_sfmmcmc$theta_draws_slim,y)
 sfm_mcmc_modes$graphs
 ```
+
+#### References
+[@basturk_bayes_2021]
+[@malsiner-walli_model-based_2016]
+[@schaap_genome-wide_2013]
