@@ -1,6 +1,6 @@
-#' Density function of a mixture of shifted poissons.
+#' Density of a mixture of shifted poissons
 #' 
-#' Bayesian estimation of a mixture of shifted poisson distributions using a Sparse Finite Mixture MCMC algorithm.
+#' Density function of a mixture of shifted poissons distributions.
 #' @param x (an integer) Observation at which the density is evaluated.
 #' @param p (a vector) Mixture weights.
 #' @param lambda (a vector) Lambda parameter for each component.
@@ -13,7 +13,7 @@
 #' \insertRef{basturk_bayes_2021}{BayesMultiMode}
 #' @examples
 #' 
-#' #two-component mixture
+#' # a three-component mixture
 #' p = c(0.1,0.5,0.4)
 #' lambda = c(1,2,3)
 #' kappa= c(0,5,1)

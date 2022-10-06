@@ -1,4 +1,4 @@
-#' Mode inference on the SFM MCMC output.
+#' Mode inference using post-processed SFM MCMC draws.
 #' 
 #' Computes the number of modes, their locations and posterior probabilities.
 #' @param theta_draws a (M x 3xJb) matrix. Output of `sfm_mcmc_spmix()` giving MCMC parameter draws after burn-in and discarding empty components.
@@ -217,6 +217,7 @@ bayes_mode <- function(theta_draws, y, mixt="shifted_poisson"){
   df_g2 = as_tibble(t(table_nb_modes))
   g2= ggplot(data=df_g2, aes(x=possible_nb_modes, y=post_prob_nb_modes)) +
     theme_gg +
+    scale_x_continuous(breaks=possible_nb_modes) +
     ggtitle("Number of modes") +
     ylim(0, 1) +
     xlab("") + ylab("Posterior probability") +

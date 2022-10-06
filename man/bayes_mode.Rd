@@ -2,7 +2,7 @@
 % Please edit documentation in R/bayes_mode.R
 \name{bayes_mode}
 \alias{bayes_mode}
-\title{Mode inference on the SFM MCMC output.}
+\title{Mode inference using post-processed SFM MCMC draws.}
 \usage{
 bayes_mode(theta_draws, y, mixt = "shifted_poisson")
 }

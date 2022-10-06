@@ -2,7 +2,7 @@
 % Please edit documentation in R/dspmix.R
 \name{dspmix}
 \alias{dspmix}
-\title{Density function of a mixture of shifted poissons.}
+\title{Density of a mixture of shifted poissons}
 \usage{
 dspmix(x, p, lambda, kappa)
 }
@@ -19,11 +19,11 @@ dspmix(x, p, lambda, kappa)
 Returns the density evaluated at the observation.
 }
 \description{
-Bayesian estimation of a mixture of shifted poisson distributions using a Sparse Finite Mixture MCMC algorithm.
+Density function of a mixture of shifted poissons distributions.
 }
 \examples{
 
-#two-component mixture
+# a three-component mixture
 p = c(0.1,0.5,0.4)
 lambda = c(1,2,3)
 kappa= c(0,5,1)

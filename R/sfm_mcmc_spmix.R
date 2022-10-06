@@ -193,6 +193,10 @@ sfm_mcmc_spmix <- function(y, Jmax, M, prt = TRUE){
     skap[m, snj[m,]==0] = NA 
     slam[m, snj[m,]==0] = NA
     
+    colnames(sP) = 1:ncol(sP)
+    colnames(skap) = 1:ncol(skap)
+    colnames(slam) = 1:ncol(slam)
+    
     ## counter
     if(prt){
       if(m %% (round(M / 10)) == 0){

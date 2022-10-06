@@ -83,17 +83,17 @@ plots_mcmc <- function(sfm_mcmc, S){
   
   # trace plots
   if(sfm_mcmc$mixt=="shifted_poisson"){
-    df_lam = as_tibble(sfm_mcmc$p_draws, .name_repair="universal") %>%
+    df_lam = as_tibble(sfm_mcmc$p_draws) %>%
       mutate(draw = rep(1:M)) %>%
       gather(-draw, key=component, value = value) %>%
       mutate(variable = "Lambda")
     
-    df_kap = as_tibble(sfm_mcmc$kappa_draws, .name_repair="universal") %>%
+    df_kap = as_tibble(sfm_mcmc$kappa_draws) %>%
       mutate(draw = rep(1:M)) %>%
       gather(-draw, key=component, value = value) %>%
       mutate(variable = "Kappa")
     
-    df_p = as_tibble(sfm_mcmc$lambda_draws, .name_repair="universal") %>%
+    df_p = as_tibble(sfm_mcmc$lambda_draws) %>%
       mutate(draw = rep(1:M)) %>%
       gather(-draw, key=component, value = value) %>%
       mutate(variable = "Mixture weights")
@@ -145,7 +145,7 @@ plots_mcmc <- function(sfm_mcmc, S){
   g2 = ggplot(data=df_g0, aes(x=nb, y=value)) +
     ggtitle("Posterior prob. nb. of components") +
     ylim(0, 1) +
-    scale_x_discrete(limits=unique(possible_nb_components)) +
+    scale_x_continuous(breaks=possible_nb_components) +
     xlab("") + ylab("") +
     theme_gg +
     geom_bar(stat="identity")
