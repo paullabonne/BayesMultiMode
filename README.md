@@ -1,16 +1,16 @@
 BayesMultiMode
 ================
 
-Bayesian methods for estimating the number of modes, their locations and
-posterior probabilities in mixture distributions. Provides functions for
-(i) estimating a mixture distribution using MCMC methods; (ii) simple
-post-processing (burn-in and discarding empty components); (iii) mode
-inference. The number of mixture components is allowed to be unknown a
-priori and estimated using a Spare Finite Mixture (SFM) algorithm.
-Currently the package supports a flexible mixture of shifted poisson
-distributions. The shifted poisson augments the poisson distribution
-with a location parameter. More mixtures of discrete and continuous
-distributions are in the pipeline.
+Bayesian methods for mode inference in mixture distributions. Provides
+functions for (i) estimating a mixture distribution using MCMC methods;
+(ii) simple post-processing (burn-in and discarding empty components);
+(iii) mode inference which provides posterior probabilities for each
+potential mode and associated locations. The number of mixture
+components is allowed to be unknown a priori and estimated using a Spare
+Finite Mixture (SFM) algorithm. Currently the package supports a
+flexible mixture of shifted poisson distributions. The shifted poisson
+augments the poisson distribution with a location parameter. More
+mixtures of discrete and continuous distributions are in the pipeline.
 
 #### Installing BayesMultiMode
 
@@ -114,6 +114,12 @@ sfm_mcmc_modes$graphs
 <img src="README_files/figure-gfm/unnamed-chunk-8-1.png" width="70%" style="display: block; margin: auto;" />
 
 #### References
+
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-basturk_bayes_2021" class="csl-entry">
+
 Basturk, Nalan, Lennart F. Hoogerheide, and Herman van Dijk. 2021.
 “Bayes Estimates of Multimodal Density Features Using DNA and Economic
 Data.” *SSRN Electronic Journal*.

@@ -8,7 +8,7 @@ bibliography: inst/REFERENCES.bib
 knitr::opts_chunk$set(dpi=600)
 ```
 
-Bayesian methods for estimating the number of modes, their locations and posterior probabilities in mixture distributions. Provides functions for (i) estimating a mixture distribution using MCMC methods; (ii) simple post-processing (burn-in and discarding empty components); (iii) mode inference. The number of mixture components is allowed to be unknown a priori and estimated using a Spare Finite Mixture (SFM) algorithm. Currently the package supports a flexible mixture of shifted poisson distributions. The shifted poisson augments the poisson distribution with a location parameter. More mixtures of discrete and continuous distributions are in the pipeline.
+Bayesian methods for mode inference in mixture distributions. Provides functions for (i) estimating a mixture distribution using MCMC methods; (ii) simple post-processing (burn-in and discarding empty components); (iii) mode inference which provides posterior probabilities for each potential mode and associated locations. The number of mixture components is allowed to be unknown a priori and estimated using a Spare Finite Mixture (SFM) algorithm. Currently the package supports a flexible mixture of shifted poisson distributions. The shifted poisson augments the poisson distribution with a location parameter. More mixtures of discrete and continuous distributions are in the pipeline.
 
 #### Installing BayesMultiMode
 ```{r, eval = FALSE}
