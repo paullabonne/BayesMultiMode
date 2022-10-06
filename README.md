@@ -20,7 +20,7 @@ shifted poisson is a two-parameter generalisation of the poisson
 distribution where the mean can diverge from the variance. More
 distributions (discrete and continuous) are in the pipeline.
 
-#### Installing BayesMultiMode
+### Installing BayesMultiMode
 
 ``` r
 # Installing from github :
@@ -28,13 +28,13 @@ distributions (discrete and continuous) are in the pipeline.
 devtools::install_github("paullabonne/BayesMultiMode")
 ```
 
-#### Loading the package
+### Loading the package
 
 ``` r
 library(BayesMultiMode)
 ```
 
-#### Generating data
+### Generating data
 
 ``` r
 set.seed(1)
@@ -48,7 +48,7 @@ length_data = 70
 simulated_data <- c(rpois(length_data*p1, lam1)+kap1, rpois(length_data*p2, lam2)+kap2)
 ```
 
-#### Choosing either simulated or DNA data
+### Choosing either simulated or DNA data
 
 ``` r
 # Select DNA data :
@@ -59,7 +59,7 @@ y = d4z4
 # y = simulated_data
 ```
 
-#### Setting parameters for SFM MCMC estimation
+### Setting parameters for SFM MCMC estimation
 
 ``` r
 # Number of MCMC iterations 
@@ -72,7 +72,7 @@ S = 0.5
 Jmax = 6
 ```
 
-#### Estimation with SFM MCMC
+### Estimation with SFM MCMC
 
 ``` r
 #Bayesian estimation
@@ -106,13 +106,13 @@ graphs[[4]]
 
 <img src="README_files/figure-gfm/unnamed-chunk-6-2.png" width="70%" style="display: block; margin: auto;" />
 
-#### Post-processing : burn-in and discarding empty components
+### Post-processing : burn-in and discarding empty components
 
 ``` r
 post_sfmmcmc = post_sfm_mcmc(sfm_mcmc,S)
 ```
 
-#### Mode inference
+### Mode inference
 
 ``` r
 sfm_mcmc_modes = bayes_mode(post_sfmmcmc$theta_draws_slim,y)
@@ -121,7 +121,7 @@ sfm_mcmc_modes$graphs
 
 <img src="README_files/figure-gfm/unnamed-chunk-8-1.png" width="70%" style="display: block; margin: auto;" />
 
-#### References
+### References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 

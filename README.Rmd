@@ -13,19 +13,19 @@ knitr::opts_chunk$set(dpi=600)
 
 An R package for detecting multimodality in discrete data using Bayesian techniques. The approach works in two stages. First, a mixture distribution is fitted on the data using a Sparse Finite Mixture (SFM) MCMC algorithm. The number of mixture components does not have to be specified; it is estimated simultaneously with the mixture weights and distributions through the SFM approach. Second, the resulting MCMC output is used to calculate the number of modes and their locations. Posterior probabilities are provided for both of these quantities providing a powerful tool for mode inference. Currently BayesMultiMode supports a flexible mixture of shifted poisson distributions. The shifted poisson is a two-parameter generalisation of the poisson distribution where the mean can diverge from the variance. More distributions (discrete and continuous) are in the pipeline.
 
-#### Installing BayesMultiMode
+### Installing BayesMultiMode
 ```{r, eval = FALSE}
 # Installing from github :
 # install.packages("devtools") # if devtools is not installed 
 devtools::install_github("paullabonne/BayesMultiMode")
 ```
 
-#### Loading the package
+### Loading the package
 ```{r}
 library(BayesMultiMode)
 ```
 
-#### Generating data
+### Generating data
 ```{r}
 set.seed(1)
 p1 = 0.3
@@ -38,7 +38,7 @@ length_data = 70
 simulated_data <- c(rpois(length_data*p1, lam1)+kap1, rpois(length_data*p2, lam2)+kap2)
 ```
 
-#### Choosing either simulated or DNA data
+### Choosing either simulated or DNA data
 ```{r}
 # Select DNA data :
 data("d4z4")
@@ -48,7 +48,7 @@ y = d4z4
 # y = simulated_data
 ```
 
-#### Setting parameters for SFM MCMC estimation
+### Setting parameters for SFM MCMC estimation
 ```{r}
 # Number of MCMC iterations 
 M = 5000 
@@ -60,7 +60,7 @@ S = 0.5
 Jmax = 6
 ```
 
-#### Estimation with SFM MCMC
+### Estimation with SFM MCMC
 ```{r, out.width = '70%', fig.align = "center"}
 #Bayesian estimation
 sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
@@ -71,18 +71,18 @@ graphs[[3]]
 graphs[[4]]
 ```
 
-#### Post-processing : burn-in and discarding empty components
+### Post-processing : burn-in and discarding empty components
 ```{r}
 post_sfmmcmc = post_sfm_mcmc(sfm_mcmc,S)
 ```
 
-#### Mode inference
+### Mode inference
 ```{r, out.width = '70%', fig.align = "center"}
 sfm_mcmc_modes = bayes_mode(post_sfmmcmc$theta_draws_slim,y)
 sfm_mcmc_modes$graphs
 ```
 
-#### References
+### References
 [@basturk_bayes_2021]
 [@malsiner-walli_model-based_2016]
 [@schaap_genome-wide_2013]
