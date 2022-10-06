@@ -1,7 +1,7 @@
 Package: BayesMultiMode
 Type: Package
 Title: Testing and Detecting Multimodality using Bayesian Methods
-Version: 0.1
+Version: 0.1.0
 Author: N. Basturk, J.L. Cross, P. de Knijff, L.F. Hoogerheide, P. Labonne, H.K. van Dijk
 Maintainer: P. Labonne <paul.labonne@bi.no>
 Description: An R package for detecting multimodality in discrete data using Bayesian
