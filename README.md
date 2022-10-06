@@ -1,11 +1,11 @@
 BayesMultiMode
 ================
 
-Bayesian methods for mode inference in mixture distributions. Provides
-functions for (i) estimating a mixture distribution using MCMC methods;
-(ii) simple post-processing (burn-in and discarding empty components);
-(iii) mode inference which provides posterior probabilities for each
-potential mode and associated locations. The number of mixture
+An R package for detecting multimodality using Bayesian methods. The
+package provides functions for (i) estimating a mixture distribution
+using MCMC methods; (ii) post-processing (burn-in and discarding empty
+components); (iii) mode inference which provides posterior probabilities
+for each potential mode and associated locations. The number of mixture
 components is allowed to be unknown a priori and estimated using a Spare
 Finite Mixture (SFM) algorithm. Currently the package supports a
 flexible mixture of shifted poisson distributions. The shifted poisson
@@ -114,7 +114,6 @@ sfm_mcmc_modes$graphs
 <img src="README_files/figure-gfm/unnamed-chunk-8-1.png" width="70%" style="display: block; margin: auto;" />
 
 #### References
-
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 

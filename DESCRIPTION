@@ -1,18 +1,18 @@
 Package: BayesMultiMode
 Type: Package
-Title: Testing Multimodality in Mixture Distributions using Bayesian Methods
+Title: Testing and Detecting Multimodality using Bayesian Methods
 Version: 0.1
 Author: N. Basturk, J.L. Cross, P. de Knijff, L.F. Hoogerheide, P. Labonne, H.K. van Dijk
 Maintainer: P. Labonne <paul.labonne@bi.no>
-Description: Bayesian methods for mode inference in mixture distributions. Provides
-      functions for (i) estimating a mixture distribution using MCMC methods;
-      (ii) simple post-processing (burn-in and discarding empty components);
-      (iii) mode inference which provides posterior probabilities for each potential
-      mode and associated locations. The number of mixture components is allowed to be
-      unknown a priori and estimated using a Spare Finite Mixture (SFM) algorithm.
-      Currently the package supports a flexible mixture of shifted poisson distributions.
-      The shifted poisson augments the poisson distribution with a location parameter.
-      More mixtures of discrete and continuous distributions are in the pipeline.
+Description: Bayesian methods for mode inference in mixtures of discrete distributions.
+      Functions are provided for (i) estimating a mixture distribution using MCMC methods;
+      (ii) post-processing (burn-in and discarding empty components); (iii) mode inference
+      giving posterior probabilities for each potential mode and associated locations.
+      The number of mixture components is allowed to be unknown a priori and estimated using
+      a Spare Finite Mixture (SFM) algorithm. Currently the package supports a flexible mixture
+      of shifted poisson distributions. The shifted poisson augments the poisson distribution
+      with a location parameter. More mixtures of discrete and continuous distributions
+      are in the pipeline.
 License: GPL (>= 3)
 Imports: ggpubr, dplyr, tidyr, ggplot2, stringr, ggh4x, magrittr, gtools, Rdpack
 RdMacros: Rdpack
