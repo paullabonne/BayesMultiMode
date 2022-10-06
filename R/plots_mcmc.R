@@ -1,7 +1,7 @@
 #' Plots SFM MCMC output.
 #' 
 #' Show plots of the MCMC estimation.
-#' @param sfm_mcmc a list. Output of `sfm_mcmc_spmix()` containing the parameter draws from the posterior mixtribution at each MCMC iteration.
+#' @param sfm_mcmc a list. Output of `sfm_mcmc_spmix()` containing the parameter draws from the posterior distribution at each MCMC iteration.
 #' @param S (a number between 0 and 1) The first S*M draws will be discarded as a burn-in. M is the total number of MCMC iterations.
 #' @returns 
 #' A list showing :
@@ -114,7 +114,7 @@ plots_mcmc <- function(sfm_mcmc, S){
     theme(legend.position="none")
   
   g_parameters = ggplot(filter(df_parameters,draw>M*S)) +
-    ggtitle("Posterior mixtribution of each parameter") +
+    ggtitle("Posterior distribution of each parameter") +
     geom_histogram(aes(x=value, fill=component), colour="white") +
     facet_nested_wrap(~variable + component, scales="free",ncol=length(unique(df_parameters$component))) +
     xlab(NULL) + ylab(NULL) +
