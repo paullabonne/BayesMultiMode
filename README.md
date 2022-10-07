@@ -11,9 +11,9 @@ techniques. The approach works in two stages. First, a mixture
 distribution is fitted on the data using a Sparse Finite Mixture (SFM)
 MCMC algorithm. The number of mixture components does not have to be
 specified; it is estimated simultaneously with the mixture weights and
-distributions through the SFM approach. Second, the resulting MCMC
+components through the SFM approach. Second, the resulting MCMC
 output is used to calculate the number of modes and their locations.
-Posterior probabilities are provided for both of these quantities
+Posterior probabilities are retrieved for both of these quantities
 providing a powerful tool for mode inference. Currently BayesMultiMode
 supports a flexible mixture of shifted poisson distributions. The
 shifted poisson is a two-parameter generalisation of the poisson
