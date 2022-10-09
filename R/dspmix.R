@@ -1,6 +1,6 @@
-#' Density of a mixture of shifted poissons
+#' Density of a mixture of shifted Poisson distributions
 #' 
-#' Density function of a mixture of shifted poissons distributions.
+#' Density function of a mixture of shifted Poisson distributions.
 #' @param x (an integer) Observation at which the density is evaluated.
 #' @param p (a vector) Mixture weights.
 #' @param lambda (a vector) Lambda parameter for each component.

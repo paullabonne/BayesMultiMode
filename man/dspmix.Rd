@@ -2,7 +2,7 @@
 % Please edit documentation in R/dspmix.R
 \name{dspmix}
 \alias{dspmix}
-\title{Density of a mixture of shifted poissons}
+\title{Density of a mixture of shifted Poisson distributions}
 \usage{
 dspmix(x, p, lambda, kappa)
 }
@@ -19,7 +19,7 @@ dspmix(x, p, lambda, kappa)
 Returns the density evaluated at the observation.
 }
 \description{
-Density function of a mixture of shifted poissons distributions.
+Density function of a mixture of shifted Poisson distributions.
 }
 \examples{
 

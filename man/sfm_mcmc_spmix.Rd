@@ -2,7 +2,7 @@
 % Please edit documentation in R/sfm_mcmc_spmix.R
 \name{sfm_mcmc_spmix}
 \alias{sfm_mcmc_spmix}
-\title{Estimation of a mixture of shifted poisson distributions.}
+\title{Estimation of a mixture of shifted Poisson distributions.}
 \usage{
 sfm_mcmc_spmix(y, Jmax, M, prt = TRUE)
 }
@@ -29,14 +29,14 @@ A list containing:
 }
 }
 \description{
-Bayesian estimation of a mixture of shifted poisson distributions using a Sparse Finite Mixture MCMC algorithm.
+Bayesian estimation of a mixture of shifted Poisson distributions using a Sparse Finite Mixture MCMC algorithm.
 }
 \examples{
 # Example with simulated data ================================================
 #set seed for random number generation
 set.seed(1) 
 
-# Set the parameters for drawing from a two-component shifted poisson 
+# Set the parameters for drawing from a two-component shifted Poisson mixture
 p1 = 0.3
 p2 = 1-p1
 kap1 = 3

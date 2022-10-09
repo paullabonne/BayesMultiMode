@@ -1,6 +1,6 @@
-#' Estimation of a mixture of shifted poisson distributions.
+#' Estimation of a mixture of shifted Poisson distributions.
 #' 
-#' Bayesian estimation of a mixture of shifted poisson distributions using a Sparse Finite Mixture MCMC algorithm.
+#' Bayesian estimation of a mixture of shifted Poisson distributions using a Sparse Finite Mixture MCMC algorithm.
 #' @param y (a vector of integers) Observations used to fit the model.
 #' @param Jmax (an integer) Maximum number of mixture components.
 #' @param M (an integer) Number of MCMC iterations.
@@ -27,7 +27,7 @@
 #' #set seed for random number generation
 #' set.seed(1) 
 #' 
-#' # Set the parameters for drawing from a two-component shifted poisson 
+#' # Set the parameters for drawing from a two-component shifted Poisson mixture
 #' p1 = 0.3
 #' p2 = 1-p1
 #' kap1 = 3

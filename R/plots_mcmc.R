@@ -24,7 +24,7 @@
 #' #set seed for random number generation
 #' set.seed(1) 
 #' 
-#' # Set the parameters for drawing from a two-component shifted poisson 
+#' # Set the parameters for drawing from a two-component shifted Poisson mixture
 #' p1 = 0.3
 #' p2 = 1-p1
 #' kap1 = 3
