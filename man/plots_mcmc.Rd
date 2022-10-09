@@ -7,7 +7,7 @@
 plots_mcmc(sfm_mcmc, S)
 }
 \arguments{
-\item{sfm_mcmc}{a list. Output of `sfm_mcmc_spmix()` containing the parameter draws from the posterior mixtribution at each MCMC iteration.}
+\item{sfm_mcmc}{a list. Output of `sfm_mcmc_spmix()` containing the parameter draws from the posterior distribution at each MCMC iteration.}
 
 \item{S}{(a number between 0 and 1) The first S*M draws will be discarded as a burn-in. M is the total number of MCMC iterations.}
 }
