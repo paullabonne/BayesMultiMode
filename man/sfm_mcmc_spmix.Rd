@@ -56,7 +56,7 @@ Jmax = 4 # Maximum number of mixture components
 sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
 
 # Example with DNA data =====================================================
-\dontrun{
+\donttest{
 y = d4z4
 M = 5000 # Number of MCMC iterations 
 Jmax = 10 # Maximum number of mixture components
