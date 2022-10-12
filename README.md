@@ -4,6 +4,7 @@ BayesMultiMode
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/paullabonne/BayesMultiMode/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/paullabonne/BayesMultiMode/actions/workflows/R-CMD-check.yaml)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/BayesMultiMode)](https://cran.r-project.org/package=BayesMultiMode)
 <!-- badges: end -->
 
 An R package for detecting multimodality in discrete data using Bayesian
@@ -20,15 +21,20 @@ is a two-parameter generalisation of the Poisson distribution where the
 mean can diverge from the variance. More distributions (discrete and
 continuous) are in the pipeline.
 
-### Installing BayesMultiMode
+### Installing BayesMultiMode from CRAN
 
 ``` r
-# Installing from github :
+install.packages("BayesMultiMode")
+```
+
+### Or installing the development version from GitHub
+
+``` r
 # install.packages("devtools") # if devtools is not installed 
 devtools::install_github("paullabonne/BayesMultiMode")
 ```
 
-### Loading the package
+### Loading BayesMultiMode
 
 ``` r
 library(BayesMultiMode)
@@ -96,7 +102,7 @@ graphs = plots_mcmc(sfm_mcmc,S)
 graphs[[3]]
 ```
 
-<img src="README_files/figure-gfm/unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-7-1.png" width="70%" style="display: block; margin: auto;" />
 
 ``` r
 graphs[[4]]
@@ -104,7 +110,7 @@ graphs[[4]]
 
     ## Warning: Removed 41 rows containing missing values (position_stack).
 
-<img src="README_files/figure-gfm/unnamed-chunk-6-2.png" width="70%" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-7-2.png" width="70%" style="display: block; margin: auto;" />
 
 ### Post-processing : burn-in and discarding empty components
 
@@ -119,12 +125,9 @@ sfm_mcmc_modes = bayes_mode(post_sfmmcmc$theta_draws_slim,y)
 sfm_mcmc_modes$graphs
 ```
 
-<img src="README_files/figure-gfm/unnamed-chunk-8-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-9-1.png" width="70%" style="display: block; margin: auto;" />
 
 ### References
-
-(Basturk, Hoogerheide, and Dijk 2021) (Malsiner-Walli,
-Fruhwirth-Schnatter, and Grun 2016) (Schaap et al. 2013)
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
