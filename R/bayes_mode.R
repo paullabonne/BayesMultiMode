@@ -209,7 +209,7 @@ bayes_mode <- function(theta_draws, y, mixt="shifted_poisson"){
   df_g1 = as_tibble(t(table_location))
   g1 = ggplot(data=df_g1, aes(x=location_at_modes, y=probs_modes)) +
     theme_gg + 
-    ggtitle("Location at the mode") +
+    ggtitle("Mode locations") +
     ylim(0, 1) +
     xlab("") + ylab("Posterior probability") +
     geom_bar(stat="identity",colour="white")
