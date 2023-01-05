@@ -153,38 +153,38 @@ bayes_mode <- function(theta_draws, y, mixt="shifted_poisson"){
   modes <- t(apply(theta_draws,1,FUN = fn.sub.mixpois, y = y.pos,which.r = 2)) # location modes
   modes = as.matrix(modes[, 1:max(n.modes)])
   colnames(modes) = paste('mode',1:max(n.modes))
-  p.modes <- t(apply(theta_draws,1,FUN = fn.sub.mixpois, y = y.pos,which.r = 3)) # location modes
-  p.modes = as.matrix(p.modes[, 1:max(n.modes)])
-  colnames(p.modes) = paste('mode',1:max(n.modes))
+  
+  # p.modes <- t(apply(theta_draws,1,FUN = fn.sub.mixpois, y = y.pos,which.r = 3)) # location modes
+  # p.modes = as.matrix(p.modes[, 1:max(n.modes)])
+  # colnames(p.modes) = paste('mode',1:max(n.modes))
   
   # Reshape into a vector
-  vec_modes = as.vector(modes)
-  vec_modes_without_NAs = vec_modes[!is.na(vec_modes)] # Remove NA values
+  # vec_modes = as.vector(modes)
+  # vec_modes_without_NAs = vec_modes[!is.na(vec_modes)] # Remove NA values
   
   ## Nb of modes per draw
-  nb_modes_per_draw = rep(NA,nrow(modes))
-  for(i in 1:nrow(modes)){
-    nb_modes_per_draw[i] = length(which(!is.na(modes[i,])))
-  }
+  # nb_modes_per_draw = rep(NA,nrow(modes))
+  # for(i in 1:nrow(modes)){
+  #   nb_modes_per_draw[i] = length(which(!is.na(modes[i,])))
+  # }
+  
+  # Number of modes 
+  n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw
   
   ##### testing unimodality
-  if(any(nb_modes_per_draw==1)){
-    Post_prob_number_modes_equal_one = length(n.modes[n.modes==1])/nrow(theta_draws)
+  if(any(n_modes==1)){
+    Post_prob_number_modes_equal_one = length(n_modes[n_modes==1])/nrow(theta_draws)
   } else {
     Post_prob_number_modes_equal_one = 0
   }
   
   ## Test for number of modes : number of modes and their posterior probability
-  possible_nb_modes = unique(nb_modes_per_draw)
+  possible_nb_modes = unique(n_modes)
   post_prob_nb_modes = rep(NA,length(possible_nb_modes))
   for (i in 1:length(possible_nb_modes)){
-    post_prob_nb_modes[i] = length(n.modes[n.modes==possible_nb_modes[i]])/nrow(theta_draws)
+    post_prob_nb_modes[i] = length(n_modes[n_modes==possible_nb_modes[i]])/nrow(theta_draws)
   }
   table_nb_modes = rbind(possible_nb_modes,post_prob_nb_modes)
-  
-  # Number of modes 
-  n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw
-  
   
   # Posterior probability of being a mode for each location
   modes_incl_flats <- t(apply(theta_draws,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 4)) # modes including flat ones
@@ -194,7 +194,7 @@ bayes_mode <- function(theta_draws, y, mixt="shifted_poisson"){
   range = min(y):max(y)
   location_at_modes = range[sum_modes_incl_flats>0]
   
-  table_location = rbind(location_at_modes,probs_modes)
+  table_location = rbind(location_at_modes, probs_modes)
   
   df_g0 = tibble(Pb = "Pb",
                  value = (1-Post_prob_number_modes_equal_one))
