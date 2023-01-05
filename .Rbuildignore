@@ -6,3 +6,5 @@
 ^README_files
 ^\.github$
 ^CRAN-SUBMISSION$
+^install_etc.Rmd
+^cts_testing.Rmd

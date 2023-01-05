@@ -1,0 +1,625 @@
+---
+title: "testing the estimation of continuous mixtures using stan"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(bayesplot)
+library(rstan)
+library(posterior)
+library(sn)
+library(BayesMultiMode)
+# install.packages("pckgstan", repos = NULL, type = "source", dependencies = TRUE)
+# install.packages("rstan", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+```
+
+# Mode finding algorithms
+
+## Fixed-point algorithm for finding the modes of a gaussian mixture
+Fixed-point algorithm to find the modes of a gaussian mixture from Carreira-Perpinan (2000), section 4 equation (10) https://doi.org/10.1109/34.888716
+```{r}
+Gaussian_mixture <- function(x, p, mu, sigma) {
+  mixture = 0
+  
+  for (i in 1:length(p)) {
+    mixture = mixture + p[i] * dnorm(x,
+                                     mean = mu[i],
+                                     sd = sigma[i])
+  }
+  
+  return(mixture)
+}
+
+f_fp <- function(x, p, mu, sigma) {
+  pmx = dnorm(x, mu, sigma) * p
+  pmx = pmx / sum(pmx)
+  
+  f = 1 / sum(pmx / sigma ^ 2) * sum(pmx / sigma ^ 2 * mu)
+  
+  return(f)
+}
+
+fixed_point <- function(params, tol_p = 1e-4, tol_x, show_plot = FALSE) {
+  p = params[grep("theta", names(params))]
+  mu = params[grep("mu", names(params))][p > tol_p]
+  sigma = params[grep("sigma", names(params))][p > tol_p]
+  
+  modes = rep(NA,length(p))
+  p = p[p > tol_p]
+  
+  iter = 0
+  
+  for (i in 1:length(mu)) {
+    x = mu[i]
+    delta = 1
+    
+    while (delta > 1e-20) {
+      iter = iter + 1
+      x1 = f_fp(x, p, mu, sigma)
+      x = x1
+      delta = abs(x - x1)
+    }
+    
+    ## check that the mode is not too close to other modes
+    not_duplicate = TRUE
+    
+    if (any(is.finite(modes))) {
+      diff = abs(x-modes)
+      diff = diff[!is.na(diff)]
+      if (any(diff<tol_x)) {
+        not_duplicate = FALSE
+      }
+    }
+    
+    if (x <= params["max_y"] & x >= params["min_y"] & not_duplicate){
+      modes[i] = x 
+    }
+  }
+  
+  if (show_plot) {
+    curve(Gaussian_mixture(x, p, mu, sigma), from = params["min_y"], to =  params["max_y"])
+    for (x in modes) {
+      abline(v = x) 
+    } 
+  }
+  
+  return(modes)
+}
+```
+
+## Mode-finding EM algorithm (MEM)
+From Li, Jia, Surajit Ray, and Bruce G. Lindsay. "A nonparametric statistical approach to clustering via mode identification." Journal of Machine Learning Research 8 (2007): 1687-1723.
+```{r}
+dst_vec <- function(x, xi, omega, nu){
+  n = length(xi)
+  output = rep(NA, n)
+  
+  for (i in 1:n) {
+    output[i] = dst(x, xi = xi[i], omega = omega[i], nu = nu[i])
+  }
+  
+  return(output)
+}
+
+Q_func = function(x, dist, post_prob, mu, sigma, xi, nu, min_max = 1){
+  if (dist == "student") {
+    Q = sum(post_prob * log(dst_vec(x, xi = mu, omega = sigma, nu = nu)))
+  }
+  
+  if (dist == "skew_normal") {
+    Q = sum(post_prob * log(dsn(x, xi = mu, omega = sigma, alpha = xi)))
+  }
+  
+  if(is.na(Q)|!is.finite(Q)){
+    Q = -1e6
+  }
+  
+  if(min_max==-1){
+    Q = -Q
+  }
+  
+  return(Q)
+}
+
+### At the moment works only for the skew normal
+MEM <- function(mcmc, dist, tol_p = 1e-3, tol_x, show_plot = FALSE) {
+  p = mcmc[grep("theta", names(mcmc))]
+  est_mode = rep(NA, length(p))
+  
+  mu = mcmc[grep("mu", names(mcmc))][p > tol_p]
+  sigma = mcmc[grep("sigma", names(mcmc))][p > tol_p]
+  
+  if (dist == "student") {
+    nu = mcmc[grep("nu", names(mcmc))][p > tol_p]
+  } else {
+    nu = NULL
+  }
+  
+  if (dist == "skew_normal") {
+    xi = mcmc[grep("xi", names(mcmc))][p > tol_p]
+  } else {
+    xi = NULL
+  }
+  
+  p = p[p > tol_p]
+  nK = length(p)
+  post_prob = rep(NA, nK)
+  
+  for (j in 1:nK) {
+    fnscale = -1
+    
+    x = mu[j]
+    
+    delta = 1
+    
+    while (delta > 1e-8) {
+      # E-step
+      if (dist == "skew_normal"){
+        f = SN_mixture(x, p, mu, sigma, xi)
+      }
+      if (dist == "student"){
+        f = ST_mixture(x, p, mu, sigma, nu)
+      }
+      
+      for (k in 1:nK){
+        if (dist == "skew_normal"){
+          post_prob[k] = p[k] * dsn(x, xi = mu[k], omega = sigma[k], alpha = xi[k])/f 
+        }
+        if (dist == "student"){
+          post_prob[k] = p[k] * dst(x, xi = mu[k], omega = sigma[k], nu = nu[k])/f 
+        }
+      }
+      
+      # M-step
+      Min = optim(par = x, Q_func, method = "L-BFGS-B",
+                  dist = dist, 
+                  post_prob = post_prob,
+                  mu = mu, sigma = sigma, xi = xi,
+                  nu = nu,
+                  control = list(fnscale = fnscale))
+      
+      x1 = Min$par
+      
+      # check convergence and increment
+      delta = abs(x - x1)
+      x = x1
+    }
+    
+    ## check that the mode is not too close to other modes
+    not_duplicate = TRUE
+    
+    if (any(is.finite(est_mode))) {
+      diff = abs(x-est_mode)
+      diff = diff[!is.na(diff)]
+      if (any(diff<tol_x)) {
+        not_duplicate = FALSE
+      }
+    }
+    
+    if (x <= mcmc["max_y"] & x >= mcmc["min_y"] & not_duplicate){ #!(!(x <= mcmc["max_y"] & x >= mcmc["min_y"]) & p[j]<1e-3)
+      est_mode[j] = x
+    }
+  }
+  
+  if (show_plot) {
+    if (dist == "skew_normal"){
+      curve(SN_mixture(x, p, mu, sigma, xi), from = params["min_y"], to =  params["max_y"])
+    }
+    if (dist == "student"){
+      curve(SN_mixture(x, p, mu, sigma, nu), from = params["min_y"], to =  params["max_y"])
+    }
+    for (x in modes) {
+      abline(v = x) 
+    } 
+  }
+  
+  return(est_mode)
+}
+```
+
+# Plotting functions
+```{r}
+SN_mixture <- function(x, p, mu, sigma, xi) {
+  mixture = 0
+  
+  for (i in 1:length(p)) {
+    mixture = mixture + p[i] * dsn(x,
+                                   xi = mu[i],
+                                   omega = sigma[i],
+                                   alpha = xi[i])
+  }
+  
+  return(mixture)
+}
+
+Gaussian_mixture <- function(x, p, mu, sigma) {
+  mixture = 0
+  
+  for (i in 1:length(p)) {
+    mixture = mixture + p[i] * dnorm(x,
+                                     mean = mu[i],
+                                     sd = sigma[i])
+  }
+  
+  return(mixture)
+}
+
+ST_mixture <- function(x, p, mu, sigma, nu) {
+  mixture = 0
+  
+  for (i in 1:length(p)) {
+    mixture = mixture + p[i] * dst(x,
+                                   xi = mu[i],
+                                   omega = sigma[i],
+                                   nu = nu[i])
+  }
+  
+  return(mixture)
+}
+
+SkT_mixture <- function(x, p, mu, sigma, xi, nu) {
+  mixture = 0
+  
+  for (i in 1:length(p)) {
+    mixture = mixture + p[i] * dst(x,
+                                   xi = mu[i],
+                                   omega = sigma[i],
+                                   alpha = xi[i],
+                                   nu = nu[i]
+    )
+  }
+  
+  return(mixture)
+}
+
+dist_mixture <- function(x, dist, pars, K) {
+  
+  if (dist == "gaussian") {
+    output = Gaussian_mixture(x, pars[, 1], pars[, 2], pars[, 3])
+  }
+  
+  if (dist == "student") {
+    output = ST_mixture(x, pars[, 1], pars[, 2], pars[, 3], pars[, 4])
+  }
+  
+  if (dist == "skew_normal") {
+    output = SN_mixture(x, pars[, 1], pars[, 2], pars[, 3], pars[, 4])
+  }
+  
+  if (dist == "skew_t") {
+    output = SkT_mixture(x, pars[, 1], pars[, 2], pars[, 3], pars[, 4], pars[, 5])
+  }
+  
+  return(output)
+  
+}
+
+#########
+mixture_plot <- function(y, K, fit, dist, max_size = 200, col = "magenta", tol = 1e-4) {
+  mcmc_output = as_draws_matrix(fit)
+  
+  ## plot the data
+  g = ggplot(data.frame(y = y), aes(y)) +
+    geom_histogram(aes(y = ..density..),
+                   colour = "white",
+                   bins = 70)
+  
+  ## plot the mixture for each draw
+  for (i in sample(1:(min(nrow(mcmc_output), max_size)))) {
+    pars = mcmc_output[i, grep("theta", colnames(mcmc_output))]
+    pars = rbind(pars, mcmc_output[i, grep("mu", colnames(mcmc_output))])
+    pars = rbind(pars, sqrt(mcmc_output[i, grep("sigma", colnames(mcmc_output))]))
+    
+    if (dist == "student") {
+      pars = rbind(pars, mcmc_output[i, grep("nu", colnames(mcmc_output))])
+    }
+    
+    if (dist == "skew_normal") {
+      pars = rbind(pars, mcmc_output[i, grep("xi", colnames(mcmc_output))])
+    }
+    
+    if (dist == "skew_t") {
+      pars = rbind(pars, mcmc_output[i, grep("xi", colnames(mcmc_output))])
+      pars = rbind(pars, mcmc_output[i, grep("nu", colnames(mcmc_output))])
+    }
+    
+    pars = t(pars)
+    pars = pars[pars[, 1]>tol, ]
+    
+    g = g +
+      geom_function(fun = dist_mixture,
+                    args = list(dist = dist,
+                                pars = pars),
+                    alpha = 0.1,
+                    colour = col)
+  }
+  
+  g
+}
+```
+
+# R estimation functions using Stan
+```{r, eval = FALSE}
+bayes_estimation <- function(data,
+                             K,
+                             dist,
+                             nb_iter = 2000,
+                             burnin = nb_iter/2,
+                             chains = 4,
+                             cores = 4,
+                             a0 = 10,
+                             A0 = 10*K,
+                             b0 = median(data),
+                             B0 = (max(data) - min(data))^2,
+                             c0 = 2.5,#2.5,
+                             e0 = 0,
+                             g0 = 0.5,
+                             G0 = 100*2.5/0.5/(max(data) - min(data))^2,#0.5/(sd(y)^2/2),
+                             #skew prior
+                             h0 = 0,
+                             H0 = 10,
+                             #studen t prior
+                             n0 = 2,
+                             N0 = 0.1,
+                             refresh = 1e3
+) {
+  
+  mixture_data <- list(K = K,
+                       N = length(data),
+                       y = data,
+                       a0 = a0,
+                       A0 = A0,
+                       b0 = b0,
+                       B0 = B0,
+                       c0 = c0,
+                       e0 = e0,
+                       g0 = g0,
+                       G0 = G0)
+  
+  if (dist %in% c("skew_t", "skew_normal")) {
+    mixture_data$h0 = h0
+    mixture_data$H0 = H0
+  }
+  
+  if (dist %in% c("student", "skew_t")) {
+    mixture_data$n0 = n0
+    mixture_data$N0 = N0
+  }
+  
+  file = paste0("stan_", dist, "_mixture.stan")
+  
+  fit <- stan(
+    file = file,  # Stan program
+    data = mixture_data,    # named list of data
+    chains = chains,             # number of Markov chains
+    warmup = burnin,        # number of warmup iterations per chain
+    iter = nb_iter,         # total number of iterations per chain
+    cores = cores,              # number of cores (could use one per chain)
+    refresh = refresh           # no progress shown
+  )
+  
+  return(fit)
+}
+```
+
+# Data
+
+## Galaxy data
+```{r}
+y = multimode::galaxy/1000
+
+plot(density(y), type="l")
+```
+
+## Pen world data
+```{r}
+library(dplyr)
+library(pwt10)
+
+df_pwt_60 = pwt10.0 %>%
+  select(year,country,rgdpe) %>%
+  filter(year %in% rep(1960:1969, 1)) %>%
+  group_by(country) %>%
+  summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
+
+df_pwt_70 = pwt10::pwt10.0 %>%
+  select(year,country,rgdpe) %>%
+  filter(year %in% rep(1970:1979,1)) %>%
+  group_by(country) %>%
+  summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
+
+df_pwt_80 = pwt10::pwt10.0 %>%
+  select(year,country,rgdpe) %>%
+  filter(year %in% rep(1980:1989,1)) %>%
+  group_by(country) %>%
+  summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
+
+df_pwt_90 = pwt10::pwt10.0 %>%
+  select(year,country,rgdpe) %>%
+  filter(year %in% rep(1990:1999,1)) %>%
+  group_by(country) %>%
+  summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
+
+df_pwt_00 = pwt10::pwt10.0 %>%
+  select(year,country,rgdpe) %>%
+  filter(year %in% rep(2000:2009,1)) %>%
+  group_by(country) %>%
+  summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
+
+df_pwt_10 = pwt10::pwt10.0 %>%
+  select(year,country,rgdpe) %>%
+  filter(year %in% rep(2010:2019,1)) %>%
+  group_by(country) %>%
+  summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
+
+y = unlist(df_pwt_10$rgdpe[!is.na(df_pwt_10$rgdpe)])/1000
+y = y
+hist(y, breaks = 200)
+```
+
+## Normal draws
+```{r, eval = FALSE}
+mu = c(0.5,2,4)
+sigma = c(0.3,0.4,0.2)
+p = c(0.3,0.5,0.2)
+nb_draws = 200
+
+y = c(rnorm(nb_draws*p[1], mu[1], sigma[1]),
+      rnorm(nb_draws*p[2], mu[2], sigma[2]),
+      rnorm(nb_draws*p[3], mu[3], sigma[3]))
+
+hist(y,main = "Simulated data", breaks=100)
+```
+
+## Student t draws
+```{r}
+library(sn)
+N = 100
+y = c(rst(0.3*N, xi = 2, omega = 0.5, nu = 2),
+      rst(0.7*N, xi = 10, omega = 1, nu = Inf))
+
+hist(y, breaks = 100)
+plot(density(y), type="l")
+```
+
+## Skew normal draws
+The skew normal density of Azzalini takes the form 
+$$f(x, \mu, \sigma, \alpha) = \frac{2}{\sigma}\phi(\frac{x-\mu}{\sigma})\Phi(\alpha \frac{x-\mu}{\sigma}),$$ 
+where $\sigma \in R^+$ is a scale parameter, $\mu \in R$ a location parameter $\alpha \in R$ the shape or asymmetry parameter. The functions $\phi(.)$ and $\Phi(.)$ are the density and cumulative functions of the normal distribution.
+```{r}
+library(sn)
+N = 200
+y = c(rsn(0.6*N, 0, 1, 20),rsn(0.4*N, 3, 0.5, 0))
+
+hist(y, breaks = 100)
+```
+
+## Skew t draws
+```{r}
+library(sn)
+N = 200
+y = c(rst(0.7*N, xi = 0, omega = 1, alpha = 20, nu= 2),
+      rst(0.3*N, xi = 5, omega = 0.5, alpha = 0, nu= Inf))
+
+hist(y, breaks = 100)
+```
+
+# Bayesian estimation
+```{r, message =FALSE, warning=FALSE}
+K = 4
+dist = "gaussian"
+
+fit = bayes_estimation(y, K = K, dist, chains = 1, nb_iter = 2000)
+mixture_plot(y, K, fit, dist, max_size = 500)
+
+# mcmc_output = rstan::extract(fit, permuted = FALSE)[,1,]
+# round(apply(mcmc_output,2,mean),2)
+
+# print(fit, pars = colnames(as.matrix(fit)))
+# rstan::traceplot(fit, pars = colnames(as.matrix(fit)))
+# rstan::traceplot(fit, inc_warmup = TRUE, pars = colnames(as.matrix(fit)))
+# plot(fit)
+
+# posterior <- as.matrix(fit)
+# plot_title <- ggtitle("Posterior distributions",
+#                       "with medians and 80% intervals")
+# mcmc_areas(posterior,
+#            pars = colnames(posterior)[grep("theta", colnames(posterior))],
+#            prob = 0.8) + plot_title
+
+# traceplot(fit, pars = colnames(posterior)[1:K], inc_warmup = TRUE)
+# traceplot(fit, pars = colnames(posterior)[(K+1):(2*K)], inc_warmup = TRUE)
+```
+
+# Mode estimation
+```{r}
+# options(error = recover)
+## This function overcomes the problem arising from comparing floating points (0.1==0.1 can be false for instance, see https://stackoverflow.com/questions/9508518/why-are-these-numbers-not-equal/9508558#9508558)
+`%.in%` = function(a, b, eps = sqrt(.Machine$double.eps)) {
+  output = rep(F,length(b))
+  for (x in a){
+    output <- (abs(b-x) <= eps) | output
+  }
+  output
+}
+
+## the other option would be to generate observations for each draw using the estimated mixture and round the data to an arbitrary decimal. 
+mcmc_output = as_draws_matrix(fit)
+mcmc_output = cbind(mcmc_output, "min_y" = min(y), "max_y" = max(y))
+
+if (dist == "gaussian") {
+  ### fixed point
+  modes = t(apply(mcmc_output[,], 1, fixed_point, tol_x = sd(y)/10)) 
+} 
+
+if (dist %in% c("student", "skew_normal")) {
+  ### MEM 
+  # MEM(pars)
+  
+  modes = t(apply(mcmc_output, 1, MEM, dist = dist, tol_x = sd(y)/10, show_plot=F))
+}
+
+
+### inference
+
+### Number of modes and their associated probs
+# Number of modes 
+n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw
+
+# testing unimodality
+if(any(n_modes==1)){
+  Post_prob_number_modes_equal_one = length(n_modes[n_modes==1])/nrow(modes)
+} else {
+  Post_prob_number_modes_equal_one = 0
+}
+
+# Test for number of modes : number of modes and their posterior probability
+possible_nb_modes = unique(n_modes)
+post_prob_nb_modes = rep(NA,length(possible_nb_modes))
+for (i in 1:length(possible_nb_modes)){
+  post_prob_nb_modes[i] = length(n_modes[n_modes==possible_nb_modes[i]])/nrow(modes)
+}
+table_nb_modes = rbind(possible_nb_modes,post_prob_nb_modes)
+
+df_g1 = dplyr::as_tibble(t(table_nb_modes))
+ggplot(data=df_g1, aes(x=possible_nb_modes, y=post_prob_nb_modes)) +
+  # theme_gg +
+  scale_x_continuous(breaks=possible_nb_modes) +
+  ggtitle("Number of modes") +
+  ylim(0, 1) +
+  xlab("") + ylab("Posterior probability") +
+  geom_bar(stat="identity")
+
+### Posterior probability of being a mode for each location
+rd = 0 # rouding decimal
+m_range = seq(from = min(round(y,rd)), to = max(round(y,rd)), by = 1/(10^rd)) # range of potential values for the modes
+modes_disc = round(modes, digits = rd)
+
+matrix_modes = matrix(0, nrow = nrow(modes), ncol = length(m_range))
+for (i in 1:nrow(matrix_modes)) {
+  matrix_modes[i, modes_disc[i, ][!is.na(modes_disc[i, ])] %.in% m_range] = 1
+}
+
+sum_modes = apply(matrix_modes,2,sum)
+probs_modes = sum_modes/nrow(modes)
+probs_modes = probs_modes[probs_modes>0]
+location_at_modes = m_range[sum_modes>0]
+
+table_location = rbind(location_at_modes, probs_modes)
+
+df_g2 = dplyr::as_tibble(t(table_location))
+ggplot(data=df_g2, aes(x=location_at_modes, y=probs_modes)) +
+  # theme_gg + 
+  ggtitle("Mode locations") +
+  ylim(0, max(probs_modes)) +
+  xlab("") + ylab("Posterior probability") +
+  geom_bar(stat="identity")
+```
+
+## illustration using ten iterations
+```{r}
+modes = t(apply(mcmc_output_post[1:10,], 1, MEM, plots=T))
+```
+
