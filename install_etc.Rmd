@@ -28,6 +28,7 @@ try(roxygen2::roxygenize(load_code = sourceDir), silent = TRUE)
 roxygen2::roxygenize()
 devtools::install()
 
-install.packages("vctrs", lib="C:/Program Files/R/R-4.2.2/library")
+# on windows
+# install.packages("vctrs", lib="C:/Program Files/R/R-4.2.2/library")
 ```
 
