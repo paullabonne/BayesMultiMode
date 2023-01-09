@@ -1,18 +1,31 @@
 #' Bayesian estimation of mixture distributions
 #'
-#' @export
 #' @param data Numeric vector of input values.
+#' @param data Integer indicating the maximum number of mixture components.
+#' @param dist String indicating the distribution of the mixture components.
+#' Currently supports "gaussian", "student" and "skew_normal".
 #' @param fit Numeric vector of output values.
+#' @param e0 Numeric positive value for the dirichlet prior parameters. If 0 so an hyperprior is used instead. Default is 0.
+#' @param a0 Numeric value for the means of the gamma hyperprior used the dirichlet prior. Default is 10.
+#' @param A0 Numeric value for the variance of the gamma hyperprior used the dirichlet prior. Default is 10*K.
+#' @param b0 Numeric value for the means of the mean priors. Default is mean(data).
+#' @param B0 Numeric value for the variance of the mean priors. Default is R^2 where R = (max(data) - min(data)).
+#' @param c0 Numeric value for variance prior. Default is 2.5.
+#' @param g0 Numeric value for variance inverse gamma hyperprior. Default is 0.5.
+#' @param G0 Numeric value for variance inverse gamma hyperprior. Default is 100*2.5/0.5/R^2.
+#' @param h0 Numeric value for the means of the skew parameters priors. Default is 0.
+#' @param H0 Numeric value for the variance of the skew parameters priors. Default is 10.
+#' @param n0 Numeric value for the means of the degree of freedom gamma priors. Default is 2.
+#' @param N0 Numeric value for the variance of the degree of freedom gamma priors. Default is 0.1.
 #' @param ... Arguments passed to `rstan::sampling` (e.g. iter, chains).
+#' 
 #' @return An object of class `stanfit` returned by `rstan::sampling`
+#' 
+#' @export
 #'
 bayes_estimation <- function(data,
                              K,
                              dist,
-                             nb_iter = 2000,
-                             burnin = nb_iter/2,
-                             chains = 4,
-                             cores = 4,
                              a0 = 10,
                              A0 = 10*K,
                              b0 = mean(data),
@@ -27,6 +40,10 @@ bayes_estimation <- function(data,
                              #studen t prior
                              n0 = 2,
                              N0 = 0.1,
+                             nb_iter = 2000,
+                             burnin = nb_iter/2,
+                             chains = 4,
+                             cores = 4,
                              refresh = 1e3
 ) {
 

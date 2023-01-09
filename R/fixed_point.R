@@ -1,14 +1,19 @@
-#' Fixed-point algorithm for finding the modes of a gaussian mixture
+#' Fixed-point algorithm for finding the modes of a gaussian mixture.
+#' See Carreira-Perpinan (2000), section 4 equation (10) https://doi.org/10.1109/34.888716.
 #' 
-#' Fixed-point algorithm to find the modes of a gaussian
-#' mixture from Carreira-Perpinan (2000), section 4 equation (10)
-#' https://doi.org/10.1109/34.888716
+#' @param params a vector of estimated mixture parameters.
+#' @param y the vector of data used for estimating the mixtures.
+#' @param tol_p Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.
+#' @param tol_x Tolerance for distance in-between modes. Default is sd(y)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
+#' @param show_plot Show the data and estimated modes.
 #' 
-#' @importFrom stats dnorm
+#' @return A vector of estimated modes. 
+#' 
+#' @importFrom stats dnorm sd 
 #' @importFrom graphics abline curve
 #' @export
 
-fixed_point <- function(params, tol_p = 1e-4, tol_x, show_plot = FALSE) {
+fixed_point <- function(params, y, tol_p = 1e-3, tol_x = sd(y)/10, show_plot = FALSE) {
   p = params[grep("theta", names(params))]
   mu = params[grep("mu", names(params))][p > tol_p]
   sigma = params[grep("sigma", names(params))][p > tol_p]

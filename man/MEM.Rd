@@ -6,6 +6,21 @@
 \usage{
 MEM(mcmc, dist, tol_p = 0.001, tol_x, show_plot = FALSE)
 }
+\arguments{
+\item{mcmc}{a vector of estimated mixture parameters.}
+
+\item{dist}{String indicating the distribution of the mixture components.
+Currently supports "gaussian", "student" and "skew_normal".}
+
+\item{tol_p}{Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.}
+
+\item{tol_x}{Tolerance for distance in-between modes. Default is sd(y)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
+
+\item{show_plot}{Show the data and estimated modes.}
+}
+\value{
+A vector estimated modes.
+}
 \description{
 From Li, Jia, Surajit Ray, and Bruce G. Lindsay.
 "A nonparametric statistical approach to clustering via mode identification."

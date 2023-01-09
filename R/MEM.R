@@ -4,10 +4,20 @@
 #' "A nonparametric statistical approach to clustering via mode identification."
 #' Journal of Machine Learning Research 8 (2007): 1687-1723.
 #' 
+#' @param mcmc a vector of estimated mixture parameters.
+#' @param dist String indicating the distribution of the mixture components.
+#' Currently supports "gaussian", "student" and "skew_normal". 
+#' @param tol_p Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.
+#' @param tol_x Tolerance for distance in-between modes. Default is sd(y)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
+#' @param show_plot Show the data and estimated modes.
+#' 
+#' @return A vector estimated modes.
+#' 
 #' @importFrom sn dst
 #' @importFrom sn dsn
 #' @importFrom graphics abline curve
 #' @importFrom stats optim
+#' 
 #' 
 #' @export
 
