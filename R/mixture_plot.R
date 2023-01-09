@@ -10,7 +10,7 @@ mixture_plot <- function(y, K, fit, dist, max_size = 200, col = "magenta", tol =
   
   ## plot the data
   g = ggplot(data.frame(y = y), aes(y)) +
-    geom_histogram(aes(y = ..density..),
+    geom_histogram(aes_string(y = "..density.."),
                    colour = "white",
                    bins = 70)
   

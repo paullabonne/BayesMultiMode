@@ -3,7 +3,7 @@
 # roxygen2::roxygenize("BayesMultiMode") #not sure if needed
 
 ######## Run this line when adding new functions to the package + adding the function name into NAMESPACE
-# devtools::document("BayesMultiMode") #create rd files to export functions
+devtools::document("BayesMultiMode") #create rd files to export functions
 #### Run this line to install the package after every modification
 # devtools::install("BayesMultiMode")
 # devtools::run_examples("BayesMultiMode")
@@ -23,10 +23,13 @@ library(ggplot2)
 
 ## rstan
 ```{r}
+# if using more r pacakges then dont forget to add them in the description file
 example(source)
 try(roxygen2::roxygenize(load_code = sourceDir), silent = TRUE)
 roxygen2::roxygenize()
 devtools::install()
+
+devtools::check()
 
 # on windows
 # install.packages("vctrs", lib="C:/Program Files/R/R-4.2.2/library")

@@ -14,7 +14,7 @@ bayes_estimation(
   cores = 4,
   a0 = 10,
   A0 = 10 * K,
-  b0 = median(data),
+  b0 = mean(data),
   B0 = (max(data) - min(data))^2,
   c0 = 2.5,
   e0 = 0,
@@ -28,9 +28,9 @@ bayes_estimation(
 )
 }
 \arguments{
-\item{x}{Numeric vector of input values.}
+\item{data}{Numeric vector of input values.}
 
-\item{y}{Numeric vector of output values.}
+\item{fit}{Numeric vector of output values.}
 
 \item{...}{Arguments passed to `rstan::sampling` (e.g. iter, chains).}
 }

@@ -1,6 +1,7 @@
 #' @importFrom sn dst
 #' @importFrom sn dsn
-
+#' @importFrom stats dnorm
+#' 
 # Vectorise the dst function for vector of nus
 dst_vec <- function(x, xi, omega, nu){
   n = length(xi)

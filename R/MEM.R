@@ -6,6 +6,8 @@
 #' 
 #' @importFrom sn dst
 #' @importFrom sn dsn
+#' @importFrom graphics abline curve
+#' @importFrom stats optim
 #' 
 #' @export
 
@@ -90,12 +92,12 @@ MEM <- function(mcmc, dist, tol_p = 1e-3, tol_x, show_plot = FALSE) {
   
   if (show_plot) {
     if (dist == "skew_normal"){
-      curve(SN_mixture(x, p, mu, sigma, xi), from = params["min_y"], to =  params["max_y"])
+      curve(SN_mixture(x, p, mu, sigma, xi), from = mcmc["min_y"], to =  mcmc["max_y"])
     }
     if (dist == "student"){
-      curve(SN_mixture(x, p, mu, sigma, nu), from = params["min_y"], to =  params["max_y"])
+      curve(SN_mixture(x, p, mu, sigma, nu), from = mcmc["min_y"], to =  mcmc["max_y"])
     }
-    for (x in modes) {
+    for (x in est_mode) {
       abline(v = x) 
     } 
   }

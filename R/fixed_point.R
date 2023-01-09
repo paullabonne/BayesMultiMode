@@ -4,6 +4,8 @@
 #' mixture from Carreira-Perpinan (2000), section 4 equation (10)
 #' https://doi.org/10.1109/34.888716
 #' 
+#' @importFrom stats dnorm
+#' @importFrom graphics abline curve
 #' @export
 
 fixed_point <- function(params, tol_p = 1e-4, tol_x, show_plot = FALSE) {

@@ -1,8 +1,8 @@
 #' Bayesian estimation of mixture distributions
 #'
 #' @export
-#' @param x Numeric vector of input values.
-#' @param y Numeric vector of output values.
+#' @param data Numeric vector of input values.
+#' @param fit Numeric vector of output values.
 #' @param ... Arguments passed to `rstan::sampling` (e.g. iter, chains).
 #' @return An object of class `stanfit` returned by `rstan::sampling`
 #'
@@ -15,7 +15,7 @@ bayes_estimation <- function(data,
                              cores = 4,
                              a0 = 10,
                              A0 = 10*K,
-                             b0 = median(data),
+                             b0 = mean(data),
                              B0 = (max(data) - min(data))^2,
                              c0 = 2.5,#2.5,
                              e0 = 0,

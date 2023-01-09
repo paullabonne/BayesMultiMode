@@ -113,7 +113,7 @@ hist(y, breaks = 100)
 # Bayesian estimation
 ```{r, message =FALSE, warning=FALSE}
 K = 4
-dist = "skew_normal"
+dist = "gaussian"
 
 fit = bayes_estimation(y, K = K, dist, chains = 1, nb_iter = 2000)
 mixture_plot(y, K, fit, dist, max_size = 500)
