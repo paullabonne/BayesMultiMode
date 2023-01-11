@@ -6,7 +6,7 @@
 #' 
 #' @param mcmc a vector of estimated mixture parameters.
 #' @param dist String indicating the distribution of the mixture components.
-#' Currently supports "gaussian", "student" and "skew_normal". 
+#' Currently supports "normal", "student" and "skew_normal". 
 #' @param tol_p Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.
 #' @param tol_x Tolerance for distance in-between modes. Default is sd(y)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
 #' @param show_plot Show the data and estimated modes.
@@ -21,7 +21,7 @@
 #' 
 #' @export
 
-MEM <- function(mcmc, dist, tol_p = 1e-3, tol_x, show_plot = FALSE) {
+MEM <- function(mcmc, dist, y, tol_p = 1e-3, tol_x, show_plot = FALSE) {
   p = mcmc[grep("theta", names(mcmc))]
   est_mode = rep(NA, length(p))
   
@@ -54,10 +54,10 @@ MEM <- function(mcmc, dist, tol_p = 1e-3, tol_x, show_plot = FALSE) {
     while (delta > 1e-8) {
       # E-step
       if (dist == "skew_normal"){
-        f = SN_mixture(x, p, mu, sigma, xi)
+        f = skew_norm_mix(x, p, mu, sigma, xi)
       }
       if (dist == "student"){
-        f = ST_mixture(x, p, mu, sigma, nu)
+        f = student_mix(x, p, mu, sigma, nu)
       }
       
       for (k in 1:nK){
@@ -95,17 +95,17 @@ MEM <- function(mcmc, dist, tol_p = 1e-3, tol_x, show_plot = FALSE) {
       }
     }
     
-    if (x <= mcmc["max_y"] & x >= mcmc["min_y"] & not_duplicate){ #!(!(x <= mcmc["max_y"] & x >= mcmc["min_y"]) & p[j]<1e-3)
+    if (x <= max(y) & x >= min(y) & not_duplicate){ #!(!(x <= mcmc["max_y"] & x >= mcmc["min_y"]) & p[j]<1e-3)
       est_mode[j] = x
     }
   }
   
   if (show_plot) {
     if (dist == "skew_normal"){
-      curve(SN_mixture(x, p, mu, sigma, xi), from = mcmc["min_y"], to =  mcmc["max_y"])
+      curve(skew_norm_mix(x, p, mu, sigma, xi), from = min(y), to =  max(y))
     }
     if (dist == "student"){
-      curve(SN_mixture(x, p, mu, sigma, nu), from = mcmc["min_y"], to =  mcmc["max_y"])
+      curve(student_mix(x, p, mu, sigma, nu), from = min(y), to =  max(y))
     }
     for (x in est_mode) {
       abline(v = x) 

@@ -45,13 +45,13 @@ fixed_point <- function(params, y, tol_p = 1e-3, tol_x = sd(y)/10, show_plot = F
       }
     }
     
-    if (x <= params["max_y"] & x >= params["min_y"] & not_duplicate){
+    if (x <= max(y) & x >= min(y) & not_duplicate){
       modes[i] = x 
     }
   }
   
   if (show_plot) {
-    curve(Gaussian_mixture(x, p, mu, sigma), from = params["min_y"], to =  params["max_y"])
+    curve(normal_mix(x, p, mu, sigma), from = min(y), to =  max(y))
     for (x in modes) {
       abline(v = x) 
     } 

@@ -15,7 +15,7 @@ dst_vec <- function(x, xi, omega, nu){
 }
 
 # Mixture of normals
-Gaussian_mixture <- function(x, p, mu, sigma) {
+normal_mix <- function(x, p, mu, sigma) {
   mixture = 0
   
   for (i in 1:length(p)) {
@@ -28,7 +28,7 @@ Gaussian_mixture <- function(x, p, mu, sigma) {
 }
 
 # Mixture of skew normals
-SN_mixture <- function(x, p, mu, sigma, xi) {
+skew_norm_mix <- function(x, p, mu, sigma, xi) {
   mixture = 0
   
   for (i in 1:length(p)) {
@@ -42,7 +42,7 @@ SN_mixture <- function(x, p, mu, sigma, xi) {
 }
 
 # Mixture of student's t-distributions
-ST_mixture <- function(x, p, mu, sigma, nu) {
+student_mix <- function(x, p, mu, sigma, nu) {
   mixture = 0
   
   for (i in 1:length(p)) {
@@ -58,7 +58,7 @@ ST_mixture <- function(x, p, mu, sigma, nu) {
 
 # currently not used
 # Mixture of skewed student's t-distributions
-SkT_mixture <- function(x, p, mu, sigma, xi, nu) {
+skew_t_mix <- function(x, p, mu, sigma, xi, nu) {
   mixture = 0
   
   for (i in 1:length(p)) {
@@ -73,23 +73,36 @@ SkT_mixture <- function(x, p, mu, sigma, xi, nu) {
   return(mixture)
 }
 
+# Mixture of shifted Poisson distributions
+shift_pois_mix <- function(x, p, lambda, kappa) {
+  mixture = 0
+  for (i in 1:length(kappa)) {
+    mixture = mixture + p[i] * dpois(x - kappa[i], lambda[i], log = FALSE)
+  }
+  return(mixture)
+}
+
 # wrapper
 dist_mixture <- function(x, dist, pars, K) {
   
-  if (dist == "gaussian") {
-    output = Gaussian_mixture(x, pars[, 1], pars[, 2], pars[, 3])
+  if (dist == "normal") {
+    output = normal_mix(x, pars[, 1], pars[, 2], pars[, 3])
   }
   
   if (dist == "student") {
-    output = ST_mixture(x, pars[, 1], pars[, 2], pars[, 3], pars[, 4])
+    output = student_mix(x, pars[, 1], pars[, 2], pars[, 3], pars[, 4])
   }
   
   if (dist == "skew_normal") {
-    output = SN_mixture(x, pars[, 1], pars[, 2], pars[, 3], pars[, 4])
+    output = skew_norm_mix(x, pars[, 1], pars[, 2], pars[, 3], pars[, 4])
   }
   
   if (dist == "skew_t") {
-    output = SkT_mixture(x, pars[, 1], pars[, 2], pars[, 3], pars[, 4], pars[, 5])
+    output = skew_t_mix(x, pars[, 1], pars[, 2], pars[, 3], pars[, 4], pars[, 5])
+  }
+  
+  if (dist == "shift_pois_mix") {
+    output = shift_pois_mix(x, pars[, 1], pars[, 2], pars[, 3])
   }
   
   return(output)

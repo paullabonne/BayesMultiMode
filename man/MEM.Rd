@@ -4,13 +4,13 @@
 \alias{MEM}
 \title{Mode-finding EM algorithm (MEM)}
 \usage{
-MEM(mcmc, dist, tol_p = 0.001, tol_x, show_plot = FALSE)
+MEM(mcmc, dist, y, tol_p = 0.001, tol_x, show_plot = FALSE)
 }
 \arguments{
 \item{mcmc}{a vector of estimated mixture parameters.}
 
 \item{dist}{String indicating the distribution of the mixture components.
-Currently supports "gaussian", "student" and "skew_normal".}
+Currently supports "normal", "student" and "skew_normal".}
 
 \item{tol_p}{Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.}
 

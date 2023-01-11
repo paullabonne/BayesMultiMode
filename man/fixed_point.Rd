@@ -2,7 +2,8 @@
 % Please edit documentation in R/fixed_point.R
 \name{fixed_point}
 \alias{fixed_point}
-\title{Fixed-point algorithm for finding the modes of a gaussian mixture}
+\title{Fixed-point algorithm for finding the modes of a gaussian mixture.
+See Carreira-Perpinan (2000), section 4 equation (10) https://doi.org/10.1109/34.888716.}
 \usage{
 fixed_point(params, y, tol_p = 0.001, tol_x = sd(y)/10, show_plot = FALSE)
 }
@@ -21,7 +22,6 @@ fixed_point(params, y, tol_p = 0.001, tol_x = sd(y)/10, show_plot = FALSE)
 A vector of estimated modes.
 }
 \description{
-Fixed-point algorithm to find the modes of a gaussian
-mixture from Carreira-Perpinan (2000), section 4 equation (10)
-https://doi.org/10.1109/34.888716
+Fixed-point algorithm for finding the modes of a gaussian mixture.
+See Carreira-Perpinan (2000), section 4 equation (10) https://doi.org/10.1109/34.888716.
 }

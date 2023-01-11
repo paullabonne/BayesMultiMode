@@ -19,53 +19,6 @@
 #' @importFrom ggh4x facet_nested_wrap
 #' @importFrom stringr str_remove
 #' 
-#' @examples
-#' # Example with simulated data ================================================
-#' #set seed for random number generation
-#' set.seed(1) 
-#' 
-#' # Set the parameters for drawing from a two-component shifted Poisson mixture
-#' p1 = 0.3
-#' p2 = 1-p1
-#' kap1 = 3
-#' kap2 = 0
-#' lam1 = 1
-#' lam2 = 0.5
-#' length_data = 70
-#' 
-#' # Generate data
-#' y <- c(rpois(length_data*p1, lam1)+kap1, rpois(length_data*p2, lam2)+kap2)
-#' 
-#' # Set parameters for the SFM MCMC estimation
-#' M = 1000 # Number of MCMC iterations 
-#' Jmax = 4 # Maximum number of mixture components
-#' 
-#' # Estimation with SFM MCMC
-#' sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
-#' 
-#' # Generating plots
-#' 
-#' # Proportion of draws burned in
-#' S = 0.5
-#' 
-#' plots_mcmc(sfm_mcmc, S=S)
-#' 
-#' # Example with DNA data =====================================================
-#' \donttest{
-#' y = d4z4
-#' M = 5000 # Number of MCMC iterations 
-#' Jmax = 10 # Maximum number of mixture components
-#' 
-#' # Estimation with SFM MCMC
-#' sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
-#' 
-#' # Generating plots
-#' 
-#' # Proportion of draws burned in
-#' S = 0.5
-#' 
-#' plots_mcmc(sfm_mcmc, S=S)
-#' }
 #' @export
 
 plots_mcmc <- function(sfm_mcmc, S){
@@ -151,74 +104,6 @@ plots_mcmc <- function(sfm_mcmc, S){
     geom_bar(stat="identity")
   
   graphs[[3]] <- g2
-  
-  # generating data frame with density of y
-  y = sfm_mcmc$y
-  d_y = rep(NA,length(unique(y)))
-  for (i in 1:length(d_y)){
-    d_y[i] = length(y[y==unique(y)[i]])/length(y)
-  }
-  unique(y)
-  
-  df_y_temp = tibble(density = d_y,
-                     x = unique(y))
-  
-  df_y = tibble(x = seq(min(y),max(y),1)) %>%
-    left_join(df_y_temp, by=c("x"="x")) %>%
-    mutate(density = ifelse(is.na(density),NA,density))
-  
-  # Uncertainty around the mixture
-  
-  # burn-in and discarding empty components
-  post = post_sfm_mcmc(sfm_mcmc, S)
-  theta_draw_slim = post$theta_draws_slim
-  J_ne = post$J_ne
-  
-  mixture_uncertainty = matrix(NA,length(df_y$x),nrow(theta_draw_slim))
-  
-  if(sfm_mcmc$mixt=="shifted_poisson"){
-    p_slim = theta_draw_slim[,1:J_ne]
-    kappa_slim = theta_draw_slim[, (J_ne+1):(2*J_ne)]
-    lambda_slim = theta_draw_slim[, (2*J_ne+1):(3*J_ne)]
-    
-    for (draw in 1:nrow(p_slim)){
-      pdf.J = matrix(0, nrow=length(df_y$x),ncol=ncol(p_slim))
-      for(j in 1:ncol(p_slim)){
-        if(!is.na(p_slim[draw,j])){
-          pdf.J[,j] = dpois((df_y$x-kappa_slim[draw,j]),lambda_slim[draw,j]) * p_slim[draw,j]
-        }
-      }
-      # summing up to get the mixture
-      mixture_uncertainty[,draw] <- rowSums(pdf.J)
-    }
-  }
-
-  # 
-  df_y = tibble(x = seq(min(y),max(y),1)) %>%
-    left_join(df_y_temp, by=c("x"="x")) %>%
-    mutate(density = ifelse(is.na(density),NA,density)) %>%
-    cbind(mixture_uncertainty)
-  
-  df_y %<>%
-    gather(-x,-density,key="component",value="value")
-  
-  if (M*S>1000){
-    alpha=0.01
-  } else {
-    alpha=0.1
-  }
-  
-  graphs[[4]] = ggplot(df_y, aes(x=x)) + 
-    theme_gg +
-    ggtitle("Estimated mixture density at each iteration and histogram of the data") +
-    theme(legend.position="none") +
-    xlab("Repeat units") + ylab("Density") +
-    geom_col(data = filter(df_y,component=="1"),aes(y=density,fill="grey33"),colour="white",alpha=1) +
-    geom_line(aes(y=value,colour=component),alpha=alpha) +
-    scale_colour_manual(values=rep("#FF6347",length(unique(df_y$component)))) +
-    scale_fill_manual(name = "",
-                    values = c("grey33"), # Color specification
-                    labels = c("Data density"))
   
   return(graphs)
 }

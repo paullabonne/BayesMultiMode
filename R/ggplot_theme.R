@@ -14,3 +14,4 @@ theme_gg <-  ggplot2::theme_bw()+ ggplot2::theme(strip.background=element_blank(
                             axis.line.y = element_line(colour = 'grey', size=0.5, linetype="solid"),
                             axis.line.x = element_line(colour = 'grey', size=0.5, linetype="solid"),
                             plot.title=element_text(hjust=0.5, size=12, face="bold"))
+

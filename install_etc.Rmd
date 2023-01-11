@@ -14,24 +14,33 @@ devtools::document("BayesMultiMode") #create rd files to export functions
 # rcmdcheck::rcmdcheck("BayesMultiMode")
 # Default data analysis using BayesMultimode
 library(BayesMultiMode)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
 # devtools::install_github("jumpingrivers/inteRgrate")
 # inteRgrate::check_pkg("BayesMultiMode")
 ```
 
 ## rstan
 ```{r}
-# if using more r pacakges then dont forget to add them in the description file
-example(source)
-try(roxygen2::roxygenize(load_code = sourceDir), silent = TRUE)
+# https://cran.r-project.org/web/packages/rstantools/vignettes/minimal-rstan-package.html
 roxygen2::roxygenize()
-devtools::install()
+rstantools::rstan_config()
+
+# devtools::install()
 
 devtools::check()
 
 # on windows
-# install.packages("vctrs", lib="C:/Program Files/R/R-4.2.2/library")
+# install.packages("example", lib="C:/Program Files/R/R-4.2.2/library")
 ```
+
+#### Loading all functions for testing before installing
+```{r, eval = FALSE}
+devtools::load_all()
+```
+
+#### Testing
+```{r}
+use_r("foofy")    # creates and opens R/foofy.R
+use_test("blarg") # creates and opens tests/testthat/test-blarg.R
+```
+
 

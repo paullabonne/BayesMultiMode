@@ -55,3 +55,6 @@ LinkingTo:
     rstan (>= 2.18.1),
     StanHeaders (>= 2.18.0)
 SystemRequirements: GNU make
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

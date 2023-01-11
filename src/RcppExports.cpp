@@ -12,13 +12,13 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 
-RcppExport SEXP _rcpp_module_boot_stan_fit4gaussian_mixture_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4normal_mixture_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4skew_normal_mixture_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4skew_t_mixture_mod();
 RcppExport SEXP _rcpp_module_boot_stan_fit4student_mixture_mod();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_rcpp_module_boot_stan_fit4gaussian_mixture_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4gaussian_mixture_mod, 0},
+    {"_rcpp_module_boot_stan_fit4normal_mixture_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4normal_mixture_mod, 0},
     {"_rcpp_module_boot_stan_fit4skew_normal_mixture_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4skew_normal_mixture_mod, 0},
     {"_rcpp_module_boot_stan_fit4skew_t_mixture_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4skew_t_mixture_mod, 0},
     {"_rcpp_module_boot_stan_fit4student_mixture_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4student_mixture_mod, 0},

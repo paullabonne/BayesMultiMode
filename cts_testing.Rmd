@@ -110,14 +110,22 @@ y = c(rst(0.7*N, xi = 0, omega = 1, alpha = 20, nu= 2),
 hist(y, breaks = 100)
 ```
 
+### DNA data
+```{r}
+data("d4z4")
+y = d4z4
+```
+
 # Bayesian estimation
 ```{r, message =FALSE, warning=FALSE}
 K = 4
-dist = "gaussian"
+dist = "student"
 
-fit = bayes_estimation(y, K = K, dist, chains = 1, nb_iter = 2000)
-mixture_plot(y, K, fit, dist, max_size = 500)
+bayesmix = bayes_estimation(data = y, K = K, dist = dist, chains = 1, nb_iter = 2000)
 
+plot(bayesmix, max_size = 200)
+
+# rstan::traceplot(bayesmode$fit)
 # mcmc_output = rstan::extract(fit, permuted = FALSE)[,1,]
 # round(apply(mcmc_output,2,mean),2)
 
@@ -140,86 +148,12 @@ mixture_plot(y, K, fit, dist, max_size = 500)
 # Mode estimation
 ```{r}
 # options(error = recover)
-## This function overcomes the problem arising from comparing floating points (0.1==0.1 can be false for instance, see https://stackoverflow.com/questions/9508518/why-are-these-numbers-not-equal/9508558#9508558)
-`%.in%` = function(a, b, eps = sqrt(.Machine$double.eps)) {
-  output = rep(F,length(b))
-  for (x in a){
-    output <- (abs(b-x) <= eps) | output
-  }
-  output
-}
 
 ## the other option would be to generate observations for each draw using the estimated mixture and round the data to an arbitrary decimal. 
-mcmc_output = as_draws_matrix(fit)
-mcmc_output = cbind(mcmc_output, "min_y" = min(y), "max_y" = max(y))
-
-if (dist == "gaussian") {
-  ### fixed point
-  modes = t(apply(mcmc_output[,], 1, fixed_point, tol_x = sd(y)/10)) 
-} 
-
-if (dist %in% c("student", "skew_normal")) {
-  ### MEM 
-  # MEM(pars)
-  
-  modes = t(apply(mcmc_output, 1, MEM, dist = dist, tol_x = sd(y)/10, show_plot=F))
-}
-
-
 ### inference
 
-### Number of modes and their associated probs
-# Number of modes 
-n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw
-
-# testing unimodality
-if(any(n_modes==1)){
-  Post_prob_number_modes_equal_one = length(n_modes[n_modes==1])/nrow(modes)
-} else {
-  Post_prob_number_modes_equal_one = 0
-}
-
-# Test for number of modes : number of modes and their posterior probability
-possible_nb_modes = unique(n_modes)
-post_prob_nb_modes = rep(NA,length(possible_nb_modes))
-for (i in 1:length(possible_nb_modes)){
-  post_prob_nb_modes[i] = length(n_modes[n_modes==possible_nb_modes[i]])/nrow(modes)
-}
-table_nb_modes = rbind(possible_nb_modes,post_prob_nb_modes)
-
-df_g1 = dplyr::as_tibble(t(table_nb_modes))
-ggplot(data=df_g1, aes(x=possible_nb_modes, y=post_prob_nb_modes)) +
-  # theme_gg +
-  scale_x_continuous(breaks=possible_nb_modes) +
-  ggtitle("Number of modes") +
-  ylim(0, 1) +
-  xlab("") + ylab("Posterior probability") +
-  geom_bar(stat="identity")
-
-### Posterior probability of being a mode for each location
-rd = 0 # rouding decimal
-m_range = seq(from = min(round(y,rd)), to = max(round(y,rd)), by = 1/(10^rd)) # range of potential values for the modes
-modes_disc = round(modes, digits = rd)
-
-matrix_modes = matrix(0, nrow = nrow(modes), ncol = length(m_range))
-for (i in 1:nrow(matrix_modes)) {
-  matrix_modes[i, modes_disc[i, ][!is.na(modes_disc[i, ])] %.in% m_range] = 1
-}
-
-sum_modes = apply(matrix_modes,2,sum)
-probs_modes = sum_modes/nrow(modes)
-probs_modes = probs_modes[probs_modes>0]
-location_at_modes = m_range[sum_modes>0]
-
-table_location = rbind(location_at_modes, probs_modes)
-
-df_g2 = dplyr::as_tibble(t(table_location))
-ggplot(data=df_g2, aes(x=location_at_modes, y=probs_modes)) +
-  # theme_gg + 
-  ggtitle("Mode locations") +
-  ylim(0, max(probs_modes)) +
-  xlab("") + ylab("Posterior probability") +
-  geom_bar(stat="identity")
+modes = bayes_mode(bayesmix)
+plot(modes)
 ```
 
 ## illustration using ten iterations
