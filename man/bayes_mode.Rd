@@ -4,10 +4,16 @@
 \alias{bayes_mode}
 \title{Bayesian estimation of mixture distributions}
 \usage{
-bayes_mode(BayesMix, rd = 1)
+bayes_mode(BayesMix, rd = 1, tol_p = 0.001, tol_x = sd(data)/10)
 }
 \arguments{
 \item{BayesMix}{object of class `BayesMixture`.}
+
+\item{rd}{(numeric scalar) rounding}
+
+\item{tol_p}{...}
+
+\item{tol_x}{...}
 }
 \value{
 An object of class `BayesMode`.

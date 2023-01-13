@@ -24,7 +24,8 @@ bayes_estimation(
   burnin = nb_iter/2,
   chains = 4,
   cores = 4,
-  refresh = 1000
+  refresh = 1000,
+  ...
 )
 }
 \arguments{
@@ -35,33 +36,41 @@ bayes_estimation(
 \item{dist}{String indicating the distribution of the mixture components.
 Currently supports "normal", "student" and "skew_normal".}
 
-\item{a0}{Numeric value for the means of the gamma hyperprior used the dirichlet prior. Default is 10.}
+\item{a0}{(numeric scalar) Mean of the gamma hyperprior used the dirichlet prior. Default is 10.}
 
-\item{A0}{Numeric value for the variance of the gamma hyperprior used the dirichlet prior. Default is 10*K.}
+\item{A0}{(numeric scalar) Variance of the gamma hyperprior used the dirichlet prior. Default is 10*K.}
 
-\item{b0}{Numeric value for the means of the mean priors. Default is mean(data).}
+\item{b0}{(numeric scalar) Mean of the mean priors. Default is mean(data).}
 
-\item{B0}{Numeric value for the variance of the mean priors. Default is R^2 where R = (max(data) - min(data)).}
+\item{B0}{(numeric scalar) Numeric value for the variance of the mean priors. Default is R^2 where R = (max(data) - min(data)).}
 
-\item{c0}{Numeric value for variance prior. Default is 2.5.}
+\item{c0}{(numeric scalar) Numeric value for variance prior. Default is 2.5.}
 
-\item{e0}{Numeric positive value for the dirichlet prior parameters. If 0 so an hyperprior is used instead. Default is 0.}
+\item{e0}{(numeric positive scalar) Dirichlet prior parameter. If 0 so an hyperprior is used instead. Default is 0.}
 
-\item{g0}{Numeric value for variance inverse gamma hyperprior. Default is 0.5.}
+\item{g0}{(numeric scalar) Numeric value for variance inverse gamma hyperprior. Default is 0.5.}
 
-\item{G0}{Numeric value for variance inverse gamma hyperprior. Default is 100*2.5/0.5/R^2.}
+\item{G0}{(numeric scalar) Numeric value for variance inverse gamma hyperprior. Default is 100*2.5/0.5/R^2.}
 
-\item{h0}{Numeric value for the means of the skew parameters priors. Default is 0.}
+\item{h0}{(numeric scalar) Mean of the skew parameters priors. Default is 0.}
 
-\item{H0}{Numeric value for the variance of the skew parameters priors. Default is 10.}
+\item{H0}{(numeric scalar) Variance of the skew parameters priors. Default is 10.}
 
-\item{n0}{Numeric value for the means of the degree of freedom gamma priors. Default is 2.}
+\item{n0}{(numeric scalar) Mean of the degree of freedom gamma priors. Default is 2.}
 
-\item{N0}{Numeric value for the variance of the degree of freedom gamma priors. Default is 0.1.}
+\item{N0}{(numeric scalar) Variance of the degree of freedom gamma priors. Default is 2.}
 
-\item{fit}{Numeric vector of output values.}
+\item{nb_iter}{Number of MCMC iterations. Default is 2000.}
 
-\item{...}{Arguments passed to `rstan::sampling` (e.g. iter, chains).}
+\item{burnin}{...}
+
+\item{chains}{...}
+
+\item{cores}{...}
+
+\item{refresh}{...}
+
+\item{...}{Other arguments passed to `rstan::sampling`.}
 }
 \value{
 An object of class `BayesMixture`.

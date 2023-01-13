@@ -1,21 +1,30 @@
 #' Plot mixture
 #' 
+#' @param x ...
+#' @param max_size ...
+#' @param tol ...
+#' @param colour ...
+#' @param transparency ...
+#' @param ... ...
+#' 
 #' @importFrom posterior as_draws_matrix
 #' @importFrom ggpubr ggarrange
+#' @importFrom assertthat assert_that
 #' @import ggplot2
 #' 
 #' @export
 
-plot.BayesMixture <- function(BM, max_size = 200, tol = 1e-3,
-                              colour = "magenta", transparency = 0.1) {
+plot.BayesMixture <- function(x, max_size = 200, tol = 1e-3,
+                              colour = "magenta", transparency = 0.1, ...) {
+  component <- value <- NULL
   
-  stopifnot(inherits(BM, "BayesMixture"))
+  assert_that(inherits(x, "BayesMixture"), msg = "input should be an object of class BayesMixture")
   
-  mcmc = BM$mcmc
-  dist = BM$dist
-  y = BM$data
+  mcmc = x$mcmc
+  dist = x$dist
+  y = x$data
   
-  if (BM$dist_type == "continuous") {
+  if (x$dist_type == "continuous") {
     ## plot the data
     g = ggplot(data.frame(y = y), aes(y)) +
       geom_histogram(aes_string(y = "..density.."),
@@ -56,7 +65,7 @@ plot.BayesMixture <- function(BM, max_size = 200, tol = 1e-3,
     } 
   }
   
-  if (BM$dist_type == "discrete") {
+  if (x$dist_type == "discrete") {
     ####### Discrete distribution
     d_y = rep(NA,length(unique(y)))
     for (i in 1:length(d_y)){
@@ -70,7 +79,7 @@ plot.BayesMixture <- function(BM, max_size = 200, tol = 1e-3,
     
     mixture_uncertainty = matrix(NA, length(x_all), nrow(mcmc))
     
-    if(BM$dist=="shifted_poisson"){
+    if(x$dist=="shifted_poisson"){
       theta = mcmc[, grep("theta", colnames(mcmc))]
       kappa = mcmc[, grep("kappa", colnames(mcmc))]
       lambda = mcmc[, grep("lambda", colnames(mcmc))]
@@ -114,14 +123,25 @@ plot.BayesMixture <- function(BM, max_size = 200, tol = 1e-3,
 }
 
 
+#' Plot modes
+#' @param x ...
+#' @param colour ...
+#' @param ... ...
+#' 
+#' @importFrom posterior as_draws_matrix
+#' @importFrom ggpubr ggarrange
+#' @import ggplot2
+#' 
 #' @export
-plot.BayesMode <- function(BayesMode, colour = "magenta") {
-  stopifnot(inherits(BayesMode, "BayesMode"))
+plot.BayesMode <- function(x, colour = "magenta", ...) {
+  Pb <- value <- location_at_modes <- probs_modes <- unique_modes <- prob_nb_modes <- NULL
   
-  modes = BayesMode$modes
-  p1 = BayesMode$p1
-  tb_nb_modes = BayesMode$tb_nb_modes
-  table_location = BayesMode$table_location
+  stopifnot(inherits(x, "BayesMode"))
+  
+  modes = x$modes
+  p1 = x$p1
+  tb_nb_modes = x$tb_nb_modes
+  table_location = x$table_location
   
   df_g0 = tibble(Pb = "Pb",
                  value = (1-p1))
@@ -142,7 +162,7 @@ plot.BayesMode <- function(BayesMode, colour = "magenta") {
     xlab("") + ylab("Posterior probability") +
     geom_bar(stat="identity")
 
-  if (BayesMode$dist_type == "continuous") {
+  if (x$dist_type == "continuous") {
     g1 = g1 + ylim(0, max(df_g1$probs_modes))
   } else {
     g1 = g1 + ylim(0, 1)

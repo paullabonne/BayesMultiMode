@@ -2,21 +2,39 @@
 #' See Carreira-Perpinan (2000), section 4 equation (10) https://doi.org/10.1109/34.888716.
 #' 
 #' @param params a vector of estimated mixture parameters.
-#' @param y the vector of data used for estimating the mixtures.
+#' @param data (numeric vector) data used for estimating the mixtures.
 #' @param tol_p Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.
-#' @param tol_x Tolerance for distance in-between modes. Default is sd(y)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
+#' @param tol_x Tolerance for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
 #' @param show_plot Show the data and estimated modes.
 #' 
 #' @return A vector of estimated modes. 
 #' 
 #' @importFrom stats dnorm sd 
 #' @importFrom graphics abline curve
+#' @importFrom assertthat assert_that
 #' @export
 
-fixed_point <- function(params, y, tol_p = 1e-3, tol_x = sd(y)/10, show_plot = FALSE) {
+fixed_point <- function(params, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot = FALSE) {
+  
+  ## input checks
+  fail = "inputs to the fixed point algorithm are corrupted"
+  assert_that(is.vector(params) & length(params) >= 3,
+              msg = paste0("params should be a vector of length >= 3; ", fail))
+  assert_that(is.vector(data) & length(data) > 0,
+              msg = paste0("data should be a vector of length > 0; ", fail))
+  assert_that(is.vector(tol_p) & tol_p > 0, msg = paste0("tol_p should be a positive scalar; ", fail))
+  assert_that(is.vector(tol_x) & tol_x > 0, msg = paste0("tol_x should be a positive scalar; ", fail))
+  assert_that(is.logical(show_plot), msg = paste0("show_plot should be TRUE or FALSE; ", fail))
+  assert_that(c("theta", "mu", "sigma") %in% names(params),
+              msg = paste0("missing parameter in params; ", fail))
+  ##
+  
   p = params[grep("theta", names(params))]
   mu = params[grep("mu", names(params))][p > tol_p]
   sigma = params[grep("sigma", names(params))][p > tol_p]
+  
+  assert_that(length(p) == length(mu) & length(sigma) == length(mu),
+              msg = paste0("p, mu and sigma should have the same lengths", fail))
   
   modes = rep(NA,length(p))
   p = p[p > tol_p]
@@ -45,13 +63,13 @@ fixed_point <- function(params, y, tol_p = 1e-3, tol_x = sd(y)/10, show_plot = F
       }
     }
     
-    if (x <= max(y) & x >= min(y) & not_duplicate){
+    if (x <= max(data) & x >= min(data) & not_duplicate){
       modes[i] = x 
     }
   }
   
   if (show_plot) {
-    curve(normal_mix(x, p, mu, sigma), from = min(y), to =  max(y))
+    curve(normal_mix(x, p, mu, sigma), from = min(data), to =  max(data))
     for (x in modes) {
       abline(v = x) 
     } 

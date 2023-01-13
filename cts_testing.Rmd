@@ -3,13 +3,11 @@ title: "testing the estimation of continuous mixtures using stan"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-# library(sn)
-library(BayesMultiMode)
-# install.packages("pckgstan", repos = NULL, type = "source", dependencies = TRUE)
+```{r}
 # install.packages("rstan", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+library(BayesMultiMode)
 ```
+
 
 # Data
 
@@ -110,7 +108,7 @@ y = c(rst(0.7*N, xi = 0, omega = 1, alpha = 20, nu= 2),
 hist(y, breaks = 100)
 ```
 
-### DNA data
+## DNA data
 ```{r}
 data("d4z4")
 y = d4z4
@@ -119,11 +117,13 @@ y = d4z4
 # Bayesian estimation
 ```{r, message =FALSE, warning=FALSE}
 K = 4
-dist = "student"
+dist = "shifted_poisson"
 
 bayesmix = bayes_estimation(data = y, K = K, dist = dist, chains = 1, nb_iter = 2000)
 
 plot(bayesmix, max_size = 200)
+
+bayesplot::mcmc_trace(bayesmix$mcmc)
 
 # rstan::traceplot(bayesmode$fit)
 # mcmc_output = rstan::extract(fit, permuted = FALSE)[,1,]

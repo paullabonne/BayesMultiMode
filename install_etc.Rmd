@@ -24,10 +24,10 @@ library(BayesMultiMode)
 roxygen2::roxygenize()
 rstantools::rstan_config()
 
-# devtools::install()
+devtools::install()
 
 devtools::check()
-
+   
 # on windows
 # install.packages("example", lib="C:/Program Files/R/R-4.2.2/library")
 ```
@@ -37,10 +37,14 @@ devtools::check()
 devtools::load_all()
 ```
 
-#### Testing
+#### Testing / https://r-pkgs.org/testing-design.html
 ```{r}
-use_r("foofy")    # creates and opens R/foofy.R
-use_test("blarg") # creates and opens tests/testthat/test-blarg.R
+library(usethis)
+use_r("fixed_point")    # creates and opens R/fixed_point.R
+use_test("fixed_point") # creates and opens tests/testthat/test-fixed_point.R
+
+
+
 ```
 
 

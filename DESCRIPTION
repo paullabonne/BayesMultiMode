@@ -21,6 +21,7 @@ Description: The testing approach works in two stages. First, a mixture distribu
       Basturk, Hoogerheide and van Dijk (2021) <doi:10.2139/ssrn.3783351>).
 License: GPL (>= 3)
 Imports: 
+    assertthat,
     dplyr,
     ggh4x,
     ggplot2,

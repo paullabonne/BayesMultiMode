@@ -6,9 +6,10 @@
 #' 
 #' @param mcmc a vector of estimated mixture parameters.
 #' @param dist String indicating the distribution of the mixture components.
-#' Currently supports "normal", "student" and "skew_normal". 
+#' Currently supports "normal", "student" and "skew_normal".
+#' @param data Numeric vector of observations.
 #' @param tol_p Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.
-#' @param tol_x Tolerance for distance in-between modes. Default is sd(y)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
+#' @param tol_x Tolerance for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
 #' @param show_plot Show the data and estimated modes.
 #' 
 #' @return A vector estimated modes.
@@ -17,11 +18,27 @@
 #' @importFrom sn dsn
 #' @importFrom graphics abline curve
 #' @importFrom stats optim
-#' 
+#' @importFrom assertthat assert_that
+#' @importFrom assertthat is.string
+
 #' 
 #' @export
 
-MEM <- function(mcmc, dist, y, tol_p = 1e-3, tol_x, show_plot = FALSE) {
+MEM <- function(mcmc, dist, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot = FALSE) {
+  
+  ## input checks
+  fail = "inputs to the Mode-finding EM algorithm are corrupted"
+  assert_that(is.vector(mcmc) & length(mcmc) >= 3,
+              msg = paste0("mcmc should be a vector of length >= 3", fail))
+  assert_that(is.string(dist),
+              msg = paste0("dist should be a string", fail))
+  assert_that(is.vector(data) & length(data) > 0,
+              msg = "data should be a vector of length > 0")
+  assert_that(is.vector(tol_p) & tol_p > 0, msg = paste0("tol_p should be a positive scalar", fail))
+  assert_that(is.vector(tol_x) & tol_x > 0, msg = paste0("tol_x should be a positive scalar", fail))
+  assert_that(is.logical(show_plot), msg = paste0("show_plot should be TRUE or FALSE", fail))
+  ##
+  
   p = mcmc[grep("theta", names(mcmc))]
   est_mode = rep(NA, length(p))
   
@@ -95,17 +112,17 @@ MEM <- function(mcmc, dist, y, tol_p = 1e-3, tol_x, show_plot = FALSE) {
       }
     }
     
-    if (x <= max(y) & x >= min(y) & not_duplicate){ #!(!(x <= mcmc["max_y"] & x >= mcmc["min_y"]) & p[j]<1e-3)
+    if (x <= max(data) & x >= min(data) & not_duplicate){ #!(!(x <= mcmc["max_y"] & x >= mcmc["min_y"]) & p[j]<1e-3)
       est_mode[j] = x
     }
   }
   
   if (show_plot) {
     if (dist == "skew_normal"){
-      curve(skew_norm_mix(x, p, mu, sigma, xi), from = min(y), to =  max(y))
+      curve(skew_norm_mix(x, p, mu, sigma, xi), from = min(data), to =  max(data))
     }
     if (dist == "student"){
-      curve(student_mix(x, p, mu, sigma, nu), from = min(y), to =  max(y))
+      curve(student_mix(x, p, mu, sigma, nu), from = min(data), to =  max(data))
     }
     for (x in est_mode) {
       abline(v = x) 

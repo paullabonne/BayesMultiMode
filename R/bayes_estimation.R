@@ -4,23 +4,29 @@
 #' @param K Integer indicating the maximum number of mixture components.
 #' @param dist String indicating the distribution of the mixture components.
 #' Currently supports "normal", "student" and "skew_normal".
-#' @param fit Numeric vector of output values.
-#' @param e0 Numeric positive value for the dirichlet prior parameters. If 0 so an hyperprior is used instead. Default is 0.
-#' @param a0 Numeric value for the means of the gamma hyperprior used the dirichlet prior. Default is 10.
-#' @param A0 Numeric value for the variance of the gamma hyperprior used the dirichlet prior. Default is 10*K.
-#' @param b0 Numeric value for the means of the mean priors. Default is mean(data).
-#' @param B0 Numeric value for the variance of the mean priors. Default is R^2 where R = (max(data) - min(data)).
-#' @param c0 Numeric value for variance prior. Default is 2.5.
-#' @param g0 Numeric value for variance inverse gamma hyperprior. Default is 0.5.
-#' @param G0 Numeric value for variance inverse gamma hyperprior. Default is 100*2.5/0.5/R^2.
-#' @param h0 Numeric value for the means of the skew parameters priors. Default is 0.
-#' @param H0 Numeric value for the variance of the skew parameters priors. Default is 10.
-#' @param n0 Numeric value for the means of the degree of freedom gamma priors. Default is 2.
-#' @param N0 Numeric value for the variance of the degree of freedom gamma priors. Default is 0.1.
-#' @param ... Arguments passed to `rstan::sampling` (e.g. iter, chains).
+#' @param e0 (numeric positive scalar) Dirichlet prior parameter. If 0 so an hyperprior is used instead. Default is 0.
+#' @param a0 (numeric scalar) Mean of the gamma hyperprior used the dirichlet prior. Default is 10.
+#' @param A0 (numeric scalar) Variance of the gamma hyperprior used the dirichlet prior. Default is 10*K.
+#' @param b0 (numeric scalar) Mean of the mean priors. Default is mean(data).
+#' @param B0 (numeric scalar) Numeric value for the variance of the mean priors. Default is R^2 where R = (max(data) - min(data)).
+#' @param c0 (numeric scalar) Numeric value for variance prior. Default is 2.5.
+#' @param g0 (numeric scalar) Numeric value for variance inverse gamma hyperprior. Default is 0.5.
+#' @param G0 (numeric scalar) Numeric value for variance inverse gamma hyperprior. Default is 100*2.5/0.5/R^2.
+#' @param h0 (numeric scalar) Mean of the skew parameters priors. Default is 0.
+#' @param H0 (numeric scalar) Variance of the skew parameters priors. Default is 10.
+#' @param n0 (numeric scalar) Mean of the degree of freedom gamma priors. Default is 2.
+#' @param N0 (numeric scalar) Variance of the degree of freedom gamma priors. Default is 2.
+#' @param nb_iter Number of MCMC iterations. Default is 2000.
+#' @param burnin ...
+#' @param chains ...
+#' @param cores ...
+#' @param refresh ...
+#' @param ... Other arguments passed to `rstan::sampling`.
 #' 
 #' @importFrom rstan sampling
-#' 
+#' @importFrom assertthat assert_that
+#' @importFrom assertthat is.scalar
+
 #' @return An object of class `BayesMixture`.
 #' 
 #' @export
@@ -47,8 +53,29 @@ bayes_estimation <- function(data,
                              burnin = nb_iter/2,
                              chains = 4,
                              cores = 4,
-                             refresh = 1e3
+                             refresh = 1e3,
+                             ...
 ) {
+  K = round(K)
+  nb_iter = round(nb_iter)
+  burnin = round(burnin)
+  refresh = round(refresh)
+  cores = round(cores)
+  chains = round(chains)
+  
+  assert_that(is.vector(data) & length(data) > 0,
+              msg = "data should be a vector of length > 0")
+  assert_that(dist %in% c("normal", "student", "skew_normal", "shifted_poisson") & is.character(dist),
+              msg = "Unsupported distribution. 
+              dist should be either normal, student, skew_normal, shifted_poisson or NA")
+  assert_that(is.scalar(nb_iter) & nb_iter > 0, msg = "nb_iter should be a positive integer")
+  assert_that(is.scalar(burnin) & burnin > 0 & burnin < nb_iter,
+              msg = "nb_iter should be a positive integer lower than burnin")
+  assert_that(is.scalar(chains) & chains > 0, msg = "chains should be a positive integer")
+  assert_that(is.scalar(cores) & cores > 0, msg = "cores should be a positive integer")
+  assert_that(is.scalar(refresh) & refresh > 0, msg = "refresh should be a positive integer")
+  assert_that(is.scalar(K) & K > 0, msg = "K should be a positive integer")
+  
 
   mixture_data <- list(K = K,
                        N = length(data),
@@ -79,7 +106,8 @@ bayes_estimation <- function(data,
                     warmup = burnin,        # number of warmup iterations per chain
                     iter = nb_iter,         # total number of iterations per chain
                     cores = cores,              # number of cores (could use one per chain)
-                    refresh = refresh           # no progress shown
+                    refresh = refresh,           # no progress shown
+                    ...
     ) 
     
     dist_type = "continuous"

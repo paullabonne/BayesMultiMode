@@ -1,23 +1,37 @@
 #' Bayesian estimation of mixture distributions
 #'
 #' @param BayesMix object of class `BayesMixture`.
+#' @param rd (numeric scalar) rounding 
+#' @param tol_x ...
+#' @param tol_p ...
 #' 
 #' @return An object of class `BayesMode`.
 #' 
+#' @importFrom assertthat assert_that
+#' @importFrom assertthat is.scalar
+#' 
 #' @export
 
-bayes_mode <- function(BayesMix, rd = 1) {
-  stopifnot(class(BayesMix)=="BayesMixture")
+bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(data)/10) {
+  assert_that(inherits(BayesMix, "BayesMixture"), "BayesMix should be an object of class BayesMixture")
+  assert_that(is.scalar(rd) & rd > 0, msg = "rd should be a positive scalar")
+  assert_that(is.vector(tol_p) & tol_p > 0, msg = "tol_p should be a positive scalar")
+  assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
   
   dist = BayesMix$dist
   data = BayesMix$data
   mcmc = BayesMix$mcmc
   dist_type = BayesMix$dist_type
-    
-  BayesMode = list()
-  BayesMode$data = data
-  BayesMode$dist = dist
-  BayesMode$dist_type = dist_type
+  
+  assert_that(is.vector(mcmc) & length(mcmc) >= 3,
+              msg = "mcmc should be a vector of length >= 3")
+  assert_that(is.vector(data) & length(data) > 0,
+              msg = "data should be a vector of length > 0")
+  assert_that(dist_type %in% c("continuous", "discrete"),
+              msg = "dist_type should be either continuous or discrete")
+  assert_that(dist %in% c("normal", "student", "skew_normal", "shifted_poisson") & is.character(dist),
+              msg = "Unsupported distribution. 
+              dist should be either normal, student, skew_normal, shifted_poisson or NA")
   
   if (dist_type == "continuous") {
     if (dist == "normal") {
@@ -54,8 +68,7 @@ bayes_mode <- function(BayesMix, rd = 1) {
     modes <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos,which.r = 2, Khat = Khat)) # location modes
     modes = as.matrix(modes[, 1:max(n.modes)])
     colnames(modes) = paste('mode',1:max(n.modes))
-    BayesMode$modes = modes
-    
+
     # Posterior probability of being a mode for each location
     modes_incl_flats <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 4, Khat=Khat)) # modes including flat ones
     sum_modes_incl_flats = apply(modes_incl_flats,2,sum)
@@ -85,6 +98,10 @@ bayes_mode <- function(BayesMix, rd = 1) {
   }
   tb_nb_modes = rbind(unique_modes,prob_nb_modes)
   
+  BayesMode = list()
+  BayesMode$data = data
+  BayesMode$dist = dist
+  BayesMode$dist_type = dist_type
   BayesMode$modes = modes
   BayesMode$p1 = p1
   BayesMode$tb_nb_modes = tb_nb_modes

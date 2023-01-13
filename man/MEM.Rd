@@ -4,7 +4,7 @@
 \alias{MEM}
 \title{Mode-finding EM algorithm (MEM)}
 \usage{
-MEM(mcmc, dist, y, tol_p = 0.001, tol_x, show_plot = FALSE)
+MEM(mcmc, dist, data, tol_p = 0.001, tol_x = sd(data)/10, show_plot = FALSE)
 }
 \arguments{
 \item{mcmc}{a vector of estimated mixture parameters.}
@@ -12,9 +12,11 @@ MEM(mcmc, dist, y, tol_p = 0.001, tol_x, show_plot = FALSE)
 \item{dist}{String indicating the distribution of the mixture components.
 Currently supports "normal", "student" and "skew_normal".}
 
+\item{data}{Numeric vector of observations.}
+
 \item{tol_p}{Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.}
 
-\item{tol_x}{Tolerance for distance in-between modes. Default is sd(y)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
+\item{tol_x}{Tolerance for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
 
 \item{show_plot}{Show the data and estimated modes.}
 }

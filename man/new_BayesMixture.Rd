@@ -16,16 +16,20 @@ new_BayesMixture(
 )
 }
 \arguments{
+\item{fit}{(numeric matrix) MCMC draws.}
+
+\item{data}{(string) Distribution family of the mixture components supported by
+the package (e.g. "normal", "student", "skew_normal", "shifted_poisson").}
+
+\item{dist}{...}
+
 \item{pars_name}{(named character vector) providing the mapping between the distribution parameters names.
 This input is used only if dist_name is invalid or NULL.}
 
 \item{density}{(function) Pdf or pmf of the mixture components.
 This input is used only if dist_name is invalid or NULL.}
 
-\item{mcmc}{(numeric matrix) MCMC draws.}
-
-\item{dist_name}{(string) Distribution family of the mixture components supported by
-the package (e.g. "normal", "student", "skew_normal", "shifted_poisson").}
+\item{dist_type}{...}
 }
 \value{
 An object of class `BayesMixture`.
