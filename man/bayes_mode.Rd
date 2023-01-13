@@ -9,11 +9,11 @@ bayes_mode(BayesMix, rd = 1, tol_p = 0.001, tol_x = sd(data)/10)
 \arguments{
 \item{BayesMix}{object of class `BayesMixture`.}
 
-\item{rd}{(numeric scalar) rounding}
+\item{rd}{Rounding parameter.}
 
-\item{tol_p}{...}
+\item{tol_p}{Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
 
-\item{tol_x}{...}
+\item{tol_x}{Tolerance parameter for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.}
 }
 \value{
 An object of class `BayesMode`.

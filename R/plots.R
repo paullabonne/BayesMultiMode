@@ -10,6 +10,13 @@
 #' @importFrom posterior as_draws_matrix
 #' @importFrom ggpubr ggarrange
 #' @importFrom assertthat assert_that
+#' @importFrom dplyr tibble
+#' @importFrom dplyr mutate
+#' @importFrom dplyr as_tibble
+#' @importFrom dplyr filter
+#' @importFrom dplyr gather
+#' @importFrom magrittr %>%
+#' @importFrom magrittr %<>%
 #' @import ggplot2
 #' 
 #' @export

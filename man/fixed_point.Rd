@@ -14,13 +14,13 @@ fixed_point(
 )
 }
 \arguments{
-\item{params}{a vector of estimated mixture parameters.}
+\item{params}{A vector of estimated mixture parameters.}
 
-\item{data}{(numeric vector) data used for estimating the mixtures.}
+\item{data}{A vector data used for estimating the mixtures.}
 
-\item{tol_p}{Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.}
+\item{tol_p}{Tolerance parameter for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.}
 
-\item{tol_x}{Tolerance for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
+\item{tol_x}{Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
 
 \item{show_plot}{Show the data and estimated modes.}
 }

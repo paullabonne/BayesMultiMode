@@ -36,39 +36,39 @@ bayes_estimation(
 \item{dist}{String indicating the distribution of the mixture components.
 Currently supports "normal", "student" and "skew_normal".}
 
-\item{a0}{(numeric scalar) Mean of the gamma hyperprior used the dirichlet prior. Default is 10.}
+\item{a0}{Mean of the gamma hyperprior used for the dirichlet prior. Default is 10.}
 
-\item{A0}{(numeric scalar) Variance of the gamma hyperprior used the dirichlet prior. Default is 10*K.}
+\item{A0}{Variance of the gamma hyperprior used for the dirichlet prior. Default is 10*K.}
 
-\item{b0}{(numeric scalar) Mean of the mean priors. Default is mean(data).}
+\item{b0}{Mean of the mean priors. Default is mean(data).}
 
-\item{B0}{(numeric scalar) Numeric value for the variance of the mean priors. Default is R^2 where R = (max(data) - min(data)).}
+\item{B0}{Variance of the mean priors. Default is R^2 where R = (max(data) - min(data)).}
 
-\item{c0}{(numeric scalar) Numeric value for variance prior. Default is 2.5.}
+\item{c0}{Variance prior. Default is 2.5.}
 
-\item{e0}{(numeric positive scalar) Dirichlet prior parameter. If 0 so an hyperprior is used instead. Default is 0.}
+\item{e0}{Dirichlet prior parameter. Must be positive or zero. If set to 0 then an hyperprior is used instead. Default is 0.}
 
-\item{g0}{(numeric scalar) Numeric value for variance inverse gamma hyperprior. Default is 0.5.}
+\item{g0}{Variance inverse gamma hyperprior. Default is 0.5.}
 
-\item{G0}{(numeric scalar) Numeric value for variance inverse gamma hyperprior. Default is 100*2.5/0.5/R^2.}
+\item{G0}{Variance inverse gamma hyperprior. Default is 100*2.5/0.5/R^2.}
 
-\item{h0}{(numeric scalar) Mean of the skew parameters priors. Default is 0.}
+\item{h0}{Mean of the skew parameters priors. Default is 0.}
 
-\item{H0}{(numeric scalar) Variance of the skew parameters priors. Default is 10.}
+\item{H0}{Variance of the skew parameters priors. Default is 10.}
 
-\item{n0}{(numeric scalar) Mean of the degree of freedom gamma priors. Default is 2.}
+\item{n0}{Mean of the degree of freedom gamma priors. Default is 2.}
 
-\item{N0}{(numeric scalar) Variance of the degree of freedom gamma priors. Default is 2.}
+\item{N0}{Variance of the degree of freedom gamma priors. Default is 2.}
 
 \item{nb_iter}{Number of MCMC iterations. Default is 2000.}
 
-\item{burnin}{...}
+\item{burnin}{Number of MCMC iterations used as burnin.}
 
-\item{chains}{...}
+\item{chains}{Number of chains.}
 
-\item{cores}{...}
+\item{cores}{Number of cores for parallel computation.}
 
-\item{refresh}{...}
+\item{refresh}{Show intemediate results. Default is 1000 so intermediate results are shown every 1000 iterations.}
 
 \item{...}{Other arguments passed to `rstan::sampling`.}
 }
