@@ -12,6 +12,7 @@
 #' @importFrom stats dnorm sd 
 #' @importFrom graphics abline curve
 #' @importFrom assertthat assert_that
+#' @importFrom stringr str_remove
 #' @export
 
 fixed_point <- function(params, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot = FALSE) {
@@ -25,7 +26,13 @@ fixed_point <- function(params, data, tol_p = 1e-3, tol_x = sd(data)/10, show_pl
   assert_that(is.vector(tol_p) & tol_p > 0, msg = paste0("tol_p should be a positive scalar; ", fail))
   assert_that(is.vector(tol_x) & tol_x > 0, msg = paste0("tol_x should be a positive scalar; ", fail))
   assert_that(is.logical(show_plot), msg = paste0("show_plot should be TRUE or FALSE; ", fail))
-  assert_that(c("theta", "mu", "sigma") %in% names(params),
+  
+  names_pars = names(params)
+  for (i in 1:10){
+    names_pars = str_remove(names_pars, as.character(i))
+  }
+  
+  assert_that(sum(c("theta", "mu", "sigma") %in% names_pars)==3,
               msg = paste0("missing parameter in params; ", fail))
   ##
   

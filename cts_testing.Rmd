@@ -147,11 +147,6 @@ bayesplot::mcmc_trace(bayesmix$mcmc)
 
 # Mode estimation
 ```{r}
-# options(error = recover)
-
-## the other option would be to generate observations for each draw using the estimated mixture and round the data to an arbitrary decimal. 
-### inference
-
 modes = bayes_mode(bayesmix)
 plot(modes)
 ```

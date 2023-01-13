@@ -27,7 +27,7 @@ rstantools::rstan_config()
 devtools::install()
 
 devtools::check()
-   
+
 # on windows
 # install.packages("example", lib="C:/Program Files/R/R-4.2.2/library")
 ```
@@ -42,9 +42,32 @@ devtools::load_all()
 library(usethis)
 use_r("fixed_point")    # creates and opens R/fixed_point.R
 use_test("fixed_point") # creates and opens tests/testthat/test-fixed_point.R
-
-
-
 ```
 
+```{r}
+# 
+# test_that("some long-running thing works", {
+#   skip_on_cran()
+#   # test code that can potentially take "a while" to run  
+# })
+# 
+# # test second element of output
+# 
+# # if the test use mcmc estimation result we could do this :
+# test_that("foofy() does this", {
+#   useful_thing1 <- readRDS(test_path("fixtures", "useful_thing1.rds"))
+#   expect_equal(foofy(useful_thing1, x = "this"), EXPECTED_FOOFY_OUTPUT)
+# })
+# 
+# test_that("foofy() does that", {
+#   useful_thing2 <- readRDS(test_path("fixtures", "useful_thing2.rds"))
+#   expect_equal(foofy(useful_thing2, x = "that"), EXPECTED_FOOFY_OUTPUT)
+# })
+
+# # Objects or functions defined in a helper file are available to all of your tests. such as :
+# new_useful_thing <- function() {
+#   # your fiddly code to create a useful_thing goes here like create a dataset ?
+# }
+# 
+```
 
