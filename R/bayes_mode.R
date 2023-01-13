@@ -1,9 +1,9 @@
 #' Bayesian estimation of mixture distributions
 #'
 #' @param BayesMix object of class `BayesMixture`.
-#' @param rd (numeric scalar) rounding 
-#' @param tol_x ...
-#' @param tol_p ...
+#' @param rd Rounding parameter.
+#' @param tol_x Tolerance parameter for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.
+#' @param tol_p Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
 #' 
 #' @return An object of class `BayesMode`.
 #' 

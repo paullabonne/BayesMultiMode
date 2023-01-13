@@ -2,15 +2,15 @@
 #' This function is helpful for users who want to explore modes in MCMC draws which have not been
 #' derived using the function `bayes_estimation()`.
 #' 
-#' @param fit (numeric matrix) MCMC draws.
-#' @param data (string) Distribution family of the mixture components supported by
+#' @param fit A matrix of MCMC draws.
+#' @param data A vector containing the data used for estimating the model and generating the MCMC draws.
+#' @param dist Distribution family of the mixture components supported by
 #' the package (e.g. "normal", "student", "skew_normal", "shifted_poisson").
-#' @param dist ...
-#' @param pars_name (named character vector) providing the mapping between the distribution parameters names.
+#' @param pars_name Mapping between the distribution parameters names.
 #' This input is used only if dist_name is invalid or NULL.
-#' @param density (function) Pdf or pmf of the mixture components.
+#' @param density Pdf or pmf of the mixture components.
 #' This input is used only if dist_name is invalid or NULL.
-#' @param dist_type ...
+#' @param dist_type Either "continous" or "discrete"
 #' 
 #' @return An object of class `BayesMixture`.
 #' 

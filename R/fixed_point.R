@@ -1,10 +1,10 @@
 #' Fixed-point algorithm for finding the modes of a gaussian mixture.
 #' See Carreira-Perpinan (2000), section 4 equation (10) https://doi.org/10.1109/34.888716.
 #' 
-#' @param params a vector of estimated mixture parameters.
-#' @param data (numeric vector) data used for estimating the mixtures.
-#' @param tol_p Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.
-#' @param tol_x Tolerance for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
+#' @param params A vector of estimated mixture parameters.
+#' @param data A vector data used for estimating the mixtures.
+#' @param tol_p Tolerance parameter for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.
+#' @param tol_x Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
 #' @param show_plot Show the data and estimated modes.
 #' 
 #' @return A vector of estimated modes. 

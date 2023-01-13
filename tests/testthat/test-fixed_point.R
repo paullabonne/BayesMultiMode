@@ -1,5 +1,6 @@
 
 test_that("fixed_point function returns expected results", {
+  set.seed(1)
   mu = c(0,10)
   sigma = c(1,2)
   p = c(0.2,0.2)

@@ -4,23 +4,23 @@
 #' @param K Integer indicating the maximum number of mixture components.
 #' @param dist String indicating the distribution of the mixture components.
 #' Currently supports "normal", "student" and "skew_normal".
-#' @param e0 (numeric positive scalar) Dirichlet prior parameter. If 0 so an hyperprior is used instead. Default is 0.
-#' @param a0 (numeric scalar) Mean of the gamma hyperprior used the dirichlet prior. Default is 10.
-#' @param A0 (numeric scalar) Variance of the gamma hyperprior used the dirichlet prior. Default is 10*K.
-#' @param b0 (numeric scalar) Mean of the mean priors. Default is mean(data).
-#' @param B0 (numeric scalar) Numeric value for the variance of the mean priors. Default is R^2 where R = (max(data) - min(data)).
-#' @param c0 (numeric scalar) Numeric value for variance prior. Default is 2.5.
-#' @param g0 (numeric scalar) Numeric value for variance inverse gamma hyperprior. Default is 0.5.
-#' @param G0 (numeric scalar) Numeric value for variance inverse gamma hyperprior. Default is 100*2.5/0.5/R^2.
-#' @param h0 (numeric scalar) Mean of the skew parameters priors. Default is 0.
-#' @param H0 (numeric scalar) Variance of the skew parameters priors. Default is 10.
-#' @param n0 (numeric scalar) Mean of the degree of freedom gamma priors. Default is 2.
-#' @param N0 (numeric scalar) Variance of the degree of freedom gamma priors. Default is 2.
+#' @param e0 Dirichlet prior parameter. Must be positive or zero. If set to 0 then an hyperprior is used instead. Default is 0.
+#' @param a0 Mean of the gamma hyperprior used the dirichlet prior. Default is 10.
+#' @param A0 Variance of the gamma hyperprior used the dirichlet prior. Default is 10*K.
+#' @param b0 Mean of the mean priors. Default is mean(data).
+#' @param B0 Numeric value for the variance of the mean priors. Default is R^2 where R = (max(data) - min(data)).
+#' @param c0 Numeric value for variance prior. Default is 2.5.
+#' @param g0 Numeric value for variance inverse gamma hyperprior. Default is 0.5.
+#' @param G0 Numeric value for variance inverse gamma hyperprior. Default is 100*2.5/0.5/R^2.
+#' @param h0 Mean of the skew parameters priors. Default is 0.
+#' @param H0 Variance of the skew parameters priors. Default is 10.
+#' @param n0 Mean of the degree of freedom gamma priors. Default is 2.
+#' @param N0 Variance of the degree of freedom gamma priors. Default is 2.
 #' @param nb_iter Number of MCMC iterations. Default is 2000.
-#' @param burnin ...
-#' @param chains ...
-#' @param cores ...
-#' @param refresh ...
+#' @param burnin Number of MCMC iterations used as burnin.
+#' @param chains Number of chains.
+#' @param cores Number of cores for parallel computation.
+#' @param refresh Show intemediate results. Default is 1000 so intermediate results are shown every 1000 iterations.
 #' @param ... Other arguments passed to `rstan::sampling`.
 #' 
 #' @importFrom rstan sampling
