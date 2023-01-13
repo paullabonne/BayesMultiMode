@@ -5,13 +5,13 @@
 #' @param dist String indicating the distribution of the mixture components.
 #' Currently supports "normal", "student" and "skew_normal".
 #' @param e0 Dirichlet prior parameter. Must be positive or zero. If set to 0 then an hyperprior is used instead. Default is 0.
-#' @param a0 Mean of the gamma hyperprior used the dirichlet prior. Default is 10.
-#' @param A0 Variance of the gamma hyperprior used the dirichlet prior. Default is 10*K.
+#' @param a0 Mean of the gamma hyperprior used for the dirichlet prior. Default is 10.
+#' @param A0 Variance of the gamma hyperprior used for the dirichlet prior. Default is 10*K.
 #' @param b0 Mean of the mean priors. Default is mean(data).
-#' @param B0 Numeric value for the variance of the mean priors. Default is R^2 where R = (max(data) - min(data)).
-#' @param c0 Numeric value for variance prior. Default is 2.5.
-#' @param g0 Numeric value for variance inverse gamma hyperprior. Default is 0.5.
-#' @param G0 Numeric value for variance inverse gamma hyperprior. Default is 100*2.5/0.5/R^2.
+#' @param B0 Variance of the mean priors. Default is R^2 where R = (max(data) - min(data)).
+#' @param c0 Variance prior. Default is 2.5.
+#' @param g0 Variance inverse gamma hyperprior. Default is 0.5.
+#' @param G0 Variance inverse gamma hyperprior. Default is 100*2.5/0.5/R^2.
 #' @param h0 Mean of the skew parameters priors. Default is 0.
 #' @param H0 Variance of the skew parameters priors. Default is 10.
 #' @param n0 Mean of the degree of freedom gamma priors. Default is 2.
@@ -75,6 +75,11 @@ bayes_estimation <- function(data,
   assert_that(is.scalar(cores) & cores > 0, msg = "cores should be a positive integer")
   assert_that(is.scalar(refresh) & refresh > 0, msg = "refresh should be a positive integer")
   assert_that(is.scalar(K) & K > 0, msg = "K should be a positive integer")
+  
+  assert_that(is.scalar(A0) & A0 > 0, msg = "A0 should be positive")
+  assert_that(is.scalar(B0) & B0 > 0, msg = "B0 should be a positive integer")
+  assert_that(is.scalar(H0) & H0 > 0, msg = "H0 should be a positive integer")
+  assert_that(is.scalar(N0) & N0 > 0, msg = "N0 should be a positive integer")
   
 
   mixture_data <- list(K = K,
