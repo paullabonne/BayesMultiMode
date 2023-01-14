@@ -122,6 +122,7 @@ dist_mixture <- function(x, dist, pars, pdf_func = NULL) {
 dist_pdf <- function(x, dist, pars, pdf_func = NULL) {
   
   if (!is.null(pdf_func)) {
+    pdf_func = match.fun(pdf_func) #solves NOTE "pdf_func is undefined"
     
     dist_pdf = pdf_func(x, pars)
     

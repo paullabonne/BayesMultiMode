@@ -31,6 +31,7 @@ shift_pois_mcmc <- function(y, K, nb_iter, warmup, prt = TRUE){
   # initialization 
   tmp <- runif(K)
   theta.init <- c(tmp[-K] / sum(tmp), rep(min(y),K), rep(1,K))
+  
   names(theta.init) = c(paste("prob ",1:(K-1),sep=""),
                         paste("kappa ",1:K,sep=""),
                         paste("lambda ",1:K,sep=""))
@@ -51,7 +52,7 @@ shift_pois_mcmc <- function(y, K, nb_iter, warmup, prt = TRUE){
   lambda0 <- theta0[ind:(ind+K-1)]; 
   p <- c(p0,(1-sum(p0))); lam <- lambda0; kap <- kappa0
   N <- length(y)     
-  lambda.rng <- kappa.rng <-c(0,max(y))
+  lambda.rng <- kappa.rng <- c(0,max(y))
   
   if(any(lambda0<=0))
     stop("'lambda0' should be > 0 for all clusters");
