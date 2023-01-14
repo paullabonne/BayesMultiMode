@@ -49,6 +49,7 @@ bayes_estimation <- function(data,
                              #studen t prior
                              n0 = 2,
                              N0 = 0.1,
+                             # mcmc stan pars
                              nb_iter = 2000,
                              burnin = nb_iter/2,
                              chains = 4,
@@ -81,7 +82,7 @@ bayes_estimation <- function(data,
   assert_that(is.scalar(H0) & H0 > 0, msg = "H0 should be a positive integer")
   assert_that(is.scalar(N0) & N0 > 0, msg = "N0 should be a positive integer")
   
-
+  
   mixture_data <- list(K = K,
                        N = length(data),
                        y = data,
@@ -93,13 +94,19 @@ bayes_estimation <- function(data,
                        e0 = e0,
                        g0 = g0,
                        G0 = G0)
-
-  if (dist %in% c("skew_t", "skew_normal")) {
+  
+  if (dist %in% c("normal")) {
+    pars_names = c("theta", "mu", "sigma")
+  }
+  
+  if (dist %in% c("skew_normal")) {
+    pars_names = c("theta", "mu", "sigma", "xi")
     mixture_data$h0 = h0
     mixture_data$H0 = H0
   }
-
-  if (dist %in% c("student", "skew_t")) {
+  
+  if (dist %in% c("student")) {
+    pars_names = c("theta", "mu", "sigma", "nu")
     mixture_data$n0 = n0
     mixture_data$N0 = N0
   }
@@ -119,14 +126,14 @@ bayes_estimation <- function(data,
     
   } else if (dist %in% c("shifted_poisson")) {
     fit <- shift_pois_mcmc(y = data, K, nb_iter, burnin)
-    
+    pars_names = c("theta", "kappa", "lambda")
     dist_type = "discrete"
     
   } else {
     stop("mixture distribution not supported")
   }
   
-  BayesMixture = new_BayesMixture(fit, data, dist, dist_type = dist_type)
-
+  BayesMixture = new_BayesMixture(fit, data, dist, dist_type = dist_type, pars_names = pars_names)
+  
   return(BayesMixture)
 }

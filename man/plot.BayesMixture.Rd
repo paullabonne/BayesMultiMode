@@ -7,7 +7,7 @@
 \method{plot}{BayesMixture}(
   x,
   max_size = 200,
-  tol = 0.001,
+  tol_p = 0.001,
   colour = "magenta",
   transparency = 0.1,
   ...
@@ -18,7 +18,7 @@
 
 \item{max_size}{...}
 
-\item{tol}{...}
+\item{tol_p}{...}
 
 \item{colour}{...}
 

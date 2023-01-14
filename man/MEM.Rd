@@ -4,7 +4,16 @@
 \alias{MEM}
 \title{Mode-finding EM algorithm (MEM)}
 \usage{
-MEM(mcmc, dist, data, tol_p = 0.001, tol_x = sd(data)/10, show_plot = FALSE)
+MEM(
+  mcmc,
+  dist,
+  pars_names,
+  data,
+  pdf_func = NULL,
+  tol_p = 0.001,
+  tol_x = sd(data)/10,
+  show_plot = FALSE
+)
 }
 \arguments{
 \item{mcmc}{a vector of estimated mixture parameters.}

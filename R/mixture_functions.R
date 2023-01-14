@@ -82,27 +82,66 @@ shift_pois_mix <- function(x, p, lambda, kappa) {
   return(mixture)
 }
 
+# Mixture 
+pdf_func_mix <- function(x, pars) {
+  mixture = 0
+  for (i in 1:nrow(pars)) {
+    mixture = mixture + pars[i, ] * pdf_func(x, pars[i, -1])
+  }
+  return(mixture)
+}
+
 # wrapper
-dist_mixture <- function(x, dist, pars, K) {
-  
-  if (dist == "normal") {
-    output = normal_mix(x, pars[, 1], pars[, 2], pars[, 3])
+dist_mixture <- function(x, dist, pars, pdf_func = NULL) {
+ 
+  if (!is.null(pdf_func)) {
+    output = pdf_func_mix(x, pars)
+  } else {
+    if (dist == "normal") {
+      output = normal_mix(x, pars[, "theta"], pars[, "mu"], pars[, "sigma"])
+    }
+    
+    if (dist == "student") {
+      output = student_mix(x, pars[, "theta"], pars[, "mu"], pars[, "sigma"], pars[, "nu"])
+    }
+    
+    if (dist == "skew_normal") {
+      output = skew_norm_mix(x, pars[, "theta"], pars[, "mu"], pars[, "sigma"], pars[, "xi"])
+    }
+    
+    if (dist == "shift_pois_mix") {
+      output = shift_pois_mix(x, pars[, "theta"], pars[, "lambda"], pars[, "lambda"])
+    }
   }
   
-  if (dist == "student") {
-    output = student_mix(x, pars[, 1], pars[, 2], pars[, 3], pars[, 4])
-  }
+  return(output)
   
-  if (dist == "skew_normal") {
-    output = skew_norm_mix(x, pars[, 1], pars[, 2], pars[, 3], pars[, 4])
-  }
+}
+
+# wrapper
+dist_pdf <- function(x, dist, pars, pdf_func = NULL) {
   
-  if (dist == "skew_t") {
-    output = skew_t_mix(x, pars[, 1], pars[, 2], pars[, 3], pars[, 4], pars[, 5])
-  }
-  
-  if (dist == "shift_pois_mix") {
-    output = shift_pois_mix(x, pars[, 1], pars[, 2], pars[, 3])
+  if (!is.null(pdf_func)) {
+    
+    dist_pdf = pdf_func(x, pars)
+    
+  } else {
+    
+    if (dist == "normal") {
+      output = dnorm(x, pars[, "mu"], pars[, "sigma"])
+    }
+    
+    if (dist == "student") {
+      output = dst_vec(x, pars[, "mu"], pars[, "sigma"], pars[, "nu"])
+    }
+    
+    if (dist == "skew_normal") {
+      output = dsn(x, pars[, "mu"], pars[, "sigma"], pars[, "xi"])
+    }
+    
+    if (dist == "shift_pois_mix") {
+      output = dpois(x - pars[, "kappa"], pars[, "lambda"])
+    }
   }
   
   return(output)

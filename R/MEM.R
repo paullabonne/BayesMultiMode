@@ -24,8 +24,7 @@
 #' 
 #' @export
 
-MEM <- function(mcmc, dist, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot = FALSE) {
-  
+MEM <- function(mcmc, dist, pars_names, data, pdf_func = NULL, tol_p = 1e-3, tol_x = sd(data)/10, show_plot = FALSE) {
   ## input checks
   fail = "inputs to the Mode-finding EM algorithm are corrupted"
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
@@ -39,60 +38,49 @@ MEM <- function(mcmc, dist, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot =
   assert_that(is.logical(show_plot), msg = paste0("show_plot should be TRUE or FALSE", fail))
   ##
   
-  p = mcmc[grep("theta", names(mcmc))]
-  est_mode = rep(NA, length(p))
+  ##
+  names_mcmc = str_to_lower(names(mcmc))
+  names_mcmc = str_extract(names_mcmc, "[a-z]+")
+  names_mcmc = unique(names_mcmc)
   
-  mu = mcmc[grep("mu", names(mcmc))][p > tol_p]
-  sigma = mcmc[grep("sigma", names(mcmc))][p > tol_p]
+  assert_that(sum(pars_names %in% names_mcmc)==length(pars_names),
+              msg = paste0("the name of the parameters provided by pars_names and those of the mcmc vector do not match; ", fail))
+  ##
   
-  if (dist == "student") {
-    nu = mcmc[grep("nu", names(mcmc))][p > tol_p]
-  } else {
-    nu = NULL
+  pars = c()
+  for (i in 1:length(pars_names)) {
+    pars = cbind(pars, mcmc[grep(pars_names[i], names(mcmc))])
   }
   
-  if (dist == "skew_normal") {
-    xi = mcmc[grep("xi", names(mcmc))][p > tol_p]
-  } else {
-    xi = NULL
-  }
+  colnames(pars) <- pars_names
+
+  est_mode = rep(NA, nrow(pars))
+
+  pars = pars[pars[,1] > tol_p, , drop = F]
   
-  p = p[p > tol_p]
-  nK = length(p)
+  nK = nrow(pars)
   post_prob = rep(NA, nK)
-  
+
   for (j in 1:nK) {
-    fnscale = -1
-    
-    x = mu[j]
+    x = pars[j,2]
     
     delta = 1
     
     while (delta > 1e-8) {
       # E-step
-      if (dist == "skew_normal"){
-        f = skew_norm_mix(x, p, mu, sigma, xi)
-      }
-      if (dist == "student"){
-        f = student_mix(x, p, mu, sigma, nu)
-      }
+      f_mix = dist_mixture(x, dist, pars, pdf_func)
       
-      for (k in 1:nK){
-        if (dist == "skew_normal"){
-          post_prob[k] = p[k] * dsn(x, xi = mu[k], omega = sigma[k], alpha = xi[k])/f 
-        }
-        if (dist == "student"){
-          post_prob[k] = p[k] * dst(x, xi = mu[k], omega = sigma[k], nu = nu[k])/f 
-        }
+      for (k in 1:nK){ 
+        post_prob[k] = pars[k, 1] * dist_pdf(x, dist, pars[k, -1, drop = F], pdf_func)/f_mix 
       }
-      
+     
       # M-step
       Min = optim(par = x, Q_func, method = "L-BFGS-B",
                   dist = dist, 
                   post_prob = post_prob,
-                  mu = mu, sigma = sigma, xi = xi,
-                  nu = nu,
-                  control = list(fnscale = fnscale))
+                  pars = pars[, -1, drop = F],
+                  pdf_func = pdf_func,
+                  control = list(fnscale = -1))
       
       x1 = Min$par
       
@@ -100,7 +88,7 @@ MEM <- function(mcmc, dist, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot =
       delta = abs(x - x1)
       x = x1
     }
-    
+ 
     ## check that the mode is not too close to other modes
     not_duplicate = TRUE
     
@@ -112,18 +100,13 @@ MEM <- function(mcmc, dist, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot =
       }
     }
     
-    if (x <= max(data) & x >= min(data) & not_duplicate){ #!(!(x <= mcmc["max_y"] & x >= mcmc["min_y"]) & p[j]<1e-3)
+    if (x <= max(data) & x >= min(data) & not_duplicate){
       est_mode[j] = x
     }
   }
   
   if (show_plot) {
-    if (dist == "skew_normal"){
-      curve(skew_norm_mix(x, p, mu, sigma, xi), from = min(data), to =  max(data))
-    }
-    if (dist == "student"){
-      curve(student_mix(x, p, mu, sigma, nu), from = min(data), to =  max(data))
-    }
+    curve(dist_mixture(x, dist, pars), from = min(data), to =  max(data))
     for (x in est_mode) {
       abline(v = x) 
     } 
@@ -133,21 +116,14 @@ MEM <- function(mcmc, dist, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot =
 }
 
 #' @keywords internal
-Q_func = function(x, dist, post_prob, mu, sigma, xi, nu, min_max = 1){
-  if (dist == "student") {
-    Q = sum(post_prob * log(dst_vec(x, xi = mu, omega = sigma, nu = nu)))
-  }
-  
-  if (dist == "skew_normal") {
-    Q = sum(post_prob * log(dsn(x, xi = mu, omega = sigma, alpha = xi)))
-  }
+Q_func = function(x, dist, post_prob, pars, pdf_func){
+
+  pdf = dist_pdf(x, dist, pars)
+  pdf[pdf==0] = 1e-10 #otherwise the log operation below through infs
+  Q = sum(post_prob * log(pdf))
   
   if(is.na(Q)|!is.finite(Q)){
     Q = -1e6
-  }
-  
-  if(min_max==-1){
-    Q = -Q
   }
   
   return(Q)

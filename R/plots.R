@@ -2,7 +2,7 @@
 #' 
 #' @param x ...
 #' @param max_size ...
-#' @param tol ...
+#' @param tol_p ...
 #' @param colour ...
 #' @param transparency ...
 #' @param ... ...
@@ -14,14 +14,15 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr as_tibble
 #' @importFrom dplyr filter
-#' @importFrom dplyr gather
+#' @importFrom dplyr left_join
+#' @importFrom tidyr gather
 #' @importFrom magrittr %>%
 #' @importFrom magrittr %<>%
 #' @import ggplot2
 #' 
 #' @export
 
-plot.BayesMixture <- function(x, max_size = 200, tol = 1e-3,
+plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
                               colour = "magenta", transparency = 0.1, ...) {
   component <- value <- NULL
   
@@ -30,6 +31,7 @@ plot.BayesMixture <- function(x, max_size = 200, tol = 1e-3,
   mcmc = x$mcmc
   dist = x$dist
   y = x$data
+  pars_names = x$pars_names
   
   if (x$dist_type == "continuous") {
     ## plot the data
@@ -40,29 +42,18 @@ plot.BayesMixture <- function(x, max_size = 200, tol = 1e-3,
     
     ## plot the mixture for each draw
     for (i in sample(1:(min(nrow(mcmc), max_size)))) {
-      
-      if (dist %in% c("normal", "student", "skew_normal")) {
-        pars = mcmc[i, grep("theta", colnames(mcmc))]
-        pars = rbind(pars, mcmc[i, grep("mu", colnames(mcmc))])
-        pars = rbind(pars, sqrt(mcmc[i, grep("sigma", colnames(mcmc))])) 
+      mcmc_i = mcmc[i, ]
+      pars = c()
+      for (i in 1:length(pars_names)) {
+        pars = cbind(pars, mcmc_i[grep(pars_names[i], colnames(mcmc_i))])
       }
+
+      colnames(pars) <- pars_names
       
-      if (dist == "student") {
-        pars = rbind(pars, mcmc[i, grep("nu", colnames(mcmc))])
-      }
+      est_mode = rep(NA, nrow(pars))
       
-      if (dist == "skew_normal") {
-        pars = rbind(pars, mcmc[i, grep("xi", colnames(mcmc))])
-      }
-      
-      if (dist == "skew_t") {
-        pars = rbind(pars, mcmc[i, grep("xi", colnames(mcmc))])
-        pars = rbind(pars, mcmc[i, grep("nu", colnames(mcmc))])
-      }
-      
-      pars = t(pars)
-      pars = pars[pars[, 1]>tol, ]
-      
+      pars = pars[pars[,1] > tol_p, ]
+
       g = g +
         geom_function(fun = dist_mixture,
                       args = list(dist = dist,
@@ -190,3 +181,6 @@ plot.BayesMode <- function(x, colour = "magenta", ...) {
   
   g
 }
+
+#' @keywords internal
+# `[` <- function(...) base::`[`(...,drop=FALSE)

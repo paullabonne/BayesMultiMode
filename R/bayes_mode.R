@@ -12,8 +12,8 @@
 #' 
 #' @export
 
-bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(data)/10) {
-  assert_that(inherits(BayesMix, "BayesMixture"), "BayesMix should be an object of class BayesMixture")
+bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)/10) {
+  assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   assert_that(is.scalar(rd) & rd > 0, msg = "rd should be a positive scalar")
   assert_that(is.vector(tol_p) & tol_p > 0, msg = "tol_p should be a positive scalar")
   assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
@@ -22,9 +22,11 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(data)/10) {
   data = BayesMix$data
   mcmc = BayesMix$mcmc
   dist_type = BayesMix$dist_type
-  
-  assert_that(is.vector(mcmc) & length(mcmc) >= 3,
-              msg = "mcmc should be a vector of length >= 3")
+  dist_pdf = BayesMix$dist_pdf
+  pars_names = BayesMix$pars_names
+    
+  assert_that(inherits(BayesMix$mcmc, "draws_matrix"),
+              msg = "mcmc in BayesMix is not of type draws_matrix")
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
   assert_that(dist_type %in% c("continuous", "discrete"),
@@ -35,18 +37,17 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(data)/10) {
   
   if (dist_type == "continuous") {
     if (dist == "normal") {
-      ### fixed point
-      modes = t(apply(mcmc, 1, fixed_point, y = data, tol_x = sd(data)/10)) 
-    } 
-    
-    if (dist %in% c("student", "skew_normal")) {
-      ### MEM 
-      modes = t(apply(mcmc, 1, MEM, dist = dist, y = data, tol_x = sd(data)/10, show_plot=F))
+      # fixed point
+      modes = apply(mcmc, 1, fixed_point, data = data, tol_x = sd(data)/10) 
+    } else {
+      # MEM algorithm
+      modes = apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, tol_x = sd(data)/10, show_plot=F)
     }
+    modes = as.matrix(modes, nrow = nrow(mcmc))
     
     ### Posterior probability of being a mode for each location
     m_range = seq(from = min(round(data,rd)), to = max(round(data,rd)), by = 1/(10^rd)) # range of potential values for the modes
-    modes_disc = round(modes, digits = rd)
+    modes_disc = round(modes, rd)
     
     matrix_modes = matrix(0, nrow = nrow(modes), ncol = length(m_range))
     for (i in 1:nrow(matrix_modes)) {
@@ -65,8 +66,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(data)/10) {
     Khat = attr(BayesMix$fit, "K")
     y.pos <- min(data):max(data) # Range
     n.modes <- apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 1, Khat = Khat) # number modes
-    modes <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos,which.r = 2, Khat = Khat)) # location modes
-    modes = as.matrix(modes[, 1:max(n.modes)])
+    modes <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 2, Khat = Khat)) # location modes
+    modes = as.matrix(modes[, 1:max(n.modes)], nrow = nrow(mcmc))
     colnames(modes) = paste('mode',1:max(n.modes))
 
     # Posterior probability of being a mode for each location
@@ -102,6 +103,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(data)/10) {
   BayesMode$data = data
   BayesMode$dist = dist
   BayesMode$dist_type = dist_type
+  BayesMode$pars_names = pars_names
   BayesMode$modes = modes
   BayesMode$p1 = p1
   BayesMode$tb_nb_modes = tb_nb_modes

@@ -24,6 +24,8 @@ library(BayesMultiMode)
 roxygen2::roxygenize()
 rstantools::rstan_config()
 
+devtools::test()
+
 devtools::install()
 
 devtools::check()
@@ -41,7 +43,7 @@ devtools::load_all()
 ```{r}
 library(usethis)
 # use_r("MEM")    # creates and opens R/fixed_point.R
-use_test("MEM") # creates and opens tests/testthat/test-fixed_point.R
+use_test("new_BayesMixture") # creates and opens tests/testthat/test-fixed_point.R
 ```
 
 ```{r}
@@ -68,17 +70,5 @@ use_test("MEM") # creates and opens tests/testthat/test-fixed_point.R
 # new_useful_thing <- function() {
 #   # your fiddly code to create a useful_thing goes here like create a dataset ?
 # }
-
-set.seed(1)
-mu = c(0,10)
-sigma = c(1,2)
-nu = c(5,5)
-p = c(0.2,0.2)
-
-data = c(sn::rst(p[1]*100, mu[1], sigma[1], nu = nu[1]), sn::rst(p[2]*100, mu[2], sigma[2], nu = nu[2]))
-params = c(theta = p, mu = mu, sigma = sigma, nu = nu)
-
-modes = MEM(params, "student", data)
-expect_equal(round(modes),  mu)
 ```
 

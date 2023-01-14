@@ -23,7 +23,6 @@ License: GPL (>= 3)
 Imports: 
     assertthat,
     dplyr,
-    ggh4x,
     ggplot2,
     ggpubr,
     gtools,

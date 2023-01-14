@@ -116,14 +116,14 @@ y = d4z4
 
 # Bayesian estimation
 ```{r, message =FALSE, warning=FALSE}
-K = 4
-dist = "shifted_poisson"
+K = 1
+dist = "skew_normal"
 
-bayesmix = bayes_estimation(data = y, K = K, dist = dist, chains = 1, nb_iter = 2000)
+bayesmix = bayes_estimation(data = y, K = K, dist = dist, chains = 1, nb_iter = 200)
 
 plot(bayesmix, max_size = 200)
 
-bayesplot::mcmc_trace(bayesmix$mcmc)
+# bayesplot::mcmc_trace(bayesmix$mcmc)
 
 # rstan::traceplot(bayesmode$fit)
 # mcmc_output = rstan::extract(fit, permuted = FALSE)[,1,]
