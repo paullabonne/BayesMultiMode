@@ -3,3 +3,4 @@
 * Modified the package structure to handle Stan
 * Added Stan code
 * The package now handles continuous data through Stan models
+* Added tests through testthats

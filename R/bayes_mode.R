@@ -41,7 +41,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
       modes = apply(mcmc, 1, fixed_point, data = data, tol_x = sd(data)/10) 
     } else {
       # MEM algorithm
-      modes = apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, tol_x = sd(data)/10, show_plot=F)
+      modes = apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, 
+                    pdf_func = pdf_func, tol_x = sd(data)/10, show_plot=F)
     }
     modes = as.matrix(modes, nrow = nrow(mcmc))
     

@@ -6,7 +6,7 @@
 \usage{
 MEM(
   mcmc,
-  dist,
+  dist = "NA",
   pars_names,
   data,
   pdf_func = NULL,

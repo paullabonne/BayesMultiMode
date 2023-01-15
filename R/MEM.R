@@ -24,7 +24,7 @@
 #' 
 #' @export
 
-MEM <- function(mcmc, dist, pars_names, data, pdf_func = NULL, tol_p = 1e-3, tol_x = sd(data)/10, show_plot = FALSE) {
+MEM <- function(mcmc, dist = "NA", pars_names, data, pdf_func = NULL, tol_p = 1e-3, tol_x = sd(data)/10, show_plot = FALSE) {
   ## input checks
   fail = "inputs to the Mode-finding EM algorithm are corrupted"
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
@@ -45,6 +45,11 @@ MEM <- function(mcmc, dist, pars_names, data, pdf_func = NULL, tol_p = 1e-3, tol
   
   assert_that(sum(pars_names %in% names_mcmc)==length(pars_names),
               msg = paste0("the name of the parameters provided by pars_names and those of the mcmc vector do not match; ", fail))
+  
+  if (dist %in% c("student", "skew_normal")) {
+    assert_that(length(pars_names) == 4,
+                msg = paste0("the number of elements in pars_names does not match with dist; ", fail)) 
+  }
   ##
   
   pars = c()
@@ -60,6 +65,10 @@ MEM <- function(mcmc, dist, pars_names, data, pdf_func = NULL, tol_p = 1e-3, tol
   
   nK = nrow(pars)
   post_prob = rep(NA, nK)
+  
+  if (!is.null(pdf_func)) {
+    pdf_func <- pdf_func_vec(pdf_func)
+  }
 
   for (j in 1:nK) {
     x = pars[j,2]
@@ -117,8 +126,8 @@ MEM <- function(mcmc, dist, pars_names, data, pdf_func = NULL, tol_p = 1e-3, tol
 
 #' @keywords internal
 Q_func = function(x, dist, post_prob, pars, pdf_func){
-
-  pdf = dist_pdf(x, dist, pars)
+  
+  pdf = dist_pdf(x, dist, pars, pdf_func = pdf_func)
   pdf[pdf==0] = 1e-10 #otherwise the log operation below through infs
   Q = sum(post_prob * log(pdf))
   

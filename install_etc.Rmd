@@ -72,3 +72,12 @@ use_test("new_BayesMixture") # creates and opens tests/testthat/test-fixed_point
 # }
 ```
 
+### uploading the package to drat
+```{r}
+library(drat)
+options(dratBranch="docs")   # to default to using docs/ as we set up
+insertPackage(file=c("/Users/paullabonne/Dropbox (BI Norwegian Business School)/Multimodality/Rcode/BayesMultiMode_0.1.2.9000.tgz"), 
+              repodir="/drat")
+```
+
+
