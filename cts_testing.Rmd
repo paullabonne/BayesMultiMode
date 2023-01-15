@@ -80,9 +80,9 @@ hist(y,main = "Simulated data", breaks=100)
 
 ## Student t draws
 ```{r}
-N = 100
-y = c(rst(0.3*N, xi = 2, omega = 0.5, nu = 2),
-      rst(0.7*N, xi = 10, omega = 1, nu = Inf))
+N = 500
+y = c(sn::rst(0.3*N, xi = 2, omega = 0.5, nu = 2),
+      sn::rst(0.7*N, xi = 10, omega = 1, nu = Inf))
 
 hist(y, breaks = 100)
 plot(density(y), type="l")
@@ -116,10 +116,10 @@ y = d4z4
 
 # Bayesian estimation
 ```{r, message =FALSE, warning=FALSE}
-K = 2
-dist = "shifted_poisson"
+K = 3
+dist = "student"
 
-bayesmix = bayes_estimation(data = y, K = K, dist = dist, chains = 1, nb_iter = 1000)
+bayesmix = bayes_estimation(data = y, K = K, dist = dist, chains = 1, nb_iter = 200)
 
 plot(bayesmix, max_size = 200)
 

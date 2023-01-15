@@ -22,7 +22,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
   data = BayesMix$data
   mcmc = BayesMix$mcmc
   dist_type = BayesMix$dist_type
-  dist_pdf = BayesMix$dist_pdf
+  pdf_func = BayesMix$pdf_func
   pars_names = BayesMix$pars_names
     
   assert_that(inherits(BayesMix$mcmc, "draws_matrix"),
@@ -38,14 +38,13 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
   if (dist_type == "continuous") {
     if (dist == "normal") {
       # fixed point
-      modes = apply(mcmc, 1, fixed_point, data = data, tol_x = sd(data)/10) 
+      modes = t(apply(mcmc, 1, fixed_point, data = data, tol_x = sd(data)/10))
     } else {
       # MEM algorithm
-      modes = apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, 
-                    pdf_func = pdf_func, tol_x = sd(data)/10, show_plot=F)
+      modes = t(apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, 
+                    pdf_func = pdf_func, tol_x = sd(data)/10, show_plot=F))
     }
-    modes = as.matrix(modes, nrow = nrow(mcmc))
-    
+
     ### Posterior probability of being a mode for each location
     m_range = seq(from = min(round(data,rd)), to = max(round(data,rd)), by = 1/(10^rd)) # range of potential values for the modes
     modes_disc = round(modes, rd)
@@ -59,7 +58,6 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
     probs_modes = sum_modes/nrow(modes)
     probs_modes = probs_modes[probs_modes>0]
     location_at_modes = m_range[sum_modes>0]
-    
     table_location = rbind(location_at_modes, probs_modes)
   }
   

@@ -8,7 +8,7 @@
 #' the package (e.g. "normal", "student", "skew_normal", "shifted_poisson").
 #' @param pars_names Mapping between the distribution parameters names.
 #' This input is used only if dist_name is invalid or NULL.
-#' @param density Pdf or pmf of the mixture components.
+#' @param pdf_func Pdf or pmf of the mixture components.
 #' This input is used only if dist_name is invalid or NULL.
 #' @param dist_type Either "continous" or "discrete"
 #' 
@@ -21,7 +21,7 @@
 #' 
 #' @export
 
-new_BayesMixture <- function(fit, data, dist = "NA", pars_names, dist_pdf = NULL, dist_type) {
+new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL, dist_type) {
   ## input checks
   assert_that(is.string(dist),
               msg = "dist should be a string")
@@ -99,7 +99,7 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, dist_pdf = NULL
     BayesMix$dist = dist
   } else {
     BayesMix$dist = "NA"
-    BayesMix$dist_pdf = dist_pdf
+    BayesMix$pdf_func = pdf_func
   }
   
   BayesMix$pars_names = pars_names

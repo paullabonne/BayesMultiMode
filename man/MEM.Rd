@@ -23,11 +23,15 @@ Currently supports "normal", "student" and "skew_normal".}
 
 \item{data}{Numeric vector of observations.}
 
+\item{pdf_func}{Pdf or pmf of the mixture components associated with the mcmc draws (if estimation not in-house)}
+
 \item{tol_p}{Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.}
 
 \item{tol_x}{Tolerance for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
 
 \item{show_plot}{Show the data and estimated modes.}
+
+\item{pars_name}{Names of the variables mcmc draws variables}
 }
 \value{
 A vector estimated modes.

@@ -11,7 +11,7 @@ new_BayesMixture(
   data,
   dist = "NA",
   pars_names,
-  dist_pdf = NULL,
+  pdf_func = NULL,
   dist_type
 )
 }
@@ -26,10 +26,10 @@ the package (e.g. "normal", "student", "skew_normal", "shifted_poisson").}
 \item{pars_names}{Mapping between the distribution parameters names.
 This input is used only if dist_name is invalid or NULL.}
 
-\item{dist_type}{Either "continous" or "discrete"}
-
-\item{density}{Pdf or pmf of the mixture components.
+\item{pdf_func}{Pdf or pmf of the mixture components.
 This input is used only if dist_name is invalid or NULL.}
+
+\item{dist_type}{Either "continous" or "discrete"}
 }
 \value{
 An object of class `BayesMixture`.

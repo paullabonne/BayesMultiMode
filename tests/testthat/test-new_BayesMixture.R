@@ -10,7 +10,7 @@ test_that("New_BayesMixture works returns expected results for the normal distri
   fit = c(theta = p, mu = mu, sigma = sigma)
   fit = rbind(fit, fit)
 
-  BM = new_BayesMixture(fit, data, dist = "normal", pars_names = pars_names, dist_pdf = NULL, dist_type = dist_type)
+  BM = new_BayesMixture(fit, data, dist = "normal", pars_names = pars_names, pdf_func = NULL, dist_type = dist_type)
   expect_s3_class(BM, "BayesMixture")
 })
 
@@ -26,7 +26,7 @@ test_that("New_BayesMixture works returns expected results for the normal distri
   fit = c(theta = p, mu = mu, omega = omega)
   fit = rbind(fit, fit)
 
-  BM = new_BayesMixture(fit, data, dist = "normal", pars_names = pars_names, dist_pdf = NULL, dist_type = dist_type)
+  BM = new_BayesMixture(fit, data, dist = "normal", pars_names = pars_names, pdf_func = NULL, dist_type = dist_type)
   expect_s3_class(BM, "BayesMixture")
 })
 
@@ -47,6 +47,6 @@ test_that("New_BayesMixture works returns expected results for the student distr
   fit = c(theta = p, mu = mu, sigma = sigma, nu = nu)
   fit = rbind(fit, fit)
   
-  BM = new_BayesMixture(fit, data, dist = dist, pars_names = pars_names, dist_pdf = NULL, dist_type = dist_type)
+  BM = new_BayesMixture(fit, data, dist = dist, pars_names = pars_names, pdf_func = NULL, dist_type = dist_type)
   expect_s3_class(BM, "BayesMixture")
 })
