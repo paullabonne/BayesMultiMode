@@ -69,9 +69,10 @@ y = galaxy
 bayesmix = bayes_estimation(data = y,
                             K = 4,
                             dist = "normal",
-                            nb_iter = 5000,
-                            burnin = 2500,
-                            chains = 1)
+                            nb_iter = 2000,
+                            burnin = 1000,
+                            chains = 1,
+                            G0 = 0)
 
 # plot estimated mixture
 plot(bayesmix, max_size = 200)
