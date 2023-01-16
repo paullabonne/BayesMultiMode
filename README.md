@@ -53,15 +53,15 @@ bayesmix = bayes_estimation(data = y,
 ```
 
     ## 10  % draws finished. Accept. prob of e0 = 14 percent
-    ## 20  % draws finished. Accept. prob of e0 = 15 percent
-    ## 30  % draws finished. Accept. prob of e0 = 14 percent
-    ## 40  % draws finished. Accept. prob of e0 = 13 percent
-    ## 50  % draws finished. Accept. prob of e0 = 13 percent
-    ## 60  % draws finished. Accept. prob of e0 = 13 percent
-    ## 70  % draws finished. Accept. prob of e0 = 13 percent
-    ## 80  % draws finished. Accept. prob of e0 = 12 percent
-    ## 90  % draws finished. Accept. prob of e0 = 12 percent
-    ## 100  % draws finished. Accept. prob of e0 = 12 percent
+    ## 20  % draws finished. Accept. prob of e0 = 14 percent
+    ## 30  % draws finished. Accept. prob of e0 = 13 percent
+    ## 40  % draws finished. Accept. prob of e0 = 12 percent
+    ## 50  % draws finished. Accept. prob of e0 = 12 percent
+    ## 60  % draws finished. Accept. prob of e0 = 12 percent
+    ## 70  % draws finished. Accept. prob of e0 = 11 percent
+    ## 80  % draws finished. Accept. prob of e0 = 11 percent
+    ## 90  % draws finished. Accept. prob of e0 = 11 percent
+    ## 100  % draws finished. Accept. prob of e0 = 11 percent
 
 ``` r
 # plot estimated mixture
@@ -107,8 +107,8 @@ bayesmix = bayes_estimation(data = y,
     ## 
     ## SAMPLING FOR MODEL 'normal_mixture' NOW (CHAIN 1).
     ## Chain 1: 
-    ## Chain 1: Gradient evaluation took 5.4e-05 seconds
-    ## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.54 seconds.
+    ## Chain 1: Gradient evaluation took 4.6e-05 seconds
+    ## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.46 seconds.
     ## Chain 1: Adjust your expectations accordingly!
     ## Chain 1: 
     ## Chain 1: 
@@ -117,24 +117,10 @@ bayesmix = bayes_estimation(data = y,
     ## Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
     ## Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
     ## Chain 1: 
-    ## Chain 1:  Elapsed Time: 2.491 seconds (Warm-up)
-    ## Chain 1:                0.698 seconds (Sampling)
-    ## Chain 1:                3.189 seconds (Total)
+    ## Chain 1:  Elapsed Time: 0.829 seconds (Warm-up)
+    ## Chain 1:                0.365 seconds (Sampling)
+    ## Chain 1:                1.194 seconds (Total)
     ## Chain 1:
-
-    ## Warning: There were 1 divergent transitions after warmup. See
-    ## https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-    ## to find out why this is a problem and how to eliminate them.
-
-    ## Warning: Examine the pairs() plot to diagnose sampling problems
-
-    ## Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-    ## Running the chains for more iterations may help. See
-    ## https://mc-stan.org/misc/warnings.html#bulk-ess
-
-    ## Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-    ## Running the chains for more iterations may help. See
-    ## https://mc-stan.org/misc/warnings.html#tail-ess
 
 ``` r
 # plot estimated mixture
