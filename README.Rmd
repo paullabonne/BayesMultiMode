@@ -12,7 +12,7 @@ knitr::opts_chunk$set(dpi=600)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/BayesMultiMode)](https://cran.r-project.org/package=BayesMultiMode)
 <!-- badges: end -->
 
-An R package for detecting multimodality in discrete data using Bayesian techniques. The approach works in two stages. First, a mixture distribution is fitted on the data using a Sparse Finite Mixture (SFM) MCMC algorithm. The number of mixture components does not have to be specified; it is estimated simultaneously with the mixture weights and components through the SFM approach. Second, the resulting MCMC output is used to calculate the number of modes and their locations. Posterior probabilities are retrieved for both of these quantities providing a powerful tool for mode inference. Currently the package supports a flexible mixture of shifted Poisson distributions. The shifted Poisson is a two-parameter generalisation of the Poisson distribution where the mean can diverge from the variance. More distributions (discrete and continuous) are in the pipeline.
+An R package for detecting and exploring multimodality using Bayesian techniques. The approach works in two stages. First, a mixture distribution is fitted on the data. The number of mixture components does not have to be specified; it can be estimated simultaneously with the mixture weights and components through a Sparse Finite Mixture approach. Second, the resulting MCMC draws are used to calculate the number of modes and their locations. Posterior probabilities are retrieved for both of these quantities providing a powerful tool for mode inference. 
 
 ### Installing BayesMultiMode from CRAN
 ```{r, eval = FALSE}
@@ -30,61 +30,60 @@ devtools::install_github("paullabonne/BayesMultiMode")
 library(BayesMultiMode)
 ```
 
-### Generating data
-```{r}
-set.seed(1)
-p1 = 0.3
-p2 = 1-p1
-kap1 = 3
-kap2 = 0
-lam1 = 1
-lam2 = 0.5
-length_data = 70
-simulated_data <- c(rpois(length_data*p1, lam1)+kap1, rpois(length_data*p2, lam2)+kap2)
-```
+### Illustration with discrete data
 
-### Choosing either simulated or DNA data
-```{r}
-# Select DNA data :
-data("d4z4")
+#### Estimation
+```{r, out.width = '70%', fig.align = "center"}
+# retreive DNA data
 y = d4z4
 
-# Or select simulated data :
-# y = simulated_data
+# estimation
+bayesmix = bayes_estimation(data = y,
+                            K = 5,
+                            dist = "shifted_poisson",
+                            nb_iter = 2000,
+                            burnin = 1000)
+
+# plot estimated mixture
+plot(bayesmix, max_size = 200)
 ```
 
-### Setting parameters for SFM MCMC estimation
-```{r}
-# Number of MCMC iterations 
-M = 5000 
-
-# Proportion of draws to discard as burnin
-S = 0.5 
-
-# Maximum number of mixture components 
-Jmax = 6
-```
-
-### Estimation with SFM MCMC
+#### Mode inference
 ```{r, out.width = '70%', fig.align = "center"}
-#Bayesian estimation
-sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
+# mode estimation
+bayesmode = bayes_mode(bayesmix)
 
-#Plots of the estimation output
-graphs = plots_mcmc(sfm_mcmc,S)
-graphs[[3]]
-graphs[[4]]
+# plot 
+plot(bayesmode, max_size = 200)
 ```
 
-### Post-processing : burn-in and discarding empty components
-```{r}
-post_sfmmcmc = post_sfm_mcmc(sfm_mcmc,S)
-```
 
-### Mode inference
+### Illustration with continuous data
+
+#### Estimation
 ```{r, out.width = '70%', fig.align = "center"}
-sfm_mcmc_modes = bayes_mode(post_sfmmcmc$theta_draws_slim,y)
-sfm_mcmc_modes$graphs
+# retreive galaxy data
+y = galaxy
+
+# estimation
+bayesmix = bayes_estimation(data = y,
+                            K = 4,
+                            dist = "normal",
+                            nb_iter = 5000,
+                            burnin = 2500,
+                            chains = 1)
+
+# plot estimated mixture
+plot(bayesmix, max_size = 200)
+```
+
+#### Mode inference
+```{r, out.width = '70%', fig.align = "center"}
+# Mode Estimation
+bayesmode = bayes_mode(bayesmix)
+
+# Plot 
+plot(bayesmode, max_size = 200)
 ```
 
 ### References
