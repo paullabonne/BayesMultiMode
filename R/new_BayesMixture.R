@@ -15,6 +15,7 @@
 #' @return An object of class `BayesMixture`.
 #' 
 #' @importFrom posterior as_draws_matrix
+#' @importFrom posterior subset_draws
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_to_lower
 #' @importFrom stringr str_replace
@@ -46,8 +47,25 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
   # check that pars_names and mcmc match
   names_mcmc = str_to_lower(colnames(mcmc))
   names_mcmc = str_extract(names_mcmc, "[a-z]+")
-  names_mcmc = unique(names_mcmc)
 
+  # adapt cols names
+  col_names = names_mcmc
+  j = 1
+  name_previous = "NA"
+  
+  for (i in 1:length(col_names)) {
+    if (col_names[i] == name_previous) {
+      j = j+1
+    } else {
+      j = 1
+    }
+    name_previous = col_names[i]
+    col_names[i] = paste0(col_names[i], "[", j, "]")
+  }
+  colnames(mcmc) <- col_names
+  
+  names_mcmc = unique(names_mcmc)
+  
   if (dist == "NA") {
     assert_that(sum(pars_names %in% names_mcmc)==length(pars_names),
                 msg = "the name of the parameters provided by pars_names and those of the mcmc object do not match") 
@@ -84,6 +102,10 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
       assert_that(sum(names_mcmc %in% pars_names)==4,
                   msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
     }
+    
+    # keep only relevant variables
+    mcmc = subset_draws(mcmc, variable = pars_names)
+    
     # change the parameter names in mcmc using pars_names
     if (change) {
       assert_that(sum(pars_names %in% names_mcmc)==length(pars_names),

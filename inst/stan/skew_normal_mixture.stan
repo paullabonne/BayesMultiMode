@@ -17,10 +17,18 @@ data {
 parameters {
   simplex[K] theta;          // mixing proportions
   ordered[K] mu;             // locations of mixture components ordered[K]
-  vector<lower=0>[K] sigma;  // scales of mixture components
+  vector<lower=0>[K] sigmaSQ;  // scales of mixture components
   real xi[K];
   vector<lower=0>[(G0>0) ? K : 0] C0; // see https://discourse.mc-stan.org/t/if-else-statement-inside-parameter-block/13937/3
  vector<lower=0>[(e0>0) ? 0 : 1] alpha;                // parameter mixing proportions
+}
+
+transformed parameters {
+  vector<lower=0>[K] sigma;  // scales of mixture components
+  
+  for (i in 1:K) {
+    sigma[i] = sqrt(sigmaSQ[i]);
+  }
 }
 
 model {
@@ -28,9 +36,9 @@ model {
 
   if (G0>0){
       C0 ~ gamma(g0, G0);
-      sigma^2 ~ inv_gamma(c0, C0);
+      sigmaSQ ~ inv_gamma(c0, C0);
   } else {
-      sigma^2 ~ inv_gamma(c0, g0);
+      sigmaSQ ~ inv_gamma(c0, g0);
   }
 
   mu ~ normal(b0, B0);

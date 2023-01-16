@@ -77,33 +77,37 @@ static int current_statement__= 0;
 static const std::vector<string> locations_array__ = {" (found before start of program)",
                                                       " (in 'normal_mixture', line 17, column 2 to column 19)",
                                                       " (in 'normal_mixture', line 18, column 2 to column 16)",
-                                                      " (in 'normal_mixture', line 19, column 2 to column 27)",
+                                                      " (in 'normal_mixture', line 19, column 2 to column 29)",
                                                       " (in 'normal_mixture', line 20, column 2 to column 40)",
                                                       " (in 'normal_mixture', line 21, column 2 to column 37)",
-                                                      " (in 'normal_mixture', line 24, column 9 to column 10)",
-                                                      " (in 'normal_mixture', line 24, column 2 to column 22)",
-                                                      " (in 'normal_mixture', line 29, column 4 to column 32)",
-                                                      " (in 'normal_mixture', line 28, column 9 to line 30, column 3)",
-                                                      " (in 'normal_mixture', line 26, column 4 to column 23)",
+                                                      " (in 'normal_mixture', line 24, column 2 to column 27)",
                                                       " (in 'normal_mixture', line 27, column 4 to column 32)",
-                                                      " (in 'normal_mixture', line 25, column 11 to line 28, column 3)",
-                                                      " (in 'normal_mixture', line 25, column 2 to line 30, column 3)",
+                                                      " (in 'normal_mixture', line 26, column 17 to line 28, column 3)",
+                                                      " (in 'normal_mixture', line 26, column 2 to line 28, column 3)",
+                                                      " (in 'normal_mixture', line 31, column 9 to column 10)",
                                                       " (in 'normal_mixture', line 31, column 2 to column 22)",
-                                                      " (in 'normal_mixture', line 35, column 4 to column 29)",
-                                                      " (in 'normal_mixture', line 36, column 4 to column 47)",
-                                                      " (in 'normal_mixture', line 34, column 9 to line 37, column 3)",
-                                                      " (in 'normal_mixture', line 33, column 4 to column 41)",
-                                                      " (in 'normal_mixture', line 32, column 10 to line 34, column 3)",
-                                                      " (in 'normal_mixture', line 32, column 2 to line 37, column 3)",
-                                                      " (in 'normal_mixture', line 38, column 2 to column 25)",
-                                                      " (in 'normal_mixture', line 40, column 11 to column 12)",
-                                                      " (in 'normal_mixture', line 40, column 4 to column 30)",
-                                                      " (in 'normal_mixture', line 42, column 6 to column 52)",
-                                                      " (in 'normal_mixture', line 41, column 19 to line 43, column 5)",
-                                                      " (in 'normal_mixture', line 41, column 4 to line 43, column 5)",
-                                                      " (in 'normal_mixture', line 44, column 4 to column 31)",
-                                                      " (in 'normal_mixture', line 39, column 17 to line 45, column 3)",
-                                                      " (in 'normal_mixture', line 39, column 2 to line 45, column 3)",
+                                                      " (in 'normal_mixture', line 37, column 4 to column 32)",
+                                                      " (in 'normal_mixture', line 36, column 9 to line 38, column 3)",
+                                                      " (in 'normal_mixture', line 34, column 4 to column 23)",
+                                                      " (in 'normal_mixture', line 35, column 4 to column 32)",
+                                                      " (in 'normal_mixture', line 33, column 11 to line 36, column 3)",
+                                                      " (in 'normal_mixture', line 33, column 2 to line 38, column 3)",
+                                                      " (in 'normal_mixture', line 39, column 2 to column 22)",
+                                                      " (in 'normal_mixture', line 44, column 4 to column 29)",
+                                                      " (in 'normal_mixture', line 45, column 4 to column 47)",
+                                                      " (in 'normal_mixture', line 43, column 9 to line 46, column 3)",
+                                                      " (in 'normal_mixture', line 42, column 4 to column 41)",
+                                                      " (in 'normal_mixture', line 41, column 10 to line 43, column 3)",
+                                                      " (in 'normal_mixture', line 41, column 2 to line 46, column 3)",
+                                                      " (in 'normal_mixture', line 48, column 2 to column 25)",
+                                                      " (in 'normal_mixture', line 51, column 11 to column 12)",
+                                                      " (in 'normal_mixture', line 51, column 4 to column 30)",
+                                                      " (in 'normal_mixture', line 53, column 6 to column 52)",
+                                                      " (in 'normal_mixture', line 52, column 19 to line 54, column 5)",
+                                                      " (in 'normal_mixture', line 52, column 4 to line 54, column 5)",
+                                                      " (in 'normal_mixture', line 55, column 4 to column 31)",
+                                                      " (in 'normal_mixture', line 50, column 17 to line 56, column 3)",
+                                                      " (in 'normal_mixture', line 50, column 2 to line 56, column 3)",
                                                       " (in 'normal_mixture', line 4, column 2 to column 17)",
                                                       " (in 'normal_mixture', line 5, column 2 to column 17)",
                                                       " (in 'normal_mixture', line 6, column 9 to column 10)",
@@ -120,7 +124,8 @@ static const std::vector<string> locations_array__ = {" (found before start of p
                                                       " (in 'normal_mixture', line 18, column 10 to column 11)",
                                                       " (in 'normal_mixture', line 19, column 18 to column 19)",
                                                       " (in 'normal_mixture', line 20, column 18 to column 32)",
-                                                      " (in 'normal_mixture', line 21, column 18 to column 32)"};
+                                                      " (in 'normal_mixture', line 21, column 18 to column 32)",
+                                                      " (in 'normal_mixture', line 24, column 18 to column 19)"};
 #include <stan_meta_header.hpp>
 class model_normal_mixture final : public model_base_crtp<model_normal_mixture> {
 private:
@@ -164,133 +169,135 @@ public:
       pos__ = std::numeric_limits<int>::min();
       
       pos__ = 1;
-      current_statement__ = 30;
+      current_statement__ = 34;
       context__.validate_dims("data initialization","K","int",
           context__.to_vec());
       K = std::numeric_limits<int>::min();
       
-      current_statement__ = 30;
+      current_statement__ = 34;
       K = context__.vals_i("K")[(1 - 1)];
-      current_statement__ = 30;
-      current_statement__ = 30;
+      current_statement__ = 34;
+      current_statement__ = 34;
       check_greater_or_equal(function__, "K", K, 1);
-      current_statement__ = 31;
+      current_statement__ = 35;
       context__.validate_dims("data initialization","N","int",
           context__.to_vec());
       N = std::numeric_limits<int>::min();
       
-      current_statement__ = 31;
+      current_statement__ = 35;
       N = context__.vals_i("N")[(1 - 1)];
-      current_statement__ = 31;
-      current_statement__ = 31;
+      current_statement__ = 35;
+      current_statement__ = 35;
       check_greater_or_equal(function__, "N", N, 1);
-      current_statement__ = 32;
+      current_statement__ = 36;
       validate_non_negative_index("y", "N", N);
-      current_statement__ = 33;
+      current_statement__ = 37;
       context__.validate_dims("data initialization","y","double",
           context__.to_vec(N));
       y = std::vector<double>(N, std::numeric_limits<double>::quiet_NaN());
       
-      current_statement__ = 33;
+      current_statement__ = 37;
       assign(y, nil_index_list(), context__.vals_r("y"),
         "assigning variable y");
-      current_statement__ = 34;
+      current_statement__ = 38;
       context__.validate_dims("data initialization","e0","double",
           context__.to_vec());
       e0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 34;
+      current_statement__ = 38;
       e0 = context__.vals_r("e0")[(1 - 1)];
-      current_statement__ = 34;
-      current_statement__ = 34;
+      current_statement__ = 38;
+      current_statement__ = 38;
       check_greater_or_equal(function__, "e0", e0, 0);
-      current_statement__ = 35;
+      current_statement__ = 39;
       context__.validate_dims("data initialization","a0","double",
           context__.to_vec());
       a0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 35;
+      current_statement__ = 39;
       a0 = context__.vals_r("a0")[(1 - 1)];
-      current_statement__ = 35;
-      current_statement__ = 35;
+      current_statement__ = 39;
+      current_statement__ = 39;
       check_greater_or_equal(function__, "a0", a0, 0);
-      current_statement__ = 36;
+      current_statement__ = 40;
       context__.validate_dims("data initialization","A0","double",
           context__.to_vec());
       A0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 36;
+      current_statement__ = 40;
       A0 = context__.vals_r("A0")[(1 - 1)];
-      current_statement__ = 36;
-      current_statement__ = 36;
+      current_statement__ = 40;
+      current_statement__ = 40;
       check_greater_or_equal(function__, "A0", A0, 0);
-      current_statement__ = 37;
+      current_statement__ = 41;
       context__.validate_dims("data initialization","b0","double",
           context__.to_vec());
       b0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 37;
+      current_statement__ = 41;
       b0 = context__.vals_r("b0")[(1 - 1)];
-      current_statement__ = 38;
+      current_statement__ = 42;
       context__.validate_dims("data initialization","B0","double",
           context__.to_vec());
       B0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 38;
+      current_statement__ = 42;
       B0 = context__.vals_r("B0")[(1 - 1)];
-      current_statement__ = 38;
-      current_statement__ = 38;
+      current_statement__ = 42;
+      current_statement__ = 42;
       check_greater_or_equal(function__, "B0", B0, 0);
-      current_statement__ = 39;
+      current_statement__ = 43;
       context__.validate_dims("data initialization","c0","double",
           context__.to_vec());
       c0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 39;
+      current_statement__ = 43;
       c0 = context__.vals_r("c0")[(1 - 1)];
-      current_statement__ = 39;
-      current_statement__ = 39;
+      current_statement__ = 43;
+      current_statement__ = 43;
       check_greater_or_equal(function__, "c0", c0, 0);
-      current_statement__ = 40;
+      current_statement__ = 44;
       context__.validate_dims("data initialization","g0","double",
           context__.to_vec());
       g0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 40;
+      current_statement__ = 44;
       g0 = context__.vals_r("g0")[(1 - 1)];
-      current_statement__ = 40;
-      current_statement__ = 40;
+      current_statement__ = 44;
+      current_statement__ = 44;
       check_greater_or_equal(function__, "g0", g0, 0);
-      current_statement__ = 41;
+      current_statement__ = 45;
       context__.validate_dims("data initialization","G0","double",
           context__.to_vec());
       G0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 41;
-      G0 = context__.vals_r("G0")[(1 - 1)];
-      current_statement__ = 41;
-      current_statement__ = 41;
-      check_greater_or_equal(function__, "G0", G0, 0);
-      current_statement__ = 42;
-      validate_positive_index("theta", "K", K);
-      current_statement__ = 43;
-      validate_non_negative_index("mu", "K", K);
-      current_statement__ = 44;
-      validate_non_negative_index("sigma", "K", K);
       current_statement__ = 45;
+      G0 = context__.vals_r("G0")[(1 - 1)];
+      current_statement__ = 45;
+      current_statement__ = 45;
+      check_greater_or_equal(function__, "G0", G0, 0);
+      current_statement__ = 46;
+      validate_positive_index("theta", "K", K);
+      current_statement__ = 47;
+      validate_non_negative_index("mu", "K", K);
+      current_statement__ = 48;
+      validate_non_negative_index("sigmaSQ", "K", K);
+      current_statement__ = 49;
       alpha_1dim__ = std::numeric_limits<int>::min();
       
-      current_statement__ = 45;
+      current_statement__ = 49;
       alpha_1dim__ = (logical_gt(e0, 0) ? 0 : 1);
-      current_statement__ = 45;
+      current_statement__ = 49;
       validate_non_negative_index("alpha", "(e0 > 0) ? 0 : 1", alpha_1dim__);
-      current_statement__ = 46;
+      current_statement__ = 50;
       C0_1dim__ = std::numeric_limits<int>::min();
       
-      current_statement__ = 46;
+      current_statement__ = 50;
       C0_1dim__ = (logical_gt(G0, 0) ? K : 0);
-      current_statement__ = 46;
+      current_statement__ = 50;
       validate_non_negative_index("C0", "(G0 > 0) ? K : 0", C0_1dim__);
+      current_statement__ = 51;
+      validate_non_negative_index("sigma", "K", K);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
       // Next line prevents compiler griping about no return
@@ -363,25 +370,25 @@ public:
         assign(mu, nil_index_list(), stan::math::ordered_constrain(mu),
           "assigning variable mu");
       }
-      Eigen::Matrix<local_scalar_t__, -1, 1> sigma;
-      sigma = Eigen::Matrix<local_scalar_t__, -1, 1>(K);
-      stan::math::fill(sigma, DUMMY_VAR__);
+      Eigen::Matrix<local_scalar_t__, -1, 1> sigmaSQ;
+      sigmaSQ = Eigen::Matrix<local_scalar_t__, -1, 1>(K);
+      stan::math::fill(sigmaSQ, DUMMY_VAR__);
       
       current_statement__ = 3;
-      sigma = in__.vector(K);
+      sigmaSQ = in__.vector(K);
       current_statement__ = 3;
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
         current_statement__ = 3;
         if (jacobian__) {
           current_statement__ = 3;
-          assign(sigma, cons_list(index_uni(sym1__), nil_index_list()),
-            stan::math::lb_constrain(sigma[(sym1__ - 1)], 0, lp__),
-            "assigning variable sigma");
+          assign(sigmaSQ, cons_list(index_uni(sym1__), nil_index_list()),
+            stan::math::lb_constrain(sigmaSQ[(sym1__ - 1)], 0, lp__),
+            "assigning variable sigmaSQ");
         } else {
           current_statement__ = 3;
-          assign(sigma, cons_list(index_uni(sym1__), nil_index_list()),
-            stan::math::lb_constrain(sigma[(sym1__ - 1)], 0),
-            "assigning variable sigma");
+          assign(sigmaSQ, cons_list(index_uni(sym1__), nil_index_list()),
+            stan::math::lb_constrain(sigmaSQ[(sym1__ - 1)], 0),
+            "assigning variable sigmaSQ");
         }}
       Eigen::Matrix<local_scalar_t__, -1, 1> alpha;
       alpha = Eigen::Matrix<local_scalar_t__, -1, 1>(alpha_1dim__);
@@ -423,57 +430,72 @@ public:
             stan::math::lb_constrain(C0[(sym1__ - 1)], 0),
             "assigning variable C0");
         }}
-      {
+      Eigen::Matrix<local_scalar_t__, -1, 1> sigma;
+      sigma = Eigen::Matrix<local_scalar_t__, -1, 1>(K);
+      stan::math::fill(sigma, DUMMY_VAR__);
+      
+      current_statement__ = 9;
+      for (int i = 1; i <= K; ++i) {
+        current_statement__ = 7;
+        assign(sigma, cons_list(index_uni(i), nil_index_list()),
+          stan::math::sqrt(sigmaSQ[(i - 1)]), "assigning variable sigma");}
+      current_statement__ = 6;
+      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
         current_statement__ = 6;
+        current_statement__ = 6;
+        check_greater_or_equal(function__, "sigma[sym1__]",
+                               sigma[(sym1__ - 1)], 0);}
+      {
+        current_statement__ = 10;
         validate_non_negative_index("log_theta", "K", K);
         Eigen::Matrix<local_scalar_t__, -1, 1> log_theta;
         log_theta = Eigen::Matrix<local_scalar_t__, -1, 1>(K);
         stan::math::fill(log_theta, DUMMY_VAR__);
         
-        current_statement__ = 13;
+        current_statement__ = 17;
         if (logical_gt(G0, 0)) {
-          current_statement__ = 10;
+          current_statement__ = 14;
           lp_accum__.add(gamma_lpdf<propto__>(C0, g0, G0));
-          current_statement__ = 11;
-          lp_accum__.add(inv_gamma_lpdf<propto__>(pow(sigma, 2), c0, C0));
+          current_statement__ = 15;
+          lp_accum__.add(inv_gamma_lpdf<propto__>(sigmaSQ, c0, C0));
         } else {
-          current_statement__ = 8;
-          lp_accum__.add(inv_gamma_lpdf<propto__>(pow(sigma, 2), c0, g0));
+          current_statement__ = 12;
+          lp_accum__.add(inv_gamma_lpdf<propto__>(sigmaSQ, c0, g0));
         }
-        current_statement__ = 14;
+        current_statement__ = 18;
         lp_accum__.add(normal_lpdf<propto__>(mu, b0, B0));
-        current_statement__ = 20;
+        current_statement__ = 24;
         if (logical_gt(e0, 0)) {
-          current_statement__ = 18;
+          current_statement__ = 22;
           lp_accum__.add(dirichlet_lpdf<propto__>(theta, rep_vector(e0, K)));
         } else {
-          current_statement__ = 15;
+          current_statement__ = 19;
           lp_accum__.add(gamma_lpdf<propto__>(alpha[(1 - 1)], a0, A0));
-          current_statement__ = 16;
+          current_statement__ = 20;
           lp_accum__.add(
             dirichlet_lpdf<propto__>(theta, rep_vector(alpha[(1 - 1)], K)));
         }
-        current_statement__ = 21;
+        current_statement__ = 25;
         assign(log_theta, nil_index_list(), stan::math::log(theta),
           "assigning variable log_theta");
-        current_statement__ = 29;
+        current_statement__ = 33;
         for (int n = 1; n <= N; ++n) {
-          current_statement__ = 22;
+          current_statement__ = 26;
           validate_non_negative_index("lps", "K", K);
           Eigen::Matrix<local_scalar_t__, -1, 1> lps;
           lps = Eigen::Matrix<local_scalar_t__, -1, 1>(K);
           stan::math::fill(lps, DUMMY_VAR__);
           
-          current_statement__ = 23;
+          current_statement__ = 27;
           assign(lps, nil_index_list(), log_theta, "assigning variable lps");
-          current_statement__ = 26;
+          current_statement__ = 30;
           for (int k = 1; k <= K; ++k) {
-            current_statement__ = 24;
+            current_statement__ = 28;
             assign(lps, cons_list(index_uni(k), nil_index_list()),
               (lps[(k - 1)] +
                 normal_lpdf<false>(y[(n - 1)], mu[(k - 1)], sigma[(k - 1)])),
               "assigning variable lps");}
-          current_statement__ = 27;
+          current_statement__ = 31;
           lp_accum__.add(log_sum_exp(lps));}
       }
     } catch (const std::exception& e) {
@@ -526,18 +548,18 @@ public:
       current_statement__ = 2;
       assign(mu, nil_index_list(), stan::math::ordered_constrain(mu),
         "assigning variable mu");
-      Eigen::Matrix<double, -1, 1> sigma;
-      sigma = Eigen::Matrix<double, -1, 1>(K);
-      stan::math::fill(sigma, std::numeric_limits<double>::quiet_NaN());
+      Eigen::Matrix<double, -1, 1> sigmaSQ;
+      sigmaSQ = Eigen::Matrix<double, -1, 1>(K);
+      stan::math::fill(sigmaSQ, std::numeric_limits<double>::quiet_NaN());
       
       current_statement__ = 3;
-      sigma = in__.vector(K);
+      sigmaSQ = in__.vector(K);
       current_statement__ = 3;
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
         current_statement__ = 3;
-        assign(sigma, cons_list(index_uni(sym1__), nil_index_list()),
-          stan::math::lb_constrain(sigma[(sym1__ - 1)], 0),
-          "assigning variable sigma");}
+        assign(sigmaSQ, cons_list(index_uni(sym1__), nil_index_list()),
+          stan::math::lb_constrain(sigmaSQ[(sym1__ - 1)], 0),
+          "assigning variable sigmaSQ");}
       Eigen::Matrix<double, -1, 1> alpha;
       alpha = Eigen::Matrix<double, -1, 1>(alpha_1dim__);
       stan::math::fill(alpha, std::numeric_limits<double>::quiet_NaN());
@@ -562,12 +584,16 @@ public:
         assign(C0, cons_list(index_uni(sym1__), nil_index_list()),
           stan::math::lb_constrain(C0[(sym1__ - 1)], 0),
           "assigning variable C0");}
+      Eigen::Matrix<double, -1, 1> sigma;
+      sigma = Eigen::Matrix<double, -1, 1>(K);
+      stan::math::fill(sigma, std::numeric_limits<double>::quiet_NaN());
+      
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
         vars__.emplace_back(theta[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
         vars__.emplace_back(mu[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        vars__.emplace_back(sigma[(sym1__ - 1)]);}
+        vars__.emplace_back(sigmaSQ[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= alpha_1dim__; ++sym1__) {
         vars__.emplace_back(alpha[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= C0_1dim__; ++sym1__) {
@@ -575,6 +601,21 @@ public:
       if (logical_negation((primitive_value(emit_transformed_parameters__) ||
             primitive_value(emit_generated_quantities__)))) {
         return ;
+      } 
+      current_statement__ = 9;
+      for (int i = 1; i <= K; ++i) {
+        current_statement__ = 7;
+        assign(sigma, cons_list(index_uni(i), nil_index_list()),
+          stan::math::sqrt(sigmaSQ[(i - 1)]), "assigning variable sigma");}
+      current_statement__ = 6;
+      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
+        current_statement__ = 6;
+        current_statement__ = 6;
+        check_greater_or_equal(function__, "sigma[sym1__]",
+                               sigma[(sym1__ - 1)], 0);}
+      if (emit_transformed_parameters__) {
+        for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
+          vars__.emplace_back(sigma[(sym1__ - 1)]);}
       } 
       if (logical_negation(emit_generated_quantities__)) {
         return ;
@@ -651,35 +692,36 @@ public:
       current_statement__ = 2;
       assign(mu_free__, nil_index_list(), stan::math::ordered_free(mu),
         "assigning variable mu_free__");
-      Eigen::Matrix<double, -1, 1> sigma;
-      sigma = Eigen::Matrix<double, -1, 1>(K);
-      stan::math::fill(sigma, std::numeric_limits<double>::quiet_NaN());
+      Eigen::Matrix<double, -1, 1> sigmaSQ;
+      sigmaSQ = Eigen::Matrix<double, -1, 1>(K);
+      stan::math::fill(sigmaSQ, std::numeric_limits<double>::quiet_NaN());
       
       {
-        std::vector<local_scalar_t__> sigma_flat__;
+        std::vector<local_scalar_t__> sigmaSQ_flat__;
         current_statement__ = 3;
-        assign(sigma_flat__, nil_index_list(), context__.vals_r("sigma"),
-          "assigning variable sigma_flat__");
+        assign(sigmaSQ_flat__, nil_index_list(), context__.vals_r("sigmaSQ"),
+          "assigning variable sigmaSQ_flat__");
         current_statement__ = 3;
         pos__ = 1;
         current_statement__ = 3;
         for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
           current_statement__ = 3;
-          assign(sigma, cons_list(index_uni(sym1__), nil_index_list()),
-            sigma_flat__[(pos__ - 1)], "assigning variable sigma");
+          assign(sigmaSQ, cons_list(index_uni(sym1__), nil_index_list()),
+            sigmaSQ_flat__[(pos__ - 1)], "assigning variable sigmaSQ");
           current_statement__ = 3;
           pos__ = (pos__ + 1);}
       }
-      Eigen::Matrix<double, -1, 1> sigma_free__;
-      sigma_free__ = Eigen::Matrix<double, -1, 1>(K);
-      stan::math::fill(sigma_free__, std::numeric_limits<double>::quiet_NaN());
+      Eigen::Matrix<double, -1, 1> sigmaSQ_free__;
+      sigmaSQ_free__ = Eigen::Matrix<double, -1, 1>(K);
+      stan::math::fill(sigmaSQ_free__, std::numeric_limits<double>::quiet_NaN());
       
       current_statement__ = 3;
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
         current_statement__ = 3;
-        assign(sigma_free__, cons_list(index_uni(sym1__), nil_index_list()),
-          stan::math::lb_free(sigma[(sym1__ - 1)], 0),
-          "assigning variable sigma_free__");}
+        assign(sigmaSQ_free__,
+          cons_list(index_uni(sym1__), nil_index_list()),
+          stan::math::lb_free(sigmaSQ[(sym1__ - 1)], 0),
+          "assigning variable sigmaSQ_free__");}
       Eigen::Matrix<double, -1, 1> alpha;
       alpha = Eigen::Matrix<double, -1, 1>(alpha_1dim__);
       stan::math::fill(alpha, std::numeric_limits<double>::quiet_NaN());
@@ -743,7 +785,7 @@ public:
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
         vars__.emplace_back(mu_free__[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        vars__.emplace_back(sigma_free__[(sym1__ - 1)]);}
+        vars__.emplace_back(sigmaSQ_free__[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= alpha_1dim__; ++sym1__) {
         vars__.emplace_back(alpha_free__[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= C0_1dim__; ++sym1__) {
@@ -760,9 +802,10 @@ public:
     names__.clear();
     names__.emplace_back("theta");
     names__.emplace_back("mu");
-    names__.emplace_back("sigma");
+    names__.emplace_back("sigmaSQ");
     names__.emplace_back("alpha");
     names__.emplace_back("C0");
+    names__.emplace_back("sigma");
     } // get_param_names() 
     
   inline void get_dims(std::vector<std::vector<size_t>>& dimss__) const {
@@ -777,6 +820,8 @@ public:
                                              static_cast<size_t>(alpha_1dim__)});
     
     dimss__.emplace_back(std::vector<size_t>{static_cast<size_t>(C0_1dim__)});
+    
+    dimss__.emplace_back(std::vector<size_t>{static_cast<size_t>(K)});
     
     } // get_dims() 
     
@@ -796,7 +841,7 @@ public:
       }}
     for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
       {
-        param_names__.emplace_back(std::string() + "sigma" + '.' + std::to_string(sym1__));
+        param_names__.emplace_back(std::string() + "sigmaSQ" + '.' + std::to_string(sym1__));
       }}
     for (int sym1__ = 1; sym1__ <= alpha_1dim__; ++sym1__) {
       {
@@ -807,7 +852,10 @@ public:
         param_names__.emplace_back(std::string() + "C0" + '.' + std::to_string(sym1__));
       }}
     if (emit_transformed_parameters__) {
-      
+      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
+        {
+          param_names__.emplace_back(std::string() + "sigma" + '.' + std::to_string(sym1__));
+        }}
     }
     
     if (emit_generated_quantities__) {
@@ -832,7 +880,7 @@ public:
       }}
     for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
       {
-        param_names__.emplace_back(std::string() + "sigma" + '.' + std::to_string(sym1__));
+        param_names__.emplace_back(std::string() + "sigmaSQ" + '.' + std::to_string(sym1__));
       }}
     for (int sym1__ = 1; sym1__ <= alpha_1dim__; ++sym1__) {
       {
@@ -843,7 +891,10 @@ public:
         param_names__.emplace_back(std::string() + "C0" + '.' + std::to_string(sym1__));
       }}
     if (emit_transformed_parameters__) {
-      
+      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
+        {
+          param_names__.emplace_back(std::string() + "sigma" + '.' + std::to_string(sym1__));
+        }}
     }
     
     if (emit_generated_quantities__) {
@@ -854,13 +905,13 @@ public:
     
   inline std::string get_constrained_sizedtypes() const {
     stringstream s__;
-    s__ << "[{\"name\":\"theta\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"alpha\",\"type\":{\"name\":\"vector\",\"length\":" << alpha_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"C0\",\"type\":{\"name\":\"vector\",\"length\":" << C0_1dim__ << "},\"block\":\"parameters\"}]";
+    s__ << "[{\"name\":\"theta\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"sigmaSQ\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"alpha\",\"type\":{\"name\":\"vector\",\"length\":" << alpha_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"C0\",\"type\":{\"name\":\"vector\",\"length\":" << C0_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"transformed_parameters\"}]";
     return s__.str();
     } // get_constrained_sizedtypes() 
     
   inline std::string get_unconstrained_sizedtypes() const {
     stringstream s__;
-    s__ << "[{\"name\":\"theta\",\"type\":{\"name\":\"vector\",\"length\":" << (K - 1) << "},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"alpha\",\"type\":{\"name\":\"vector\",\"length\":" << alpha_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"C0\",\"type\":{\"name\":\"vector\",\"length\":" << C0_1dim__ << "},\"block\":\"parameters\"}]";
+    s__ << "[{\"name\":\"theta\",\"type\":{\"name\":\"vector\",\"length\":" << (K - 1) << "},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"sigmaSQ\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"alpha\",\"type\":{\"name\":\"vector\",\"length\":" << alpha_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"C0\",\"type\":{\"name\":\"vector\",\"length\":" << C0_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"transformed_parameters\"}]";
     return s__.str();
     } // get_unconstrained_sizedtypes() 
     
