@@ -86,7 +86,7 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
         pdf.J = matrix(0, nrow=length(x_all),ncol=ncol(theta))
         for(j in 1:ncol(theta)){
           if(!is.na(theta[draw,j])){
-            pdf.J[,j] = dpois((x_all-kappa[draw,j]),lambda[draw,j]) * theta[draw,j]
+            pdf.J[,j] = dpois((x_all-kappa[draw, j, drop = T]),lambda[draw, j, drop = T]) * theta[draw, j, drop = T]
           }
         }
         # summing up to get the mixture
@@ -181,6 +181,3 @@ plot.BayesMode <- function(x, colour = "magenta", ...) {
   
   g
 }
-
-#' @keywords internal
-# `[` <- function(...) base::`[`(...,drop=FALSE)

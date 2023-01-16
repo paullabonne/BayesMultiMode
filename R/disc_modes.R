@@ -1,5 +1,5 @@
 # Function to count the number of modes from an empirical pdf py evaluated at points y
-# Author: N. Basturk
+# Author: N. Basturk, Paul Labonne
 # Created: 20.03.2015
 # inputs: 
 #	y  : [vector (N)] of evaluation points
@@ -55,28 +55,24 @@ disc_modes <- function(y, py, mode.sel = NULL){
 
 #' @keywords internal
 ### COUNT NUMBER OF MODES
-fn.sub.mixpois<-function(theta.draws_i, y, which.r, Khat = Khat){
+fn.sub.mixpois <- function(theta.draws_i, y, which.r, Khat = Khat){
   theta.draws_i = theta.draws_i[!is.na(theta.draws_i)]
 
-  theta <- cbind(theta.draws_i[1:Khat],
-                 theta.draws_i[(Khat+1):(2*Khat)],
-                 theta.draws_i[(2*Khat+1):(3*Khat)])
-  
-  p <- theta[,1]
-  kappa <- theta[,2]
-  lambda <-  theta[,3]
+  p = theta.draws_i[grep("theta", names(theta.draws_i))]
+  kappa = theta.draws_i[grep("kappa", names(theta.draws_i))]
+  lambda = theta.draws_i[grep("lambda", names(theta.draws_i))]
   
   ### Getting individual component densities
-  pdf.J = matrix(nrow=length(y),ncol=Khat) 
-  for(j in 1:Khat){
+  pdf.J = matrix(0, nrow=length(y), ncol=Khat) 
+  for(j in 1:length(p)){
     pdf.J[,j] = dpois((y-kappa[j]),lambda[j]) * p[j]
   }
-  
+
   ### summing up to get the mixture
   py <- rowSums(pdf.J)
   
   ### Finding the modes
-  out <- disc_modes(y,py, mode.sel = "leftmode")
+  out <- disc_modes(y, py, mode.sel = "leftmode")
   r <- num.modes <- out$num.modes
   if(which.r == 2){
     # mode locations

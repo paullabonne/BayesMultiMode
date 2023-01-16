@@ -1,0 +1,158 @@
+---
+title: "testing the estimation of continuous mixtures using stan"
+output: html_document
+---
+
+```{r}
+# install.packages("rstan", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+library(BayesMultiMode)
+```
+
+
+# Data
+
+## Galaxy data
+```{r}
+y = multimode::galaxyrg
+
+plot(density(y), type="l")
+```
+
+## Pen world data
+```{r}
+library(dplyr)
+library(pwt10)
+
+df_pwt_60 = pwt10.0 %>%
+  select(year,country,rgdpe) %>%
+  filter(year %in% rep(1960:1969, 1)) %>%
+  group_by(country) %>%
+  summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
+
+df_pwt_70 = pwt10::pwt10.0 %>%
+  select(year,country,rgdpe) %>%
+  filter(year %in% rep(1970:1979,1)) %>%
+  group_by(country) %>%
+  summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
+
+df_pwt_80 = pwt10::pwt10.0 %>%
+  select(year,country,rgdpe) %>%
+  filter(year %in% rep(1980:1989,1)) %>%
+  group_by(country) %>%
+  summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
+
+df_pwt_90 = pwt10::pwt10.0 %>%
+  select(year,country,rgdpe) %>%
+  filter(year %in% rep(1990:1999,1)) %>%
+  group_by(country) %>%
+  summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
+
+df_pwt_00 = pwt10::pwt10.0 %>%
+  select(year,country,rgdpe) %>%
+  filter(year %in% rep(2000:2009,1)) %>%
+  group_by(country) %>%
+  summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
+
+df_pwt_10 = pwt10::pwt10.0 %>%
+  select(year,country,rgdpe) %>%
+  filter(year %in% rep(2010:2019,1)) %>%
+  group_by(country) %>%
+  summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
+
+y = unlist(df_pwt_10$rgdpe[!is.na(df_pwt_10$rgdpe)])/1000
+y = y
+hist(y, breaks = 200)
+```
+
+## Normal draws
+```{r, eval = FALSE}
+mu = c(0.5,2,4)
+sigma = c(0.3,0.4,0.2)
+p = c(0.3,0.5,0.2)
+nb_draws = 200
+
+y = c(rnorm(nb_draws*p[1], mu[1], sigma[1]),
+      rnorm(nb_draws*p[2], mu[2], sigma[2]),
+      rnorm(nb_draws*p[3], mu[3], sigma[3]))
+
+hist(y,main = "Simulated data", breaks=100)
+```
+
+## Student t draws
+```{r}
+N = 500
+y = c(sn::rst(0.3*N, xi = 2, omega = 0.5, nu = 2),
+      sn::rst(0.7*N, xi = 10, omega = 1, nu = Inf))
+
+hist(y, breaks = 100)
+plot(density(y), type="l")
+```
+
+## Skew normal draws
+The skew normal density of Azzalini takes the form 
+$$f(x, \mu, \sigma, \alpha) = \frac{2}{\sigma}\phi(\frac{x-\mu}{\sigma})\Phi(\alpha \frac{x-\mu}{\sigma}),$$ 
+where $\sigma \in R^+$ is a scale parameter, $\mu \in R$ a location parameter $\alpha \in R$ the shape or asymmetry parameter. The functions $\phi(.)$ and $\Phi(.)$ are the density and cumulative functions of the normal distribution.
+```{r}
+N = 200
+y = c(rsn(0.6*N, 0, 1, 20),rsn(0.4*N, 3, 0.5, 0))
+
+hist(y, breaks = 100)
+```
+
+## Skew t draws
+```{r}
+N = 200
+y = c(rst(0.7*N, xi = 0, omega = 1, alpha = 20, nu= 2),
+      rst(0.3*N, xi = 5, omega = 0.5, alpha = 0, nu= Inf))
+
+hist(y, breaks = 100)
+```
+
+## DNA data
+```{r}
+data("d4z4")
+y = d4z4
+```
+
+# Bayesian estimation
+```{r, message =FALSE, warning=FALSE}
+K = 3
+dist = "student"
+
+bayesmix = bayes_estimation(data = y, K = K, dist = dist, chains = 1, nb_iter = 200)
+
+plot(bayesmix, max_size = 200)
+
+# bayesplot::mcmc_trace(bayesmix$mcmc)
+
+# rstan::traceplot(bayesmode$fit)
+# mcmc_output = rstan::extract(fit, permuted = FALSE)[,1,]
+# round(apply(mcmc_output,2,mean),2)
+
+# print(fit, pars = colnames(as.matrix(fit)))
+# rstan::traceplot(fit, pars = colnames(as.matrix(fit)))
+# rstan::traceplot(fit, inc_warmup = TRUE, pars = colnames(as.matrix(fit)))
+# plot(fit)
+
+# posterior <- as.matrix(fit)
+# plot_title <- ggtitle("Posterior distributions",
+#                       "with medians and 80% intervals")
+# mcmc_areas(posterior,
+#            pars = colnames(posterior)[grep("theta", colnames(posterior))],
+#            prob = 0.8) + plot_title
+
+# traceplot(fit, pars = colnames(posterior)[1:K], inc_warmup = TRUE)
+# traceplot(fit, pars = colnames(posterior)[(K+1):(2*K)], inc_warmup = TRUE)
+```
+
+# Mode estimation
+```{r}
+modes = bayes_mode(bayesmix)
+plot(modes)
+```
+
+## illustration using ten iterations
+```{r}
+modes = t(apply(mcmc_output_post[1:10,], 1, MEM, plots=T))
+```
+

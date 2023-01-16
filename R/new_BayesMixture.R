@@ -38,9 +38,10 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
   mcmc <- as_draws_matrix(fit)
   
   if (dist == "shifted_poisson") {
-    mcmc = post_sfm_mcmc(mcmc)
+    mcmc_par <- attributes(mcmc)
+    #Burn in
+    mcmc = mcmc[(mcmc_par$warmup+1):nrow(mcmc), ]
   }
-  
   
   # check that pars_names and mcmc match
   names_mcmc = str_to_lower(colnames(mcmc))
@@ -108,35 +109,4 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
   class(BayesMix) <- "BayesMixture"
   
   return(BayesMix)
-}
-
-
-#' @keywords internal
-post_sfm_mcmc <- function(mcmc){
-  
-  mcmc_post = mcmc
-  
-  #Number of draws
-  M = nrow(mcmc)
-  
-  mcmc_par <- attributes(mcmc)
-  #Burn in
-  mcmc_post = mcmc_post[(mcmc_par$warmup+1):M,]
-  
-  # Discard empty components
-  # when a component is empty in a given draw it has a NA. 
-  # Thus we discard components we are always NAs (empty in all draws).
-  temp = mcmc_post
-  temp[!is.na(temp)] = 1
-  temp[is.na(temp)] = 0
-  sum_temp = apply(temp,2,sum)
-  
-  mcmc_post = mcmc_post[,sum_temp>0]
-  
-  # number of non-tempty components
-  # if(sfm_mcmc$mixt=="shifted_poisson"){
-  #   K_non_emp = length(which(sum_temp>0))/3
-  # }
-  
-  return(mcmc_post)
 }
