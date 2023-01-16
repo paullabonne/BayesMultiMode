@@ -82,33 +82,28 @@ static const std::vector<string> locations_array__ = {" (found before start of p
                                                       " (in 'normal_mixture', line 21, column 2 to column 37)",
                                                       " (in 'normal_mixture', line 24, column 9 to column 10)",
                                                       " (in 'normal_mixture', line 24, column 2 to column 22)",
-                                                      " (in 'normal_mixture', line 25, column 9 to column 10)",
-                                                      " (in 'normal_mixture', line 25, column 2 to column 21)",
-                                                      " (in 'normal_mixture', line 30, column 4 to column 30)",
-                                                      " (in 'normal_mixture', line 29, column 9 to line 31, column 3)",
-                                                      " (in 'normal_mixture', line 27, column 4 to column 23)",
-                                                      " (in 'normal_mixture', line 28, column 4 to column 30)",
-                                                      " (in 'normal_mixture', line 26, column 11 to line 29, column 3)",
-                                                      " (in 'normal_mixture', line 26, column 2 to line 31, column 3)",
-                                                      " (in 'normal_mixture', line 32, column 2 to column 22)",
-                                                      " (in 'normal_mixture', line 36, column 4 to column 29)",
-                                                      " (in 'normal_mixture', line 37, column 4 to column 47)",
-                                                      " (in 'normal_mixture', line 35, column 9 to line 38, column 3)",
-                                                      " (in 'normal_mixture', line 34, column 4 to column 41)",
-                                                      " (in 'normal_mixture', line 33, column 10 to line 35, column 3)",
-                                                      " (in 'normal_mixture', line 33, column 2 to line 38, column 3)",
-                                                      " (in 'normal_mixture', line 39, column 2 to column 25)",
-                                                      " (in 'normal_mixture', line 41, column 4 to column 33)",
-                                                      " (in 'normal_mixture', line 40, column 17 to line 42, column 3)",
-                                                      " (in 'normal_mixture', line 40, column 2 to line 42, column 3)",
-                                                      " (in 'normal_mixture', line 44, column 11 to column 12)",
-                                                      " (in 'normal_mixture', line 44, column 4 to column 30)",
-                                                      " (in 'normal_mixture', line 46, column 6 to column 55)",
-                                                      " (in 'normal_mixture', line 45, column 19 to line 47, column 5)",
-                                                      " (in 'normal_mixture', line 45, column 4 to line 47, column 5)",
-                                                      " (in 'normal_mixture', line 48, column 4 to column 31)",
-                                                      " (in 'normal_mixture', line 43, column 17 to line 49, column 3)",
-                                                      " (in 'normal_mixture', line 43, column 2 to line 49, column 3)",
+                                                      " (in 'normal_mixture', line 29, column 4 to column 32)",
+                                                      " (in 'normal_mixture', line 28, column 9 to line 30, column 3)",
+                                                      " (in 'normal_mixture', line 26, column 4 to column 23)",
+                                                      " (in 'normal_mixture', line 27, column 4 to column 32)",
+                                                      " (in 'normal_mixture', line 25, column 11 to line 28, column 3)",
+                                                      " (in 'normal_mixture', line 25, column 2 to line 30, column 3)",
+                                                      " (in 'normal_mixture', line 31, column 2 to column 22)",
+                                                      " (in 'normal_mixture', line 35, column 4 to column 29)",
+                                                      " (in 'normal_mixture', line 36, column 4 to column 47)",
+                                                      " (in 'normal_mixture', line 34, column 9 to line 37, column 3)",
+                                                      " (in 'normal_mixture', line 33, column 4 to column 41)",
+                                                      " (in 'normal_mixture', line 32, column 10 to line 34, column 3)",
+                                                      " (in 'normal_mixture', line 32, column 2 to line 37, column 3)",
+                                                      " (in 'normal_mixture', line 38, column 2 to column 25)",
+                                                      " (in 'normal_mixture', line 40, column 11 to column 12)",
+                                                      " (in 'normal_mixture', line 40, column 4 to column 30)",
+                                                      " (in 'normal_mixture', line 42, column 6 to column 52)",
+                                                      " (in 'normal_mixture', line 41, column 19 to line 43, column 5)",
+                                                      " (in 'normal_mixture', line 41, column 4 to line 43, column 5)",
+                                                      " (in 'normal_mixture', line 44, column 4 to column 31)",
+                                                      " (in 'normal_mixture', line 39, column 17 to line 45, column 3)",
+                                                      " (in 'normal_mixture', line 39, column 2 to line 45, column 3)",
                                                       " (in 'normal_mixture', line 4, column 2 to column 17)",
                                                       " (in 'normal_mixture', line 5, column 2 to column 17)",
                                                       " (in 'normal_mixture', line 6, column 9 to column 10)",
@@ -169,132 +164,132 @@ public:
       pos__ = std::numeric_limits<int>::min();
       
       pos__ = 1;
-      current_statement__ = 35;
+      current_statement__ = 30;
       context__.validate_dims("data initialization","K","int",
           context__.to_vec());
       K = std::numeric_limits<int>::min();
       
-      current_statement__ = 35;
+      current_statement__ = 30;
       K = context__.vals_i("K")[(1 - 1)];
-      current_statement__ = 35;
-      current_statement__ = 35;
+      current_statement__ = 30;
+      current_statement__ = 30;
       check_greater_or_equal(function__, "K", K, 1);
-      current_statement__ = 36;
+      current_statement__ = 31;
       context__.validate_dims("data initialization","N","int",
           context__.to_vec());
       N = std::numeric_limits<int>::min();
       
-      current_statement__ = 36;
+      current_statement__ = 31;
       N = context__.vals_i("N")[(1 - 1)];
-      current_statement__ = 36;
-      current_statement__ = 36;
+      current_statement__ = 31;
+      current_statement__ = 31;
       check_greater_or_equal(function__, "N", N, 1);
-      current_statement__ = 37;
+      current_statement__ = 32;
       validate_non_negative_index("y", "N", N);
-      current_statement__ = 38;
+      current_statement__ = 33;
       context__.validate_dims("data initialization","y","double",
           context__.to_vec(N));
       y = std::vector<double>(N, std::numeric_limits<double>::quiet_NaN());
       
-      current_statement__ = 38;
+      current_statement__ = 33;
       assign(y, nil_index_list(), context__.vals_r("y"),
         "assigning variable y");
-      current_statement__ = 39;
+      current_statement__ = 34;
       context__.validate_dims("data initialization","e0","double",
           context__.to_vec());
       e0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 39;
+      current_statement__ = 34;
       e0 = context__.vals_r("e0")[(1 - 1)];
-      current_statement__ = 39;
-      current_statement__ = 39;
+      current_statement__ = 34;
+      current_statement__ = 34;
       check_greater_or_equal(function__, "e0", e0, 0);
-      current_statement__ = 40;
+      current_statement__ = 35;
       context__.validate_dims("data initialization","a0","double",
           context__.to_vec());
       a0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 40;
+      current_statement__ = 35;
       a0 = context__.vals_r("a0")[(1 - 1)];
-      current_statement__ = 40;
-      current_statement__ = 40;
+      current_statement__ = 35;
+      current_statement__ = 35;
       check_greater_or_equal(function__, "a0", a0, 0);
-      current_statement__ = 41;
+      current_statement__ = 36;
       context__.validate_dims("data initialization","A0","double",
           context__.to_vec());
       A0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 41;
+      current_statement__ = 36;
       A0 = context__.vals_r("A0")[(1 - 1)];
-      current_statement__ = 41;
-      current_statement__ = 41;
+      current_statement__ = 36;
+      current_statement__ = 36;
       check_greater_or_equal(function__, "A0", A0, 0);
-      current_statement__ = 42;
+      current_statement__ = 37;
       context__.validate_dims("data initialization","b0","double",
           context__.to_vec());
       b0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 42;
+      current_statement__ = 37;
       b0 = context__.vals_r("b0")[(1 - 1)];
-      current_statement__ = 43;
+      current_statement__ = 38;
       context__.validate_dims("data initialization","B0","double",
           context__.to_vec());
       B0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 43;
+      current_statement__ = 38;
       B0 = context__.vals_r("B0")[(1 - 1)];
-      current_statement__ = 43;
-      current_statement__ = 43;
+      current_statement__ = 38;
+      current_statement__ = 38;
       check_greater_or_equal(function__, "B0", B0, 0);
-      current_statement__ = 44;
+      current_statement__ = 39;
       context__.validate_dims("data initialization","c0","double",
           context__.to_vec());
       c0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 44;
+      current_statement__ = 39;
       c0 = context__.vals_r("c0")[(1 - 1)];
-      current_statement__ = 44;
-      current_statement__ = 44;
+      current_statement__ = 39;
+      current_statement__ = 39;
       check_greater_or_equal(function__, "c0", c0, 0);
-      current_statement__ = 45;
+      current_statement__ = 40;
       context__.validate_dims("data initialization","g0","double",
           context__.to_vec());
       g0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 45;
+      current_statement__ = 40;
       g0 = context__.vals_r("g0")[(1 - 1)];
-      current_statement__ = 45;
-      current_statement__ = 45;
+      current_statement__ = 40;
+      current_statement__ = 40;
       check_greater_or_equal(function__, "g0", g0, 0);
-      current_statement__ = 46;
+      current_statement__ = 41;
       context__.validate_dims("data initialization","G0","double",
           context__.to_vec());
       G0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 46;
+      current_statement__ = 41;
       G0 = context__.vals_r("G0")[(1 - 1)];
-      current_statement__ = 46;
-      current_statement__ = 46;
+      current_statement__ = 41;
+      current_statement__ = 41;
       check_greater_or_equal(function__, "G0", G0, 0);
-      current_statement__ = 47;
+      current_statement__ = 42;
       validate_positive_index("theta", "K", K);
-      current_statement__ = 48;
+      current_statement__ = 43;
       validate_non_negative_index("mu", "K", K);
-      current_statement__ = 49;
+      current_statement__ = 44;
       validate_non_negative_index("sigma", "K", K);
-      current_statement__ = 50;
+      current_statement__ = 45;
       alpha_1dim__ = std::numeric_limits<int>::min();
       
-      current_statement__ = 50;
+      current_statement__ = 45;
       alpha_1dim__ = (logical_gt(e0, 0) ? 0 : 1);
-      current_statement__ = 50;
+      current_statement__ = 45;
       validate_non_negative_index("alpha", "(e0 > 0) ? 0 : 1", alpha_1dim__);
-      current_statement__ = 51;
+      current_statement__ = 46;
       C0_1dim__ = std::numeric_limits<int>::min();
       
-      current_statement__ = 51;
+      current_statement__ = 46;
       C0_1dim__ = (logical_gt(G0, 0) ? K : 0);
-      current_statement__ = 51;
+      current_statement__ = 46;
       validate_non_negative_index("C0", "(G0 > 0) ? K : 0", C0_1dim__);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -435,62 +430,50 @@ public:
         log_theta = Eigen::Matrix<local_scalar_t__, -1, 1>(K);
         stan::math::fill(log_theta, DUMMY_VAR__);
         
-        current_statement__ = 8;
-        validate_non_negative_index("sigma_tr", "K", K);
-        Eigen::Matrix<local_scalar_t__, -1, 1> sigma_tr;
-        sigma_tr = Eigen::Matrix<local_scalar_t__, -1, 1>(K);
-        stan::math::fill(sigma_tr, DUMMY_VAR__);
-        
-        current_statement__ = 15;
+        current_statement__ = 13;
         if (logical_gt(G0, 0)) {
-          current_statement__ = 12;
-          lp_accum__.add(gamma_lpdf<propto__>(C0, g0, G0));
-          current_statement__ = 13;
-          lp_accum__.add(inv_gamma_lpdf<propto__>(sigma, c0, C0));
-        } else {
           current_statement__ = 10;
-          lp_accum__.add(inv_gamma_lpdf<propto__>(sigma, c0, g0));
+          lp_accum__.add(gamma_lpdf<propto__>(C0, g0, G0));
+          current_statement__ = 11;
+          lp_accum__.add(inv_gamma_lpdf<propto__>(pow(sigma, 2), c0, C0));
+        } else {
+          current_statement__ = 8;
+          lp_accum__.add(inv_gamma_lpdf<propto__>(pow(sigma, 2), c0, g0));
         }
-        current_statement__ = 16;
+        current_statement__ = 14;
         lp_accum__.add(normal_lpdf<propto__>(mu, b0, B0));
-        current_statement__ = 22;
+        current_statement__ = 20;
         if (logical_gt(e0, 0)) {
-          current_statement__ = 20;
+          current_statement__ = 18;
           lp_accum__.add(dirichlet_lpdf<propto__>(theta, rep_vector(e0, K)));
         } else {
-          current_statement__ = 17;
+          current_statement__ = 15;
           lp_accum__.add(gamma_lpdf<propto__>(alpha[(1 - 1)], a0, A0));
-          current_statement__ = 18;
+          current_statement__ = 16;
           lp_accum__.add(
             dirichlet_lpdf<propto__>(theta, rep_vector(alpha[(1 - 1)], K)));
         }
-        current_statement__ = 23;
+        current_statement__ = 21;
         assign(log_theta, nil_index_list(), stan::math::log(theta),
           "assigning variable log_theta");
-        current_statement__ = 26;
-        for (int k = 1; k <= K; ++k) {
-          current_statement__ = 24;
-          assign(sigma_tr, cons_list(index_uni(k), nil_index_list()),
-            stan::math::sqrt(sigma[(k - 1)]), "assigning variable sigma_tr");
-        }
-        current_statement__ = 34;
+        current_statement__ = 29;
         for (int n = 1; n <= N; ++n) {
-          current_statement__ = 27;
+          current_statement__ = 22;
           validate_non_negative_index("lps", "K", K);
           Eigen::Matrix<local_scalar_t__, -1, 1> lps;
           lps = Eigen::Matrix<local_scalar_t__, -1, 1>(K);
           stan::math::fill(lps, DUMMY_VAR__);
           
-          current_statement__ = 28;
+          current_statement__ = 23;
           assign(lps, nil_index_list(), log_theta, "assigning variable lps");
-          current_statement__ = 31;
+          current_statement__ = 26;
           for (int k = 1; k <= K; ++k) {
-            current_statement__ = 29;
+            current_statement__ = 24;
             assign(lps, cons_list(index_uni(k), nil_index_list()),
               (lps[(k - 1)] +
-                normal_lpdf<false>(y[(n - 1)], mu[(k - 1)],
-                  sigma_tr[(k - 1)])), "assigning variable lps");}
-          current_statement__ = 32;
+                normal_lpdf<false>(y[(n - 1)], mu[(k - 1)], sigma[(k - 1)])),
+              "assigning variable lps");}
+          current_statement__ = 27;
           lp_accum__.add(log_sum_exp(lps));}
       }
     } catch (const std::exception& e) {

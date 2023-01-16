@@ -45,13 +45,12 @@ parameters {
 
 model {
     vector[K] log_theta;
-  vector[K] sigma_tr;  // scales of mixture components
 
   if (G0>0){
       C0 ~ gamma(g0, G0);
-      sigma ~ inv_gamma(c0, C0);
+      sigma^2 ~ inv_gamma(c0, C0);
   } else {
-      sigma ~ inv_gamma(c0, g0);
+      sigma^2 ~ inv_gamma(c0, g0);
   }
 
   mu ~ normal(b0, B0);
@@ -68,14 +67,10 @@ model {
 
   nu ~ gamma(n0, N0);
 
-  for (k in 1:K) {
-    sigma_tr[k] = sqrt(sigma[k]);
-  }
-
   for (n in 1:N) {
     vector[K] lps = log_theta;
     for (k in 1:K) {
-      lps[k] += skew_t_lpdf(y[n] | mu[k], sigma_tr[k], xi[k], nu[k]);
+      lps[k] += skew_t_lpdf(y[n] | mu[k], sigma[k], xi[k], nu[k]);
     }
     target += log_sum_exp(lps);
   }
