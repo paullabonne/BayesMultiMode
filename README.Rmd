@@ -34,7 +34,7 @@ library(BayesMultiMode)
 
 #### Estimation
 ```{r, out.width = '70%', fig.align = "center"}
-# retreive DNA data
+# retrieve DNA data
 y = d4z4
 
 # estimation
@@ -62,7 +62,7 @@ plot(bayesmode, max_size = 200)
 
 #### Estimation
 ```{r, out.width = '70%', fig.align = "center"}
-# retreive galaxy data
+# retrieve galaxy data
 y = galaxy
 
 # estimation
