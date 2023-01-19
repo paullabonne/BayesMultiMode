@@ -20,7 +20,7 @@ parameters {
   vector<lower=0>[K] sigmaSQ;  // scales of mixture components
   real xi[K];
   vector<lower=0>[(G0>0) ? K : 0] C0; // see https://discourse.mc-stan.org/t/if-else-statement-inside-parameter-block/13937/3
- vector<lower=0>[(e0>0) ? 0 : 1] alpha;                // parameter mixing proportions
+  vector<lower=0>[(e0>0) ? 0 : 1] alpha;                // parameter mixing proportions
 }
 
 transformed parameters {
@@ -33,18 +33,18 @@ transformed parameters {
 
 model {
   vector[K] log_theta;
-
+  
   if (G0>0){
-      C0 ~ gamma(g0, G0);
-      sigmaSQ ~ inv_gamma(c0, C0);
+    C0 ~ gamma(g0, G0);
+    sigmaSQ ~ inv_gamma(c0, C0);
   } else {
-      sigmaSQ ~ inv_gamma(c0, g0);
+    sigmaSQ ~ inv_gamma(c0, g0);
   }
-
+  
   mu ~ normal(b0, B0);
-
+  
   xi ~ normal(h0, H0);
-
+  
   if(e0>0){
     theta ~ dirichlet(rep_vector(e0, K));
   } else {
@@ -52,7 +52,7 @@ model {
     theta ~ dirichlet(rep_vector(alpha[1], K));
   }
   log_theta = log(theta);  // cache log calculation
-
+  
   for (n in 1:N) {
     vector[K] lps = log_theta;
     for (k in 1:K) {

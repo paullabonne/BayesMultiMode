@@ -8,7 +8,7 @@
 #' @param dist String indicating the distribution of the mixture components.
 #' Currently supports "normal", "student" and "skew_normal".
 #' @param data Numeric vector of observations.
-#' @param pars_name Names of the variables mcmc draws variables
+#' @param pars_names Names of the variables mcmc draws variables
 #' @param pdf_func Pdf or pmf of the mixture components associated with the mcmc draws (if estimation not in-house)
 #' @param tol_p Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.
 #' @param tol_x Tolerance for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
