@@ -49,6 +49,13 @@ bayes_estimation <- function(data,
                              #studen t prior
                              n0 = 2,
                              N0 = 0.1,
+                             #poisson prior
+                             l0 = 1.1,
+                             L0 = 1.1/mean(data),
+                             #shifted poisson prior
+                             e0_kappa = 0,
+                             d0 = 10,
+                             D0 = 10*(max(data) - min(data) + 1),
                              # mcmc stan pars
                              nb_iter = 2000,
                              burnin = nb_iter/2,
@@ -83,7 +90,8 @@ bayes_estimation <- function(data,
   assert_that(is.scalar(B0) & B0 > 0, msg = "B0 should be a positive integer")
   assert_that(is.scalar(H0) & H0 > 0, msg = "H0 should be a positive integer")
   assert_that(is.scalar(N0) & N0 > 0, msg = "N0 should be a positive integer")
-  
+  assert_that(is.scalar(L0) & L0 > 0, msg = "L0 should be a positive integer")
+  assert_that(is.scalar(D0) & D0 > 0, msg = "D0 should be a positive integer")
   
   mixture_data <- list(K = K,
                        N = length(data),
@@ -96,11 +104,22 @@ bayes_estimation <- function(data,
                        e0 = e0,
                        g0 = g0,
                        G0 = G0,
+                       h0 = h0,
+                       H0 = H0,
+                       n0 = n0,
+                       N0 = N0,
                        l0 = l0,
-                       L0 = L0)
+                       L0 = L0,
+                       e0_kappa = e0_kappa,
+                       d0 = d0,
+                       D0 = D0)
   
   if (dist == "poisson") {
     pars_names = c("theta", "lambda")
+  }
+  
+  if (dist == "shifted_poisson") {
+    pars_names = c("theta", "kappa", "lambda")
   }
   
   if (dist == "normal") {
@@ -109,25 +128,17 @@ bayes_estimation <- function(data,
   
   if (dist == "skew_normal") {
     pars_names = c("theta", "mu", "sigma", "xi")
-    mixture_data$h0 = h0
-    mixture_data$H0 = H0
   }
   
   if (dist == "student") {
     pars_names = c("theta", "mu", "sigma", "nu")
-    mixture_data$n0 = n0
-    mixture_data$N0 = N0
   }
   
   if (dist == "skew_t") {
-    pars_names = c("theta", "mu", "sigma", "xi,", "nu")
-    mixture_data$h0 = h0
-    mixture_data$H0 = H0
-    mixture_data$n0 = n0
-    mixture_data$N0 = N0
+    pars_names = c("theta", "mu", "sigma", "xi", "nu")
   }
   
-  if (dist %in% c("normal", "student", "skew_normal", "skew_t", "poisson")) {
+  if (dist %in% c("normal", "student", "skew_normal", "skew_t", "poisson", "shifted_poisson")) {
     fit <- sampling(stanmodels[[paste0(dist, "_mixture")]],  # Stan program
                     data = mixture_data,    # named list of data
                     chains = chains,             # number of Markov chains
@@ -138,13 +149,13 @@ bayes_estimation <- function(data,
                     ...
     ) 
     
-    if (dist %in % c("poisson")) {
+    if (dist %in% c("poisson", "shifted_poisson")) {
       dist_type = "discrete"
     } else {
       dist_type = "continuous"
     }
     
-  } else if (dist %in% c("shifted_poisson")) {
+  } else if (dist %in% c("shifted_poisson_s")) {
     fit <- shift_pois_mcmc(y = data, K, nb_iter, burnin)
     pars_names = c("theta", "kappa", "lambda")
     dist_type = "discrete"

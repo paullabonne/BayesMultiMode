@@ -38,7 +38,7 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
   
   mcmc <- as_draws_matrix(fit)
   
-  if (dist == "shifted_poisson") {
+  if (dist == "shifted_poisson_s") {
     mcmc_par <- attributes(mcmc)
     #Burn in
     mcmc = mcmc[(mcmc_par$warmup+1):nrow(mcmc), ]

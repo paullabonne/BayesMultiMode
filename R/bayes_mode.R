@@ -32,18 +32,18 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
   assert_that(dist_type %in% c("continuous", "discrete"),
               msg = "dist_type should be either continuous or discrete")
   assert_that(dist %in% c("normal", "student", "skew_t", "poisson",
-                          "skew_normal", "shifted_poisson") & is.character(dist),
+                          "skew_normal", "poisson", "shifted_poisson") & is.character(dist),
               msg = "Unsupported distribution. 
-              dist should be either normal, student, skew_normal, skew_t, shifted_poisson or NA")
+              dist should be either normal, student, skew_normal, skew_t, poisson, shifted_poisson or NA")
   
   if (dist_type == "continuous") {
     if (dist == "normal") {
       # fixed point
-      modes = t(apply(mcmc, 1, fixed_point, data = data, tol_x = sd(data)/10))
+      modes = t(apply(mcmc, 1, fixed_point, data = data, tol_x = tol_x, tol_p = tol_p))
     } else {
       # MEM algorithm
       modes = t(apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, 
-                    pdf_func = pdf_func, tol_x = sd(data)/10, show_plot=F))
+                    pdf_func = pdf_func, tol_x = tol_x, tol_p = tol_p, show_plot=F))
     }
 
     ### Posterior probability of being a mode for each location
@@ -62,16 +62,20 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
     table_location = rbind(location_at_modes, probs_modes)
   }
   
-  if (dist == "shifted_poisson") {
-    Khat = attr(BayesMix$fit, "K")
+  if (dist_type == "discrete") {
     y.pos <- min(data):max(data) # Range
-    n.modes <- apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 1, Khat = Khat) # number modes
-    modes <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 2, Khat = Khat)) # location modes
+    
+    n.modes <- apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 1,
+                     pars_names, tol_p, dist, pdf_func) # number modes
+    modes <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 2,
+                     pars_names, tol_p, dist, pdf_func)) # location modes
+    
     modes = as.matrix(modes[, 1:max(n.modes)], nrow = nrow(mcmc))
     colnames(modes) = paste('mode',1:max(n.modes))
 
     # Posterior probability of being a mode for each location
-    modes_incl_flats <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 4, Khat=Khat)) # modes including flat ones
+    modes_incl_flats <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 4,
+                                pars_names, tol_p, dist, pdf_func)) # modes including flat ones
     sum_modes_incl_flats = apply(modes_incl_flats,2,sum)
     probs_modes = sum_modes_incl_flats/nrow(mcmc)
     probs_modes = probs_modes[probs_modes>0]

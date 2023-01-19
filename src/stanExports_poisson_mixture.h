@@ -76,7 +76,7 @@ stan::math::profile_map profiles__;
 static int current_statement__= 0;
 static const std::vector<string> locations_array__ = {" (found before start of program)",
                                                       " (in 'poisson_mixture', line 13, column 2 to column 19)",
-                                                      " (in 'poisson_mixture', line 14, column 2 to column 28)",
+                                                      " (in 'poisson_mixture', line 14, column 2 to column 29)",
                                                       " (in 'poisson_mixture', line 15, column 2 to column 40)",
                                                       " (in 'poisson_mixture', line 18, column 11 to column 12)",
                                                       " (in 'poisson_mixture', line 18, column 4 to column 37)",
@@ -105,7 +105,7 @@ static const std::vector<string> locations_array__ = {" (found before start of p
                                                       " (in 'poisson_mixture', line 9, column 2 to column 10)",
                                                       " (in 'poisson_mixture', line 10, column 2 to column 19)",
                                                       " (in 'poisson_mixture', line 13, column 10 to column 11)",
-                                                      " (in 'poisson_mixture', line 14, column 18 to column 19)",
+                                                      " (in 'poisson_mixture', line 14, column 19 to column 20)",
                                                       " (in 'poisson_mixture', line 15, column 18 to column 32)"};
 #include <stan_meta_header.hpp>
 class model_poisson_mixture final : public model_base_crtp<model_poisson_mixture> {
@@ -295,19 +295,17 @@ public:
       current_statement__ = 2;
       lambda = in__.vector(K);
       current_statement__ = 2;
-      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
+      if (jacobian__) {
         current_statement__ = 2;
-        if (jacobian__) {
-          current_statement__ = 2;
-          assign(lambda, cons_list(index_uni(sym1__), nil_index_list()),
-            stan::math::lb_constrain(lambda[(sym1__ - 1)], 0, lp__),
-            "assigning variable lambda");
-        } else {
-          current_statement__ = 2;
-          assign(lambda, cons_list(index_uni(sym1__), nil_index_list()),
-            stan::math::lb_constrain(lambda[(sym1__ - 1)], 0),
-            "assigning variable lambda");
-        }}
+        assign(lambda, nil_index_list(),
+          stan::math::positive_ordered_constrain(lambda, lp__),
+          "assigning variable lambda");
+      } else {
+        current_statement__ = 2;
+        assign(lambda, nil_index_list(),
+          stan::math::positive_ordered_constrain(lambda),
+          "assigning variable lambda");
+      }
       Eigen::Matrix<local_scalar_t__, -1, 1> alpha;
       alpha = Eigen::Matrix<local_scalar_t__, -1, 1>(alpha_1dim__);
       stan::math::fill(alpha, DUMMY_VAR__);
@@ -419,11 +417,9 @@ public:
       current_statement__ = 2;
       lambda = in__.vector(K);
       current_statement__ = 2;
-      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        current_statement__ = 2;
-        assign(lambda, cons_list(index_uni(sym1__), nil_index_list()),
-          stan::math::lb_constrain(lambda[(sym1__ - 1)], 0),
-          "assigning variable lambda");}
+      assign(lambda, nil_index_list(),
+        stan::math::positive_ordered_constrain(lambda),
+        "assigning variable lambda");
       Eigen::Matrix<double, -1, 1> alpha;
       alpha = Eigen::Matrix<double, -1, 1>(alpha_1dim__);
       stan::math::fill(alpha, std::numeric_limits<double>::quiet_NaN());
@@ -519,11 +515,9 @@ public:
       stan::math::fill(lambda_free__, std::numeric_limits<double>::quiet_NaN());
       
       current_statement__ = 2;
-      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        current_statement__ = 2;
-        assign(lambda_free__, cons_list(index_uni(sym1__), nil_index_list()),
-          stan::math::lb_free(lambda[(sym1__ - 1)], 0),
-          "assigning variable lambda_free__");}
+      assign(lambda_free__, nil_index_list(),
+        stan::math::positive_ordered_free(lambda),
+        "assigning variable lambda_free__");
       Eigen::Matrix<double, -1, 1> alpha;
       alpha = Eigen::Matrix<double, -1, 1>(alpha_1dim__);
       stan::math::fill(alpha, std::numeric_limits<double>::quiet_NaN());

@@ -1,5 +1,5 @@
 # Function to count the number of modes from an empirical pdf py evaluated at points y
-# Author: N. Basturk, Paul Labonne
+# Authors: N. Basturk, J. Cross, P. Labonne
 # Created: 20.03.2015
 # inputs: 
 #	y  : [vector (N)] of evaluation points
@@ -55,32 +55,92 @@ disc_modes <- function(y, py, mode.sel = NULL){
 
 #' @keywords internal
 ### COUNT NUMBER OF MODES
-fn.sub.mixpois <- function(theta.draws_i, y, which.r, Khat = Khat){
-  theta.draws_i = theta.draws_i[!is.na(theta.draws_i)]
-
-  p = theta.draws_i[grep("theta", names(theta.draws_i))]
-  kappa = theta.draws_i[grep("kappa", names(theta.draws_i))]
-  lambda = theta.draws_i[grep("lambda", names(theta.draws_i))]
+fn.sub.mixpois <- function(mcmc, y, which.r, pars_names, tol_p, dist, pdf_func = NULL){
   
-  ### Getting individual component densities
-  pdf.J = matrix(0, nrow=length(y), ncol=Khat) 
-  for(j in 1:length(p)){
-    pdf.J[,j] = dpois((y-kappa[j]),lambda[j]) * p[j]
+  if (!is.null(pdf_func)) {
+    pdf_func <- pdf_func_vec(pdf_func)
+  }
+  
+  ## input checks
+  fail = "inputs to the discrete mode-finding algorithm are corrupted"
+  assert_that(is.vector(mcmc) & length(mcmc) >= 3,
+              msg = paste0("mcmc should be a vector of length >= 3", fail))
+  assert_that(is.string(dist),
+              msg = paste0("dist should be a string", fail))
+  assert_that(is.vector(y) & length(y) > 0,
+              msg = "y should be a vector of length > 0")
+  assert_that(is.vector(tol_p) & tol_p > 0, msg = paste0("tol_p should be a positive scalar", fail))
+  ##
+  
+  ##
+  names_mcmc = str_to_lower(names(mcmc))
+  names_mcmc = str_extract(names_mcmc, "[a-z]+")
+  names_mcmc = unique(names_mcmc)
+  
+  assert_that(sum(pars_names %in% names_mcmc)==length(pars_names),
+              msg = paste0("the name of the parameters provided by pars_names and those of the mcmc vector do not match; ", fail))
+  
+  if (dist %in% c("shifted_poisson")) {
+    assert_that(length(pars_names) == 3,
+                msg = paste0("the number of elements in pars_names does not match with dist; ", fail))
+    pars_names = pars_names[!pars_names=="kappa"]
+  }
+  if (dist %in% c("poisson")) {
+    assert_that(length(pars_names) == 2,
+                msg = paste0("the number of elements in pars_names does not match with dist; ", fail)) 
+  }
+  ##
+  
+  pars = c()
+  for (i in 1:length(pars_names)) {
+    pars = cbind(pars, mcmc[grep(pars_names[i], names(mcmc))])
+  }
+  
+  colnames(pars) <- pars_names
+  ##
+  
+  # mcmc = mcmc[!is.na(mcmc)]
+  Khat = nrow(pars)
+  keep = which(pars[,1] > tol_p)
+  
+  pars = pars[keep, , drop = F]
+  
+  if (dist == "shifted_poisson") {
+    kappa = matrix(mcmc[grep("kappa", names(mcmc))],
+                   length(mcmc[grep("kappa", names(mcmc))])/Khat, Khat, byrow = T)
+    kappa = kappa[ ,keep, drop = F]
+    kappa[abs(kappa) < tol_p] = 0
+    
+    ### Getting individual component densities
+    pdf = matrix(0, nrow=length(y), ncol=Khat)
+    for(k in 1:nrow(pars)){
+      pdf_k = rep(0,length(y))
+      for (i in 0:max(y)) {
+        pdf_k = pdf_k + kappa[i+1,k] * dist_pdf(y - i, dist = "poisson", pars[k, -1, drop = F], pdf_func)
+      }
+      pdf[,k] = pars[k,1]*pdf_k
+    }
+  } else {
+    ### Getting individual component densities
+    pdf = matrix(0, nrow=length(y), ncol=Khat) 
+    for(k in 1:nrow(pars)){
+      pdf[,k] = pars[k,1] * dist_pdf(y, dist, pars[k, -1, drop = F], pdf_func)
+    }
   }
 
   ### summing up to get the mixture
-  py <- rowSums(pdf.J)
+  py <- rowSums(pdf, na.rm = T)
   
   ### Finding the modes
   out <- disc_modes(y, py, mode.sel = "leftmode")
   r <- num.modes <- out$num.modes
   if(which.r == 2){
     # mode locations
-    r = rep(NA, Khat*2)
+    r = rep(NA, length(y))
     r[1:length(out$y.peaks)] = out$y.peaks
   }
   if(which.r == 3){
-    r = rep(NA, Khat*2)
+    r = rep(NA, length(y))
     #density at modes
     r[1:length(out$py.peaks)] = out$py.peaks
   }

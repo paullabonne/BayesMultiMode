@@ -112,16 +112,28 @@ hist(y, breaks = 100)
 ```{r}
 data("d4z4")
 y = d4z4
+
+p1 = 0.5
+p2 = 1-p1
+kap1 = 10
+kap2 = 0
+lam1 = 1
+lam2 = 0.1
+length_data = 70
+y <- c(rpois(length_data*p1, lam1)+kap1, rpois(length_data*p2, lam2)+kap2)
+hist(y)
 ```
 
 # Bayesian estimation
 ```{r, message =FALSE, warning=FALSE}
-K = 10
-dist = "skew_t"
+K = 3
+dist = "normal"
 
-bayesmix = bayes_estimation(data = y, K = K, dist = dist, chains = 1, nb_iter = 2000)
+bayesmix = bayes_estimation(data = y, K = K,
+                            dist = dist, chains = 1, nb_iter = 20,
+                            e0_kappa = 1e-10)
 
-plot(bayesmix, max_size = 200)
+plot(bayesmix, max_size = 200, transparency = 0.1)
 
 # bayesplot::mcmc_trace(bayesmix$mcmc)
 
@@ -147,7 +159,7 @@ plot(bayesmix, max_size = 200)
 
 # Mode estimation
 ```{r}
-modes = bayes_mode(bayesmix)
+modes = bayes_mode(bayesmix, tol_p = 0.1)
 plot(modes)
 ```
 

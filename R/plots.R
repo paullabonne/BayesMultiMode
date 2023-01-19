@@ -77,20 +77,52 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
     
     mixture_uncertainty = matrix(NA, length(x_all), nrow(mcmc))
     
-    if(x$dist=="shifted_poisson"){
+    if(x$dist %in% c("poisson", "shifted_poisson")){
       theta = mcmc[, grep("theta", colnames(mcmc))]
-      kappa = mcmc[, grep("kappa", colnames(mcmc))]
       lambda = mcmc[, grep("lambda", colnames(mcmc))]
       
+      if (x$dist == "shifted_poisson") {
+        kappa = mcmc[, grep("kappa", colnames(mcmc))]
+      } else {
+        kappa = matrix(0,nrow(lambda), ncol(lambda))
+      }
+      
       for (draw in sample(1:(min(nrow(mcmc), max_size)))) {
-        pdf.J = matrix(0, nrow=length(x_all),ncol=ncol(theta))
+        ##
+        if (x$dist == "shifted_poisson") {
+          pars = c()
+          pars_names = c("theta", "lambda")
+          for (i in 1:length(pars_names)) {
+            pars = rbind(pars, mcmc[draw, grep(pars_names[i], colnames(mcmc))])
+          }
+          
+          pars = t(pars)
+          colnames(pars) <- pars_names
+          
+          Khat = ncol(theta)
+          kappa = matrix(mcmc[draw, grep("kappa", colnames(mcmc))],
+                         length(mcmc[draw, grep("kappa", colnames(mcmc))])/Khat, Khat, byrow = T)
+          
+          ### Getting individual component densities
+          pdf = matrix(0, nrow=length(x_all), ncol=Khat)
+          for(k in 1:nrow(pars)){
+            pdf_k = rep(0,length(x_all))
+            for (i in 0:max(y)) {
+              pdf_k = pdf_k + kappa[i+1,k] * dist_pdf(x_all - i, dist = "poisson", pars[k, -1, drop = F], pdf_func=NULL)
+            }
+            pdf[,k] = pars[k,1]*pdf_k
+          } 
+        }
+
+        pdf = matrix(0, nrow=length(x_all),ncol=ncol(theta))
         for(j in 1:ncol(theta)){
           if(!is.na(theta[draw,j])){
-            pdf.J[,j] = dpois((x_all-kappa[draw, j, drop = T]),lambda[draw, j, drop = T]) * theta[draw, j, drop = T]
+            pdf[,j] = dpois((x_all-kappa[draw, j, drop = T]), lambda[draw, j, drop = T]) * theta[draw, j, drop = T]
           }
         }
+        
         # summing up to get the mixture
-        mixture_uncertainty[,draw] <- rowSums(pdf.J)
+        mixture_uncertainty[,draw] <- rowSums(pdf)
       }
     }
     

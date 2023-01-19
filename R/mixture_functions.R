@@ -3,12 +3,15 @@
 #' @importFrom stats dnorm
 #' 
 # Vectorise the dst function for vector of nus
-dst_vec <- function(x, xi, omega, nu){
+dst_vec <- function(x, xi, omega, alpha = NULL, nu){
+  if(is.null(alpha)) {
+    alpha = rep(0, length(xi))
+  }
   n = length(xi)
   output = rep(NA, n)
   
   for (i in 1:n) {
-    output[i] = dst(x, xi = xi[i], omega = omega[i], nu = nu[i])
+    output[i] = dst(x, xi = xi[i], omega = omega[i], alpha = alpha[i], nu = nu[i])
   }
   
   return(output)
@@ -168,7 +171,7 @@ dist_pdf <- function(x, dist, pars, pdf_func = NULL) {
     }
     
     if (dist == "student") {
-      output = dst_vec(x, pars[, "mu"], pars[, "sigma"], pars[, "nu"])
+      output = dst_vec(x, xi = pars[, "mu"], omega = pars[, "sigma"], nu = pars[, "nu"])
     }
     
     if (dist == "skew_normal") {
@@ -176,14 +179,15 @@ dist_pdf <- function(x, dist, pars, pdf_func = NULL) {
     }
     
     if (dist == "skew_t") {
-      output = dst(x, pars[, "mu"], pars[, "sigma"], pars[, "xi"], pars[, "nu"])
+      output = dst_vec(x, xi = pars[, "mu"], omega = pars[, "sigma"],
+                       alpha = pars[, "xi"], nu = pars[, "nu"])
     }
     
-    if (dist == "shift_pois_mix") {
+    if (dist == "shifted_poisson") {
       output = dpois(x - pars[, "kappa"], pars[, "lambda"])
     }
     
-    if (dist == "pois_mix") {
+    if (dist == "poisson") {
       output = dpois(x, pars[, "lambda"])
     }
   }

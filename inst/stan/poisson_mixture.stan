@@ -13,7 +13,7 @@ data {
 
 parameters {
   simplex[K] theta;          // mixing proportions
-  vector<lower=0>[K] lambda;            
+  positive_ordered[K] lambda;            
   vector<lower=0>[(e0>0) ? 0 : 1] alpha;                // parameter mixing proportions
 }
 
