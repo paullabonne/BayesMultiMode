@@ -52,6 +52,10 @@ MEM <- function(mcmc, dist = "NA", pars_names, data, pdf_func = NULL, tol_p = 1e
     assert_that(length(pars_names) == 4,
                 msg = paste0("the number of elements in pars_names does not match with dist; ", fail)) 
   }
+  if (dist %in% c("skew_t")) {
+    assert_that(length(pars_names) == 5,
+                msg = paste0("the number of elements in pars_names does not match with dist; ", fail)) 
+  }
   ##
   
   pars = c()

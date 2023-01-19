@@ -102,6 +102,16 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
       assert_that(sum(names_mcmc %in% pars_names)==4,
                   msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
     }
+    if (dist == "skew_t" & sum(c("theta", "mu", "sigma", "xi", "nu") %in% names_mcmc)<5){
+      change = TRUE
+      
+      assert_that(!is.null(names(pars_names)),
+                  msg = "pars_names should be a named vector with names : theta, mu, sigma, xi and nu")
+      assert_that(sum(names(pars_names) %in% c("theta", "mu", "sigma", "xi", "nu"))==5,
+                  msg = "the name of the parameters provided by pars_names should be theta, mu, sigma, xi and nu")
+      assert_that(sum(names_mcmc %in% pars_names)==5,
+                  msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
+    }
     
     # keep only relevant variables
     mcmc = subset_draws(mcmc, variable = pars_names)
@@ -118,7 +128,7 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
     } 
   }
   
-  if (dist %in% c("normal", "student", "skew_normal", "shifted_poisson")) {
+  if (dist %in% c("normal", "student", "skew_normal", "skew_t", "shifted_poisson")) {
     BayesMix$dist = dist
   } else {
     BayesMix$dist = "NA"

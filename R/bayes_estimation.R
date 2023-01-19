@@ -66,9 +66,11 @@ bayes_estimation <- function(data,
   
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
-  assert_that(dist %in% c("normal", "student", "skew_normal", "shifted_poisson") & is.character(dist),
+  assert_that(dist %in% c("normal", "student",
+                          "skew_t", "skew_normal", "shifted_poisson") & is.character(dist),
               msg = "Unsupported distribution. 
-              dist should be either normal, student, skew_normal, shifted_poisson or NA")
+              dist should be either normal, student,
+              skew_normal, skew_t, shifted_poisson or NA")
   assert_that(is.scalar(nb_iter) & nb_iter > 0, msg = "nb_iter should be a positive integer")
   assert_that(is.scalar(burnin) & burnin > 0 & burnin < nb_iter,
               msg = "nb_iter should be a positive integer lower than burnin")
@@ -95,18 +97,26 @@ bayes_estimation <- function(data,
                        g0 = g0,
                        G0 = G0)
   
-  if (dist %in% c("normal")) {
+  if (dist == "normal") {
     pars_names = c("theta", "mu", "sigma")
   }
   
-  if (dist %in% c("skew_normal")) {
+  if (dist == "skew_normal") {
     pars_names = c("theta", "mu", "sigma", "xi")
     mixture_data$h0 = h0
     mixture_data$H0 = H0
   }
   
-  if (dist %in% c("student")) {
+  if (dist == "student") {
     pars_names = c("theta", "mu", "sigma", "nu")
+    mixture_data$n0 = n0
+    mixture_data$N0 = N0
+  }
+  
+  if (dist == "skew_t") {
+    pars_names = c("theta", "mu", "sigma", "xi,", "nu")
+    mixture_data$h0 = h0
+    mixture_data$H0 = H0
     mixture_data$n0 = n0
     mixture_data$N0 = N0
   }

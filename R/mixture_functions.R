@@ -129,6 +129,10 @@ dist_mixture <- function(x, dist, pars, pdf_func = NULL) {
       output = skew_norm_mix(x, pars[, "theta"], pars[, "mu"], pars[, "sigma"], pars[, "xi"])
     }
     
+    if (dist == "skew_t") {
+      output = skew_t_mix(x, pars[, "theta"], pars[, "mu"], pars[, "sigma"], pars[, "xi"], pars[, "nu"])
+    }
+    
     if (dist == "shift_pois_mix") {
       output = shift_pois_mix(x, pars[, "theta"], pars[, "lambda"], pars[, "lambda"])
     }
@@ -156,6 +160,10 @@ dist_pdf <- function(x, dist, pars, pdf_func = NULL) {
     
     if (dist == "skew_normal") {
       output = dsn(x, pars[, "mu"], pars[, "sigma"], pars[, "xi"])
+    }
+    
+    if (dist == "skew_t") {
+      output = dst(x, pars[, "mu"], pars[, "sigma"], pars[, "xi"], pars[, "nu"])
     }
     
     if (dist == "shift_pois_mix") {
