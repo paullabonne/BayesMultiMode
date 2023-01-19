@@ -21,6 +21,8 @@ MEM(
 \item{dist}{String indicating the distribution of the mixture components.
 Currently supports "normal", "student" and "skew_normal".}
 
+\item{pars_names}{Names of the variables mcmc draws variables}
+
 \item{data}{Numeric vector of observations.}
 
 \item{pdf_func}{Pdf or pmf of the mixture components associated with the mcmc draws (if estimation not in-house)}
@@ -30,8 +32,6 @@ Currently supports "normal", "student" and "skew_normal".}
 \item{tol_x}{Tolerance for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
 
 \item{show_plot}{Show the data and estimated modes.}
-
-\item{pars_name}{Names of the variables mcmc draws variables}
 }
 \value{
 A vector estimated modes.
