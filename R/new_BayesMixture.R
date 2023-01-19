@@ -72,6 +72,17 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
   } else {
     change = FALSE
     
+    if (dist == "poisson" & sum(c("theta", "lambda") %in% names_mcmc) < 2){
+      change = TRUE
+      
+      assert_that(!is.null(names(pars_names)),
+                  msg = "pars_names should be a named vector with names : theta and lambda")
+      assert_that(sum(names(pars_names) %in% c("theta", "lambda"))==2,
+                  msg = "the name of the parameters provided by pars_names should be theta and lambda")
+      assert_that(sum(names_mcmc %in% pars_names)==2,
+                  msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
+    }
+    
     if (dist == "normal" & sum(c("theta", "mu", "sigma") %in% names_mcmc)<3){
       change = TRUE
       
@@ -128,7 +139,7 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
     } 
   }
   
-  if (dist %in% c("normal", "student", "skew_normal", "skew_t", "shifted_poisson")) {
+  if (dist %in% c("normal", "student", "skew_normal", "skew_t", "poisson", "shifted_poisson")) {
     BayesMix$dist = dist
   } else {
     BayesMix$dist = "NA"

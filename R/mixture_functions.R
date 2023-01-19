@@ -73,6 +73,15 @@ skew_t_mix <- function(x, p, mu, sigma, xi, nu) {
   return(mixture)
 }
 
+# Mixture of shifted Poisson
+pois_mix <- function(x, p, lambda, kappa) {
+  mixture = 0
+  for (i in 1:length(kappa)) {
+    mixture = mixture + p[i] * dpois(x, lambda[i], log = FALSE)
+  }
+  return(mixture)
+}
+
 # Mixture of shifted Poisson distributions
 shift_pois_mix <- function(x, p, lambda, kappa) {
   mixture = 0
@@ -133,8 +142,12 @@ dist_mixture <- function(x, dist, pars, pdf_func = NULL) {
       output = skew_t_mix(x, pars[, "theta"], pars[, "mu"], pars[, "sigma"], pars[, "xi"], pars[, "nu"])
     }
     
+    if (dist == "pois_mix") {
+      output = pois_mix(x, pars[, "theta"], pars[, "lambda"])
+    }
+    
     if (dist == "shift_pois_mix") {
-      output = shift_pois_mix(x, pars[, "theta"], pars[, "lambda"], pars[, "lambda"])
+      output = shift_pois_mix(x, pars[, "theta"], pars[, "lambda"], pars[, "kappa"])
     }
   }
   
@@ -168,6 +181,10 @@ dist_pdf <- function(x, dist, pars, pdf_func = NULL) {
     
     if (dist == "shift_pois_mix") {
       output = dpois(x - pars[, "kappa"], pars[, "lambda"])
+    }
+    
+    if (dist == "pois_mix") {
+      output = dpois(x, pars[, "lambda"])
     }
   }
   
