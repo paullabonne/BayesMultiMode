@@ -22,14 +22,14 @@ bayes_estimation(
   N0 = 0.1,
   l0 = 1.1,
   L0 = 1.1/mean(data),
-  e0_kappa = 0,
+  e0_kappa = 1e-20,
   d0 = 10,
-  D0 = 10 * (max(data) - min(data) + 1),
+  D0 = 10 * (max(data) - min(data)),
   nb_iter = 2000,
   burnin = nb_iter/2,
   chains = 4,
   cores = 4,
-  refresh = 1000,
+  refresh = nb_iter/10,
   ...
 )
 }
@@ -65,6 +65,17 @@ Currently supports "normal", "student" and "skew_normal".}
 
 \item{N0}{Variance of the degree of freedom gamma priors. Default is 2.}
 
+\item{l0}{... Prior for lambda}
+
+\item{L0}{... Prior for lambda}
+
+\item{e0_kappa}{Dirichlet prior parameter for kappa (shifted poisson). Must be positive or zero. If set to 0 then an hyperprior is used instead.
+Default is 1e-20}
+
+\item{d0}{...}
+
+\item{D0}{...}
+
 \item{nb_iter}{Number of MCMC iterations. Default is 2000.}
 
 \item{burnin}{Number of MCMC iterations used as burnin.}
@@ -73,7 +84,7 @@ Currently supports "normal", "student" and "skew_normal".}
 
 \item{cores}{Number of cores for parallel computation.}
 
-\item{refresh}{Show intemediate results. Default is 1000 so intermediate results are shown every 1000 iterations.}
+\item{refresh}{Show intemediate results. Default is nb_iter/10 so intermediate results are shown every 1000 iterations.}
 
 \item{...}{Other arguments passed to `rstan::sampling`.}
 }
