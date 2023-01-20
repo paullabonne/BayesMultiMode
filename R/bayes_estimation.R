@@ -18,7 +18,8 @@
 #' @param N0 Variance of the degree of freedom gamma priors. Default is 2.
 #' @param l0 ... Prior for lambda 
 #' @param L0 ... Prior for lambda 
-#' @param e0_kappa Dirichlet prior parameter for kappa (shifted poisson). Must be positive or zero. If set to 0 then an hyperprior is used instead. Default is 0.
+#' @param e0_kappa Dirichlet prior parameter for kappa (shifted poisson). Must be positive or zero. If set to 0 then an hyperprior is used instead.
+#' Default is 1e-20
 #' @param d0 ...
 #' @param D0 ...
 #' @param nb_iter Number of MCMC iterations. Default is 2000.
