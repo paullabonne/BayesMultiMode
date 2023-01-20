@@ -14,7 +14,7 @@
 
 bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)/10) {
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
-  assert_that(is.scalar(rd) & rd > 0, msg = "rd should be a positive scalar")
+  assert_that(is.scalar(rd) & rd >= 0, msg = "rd should be greater or equal than zero")
   assert_that(is.vector(tol_p) & tol_p > 0, msg = "tol_p should be a positive scalar")
   assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
   
