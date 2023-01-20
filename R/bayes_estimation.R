@@ -58,9 +58,9 @@ bayes_estimation <- function(data,
                              l0 = 1.1,
                              L0 = 1.1/mean(data),
                              #shifted poisson prior
-                             e0_kappa = 0,
+                             e0_kappa = 1e-20,
                              d0 = 10,
-                             D0 = 10*(max(data) - min(data) + 1),
+                             D0 = 10*(max(data) - min(data)),
                              # mcmc stan pars
                              nb_iter = 2000,
                              burnin = nb_iter/2,

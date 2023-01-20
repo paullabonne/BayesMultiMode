@@ -3,6 +3,7 @@ title: "testing the estimation of continuous mixtures using stan"
 output: html_document
 ---
 
+# Load package
 ```{r}
 # install.packages("rstan", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
 library(BayesMultiMode)
@@ -127,11 +128,10 @@ hist(y)
 # Bayesian estimation
 ```{r, message =FALSE, warning=FALSE}
 K = 3
-dist = "normal"
+dist = "shifted_poisson"
 
 bayesmix = bayes_estimation(data = y, K = K,
-                            dist = dist, chains = 1, nb_iter = 20,
-                            e0_kappa = 1e-10)
+                            dist = dist, chains = 1, nb_iter = 2000)
 
 plot(bayesmix, max_size = 200, transparency = 0.1)
 

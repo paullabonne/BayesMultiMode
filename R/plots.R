@@ -112,13 +112,13 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
             }
             pdf[,k] = pars[k,1]*pdf_k
           } 
-        }
-
-        pdf = matrix(0, nrow=length(x_all),ncol=ncol(theta))
-        for(j in 1:ncol(theta)){
-          if(!is.na(theta[draw,j])){
-            pdf[,j] = dpois((x_all-kappa[draw, j, drop = T]), lambda[draw, j, drop = T]) * theta[draw, j, drop = T]
-          }
+        } else {
+          pdf = matrix(0, nrow=length(x_all),ncol=ncol(theta))
+          for(j in 1:ncol(theta)){
+            if(!is.na(theta[draw,j])){
+              pdf[,j] = dpois((x_all-kappa[draw, j, drop = T]), lambda[draw, j, drop = T]) * theta[draw, j, drop = T]
+            }
+          } 
         }
         
         # summing up to get the mixture
