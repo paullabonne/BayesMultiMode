@@ -26,7 +26,7 @@
 #' @param burnin Number of MCMC iterations used as burnin.
 #' @param chains Number of chains.
 #' @param cores Number of cores for parallel computation.
-#' @param refresh Show intemediate results. Default is 1000 so intermediate results are shown every 1000 iterations.
+#' @param refresh Show intemediate results. Default is nb_iter/10 so intermediate results are shown every 1000 iterations.
 #' @param ... Other arguments passed to `rstan::sampling`.
 #' 
 #' @importFrom rstan sampling
@@ -67,7 +67,7 @@ bayes_estimation <- function(data,
                              burnin = nb_iter/2,
                              chains = 4,
                              cores = 4,
-                             refresh = 1e3,
+                             refresh = nb_iter/10,
                              ...
 ) {
   K = round(K)
