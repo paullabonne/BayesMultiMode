@@ -75,73 +75,73 @@ using stan::math::pow;
 stan::math::profile_map profiles__;
 static int current_statement__= 0;
 static const std::vector<string> locations_array__ = {" (found before start of program)",
-                                                      " (in 'skew_t_mixture', line 29, column 2 to column 19)",
-                                                      " (in 'skew_t_mixture', line 30, column 2 to column 16)",
-                                                      " (in 'skew_t_mixture', line 31, column 2 to column 29)",
-                                                      " (in 'skew_t_mixture', line 32, column 2 to column 13)",
+                                                      " (in 'skew_t_mixture', line 30, column 2 to column 19)",
+                                                      " (in 'skew_t_mixture', line 31, column 2 to column 16)",
+                                                      " (in 'skew_t_mixture', line 32, column 2 to column 29)",
                                                       " (in 'skew_t_mixture', line 33, column 2 to column 24)",
-                                                      " (in 'skew_t_mixture', line 34, column 2 to column 40)",
-                                                      " (in 'skew_t_mixture', line 35, column 2 to column 37)",
-                                                      " (in 'skew_t_mixture', line 38, column 2 to column 27)",
-                                                      " (in 'skew_t_mixture', line 41, column 4 to column 32)",
-                                                      " (in 'skew_t_mixture', line 40, column 17 to line 42, column 3)",
-                                                      " (in 'skew_t_mixture', line 40, column 2 to line 42, column 3)",
-                                                      " (in 'skew_t_mixture', line 45, column 11 to column 12)",
-                                                      " (in 'skew_t_mixture', line 45, column 4 to column 24)",
-                                                      " (in 'skew_t_mixture', line 50, column 6 to column 34)",
-                                                      " (in 'skew_t_mixture', line 49, column 9 to line 51, column 3)",
-                                                      " (in 'skew_t_mixture', line 47, column 6 to column 25)",
-                                                      " (in 'skew_t_mixture', line 48, column 6 to column 34)",
-                                                      " (in 'skew_t_mixture', line 46, column 11 to line 49, column 3)",
-                                                      " (in 'skew_t_mixture', line 46, column 2 to line 51, column 3)",
-                                                      " (in 'skew_t_mixture', line 52, column 2 to column 22)",
-                                                      " (in 'skew_t_mixture', line 53, column 2 to column 22)",
-                                                      " (in 'skew_t_mixture', line 57, column 4 to column 29)",
-                                                      " (in 'skew_t_mixture', line 58, column 4 to column 47)",
-                                                      " (in 'skew_t_mixture', line 56, column 9 to line 59, column 3)",
-                                                      " (in 'skew_t_mixture', line 55, column 4 to column 41)",
-                                                      " (in 'skew_t_mixture', line 54, column 10 to line 56, column 3)",
-                                                      " (in 'skew_t_mixture', line 54, column 2 to line 59, column 3)",
-                                                      " (in 'skew_t_mixture', line 60, column 4 to column 27)",
-                                                      " (in 'skew_t_mixture', line 61, column 2 to column 21)",
-                                                      " (in 'skew_t_mixture', line 63, column 11 to column 12)",
-                                                      " (in 'skew_t_mixture', line 63, column 4 to column 30)",
-                                                      " (in 'skew_t_mixture', line 65, column 6 to column 66)",
-                                                      " (in 'skew_t_mixture', line 64, column 19 to line 66, column 5)",
-                                                      " (in 'skew_t_mixture', line 64, column 4 to line 66, column 5)",
-                                                      " (in 'skew_t_mixture', line 67, column 4 to column 31)",
-                                                      " (in 'skew_t_mixture', line 62, column 17 to line 68, column 3)",
-                                                      " (in 'skew_t_mixture', line 62, column 2 to line 68, column 3)",
-                                                      " (in 'skew_t_mixture', line 12, column 2 to column 17)",
+                                                      " (in 'skew_t_mixture', line 34, column 2 to column 13)",
+                                                      " (in 'skew_t_mixture', line 35, column 2 to column 40)",
+                                                      " (in 'skew_t_mixture', line 36, column 2 to column 37)",
+                                                      " (in 'skew_t_mixture', line 39, column 2 to column 27)",
+                                                      " (in 'skew_t_mixture', line 42, column 4 to column 32)",
+                                                      " (in 'skew_t_mixture', line 41, column 17 to line 43, column 3)",
+                                                      " (in 'skew_t_mixture', line 41, column 2 to line 43, column 3)",
+                                                      " (in 'skew_t_mixture', line 46, column 9 to column 10)",
+                                                      " (in 'skew_t_mixture', line 46, column 2 to column 22)",
+                                                      " (in 'skew_t_mixture', line 52, column 4 to column 32)",
+                                                      " (in 'skew_t_mixture', line 51, column 9 to line 53, column 3)",
+                                                      " (in 'skew_t_mixture', line 49, column 4 to column 23)",
+                                                      " (in 'skew_t_mixture', line 50, column 4 to column 32)",
+                                                      " (in 'skew_t_mixture', line 48, column 11 to line 51, column 3)",
+                                                      " (in 'skew_t_mixture', line 48, column 2 to line 53, column 3)",
+                                                      " (in 'skew_t_mixture', line 55, column 2 to column 22)",
+                                                      " (in 'skew_t_mixture', line 57, column 2 to column 22)",
+                                                      " (in 'skew_t_mixture', line 62, column 4 to column 29)",
+                                                      " (in 'skew_t_mixture', line 63, column 4 to column 47)",
+                                                      " (in 'skew_t_mixture', line 61, column 9 to line 64, column 3)",
+                                                      " (in 'skew_t_mixture', line 60, column 4 to column 41)",
+                                                      " (in 'skew_t_mixture', line 59, column 10 to line 61, column 3)",
+                                                      " (in 'skew_t_mixture', line 59, column 2 to line 64, column 3)",
+                                                      " (in 'skew_t_mixture', line 66, column 2 to column 25)",
+                                                      " (in 'skew_t_mixture', line 68, column 2 to column 21)",
+                                                      " (in 'skew_t_mixture', line 71, column 11 to column 12)",
+                                                      " (in 'skew_t_mixture', line 71, column 4 to column 30)",
+                                                      " (in 'skew_t_mixture', line 73, column 6 to column 66)",
+                                                      " (in 'skew_t_mixture', line 72, column 19 to line 74, column 5)",
+                                                      " (in 'skew_t_mixture', line 72, column 4 to line 74, column 5)",
+                                                      " (in 'skew_t_mixture', line 75, column 4 to column 31)",
+                                                      " (in 'skew_t_mixture', line 70, column 17 to line 76, column 3)",
+                                                      " (in 'skew_t_mixture', line 70, column 2 to line 76, column 3)",
                                                       " (in 'skew_t_mixture', line 13, column 2 to column 17)",
-                                                      " (in 'skew_t_mixture', line 14, column 9 to column 10)",
-                                                      " (in 'skew_t_mixture', line 14, column 2 to column 12)",
-                                                      " (in 'skew_t_mixture', line 15, column 2 to column 19)",
+                                                      " (in 'skew_t_mixture', line 14, column 2 to column 17)",
+                                                      " (in 'skew_t_mixture', line 15, column 9 to column 10)",
+                                                      " (in 'skew_t_mixture', line 15, column 2 to column 12)",
                                                       " (in 'skew_t_mixture', line 16, column 2 to column 19)",
                                                       " (in 'skew_t_mixture', line 17, column 2 to column 19)",
-                                                      " (in 'skew_t_mixture', line 18, column 2 to column 10)",
-                                                      " (in 'skew_t_mixture', line 19, column 2 to column 19)",
+                                                      " (in 'skew_t_mixture', line 18, column 2 to column 19)",
+                                                      " (in 'skew_t_mixture', line 19, column 2 to column 10)",
                                                       " (in 'skew_t_mixture', line 20, column 2 to column 19)",
                                                       " (in 'skew_t_mixture', line 21, column 2 to column 19)",
                                                       " (in 'skew_t_mixture', line 22, column 2 to column 19)",
-                                                      " (in 'skew_t_mixture', line 23, column 2 to column 10)",
+                                                      " (in 'skew_t_mixture', line 23, column 2 to column 19)",
                                                       " (in 'skew_t_mixture', line 24, column 2 to column 19)",
                                                       " (in 'skew_t_mixture', line 25, column 2 to column 19)",
-                                                      " (in 'skew_t_mixture', line 26, column 2 to column 19)",
-                                                      " (in 'skew_t_mixture', line 29, column 10 to column 11)",
+                                                      " (in 'skew_t_mixture', line 26, column 2 to column 10)",
+                                                      " (in 'skew_t_mixture', line 27, column 2 to column 19)",
                                                       " (in 'skew_t_mixture', line 30, column 10 to column 11)",
-                                                      " (in 'skew_t_mixture', line 31, column 18 to column 19)",
-                                                      " (in 'skew_t_mixture', line 32, column 10 to column 11)",
+                                                      " (in 'skew_t_mixture', line 31, column 10 to column 11)",
+                                                      " (in 'skew_t_mixture', line 32, column 18 to column 19)",
                                                       " (in 'skew_t_mixture', line 33, column 18 to column 19)",
-                                                      " (in 'skew_t_mixture', line 34, column 18 to column 32)",
+                                                      " (in 'skew_t_mixture', line 34, column 10 to column 11)",
                                                       " (in 'skew_t_mixture', line 35, column 18 to column 32)",
-                                                      " (in 'skew_t_mixture', line 38, column 18 to column 19)",
+                                                      " (in 'skew_t_mixture', line 36, column 18 to column 32)",
+                                                      " (in 'skew_t_mixture', line 39, column 18 to column 19)",
                                                       " (in 'skew_t_mixture', line 4, column 4 to column 30)",
                                                       " (in 'skew_t_mixture', line 5, column 4 to column 41)",
                                                       " (in 'skew_t_mixture', line 6, column 4 to column 48)",
                                                       " (in 'skew_t_mixture', line 7, column 4 to column 55)",
-                                                      " (in 'skew_t_mixture', line 8, column 4 to column 52)",
-                                                      " (in 'skew_t_mixture', line 3, column 66 to line 9, column 3)"};
+                                                      " (in 'skew_t_mixture', line 9, column 4 to column 52)",
+                                                      " (in 'skew_t_mixture', line 3, column 66 to line 10, column 3)"};
 template <bool propto__, typename T0__, typename T1__, typename T2__,
 typename T3__, typename T4__>
 stan::promote_args_t<T0__, T1__, T2__, T3__,
@@ -212,10 +212,10 @@ private:
   double c0;
   double g0;
   double G0;
-  double h0;
-  double H0;
   double n0;
   double N0;
+  double h0;
+  double H0;
   int alpha_1dim__;
   int C0_1dim__;
  
@@ -353,42 +353,42 @@ public:
       current_statement__ = 49;
       check_greater_or_equal(function__, "G0", G0, 0);
       current_statement__ = 50;
-      context__.validate_dims("data initialization","h0","double",
-          context__.to_vec());
-      h0 = std::numeric_limits<double>::quiet_NaN();
-      
-      current_statement__ = 50;
-      h0 = context__.vals_r("h0")[(1 - 1)];
-      current_statement__ = 51;
-      context__.validate_dims("data initialization","H0","double",
-          context__.to_vec());
-      H0 = std::numeric_limits<double>::quiet_NaN();
-      
-      current_statement__ = 51;
-      H0 = context__.vals_r("H0")[(1 - 1)];
-      current_statement__ = 51;
-      current_statement__ = 51;
-      check_greater_or_equal(function__, "H0", H0, 0);
-      current_statement__ = 52;
       context__.validate_dims("data initialization","n0","double",
           context__.to_vec());
       n0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 52;
+      current_statement__ = 50;
       n0 = context__.vals_r("n0")[(1 - 1)];
-      current_statement__ = 52;
-      current_statement__ = 52;
+      current_statement__ = 50;
+      current_statement__ = 50;
       check_greater_or_equal(function__, "n0", n0, 0);
-      current_statement__ = 53;
+      current_statement__ = 51;
       context__.validate_dims("data initialization","N0","double",
           context__.to_vec());
       N0 = std::numeric_limits<double>::quiet_NaN();
       
-      current_statement__ = 53;
+      current_statement__ = 51;
       N0 = context__.vals_r("N0")[(1 - 1)];
-      current_statement__ = 53;
-      current_statement__ = 53;
+      current_statement__ = 51;
+      current_statement__ = 51;
       check_greater_or_equal(function__, "N0", N0, 0);
+      current_statement__ = 52;
+      context__.validate_dims("data initialization","h0","double",
+          context__.to_vec());
+      h0 = std::numeric_limits<double>::quiet_NaN();
+      
+      current_statement__ = 52;
+      h0 = context__.vals_r("h0")[(1 - 1)];
+      current_statement__ = 53;
+      context__.validate_dims("data initialization","H0","double",
+          context__.to_vec());
+      H0 = std::numeric_limits<double>::quiet_NaN();
+      
+      current_statement__ = 53;
+      H0 = context__.vals_r("H0")[(1 - 1)];
+      current_statement__ = 53;
+      current_statement__ = 53;
+      check_greater_or_equal(function__, "H0", H0, 0);
       current_statement__ = 54;
       validate_positive_index("theta", "K", K);
       current_statement__ = 55;
@@ -396,9 +396,9 @@ public:
       current_statement__ = 56;
       validate_non_negative_index("sigmaSQ", "K", K);
       current_statement__ = 57;
-      validate_non_negative_index("xi", "K", K);
-      current_statement__ = 58;
       validate_non_negative_index("nu", "K", K);
+      current_statement__ = 58;
+      validate_non_negative_index("xi", "K", K);
       current_statement__ = 59;
       alpha_1dim__ = std::numeric_limits<int>::min();
       
@@ -509,34 +509,34 @@ public:
             stan::math::lb_constrain(sigmaSQ[(sym1__ - 1)], 0),
             "assigning variable sigmaSQ");
         }}
-      std::vector<local_scalar_t__> xi;
-      xi = std::vector<local_scalar_t__>(K, DUMMY_VAR__);
-      
-      current_statement__ = 4;
-      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        current_statement__ = 4;
-        assign(xi, cons_list(index_uni(sym1__), nil_index_list()),
-          in__.scalar(), "assigning variable xi");}
       Eigen::Matrix<local_scalar_t__, -1, 1> nu;
       nu = Eigen::Matrix<local_scalar_t__, -1, 1>(K);
       stan::math::fill(nu, DUMMY_VAR__);
       
-      current_statement__ = 5;
+      current_statement__ = 4;
       nu = in__.vector(K);
-      current_statement__ = 5;
+      current_statement__ = 4;
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        current_statement__ = 5;
+        current_statement__ = 4;
         if (jacobian__) {
-          current_statement__ = 5;
+          current_statement__ = 4;
           assign(nu, cons_list(index_uni(sym1__), nil_index_list()),
             stan::math::lb_constrain(nu[(sym1__ - 1)], 1, lp__),
             "assigning variable nu");
         } else {
-          current_statement__ = 5;
+          current_statement__ = 4;
           assign(nu, cons_list(index_uni(sym1__), nil_index_list()),
             stan::math::lb_constrain(nu[(sym1__ - 1)], 1),
             "assigning variable nu");
         }}
+      std::vector<local_scalar_t__> xi;
+      xi = std::vector<local_scalar_t__>(K, DUMMY_VAR__);
+      
+      current_statement__ = 5;
+      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
+        current_statement__ = 5;
+        assign(xi, cons_list(index_uni(sym1__), nil_index_list()),
+          in__.scalar(), "assigning variable xi");}
       Eigen::Matrix<local_scalar_t__, -1, 1> alpha;
       alpha = Eigen::Matrix<local_scalar_t__, -1, 1>(alpha_1dim__);
       stan::math::fill(alpha, DUMMY_VAR__);
@@ -712,26 +712,26 @@ public:
         assign(sigmaSQ, cons_list(index_uni(sym1__), nil_index_list()),
           stan::math::lb_constrain(sigmaSQ[(sym1__ - 1)], 0),
           "assigning variable sigmaSQ");}
-      std::vector<double> xi;
-      xi = std::vector<double>(K, std::numeric_limits<double>::quiet_NaN());
-      
-      current_statement__ = 4;
-      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        current_statement__ = 4;
-        assign(xi, cons_list(index_uni(sym1__), nil_index_list()),
-          in__.scalar(), "assigning variable xi");}
       Eigen::Matrix<double, -1, 1> nu;
       nu = Eigen::Matrix<double, -1, 1>(K);
       stan::math::fill(nu, std::numeric_limits<double>::quiet_NaN());
       
-      current_statement__ = 5;
+      current_statement__ = 4;
       nu = in__.vector(K);
-      current_statement__ = 5;
+      current_statement__ = 4;
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        current_statement__ = 5;
+        current_statement__ = 4;
         assign(nu, cons_list(index_uni(sym1__), nil_index_list()),
           stan::math::lb_constrain(nu[(sym1__ - 1)], 1),
           "assigning variable nu");}
+      std::vector<double> xi;
+      xi = std::vector<double>(K, std::numeric_limits<double>::quiet_NaN());
+      
+      current_statement__ = 5;
+      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
+        current_statement__ = 5;
+        assign(xi, cons_list(index_uni(sym1__), nil_index_list()),
+          in__.scalar(), "assigning variable xi");}
       Eigen::Matrix<double, -1, 1> alpha;
       alpha = Eigen::Matrix<double, -1, 1>(alpha_1dim__);
       stan::math::fill(alpha, std::numeric_limits<double>::quiet_NaN());
@@ -767,9 +767,9 @@ public:
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
         vars__.emplace_back(sigmaSQ[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        vars__.emplace_back(xi[(sym1__ - 1)]);}
-      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
         vars__.emplace_back(nu[(sym1__ - 1)]);}
+      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
+        vars__.emplace_back(xi[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= alpha_1dim__; ++sym1__) {
         vars__.emplace_back(alpha[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= C0_1dim__; ++sym1__) {
@@ -898,41 +898,41 @@ public:
           cons_list(index_uni(sym1__), nil_index_list()),
           stan::math::lb_free(sigmaSQ[(sym1__ - 1)], 0),
           "assigning variable sigmaSQ_free__");}
-      std::vector<double> xi;
-      xi = std::vector<double>(K, std::numeric_limits<double>::quiet_NaN());
-      
-      current_statement__ = 4;
-      assign(xi, nil_index_list(), context__.vals_r("xi"),
-        "assigning variable xi");
       Eigen::Matrix<double, -1, 1> nu;
       nu = Eigen::Matrix<double, -1, 1>(K);
       stan::math::fill(nu, std::numeric_limits<double>::quiet_NaN());
       
       {
         std::vector<local_scalar_t__> nu_flat__;
-        current_statement__ = 5;
+        current_statement__ = 4;
         assign(nu_flat__, nil_index_list(), context__.vals_r("nu"),
           "assigning variable nu_flat__");
-        current_statement__ = 5;
+        current_statement__ = 4;
         pos__ = 1;
-        current_statement__ = 5;
+        current_statement__ = 4;
         for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-          current_statement__ = 5;
+          current_statement__ = 4;
           assign(nu, cons_list(index_uni(sym1__), nil_index_list()),
             nu_flat__[(pos__ - 1)], "assigning variable nu");
-          current_statement__ = 5;
+          current_statement__ = 4;
           pos__ = (pos__ + 1);}
       }
       Eigen::Matrix<double, -1, 1> nu_free__;
       nu_free__ = Eigen::Matrix<double, -1, 1>(K);
       stan::math::fill(nu_free__, std::numeric_limits<double>::quiet_NaN());
       
-      current_statement__ = 5;
+      current_statement__ = 4;
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        current_statement__ = 5;
+        current_statement__ = 4;
         assign(nu_free__, cons_list(index_uni(sym1__), nil_index_list()),
           stan::math::lb_free(nu[(sym1__ - 1)], 1),
           "assigning variable nu_free__");}
+      std::vector<double> xi;
+      xi = std::vector<double>(K, std::numeric_limits<double>::quiet_NaN());
+      
+      current_statement__ = 5;
+      assign(xi, nil_index_list(), context__.vals_r("xi"),
+        "assigning variable xi");
       Eigen::Matrix<double, -1, 1> alpha;
       alpha = Eigen::Matrix<double, -1, 1>(alpha_1dim__);
       stan::math::fill(alpha, std::numeric_limits<double>::quiet_NaN());
@@ -998,9 +998,9 @@ public:
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
         vars__.emplace_back(sigmaSQ_free__[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
-        vars__.emplace_back(xi[(sym1__ - 1)]);}
-      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
         vars__.emplace_back(nu_free__[(sym1__ - 1)]);}
+      for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
+        vars__.emplace_back(xi[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= alpha_1dim__; ++sym1__) {
         vars__.emplace_back(alpha_free__[(sym1__ - 1)]);}
       for (int sym1__ = 1; sym1__ <= C0_1dim__; ++sym1__) {
@@ -1018,8 +1018,8 @@ public:
     names__.emplace_back("theta");
     names__.emplace_back("mu");
     names__.emplace_back("sigmaSQ");
-    names__.emplace_back("xi");
     names__.emplace_back("nu");
+    names__.emplace_back("xi");
     names__.emplace_back("alpha");
     names__.emplace_back("C0");
     names__.emplace_back("sigma");
@@ -1066,11 +1066,11 @@ public:
       }}
     for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
       {
-        param_names__.emplace_back(std::string() + "xi" + '.' + std::to_string(sym1__));
+        param_names__.emplace_back(std::string() + "nu" + '.' + std::to_string(sym1__));
       }}
     for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
       {
-        param_names__.emplace_back(std::string() + "nu" + '.' + std::to_string(sym1__));
+        param_names__.emplace_back(std::string() + "xi" + '.' + std::to_string(sym1__));
       }}
     for (int sym1__ = 1; sym1__ <= alpha_1dim__; ++sym1__) {
       {
@@ -1113,11 +1113,11 @@ public:
       }}
     for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
       {
-        param_names__.emplace_back(std::string() + "xi" + '.' + std::to_string(sym1__));
+        param_names__.emplace_back(std::string() + "nu" + '.' + std::to_string(sym1__));
       }}
     for (int sym1__ = 1; sym1__ <= K; ++sym1__) {
       {
-        param_names__.emplace_back(std::string() + "nu" + '.' + std::to_string(sym1__));
+        param_names__.emplace_back(std::string() + "xi" + '.' + std::to_string(sym1__));
       }}
     for (int sym1__ = 1; sym1__ <= alpha_1dim__; ++sym1__) {
       {
@@ -1142,13 +1142,13 @@ public:
     
   inline std::string get_constrained_sizedtypes() const {
     stringstream s__;
-    s__ << "[{\"name\":\"theta\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"sigmaSQ\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"xi\",\"type\":{\"name\":\"array\",\"length\":" << K << ",\"element_type\":{\"name\":\"real\"}},\"block\":\"parameters\"},{\"name\":\"nu\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"alpha\",\"type\":{\"name\":\"vector\",\"length\":" << alpha_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"C0\",\"type\":{\"name\":\"vector\",\"length\":" << C0_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"transformed_parameters\"}]";
+    s__ << "[{\"name\":\"theta\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"sigmaSQ\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"nu\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"xi\",\"type\":{\"name\":\"array\",\"length\":" << K << ",\"element_type\":{\"name\":\"real\"}},\"block\":\"parameters\"},{\"name\":\"alpha\",\"type\":{\"name\":\"vector\",\"length\":" << alpha_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"C0\",\"type\":{\"name\":\"vector\",\"length\":" << C0_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"transformed_parameters\"}]";
     return s__.str();
     } // get_constrained_sizedtypes() 
     
   inline std::string get_unconstrained_sizedtypes() const {
     stringstream s__;
-    s__ << "[{\"name\":\"theta\",\"type\":{\"name\":\"vector\",\"length\":" << (K - 1) << "},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"sigmaSQ\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"xi\",\"type\":{\"name\":\"array\",\"length\":" << K << ",\"element_type\":{\"name\":\"real\"}},\"block\":\"parameters\"},{\"name\":\"nu\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"alpha\",\"type\":{\"name\":\"vector\",\"length\":" << alpha_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"C0\",\"type\":{\"name\":\"vector\",\"length\":" << C0_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"transformed_parameters\"}]";
+    s__ << "[{\"name\":\"theta\",\"type\":{\"name\":\"vector\",\"length\":" << (K - 1) << "},\"block\":\"parameters\"},{\"name\":\"mu\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"sigmaSQ\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"nu\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"parameters\"},{\"name\":\"xi\",\"type\":{\"name\":\"array\",\"length\":" << K << ",\"element_type\":{\"name\":\"real\"}},\"block\":\"parameters\"},{\"name\":\"alpha\",\"type\":{\"name\":\"vector\",\"length\":" << alpha_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"C0\",\"type\":{\"name\":\"vector\",\"length\":" << C0_1dim__ << "},\"block\":\"parameters\"},{\"name\":\"sigma\",\"type\":{\"name\":\"vector\",\"length\":" << K << "},\"block\":\"transformed_parameters\"}]";
     return s__.str();
     } // get_unconstrained_sizedtypes() 
     

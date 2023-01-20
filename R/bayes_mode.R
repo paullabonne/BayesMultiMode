@@ -31,10 +31,11 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
               msg = "data should be a vector of length > 0")
   assert_that(dist_type %in% c("continuous", "discrete"),
               msg = "dist_type should be either continuous or discrete")
-  assert_that(dist %in% c("normal", "student", "skew_t", "poisson",
+  assert_that(dist %in% c("normal", "student", "skew_t", "poisson", "shifted_poisson_bis",
                           "skew_normal", "poisson", "shifted_poisson") & is.character(dist),
               msg = "Unsupported distribution. 
-              dist should be either normal, student, skew_normal, skew_t, poisson, shifted_poisson or NA")
+              dist should be either normal, student, skew_normal, skew_t, poisson,
+              shifted_poisson, shifted_poisson_bis or NA")
   
   if (dist_type == "continuous") {
     if (dist == "normal") {

@@ -77,11 +77,11 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
     
     mixture_uncertainty = matrix(NA, length(x_all), nrow(mcmc))
     
-    if(x$dist %in% c("poisson", "shifted_poisson")){
+    if(x$dist %in% c("poisson", "shifted_poisson", "shifted_poisson_bis")){
       theta = mcmc[, grep("theta", colnames(mcmc))]
       lambda = mcmc[, grep("lambda", colnames(mcmc))]
       
-      if (x$dist == "shifted_poisson") {
+      if (x$dist == "shifted_poisson_bis") {
         kappa = mcmc[, grep("kappa", colnames(mcmc))]
       } else {
         kappa = matrix(0,nrow(lambda), ncol(lambda))

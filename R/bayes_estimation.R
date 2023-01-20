@@ -79,11 +79,11 @@ bayes_estimation <- function(data,
   
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
-  assert_that(dist %in% c("normal", "student", "skew_t", 
-                          "skew_normal", "poisson",  "shifted_poisson") & is.character(dist),
+  assert_that(dist %in% c("normal", "student", "skew_t", "shifted_poisson_bis",
+                          "skew_normal", "poisson", "shifted_poisson") & is.character(dist),
               msg = "Unsupported distribution. 
               dist should be either normal, student,
-              skew_normal, skew_t, poisson, shifted_poisson or NA")
+              skew_normal, skew_t, poisson, shifted_poisson, shifted_poisson_bis or NA")
   assert_that(is.scalar(nb_iter) & nb_iter > 0, msg = "nb_iter should be a positive integer")
   assert_that(is.scalar(burnin) & burnin > 0 & burnin < nb_iter,
               msg = "nb_iter should be a positive integer lower than burnin")
@@ -124,7 +124,7 @@ bayes_estimation <- function(data,
     pars_names = c("theta", "lambda")
   }
   
-  if (dist == "shifted_poisson") {
+  if (dist %in% c("shifted_poisson", "shifted_poisson_bis")) {
     pars_names = c("theta", "kappa", "lambda")
   }
   
@@ -147,21 +147,21 @@ bayes_estimation <- function(data,
   if (dist %in% c("normal", "student", "skew_normal", "skew_t", "poisson", "shifted_poisson")) {
     fit <- sampling(stanmodels[[paste0(dist, "_mixture")]],  # Stan program
                     data = mixture_data,    # named list of data
-                    chains = chains,             # number of Markov chains
+                    chains = chains,        # number of Markov chains
                     warmup = burnin,        # number of warmup iterations per chain
                     iter = nb_iter,         # total number of iterations per chain
-                    cores = cores,              # number of cores (could use one per chain)
-                    refresh = refresh,           # no progress shown
+                    cores = cores,          # number of cores (could use one per chain)
+                    refresh = refresh,      # progress display
                     ...
     ) 
     
-    if (dist %in% c("poisson", "shifted_poisson")) {
+    if (dist %in% c("poisson", "shifted_poisson", "shifted_poisson_bis")) {
       dist_type = "discrete"
     } else {
       dist_type = "continuous"
     }
     
-  } else if (dist %in% c("shifted_poisson_s")) {
+  } else if (dist == "shifted_poisson_bis") {
     fit <- shift_pois_mcmc(y = data, K, nb_iter, burnin)
     pars_names = c("theta", "kappa", "lambda")
     dist_type = "discrete"

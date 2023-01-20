@@ -38,7 +38,7 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
   
   mcmc <- as_draws_matrix(fit)
   
-  if (dist == "shifted_poisson_s") {
+  if (dist == "shifted_poisson_bis") {
     mcmc_par <- attributes(mcmc)
     #Burn in
     mcmc = mcmc[(mcmc_par$warmup+1):nrow(mcmc), ]
@@ -139,7 +139,8 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
     } 
   }
   
-  if (dist %in% c("normal", "student", "skew_normal", "skew_t", "poisson", "shifted_poisson")) {
+  if (dist %in% c("normal", "student", "skew_normal", "skew_t",
+                  "poisson", "shifted_poisson", "shifted_poisson_bis")) {
     BayesMix$dist = dist
   } else {
     BayesMix$dist = "NA"

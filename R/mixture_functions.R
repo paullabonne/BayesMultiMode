@@ -183,7 +183,7 @@ dist_pdf <- function(x, dist, pars, pdf_func = NULL) {
                        alpha = pars[, "xi"], nu = pars[, "nu"])
     }
     
-    if (dist == "shifted_poisson") {
+    if (dist == "shifted_poisson_bis") {
       output = dpois(x - pars[, "kappa"], pars[, "lambda"])
     }
     
