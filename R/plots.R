@@ -3,11 +3,12 @@
 #' @param x ...
 #' @param max_size ...
 #' @param tol_p ...
-#' @param colour ...
 #' @param transparency ...
 #' @param ... ...
 #' 
 #' @importFrom posterior as_draws_matrix
+#' @importFrom posterior as_draws_df
+#' @importFrom scales hue_pal
 #' @importFrom ggpubr ggarrange
 #' @importFrom assertthat assert_that
 #' @importFrom dplyr tibble
@@ -23,7 +24,7 @@
 #' @export
 
 plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
-                              colour = "magenta", transparency = 0.1, ...) {
+                              transparency = 0.1, ...) {
   component <- value <- NULL
   
   assert_that(inherits(x, "BayesMixture"), msg = "input should be an object of class BayesMixture")
@@ -32,6 +33,8 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
   dist = x$dist
   y = x$data
   pars_names = x$pars_names
+  fit = as_draws_df(x$fit)
+  colour_range = hue_pal()(length(unique(fit$.chain)))
   
   if (x$dist_type == "continuous") {
     ## plot the data
@@ -41,25 +44,24 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
                      bins = 70)
     
     ## plot the mixture for each draw
-    for (i in sample(1:(min(nrow(mcmc), max_size)))) {
+    for (i in sample(nrow(mcmc),min(nrow(mcmc), max_size))) {
       mcmc_i = mcmc[i, ]
       pars = c()
-      for (i in 1:length(pars_names)) {
-        pars = cbind(pars, mcmc_i[grep(pars_names[i], colnames(mcmc_i))])
+      for (j in 1:length(pars_names)) {
+        pars = cbind(pars, mcmc_i[grep(pars_names[j], colnames(mcmc_i))])
       }
 
       colnames(pars) <- pars_names
       
       est_mode = rep(NA, nrow(pars))
       
-      pars = pars[pars[,1] > tol_p, ]
-
+      # pars = pars[pars[,1] > tol_p, ]
       g = g +
         geom_function(fun = dist_mixture,
                       args = list(dist = dist,
                                   pars = pars),
                       alpha = transparency,
-                      colour = colour)
+                      colour = colour_range[fit$.chain[i]])
     } 
   }
   
@@ -155,7 +157,6 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
 
 #' Plot modes
 #' @param x ...
-#' @param colour ...
 #' @param ... ...
 #' 
 #' @importFrom posterior as_draws_matrix
@@ -163,7 +164,7 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
 #' @import ggplot2
 #' 
 #' @export
-plot.BayesMode <- function(x, colour = "magenta", ...) {
+plot.BayesMode <- function(x, ...) {
   Pb <- value <- location_at_modes <- probs_modes <- unique_modes <- prob_nb_modes <- NULL
   
   stopifnot(inherits(x, "BayesMode"))

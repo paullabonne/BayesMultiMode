@@ -29,7 +29,6 @@
 #' @param refresh Show intemediate results. Default is nb_iter/10 so intermediate results are shown every 1000 iterations.
 #' @param ... Other arguments passed to `rstan::sampling`.
 #' 
-#' @importFrom rstan sampling
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.scalar
 
@@ -45,10 +44,10 @@ bayes_estimation <- function(data,
                              A0 = 10*K,
                              b0 = mean(data),
                              B0 = (max(data) - min(data))^2,
-                             c0 = 2.5,#2.5,
+                             c0 = 2.5,
                              e0 = 0,
                              g0 = 0.5,
-                             G0 = 100*2.5/0.5/(max(data) - min(data))^2,#0.5/(sd(y)^2/2),
+                             G0 = 100*g0/c0/B0,
                              #skew prior
                              h0 = 0,
                              H0 = 10,
@@ -144,31 +143,24 @@ bayes_estimation <- function(data,
     pars_names = c("theta", "mu", "sigma", "xi", "nu")
   }
   
-  if (dist %in% c("normal", "student", "skew_normal", "skew_t", "poisson", "shifted_poisson")) {
-    fit <- sampling(stanmodels[[paste0(dist, "_mixture")]],  # Stan program
-                    data = mixture_data,    # named list of data
-                    chains = chains,        # number of Markov chains
-                    warmup = burnin,        # number of warmup iterations per chain
-                    iter = nb_iter,         # total number of iterations per chain
-                    cores = cores,          # number of cores (could use one per chain)
-                    refresh = refresh,      # progress display
-                    ...
-    ) 
-    
-    if (dist %in% c("poisson", "shifted_poisson", "shifted_poisson_bis")) {
-      dist_type = "discrete"
-    } else {
-      dist_type = "continuous"
-    }
-    
-  } else if (dist == "shifted_poisson_bis") {
-    fit <- shift_pois_mcmc(y = data, K, nb_iter, burnin)
+  if (dist %in% c("normal")) {
+    fit = gibbs_SFM_normal(y = data,
+                           K,
+                           nb_iter)
+    pars_names = c("theta", "mu", "sigma")
+    dist_type = "continuous"
+  } else if (dist == "shifted_poisson") {
+    fit <- gibbs_SFM_sp(y = data, K, nb_iter)
     pars_names = c("theta", "kappa", "lambda")
     dist_type = "discrete"
     
   } else {
     stop("mixture distribution not supported")
   }
+  
+  
+  attr(fit, "K") = K
+  attr(fit, "warmup") = burnin
   
   BayesMixture = new_BayesMixture(fit, data, dist, dist_type = dist_type, pars_names = pars_names)
   

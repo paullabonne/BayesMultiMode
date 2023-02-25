@@ -27,7 +27,7 @@
 #' @importFrom stats density dgamma dpois rgamma rmultinom rnorm runif
 
 #' @keywords internal
-shift_pois_mcmc <- function(y, K, nb_iter, warmup, prt = TRUE){
+gibbs_SFM_sp <- function(y, K, nb_iter, prt = TRUE){
   # initialization 
   tmp <- runif(K)
   theta.init <- c(tmp[-K] / sum(tmp), rep(min(y),K), rep(1,K))
@@ -179,9 +179,6 @@ shift_pois_mcmc <- function(y, K, nb_iter, warmup, prt = TRUE){
   
   # Store output
   mcmc = cbind(sP, skap, slam, snj, se0)
-  
-  attr(mcmc, "K") = K
-  attr(mcmc, "warmup") = warmup
   
   # Return output   
   return(mcmc)

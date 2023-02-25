@@ -15,7 +15,7 @@ bayes_estimation(
   c0 = 2.5,
   e0 = 0,
   g0 = 0.5,
-  G0 = 100 * 2.5/0.5/(max(data) - min(data))^2,
+  G0 = 100 * g0/c0/B0,
   h0 = 0,
   H0 = 10,
   n0 = 2,

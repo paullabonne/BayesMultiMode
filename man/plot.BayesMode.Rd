@@ -4,12 +4,10 @@
 \alias{plot.BayesMode}
 \title{Plot modes}
 \usage{
-\method{plot}{BayesMode}(x, colour = "magenta", ...)
+\method{plot}{BayesMode}(x, ...)
 }
 \arguments{
 \item{x}{...}
-
-\item{colour}{...}
 
 \item{...}{...}
 }

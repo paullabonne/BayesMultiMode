@@ -64,17 +64,22 @@ plot(bayesmode, max_size = 200)
 ```{r, out.width = '70%', fig.align = "center"}
 # retrieve galaxy data
 y = galaxy
+N = 500
+y = c(rnorm(N, 0, 1), rnorm(N, 3, 0.5), rnorm(N, 10, 3))
 
 # estimation
 bayesmix = bayes_estimation(data = y,
-                            K = 4,
+                            K = 5,
                             dist = "normal",
-                            nb_iter = 2000,
-                            burnin = 1000,
-                            chains = 1,
-                            G0 = 0)
+                            nb_iter = 5000,
+                            burnin = 2500)
 
 # plot estimated mixture
+plot(bayesmix, max_size = 200)
+
+bayesmix$mcmc[is.na(bayesmix$mcmc)] = 0
+bayesplot::mcmc_trace(bayesmix$mcmc, pars = colnames(bayesmix$mcmc))
+# traceplots
 plot(bayesmix, max_size = 200)
 ```
 

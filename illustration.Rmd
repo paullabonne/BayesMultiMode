@@ -19,6 +19,33 @@ y = multimode::galaxyrg
 plot(density(y), type="l")
 ```
 
+```{r}
+out = gibbsSFM_normal(y,
+                5,
+                2000)
+
+for (i in 1:5){
+  plot(out[,i], type="l")
+}
+
+plot(out[,16], type = "l")
+```
+
+
+## Fish data
+```{r}
+data("fish", package = "bayesmix")
+y = unlist(fish)
+plot(density(y), type="l")
+```
+
+## Darwin data
+```{r}
+data("fish", package = "bayesmix")
+y = unlist(fish)
+plot(density(y), type="l")
+```
+
 ## Pen world data
 ```{r}
 library(dplyr)
@@ -60,9 +87,9 @@ df_pwt_10 = pwt10::pwt10.0 %>%
   group_by(country) %>%
   summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
 
-y = unlist(df_pwt_10$rgdpe[!is.na(df_pwt_10$rgdpe)])/1000
+y = unlist(df_pwt_70$rgdpe[!is.na(df_pwt_70$rgdpe)])/1000
 y = y
-hist(y, breaks = 200)
+hist(y, breaks = 100, xlim= c(0,0.5))
 ```
 
 ## Normal draws
@@ -122,44 +149,65 @@ lam1 = 1
 lam2 = 0.1
 length_data = 70
 y <- c(rpois(length_data*p1, lam1)+kap1, rpois(length_data*p2, lam2)+kap2)
+
+y = multimode::geyser
+
+y = y[1:70]
 hist(y)
 ```
 
 # Bayesian estimation
 ```{r, message =FALSE, warning=FALSE}
-K = 5
-dist = "shifted_poisson_bis"
+K = 10
+
+dist = "normal"
 
 bayesmix = bayes_estimation(data = y, K = K,
-                            dist = dist, chains = 1, nb_iter = 100)
+                            dist = dist, chains = 4, nb_iter = 2000,
+                            B0 = sd(y),
+                            # G0 = 0,
+                            e0 = 1,
+                            # e0_kappa = 0.00000001,
+                            # a0 = 1, A0 = 200,
+                            control = list(adapt_delta = 0.8))
 
-plot(bayesmix, max_size = 200, transparency = 0.1)
+plot(bayesmix, max_size = 500, transparency = 0.2)
+```
 
-# bayesplot::mcmc_trace(bayesmix$mcmc)
+# convergence
+```{r}
+# for (i in 1:length(wesanderson::wes_palettes)){
+#   scales::show_col(unlist(wesanderson::wes_palettes[i]))
+# }
+library(magrittr)
+model_var = bayesmix$pars_names
 
-# rstan::traceplot(bayesmode$fit)
-# mcmc_output = rstan::extract(fit, permuted = FALSE)[,1,]
-# round(apply(mcmc_output,2,mean),2)
+mcmc = posterior::as_draws_df(bayesmix$fit)
+mcmc %<>% dplyr::select(-tidyr::contains("sigmaSQ"))
+# mcmc[is.na(mcmc)] = 0
+theme_p <- ggplot2::theme_minimal()
+bayesplot::bayesplot_theme_set(theme_p)
+j=15
+col = c(wesanderson::wes_palettes[[j]], wesanderson::wes_palettes[[j]][2])
+bayesplot::color_scheme_set(scheme = col[1:6])
+for (par in model_var){
+ show(bayesplot::mcmc_trace(mcmc,
+                 pars = colnames(mcmc)[grep(par,colnames(mcmc))])) 
+}
 
-# print(fit, pars = colnames(as.matrix(fit)))
-# rstan::traceplot(fit, pars = colnames(as.matrix(fit)))
-# rstan::traceplot(fit, inc_warmup = TRUE, pars = colnames(as.matrix(fit)))
-# plot(fit)
-
-# posterior <- as.matrix(fit)
-# plot_title <- ggtitle("Posterior distributions",
-#                       "with medians and 80% intervals")
-# mcmc_areas(posterior,
-#            pars = colnames(posterior)[grep("theta", colnames(posterior))],
-#            prob = 0.8) + plot_title
-
-# traceplot(fit, pars = colnames(posterior)[1:K], inc_warmup = TRUE)
-# traceplot(fit, pars = colnames(posterior)[(K+1):(2*K)], inc_warmup = TRUE)
+mcmc %>%
+  tidyr::gather(-.chain, -.iteration, -.draw, key = "var", value = "value") %>%
+  dplyr::group_by(.chain, var) %>%
+  dplyr::summarise(rhat = posterior::rhat(value)) %>%
+  tidyr::spread(key = "var", value = "rhat") %>%
+  dplyr::select(lp__) %>%
+  dplyr::ungroup() %>%
+  dplyr::select(-.chain)
 ```
 
 # Mode estimation
 ```{r}
-modes = bayes_mode(bayesmix, rd=0)
+modes = bayes_mode(bayesmix, rd=1)
 plot(modes)
 ```
 

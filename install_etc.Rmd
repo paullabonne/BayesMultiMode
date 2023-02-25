@@ -18,20 +18,16 @@ library(BayesMultiMode)
 # inteRgrate::check_pkg("BayesMultiMode")
 ```
 
-## rstan
+## 
 ```{r}
-# https://cran.r-project.org/web/packages/rstantools/vignettes/minimal-rstan-package.html
 roxygen2::roxygenize()
-rstantools::rstan_config()
+devtools::document()
 
 devtools::test()
 
 devtools::install()
 
 devtools::check()
-
-# on windows
-# install.packages("example", lib="C:/Program Files/R/R-4.2.2/library")
 ```
 
 #### Loading all functions for testing before installing

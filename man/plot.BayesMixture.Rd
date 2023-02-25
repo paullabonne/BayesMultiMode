@@ -4,14 +4,7 @@
 \alias{plot.BayesMixture}
 \title{Plot mixture}
 \usage{
-\method{plot}{BayesMixture}(
-  x,
-  max_size = 200,
-  tol_p = 0.001,
-  colour = "magenta",
-  transparency = 0.1,
-  ...
-)
+\method{plot}{BayesMixture}(x, max_size = 200, tol_p = 0.001, transparency = 0.1, ...)
 }
 \arguments{
 \item{x}{...}
@@ -19,8 +12,6 @@
 \item{max_size}{...}
 
 \item{tol_p}{...}
-
-\item{colour}{...}
 
 \item{transparency}{...}
 
