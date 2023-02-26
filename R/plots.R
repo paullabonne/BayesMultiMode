@@ -50,7 +50,7 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
       for (j in 1:length(pars_names)) {
         pars = cbind(pars, mcmc_i[grep(pars_names[j], colnames(mcmc_i))])
       }
-
+      
       colnames(pars) <- pars_names
       
       est_mode = rep(NA, nrow(pars))
@@ -79,11 +79,11 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
     
     mixture_uncertainty = matrix(NA, length(x_all), nrow(mcmc))
     
-    if(x$dist %in% c("poisson", "shifted_poisson", "shifted_poisson_bis")){
+    if(x$dist %in% c("poisson", "shifted_poisson")){
       theta = mcmc[, grep("theta", colnames(mcmc))]
       lambda = mcmc[, grep("lambda", colnames(mcmc))]
       
-      if (x$dist == "shifted_poisson_bis") {
+      if (x$dist == "shifted_poisson") {
         kappa = mcmc[, grep("kappa", colnames(mcmc))]
       } else {
         kappa = matrix(0,nrow(lambda), ncol(lambda))
@@ -91,37 +91,13 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
       
       for (draw in sample(1:(min(nrow(mcmc), max_size)))) {
         ##
-        if (x$dist == "shifted_poisson") {
-          pars = c()
-          pars_names = c("theta", "lambda")
-          for (i in 1:length(pars_names)) {
-            pars = rbind(pars, mcmc[draw, grep(pars_names[i], colnames(mcmc))])
+        
+        pdf = matrix(0, nrow=length(x_all),ncol=ncol(theta))
+        for(j in 1:ncol(theta)){
+          if(!is.na(theta[draw,j])){
+            pdf[,j] = dpois((x_all-kappa[draw, j, drop = T]), lambda[draw, j, drop = T]) * theta[draw, j, drop = T]
           }
-          
-          pars = t(pars)
-          colnames(pars) <- pars_names
-          
-          Khat = ncol(theta)
-          kappa = matrix(mcmc[draw, grep("kappa", colnames(mcmc))],
-                         length(mcmc[draw, grep("kappa", colnames(mcmc))])/Khat, Khat, byrow = T)
-          
-          ### Getting individual component densities
-          pdf = matrix(0, nrow=length(x_all), ncol=Khat)
-          for(k in 1:nrow(pars)){
-            pdf_k = rep(0,length(x_all))
-            for (i in 0:max(y)) {
-              pdf_k = pdf_k + kappa[i+1,k] * dist_pdf(x_all - i, dist = "poisson", pars[k, -1, drop = F], pdf_func=NULL)
-            }
-            pdf[,k] = pars[k,1]*pdf_k
-          } 
-        } else {
-          pdf = matrix(0, nrow=length(x_all),ncol=ncol(theta))
-          for(j in 1:ncol(theta)){
-            if(!is.na(theta[draw,j])){
-              pdf[,j] = dpois((x_all-kappa[draw, j, drop = T]), lambda[draw, j, drop = T]) * theta[draw, j, drop = T]
-            }
-          } 
-        }
+        } 
         
         # summing up to get the mixture
         mixture_uncertainty[,draw] <- rowSums(pdf)
@@ -192,7 +168,7 @@ plot.BayesMode <- function(x, ...) {
     ggtitle("Mode locations") +
     xlab("") + ylab("Posterior probability") +
     geom_bar(stat="identity")
-
+  
   if (x$dist_type == "continuous") {
     g1 = g1 + ylim(0, max(df_g1$probs_modes))
   } else {

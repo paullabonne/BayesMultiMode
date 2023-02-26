@@ -83,7 +83,6 @@ fn.sub.mixpois <- function(mcmc, y, which.r, pars_names, tol_p, dist, pdf_func =
   if (dist %in% c("shifted_poisson")) {
     assert_that(length(pars_names) == 3,
                 msg = paste0("the number of elements in pars_names does not match with dist; ", fail))
-    pars_names = pars_names[!pars_names=="kappa"]
   }
   if (dist %in% c("poisson")) {
     assert_that(length(pars_names) == 2,
@@ -101,33 +100,16 @@ fn.sub.mixpois <- function(mcmc, y, which.r, pars_names, tol_p, dist, pdf_func =
   
   # mcmc = mcmc[!is.na(mcmc)]
   Khat = nrow(pars)
-  keep = which(pars[,1] > tol_p)
   
-  pars = pars[keep, , drop = F]
+  # keep = which(pars[,1] > tol_p)
+  # pars = pars[keep, , drop = F]
   
-  if (dist == "shifted_poisson") {
-    kappa = matrix(mcmc[grep("kappa", names(mcmc))],
-                   length(mcmc[grep("kappa", names(mcmc))])/Khat, Khat, byrow = T)
-    kappa = kappa[ ,keep, drop = F]
-    kappa[abs(kappa) < tol_p] = 0
-    
-    ### Getting individual component densities
-    pdf = matrix(0, nrow=length(y), ncol=Khat)
-    for(k in 1:nrow(pars)){
-      pdf_k = rep(0,length(y))
-      for (i in 0:max(y)) {
-        pdf_k = pdf_k + kappa[i+1,k] * dist_pdf(y - i, dist = "poisson", pars[k, -1, drop = F], pdf_func)
-      }
-      pdf[,k] = pars[k,1]*pdf_k
-    }
-  } else {
-    ### Getting individual component densities
-    pdf = matrix(0, nrow=length(y), ncol=Khat) 
-    for(k in 1:nrow(pars)){
-      pdf[,k] = pars[k,1] * dist_pdf(y, dist, pars[k, -1, drop = F], pdf_func)
-    }
+  ### Getting individual component densities
+  pdf = matrix(0, nrow=length(y), ncol=Khat) 
+  for(k in 1:nrow(pars)){
+    pdf[,k] = pars[k,1] * dist_pdf(y, dist, pars[k, -1, drop = F], pdf_func)
   }
-
+  
   ### summing up to get the mixture
   py <- rowSums(pdf, na.rm = T)
   

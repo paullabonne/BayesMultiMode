@@ -119,18 +119,6 @@ bayes_estimation <- function(data,
                        d0 = d0,
                        D0 = D0)
   
-  if (dist == "poisson") {
-    pars_names = c("theta", "lambda")
-  }
-  
-  if (dist %in% c("shifted_poisson", "shifted_poisson_bis")) {
-    pars_names = c("theta", "kappa", "lambda")
-  }
-  
-  if (dist == "normal") {
-    pars_names = c("theta", "mu", "sigma")
-  }
-  
   if (dist == "skew_normal") {
     pars_names = c("theta", "mu", "sigma", "xi")
   }

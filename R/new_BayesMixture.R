@@ -140,7 +140,7 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
   }
   
   if (dist %in% c("normal", "student", "skew_normal", "skew_t",
-                  "poisson", "shifted_poisson", "shifted_poisson_bis")) {
+                  "poisson", "shifted_poisson")) {
     BayesMix$dist = dist
   } else {
     BayesMix$dist = "NA"
