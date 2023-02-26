@@ -3,3 +3,4 @@
 .RData
 .Ruserdata
 ^SNB.Rmd
+.DS_Store
