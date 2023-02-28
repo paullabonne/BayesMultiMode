@@ -15,7 +15,7 @@
 #' @importFrom stringr str_remove
 #' @export
 
-fixed_point <- function(mcmc, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot = FALSE) {
+fixed_point <- function(mcmc, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot = F) {
   
   ## input checks
   fail = "inputs to the fixed point algorithm are corrupted"
@@ -48,14 +48,15 @@ fixed_point <- function(mcmc, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot
   iter = 0
   
   for (i in 1:length(mu)) {
+    
     x = mu[i]
     delta = 1
     
-    while (delta > 1e-20) {
+    while (delta > 1e-8) {
       iter = iter + 1
       x1 = f_fp(x, p, mu, sigma)
-      x = x1
       delta = abs(x - x1)
+      x = x1
     }
     
     ## check that the mode is not too close to other modes
@@ -87,9 +88,9 @@ fixed_point <- function(mcmc, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot
 #' @keywords internal
 f_fp <- function(x, p, mu, sigma) {
   pmx = dnorm(x, mu, sigma) * p
-  pmx = pmx / sum(pmx)
-  
-  f = 1 / sum(pmx / sigma ^ 2) * sum(pmx / sigma ^ 2 * mu)
+  pmx = pmx/sum(pmx)
+
+  f = 1/sum(pmx/sigma^2) * sum(pmx/sigma^2*mu)
   
   return(f)
 }

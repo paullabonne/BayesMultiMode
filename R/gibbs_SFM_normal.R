@@ -44,7 +44,6 @@ gibbs_SFM_normal <- function(y,
   }
   
   mu[1,] <- cbind(t(cl_y$centers))
-  eta[1,] = rep(1/K, K)
 
   C0 = g0 #not sure
   cnt_update_e0 = 0 # counter for MH step update of concentration parameter

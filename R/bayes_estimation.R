@@ -24,9 +24,6 @@
 #' @param D0 ...
 #' @param nb_iter Number of MCMC iterations. Default is 2000.
 #' @param burnin Number of MCMC iterations used as burnin.
-#' @param chains Number of chains.
-#' @param cores Number of cores for parallel computation.
-#' @param refresh Show intemediate results. Default is nb_iter/10 so intermediate results are shown every 1000 iterations.
 #' @param ... Other arguments passed to `rstan::sampling`.
 #' 
 #' @importFrom assertthat assert_that
@@ -64,17 +61,11 @@ bayes_estimation <- function(data,
                              # mcmc stan pars
                              nb_iter = 2000,
                              burnin = nb_iter/2,
-                             chains = 4,
-                             cores = 4,
-                             refresh = nb_iter/10,
                              ...
 ) {
   K = round(K)
   nb_iter = round(nb_iter)
   burnin = round(burnin)
-  refresh = round(refresh)
-  cores = round(cores)
-  chains = round(chains)
   
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
@@ -86,9 +77,6 @@ bayes_estimation <- function(data,
   assert_that(is.scalar(nb_iter) & nb_iter > 0, msg = "nb_iter should be a positive integer")
   assert_that(is.scalar(burnin) & burnin > 0 & burnin < nb_iter,
               msg = "nb_iter should be a positive integer lower than burnin")
-  assert_that(is.scalar(chains) & chains > 0, msg = "chains should be a positive integer")
-  assert_that(is.scalar(cores) & cores > 0, msg = "cores should be a positive integer")
-  assert_that(is.scalar(refresh) & refresh > 0, msg = "refresh should be a positive integer")
   assert_that(is.scalar(K) & K > 0, msg = "K should be a positive integer")
   
   assert_that(is.scalar(A0) & A0 > 0, msg = "A0 should be positive")

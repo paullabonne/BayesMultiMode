@@ -12,7 +12,8 @@
 #' 
 #' @export
 
-bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)/10) {
+bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)/10, show_plot = F, nb_iter = NA) {
+  
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   assert_that(is.scalar(rd) & rd >= 0, msg = "rd should be greater or equal than zero")
   assert_that(is.vector(tol_p) & tol_p > 0, msg = "tol_p should be a positive scalar")
@@ -24,6 +25,10 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
   dist_type = BayesMix$dist_type
   pdf_func = BayesMix$pdf_func
   pars_names = BayesMix$pars_names
+  
+  if (!is.na(nb_iter) & nb_iter < nrow(mcmc)) {
+    mcmc = mcmc[sample(1:nrow(mcmc), nb_iter), ]
+  }
     
   assert_that(inherits(BayesMix$mcmc, "draws_matrix"),
               msg = "mcmc in BayesMix is not of type draws_matrix")
@@ -40,11 +45,11 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
   if (dist_type == "continuous") {
     if (dist == "normal") {
       # fixed point
-      modes = t(apply(mcmc, 1, fixed_point, data = data, tol_x = tol_x, tol_p = tol_p))
+      modes = t(apply(mcmc, 1, fixed_point, data = data, tol_x = tol_x, tol_p = tol_p, show_plot = show_plot))
     } else {
       # MEM algorithm
       modes = t(apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, 
-                    pdf_func = pdf_func, tol_x = tol_x, tol_p = tol_p, show_plot=F))
+                    pdf_func = pdf_func, tol_x = tol_x, tol_p = tol_p, show_plot = show_plot))
     }
 
     ### Posterior probability of being a mode for each location
