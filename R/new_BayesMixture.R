@@ -103,7 +103,7 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
       assert_that(sum(names_mcmc %in% pars_names)==4,
                   msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
     }
-    if (dist == "skew_normal" & sum(c("theta", "mu", "sigma", "xi") %in% names_mcmc)<4){
+    if (dist == "skew_normal" & sum(c("theta", "xi", "omega", "alpha") %in% names_mcmc)<4){
       change = TRUE
       
       assert_that(!is.null(names(pars_names)),

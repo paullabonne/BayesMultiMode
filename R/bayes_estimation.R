@@ -95,7 +95,9 @@ bayes_estimation <- function(data,
   assert_that(is.scalar(B0) & B0 > 0, msg = "B0 should be a positive integer")
   assert_that(is.scalar(H0) & H0 > 0, msg = "H0 should be a positive integer")
   assert_that(is.scalar(N0) & N0 > 0, msg = "N0 should be a positive integer")
-  assert_that(is.scalar(L0) & L0 > 0, msg = "L0 should be a positive integer")
+  if(dist == "poisson"){
+    assert_that(is.scalar(L0) & L0 > 0, msg = "L0 should be a positive integer")
+  }
   assert_that(is.scalar(D0) & D0 > 0, msg = "D0 should be a positive integer")
   
   mixture_data <- list(K = K,
@@ -119,10 +121,6 @@ bayes_estimation <- function(data,
                        d0 = d0,
                        D0 = D0)
   
-  if (dist == "skew_normal") {
-    pars_names = c("theta", "mu", "sigma", "xi")
-  }
-  
   if (dist == "student") {
     pars_names = c("theta", "mu", "sigma", "nu")
   }
@@ -132,12 +130,21 @@ bayes_estimation <- function(data,
   }
   
   if (dist %in% c("normal")) {
+    
     fit = gibbs_SFM_normal(y = data,
                            K,
                            nb_iter)
     pars_names = c("theta", "mu", "sigma")
     dist_type = "continuous"
-  } else if (dist == "shifted_poisson") {
+    
+  } else if (dist == "skew_normal") {
+    
+    fit <- gibbs_SFM_skew_n(y = data, K, nb_iter)
+    pars_names = c("theta", "xi", "omega", "alpha")
+    dist_type = "continuous"
+    
+  }else if (dist == "shifted_poisson") {
+    
     fit <- gibbs_SFM_sp(y = data, K, nb_iter)
     pars_names = c("theta", "kappa", "lambda")
     dist_type = "discrete"

@@ -56,6 +56,7 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
       est_mode = rep(NA, nrow(pars))
       
       # pars = pars[pars[,1] > tol_p, ]
+      
       g = g +
         geom_function(fun = dist_mixture,
                       args = list(dist = dist,

@@ -24,7 +24,7 @@ gibbs_SFM_normal <- function(y,
                             b0 = median(y),
                             B0 = (max(y) - min(y))^2,
                             c0 = 2.5,
-                            e0 = 0.01,
+                            e0 = a0*A0,
                             g0 = 0.5,
                             G0 = 100*g0/c0/B0,
                             prt = TRUE){
@@ -37,13 +37,16 @@ gibbs_SFM_normal <- function(y,
   
   # initialisation
   cl_y <- kmeans(y, centers = K, nstart = 30)
-  # S <- rbind(tabulate(cl_y$cluster),
-  #            matrix(0,length(y)-1,K))
+  
+  S <- matrix(0,length(y),K)
+  for (k in 1:K) {
+    S[cl_y$cluster==k ,k] = 1
+  }
+  
   mu[1,] <- cbind(t(cl_y$centers))
   eta[1,] = rep(1/K, K)
-  S = t(rmultinom(n = length(y),size=1,prob=eta[1,])) # component indicaton
+
   C0 = g0 #not sure
-  alpha0 = rep(a0*A0, K)
   cnt_update_e0 = 0 # counter for MH step update of concentration parameter
   
   # sampling
@@ -59,7 +62,6 @@ gibbs_SFM_normal <- function(y,
     for (k in 1:K){
       
       ## b. sample sigma
-      v = y[S[, k]==1] - mu[m-1, k]
       ck = c0 + N[k]/2
       Ck = C0 + 0.5*sum((y[S[, k]==1]-mu[m-1, k])^2)
       sigma2[m, k] = 1/rgamma(1, ck, Ck)
@@ -76,26 +78,25 @@ gibbs_SFM_normal <- function(y,
       
       # 2. classification
       probs[, k] = eta[m, k] * dnorm(y, mu[m, k], sqrt(sigma2[m, k]))
-      # S = apply(probs, 1, function(x) sample(1:K, 1, prob = x))
     }
     
-    pnorm = probs#/rowSums(probs) #removed the replicate
-    for (jj in 1:length(y)){
-      S[jj,] = t(rmultinom(n = 1,size=1,prob=pnorm[jj,])) # component indicator
-    }
+    # 2. classification
+    pnorm = probs/rowSums(probs) #removed the replicate
+    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
     
     # 3. sample hyperparameters
     
     ## a. sample C0
     C0 = rgamma(1, g0 + K*c0, G0 + sum(1/sigma2[m, ]))
-    ## b. MH step for e0
+    
+    ## MH step for e0
     ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
     MH_step = draw_e0(e0[1],a0,A0,eta[m, ])
     alpha0 = as.numeric(MH_step[1])
     ind_update_e0 = as.numeric(MH_step[2])
     e0 = alpha0*matrix(data=1,nrow=1,ncol=K) # probabilities
     cnt_update_e0 = cnt_update_e0 + ind_update_e0
-    
+  
     ## c. sample lambda, the penalty parameter for b0 / skip for now
     
     ## d. sample b0 / skip for now

@@ -31,14 +31,18 @@ normal_mix <- function(x, p, mu, sigma) {
 }
 
 # Mixture of skew normals
-skew_norm_mix <- function(x, p, mu, sigma, xi) {
+skew_norm_mix <- function(x, p, xi, omega, alpha) {
   mixture = 0
   
   for (i in 1:length(p)) {
     mixture = mixture + p[i] * dsn(x,
-                                   xi = mu[i],
-                                   omega = sigma[i],
-                                   alpha = xi[i])
+                                   xi[i],
+                                   omega[i],
+                                   alpha[i])
+    # mixture = mixture + p[i] * SN_bis(x,
+    #                                   xi[i],
+    #                                   omega[i],
+    #                                   alpha[i])
   }
   
   return(mixture)
@@ -138,7 +142,7 @@ dist_mixture <- function(x, dist, pars, pdf_func = NULL) {
     }
     
     if (dist == "skew_normal") {
-      output = skew_norm_mix(x, pars[, "theta"], pars[, "mu"], pars[, "sigma"], pars[, "xi"])
+      output = skew_norm_mix(x, pars[, "theta"], pars[, "xi"], pars[, "omega"], pars[, "alpha"])
     }
     
     if (dist == "skew_t") {
@@ -175,7 +179,8 @@ dist_pdf <- function(x, dist, pars, pdf_func = NULL) {
     }
     
     if (dist == "skew_normal") {
-      output = dsn(x, pars[, "mu"], pars[, "sigma"], pars[, "xi"])
+      output = dsn(x, pars[, "xi"], pars[, "omega"], pars[, "alpha"])
+      # output = SN_bis(x, pars[, "xi"], pars[, "omega"], pars[, "alpha"])
     }
     
     if (dist == "skew_t") {
