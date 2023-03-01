@@ -63,11 +63,11 @@ plot(bayesmode, max_size = 200)
 #### Estimation
 ```{r, out.width = '70%', fig.align = "center"}
 # simulate
-# N = 500
-# Xi = c(0,4)
-# Omega = c(2,2)
-# Alpha = c(-50,0)
-# y = c(sn::rsn(N*0.7, Xi[1], Omega[1],Alpha[1]), sn::rsn(N*0.3, Xi[2], Omega[2],Alpha[2]))
+N = 200
+Xi = c(0,4)
+Omega = c(2,2)
+Alpha = c(-50,0)
+y = c(sn::rsn(N*0.7, Xi[1], Omega[1],Alpha[1]), sn::rsn(N*0.3, Xi[2], Omega[2],Alpha[2]))
 
 # retrieve galaxy data
 # y = galaxy
@@ -76,7 +76,7 @@ plot(bayesmode, max_size = 200)
 hist(y, breaks = 30)
 
 bayesmix = bayes_estimation(data = y,
-                            K = 5,
+                            K = 4,
                             dist = "skew_normal",
                             nb_iter = 10000,
                             burnin = 5000)
@@ -95,7 +95,7 @@ bayesplot::mcmc_trace(bayesmix$mcmc, pars = colnames(bayesmix$mcmc))
 bayesmode = bayes_mode(bayesmix)
 bayes_mode(bayesmix, nb_iter = 10, show_plot = TRUE)
 # Plot 
-plot(bayesmode, max_size = 200)
+plot(bayesmode, max_size = 200,)
 ```
 
 ### References

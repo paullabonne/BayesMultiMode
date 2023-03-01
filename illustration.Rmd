@@ -41,8 +41,8 @@ plot(density(y), type="l")
 
 ## Darwin data
 ```{r}
-data("fish", package = "bayesmix")
-y = unlist(fish)
+data("darwin", package = "bayesmix")
+y = unlist(darwin)
 plot(density(y), type="l")
 ```
 
@@ -87,9 +87,9 @@ df_pwt_10 = pwt10::pwt10.0 %>%
   group_by(country) %>%
   summarise(rgdpe = as.numeric(mean(rgdpe, na.rm=T)/1000))
 
-y = unlist(df_pwt_70$rgdpe[!is.na(df_pwt_70$rgdpe)])/1000
+y = unlist(df_pwt_90$rgdpe[!is.na(df_pwt_90$rgdpe)])
 y = y
-hist(y, breaks = 100, xlim= c(0,0.5))
+hist(y, breaks = 100)
 ```
 
 ## Normal draws
@@ -158,18 +158,13 @@ hist(y)
 
 # Bayesian estimation
 ```{r, message =FALSE, warning=FALSE}
-K = 10
-
+K = 2
+# y = y/1000
 dist = "normal"
-
+hist(y)
 bayesmix = bayes_estimation(data = y, K = K,
-                            dist = dist, chains = 4, nb_iter = 2000,
-                            B0 = sd(y),
-                            # G0 = 0,
-                            e0 = 1,
-                            # e0_kappa = 0.00000001,
-                            # a0 = 1, A0 = 200,
-                            control = list(adapt_delta = 0.8))
+                            dist = dist,
+                            nb_iter = 2000)
 
 plot(bayesmix, max_size = 500, transparency = 0.2)
 ```

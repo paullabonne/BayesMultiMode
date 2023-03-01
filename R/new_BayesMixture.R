@@ -125,7 +125,7 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
     }
     
     # keep only relevant variables
-    mcmc = subset_draws(mcmc, variable = c(pars_names, "loglik"))
+    mcmc = subset_draws(mcmc, variable = pars_names)
     
     # change the parameter names in mcmc using pars_names
     if (change) {
