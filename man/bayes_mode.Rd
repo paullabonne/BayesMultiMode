@@ -4,7 +4,14 @@
 \alias{bayes_mode}
 \title{Bayesian estimation of mixture distributions}
 \usage{
-bayes_mode(BayesMix, rd = 1, tol_p = 0.001, tol_x = sd(BayesMix$data)/10)
+bayes_mode(
+  BayesMix,
+  rd = 1,
+  tol_p = 0.001,
+  tol_x = sd(BayesMix$data)/10,
+  show_plot = F,
+  nb_iter = NA
+)
 }
 \arguments{
 \item{BayesMix}{object of class `BayesMixture`.}

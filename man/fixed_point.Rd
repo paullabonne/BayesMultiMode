@@ -5,7 +5,7 @@
 \title{Fixed-point algorithm for finding the modes of a gaussian mixture.
 See Carreira-Perpinan (2000), section 4 equation (10) https://doi.org/10.1109/34.888716.}
 \usage{
-fixed_point(mcmc, data, tol_p = 0.001, tol_x = sd(data)/10, show_plot = FALSE)
+fixed_point(mcmc, data, tol_p = 0.001, tol_x = sd(data)/10, show_plot = F)
 }
 \arguments{
 \item{mcmc}{A vector of estimated mixture parameters.}

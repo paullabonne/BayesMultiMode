@@ -27,9 +27,6 @@ bayes_estimation(
   D0 = 10 * (max(data) - min(data)),
   nb_iter = 2000,
   burnin = nb_iter/2,
-  chains = 4,
-  cores = 4,
-  refresh = nb_iter/10,
   ...
 )
 }
@@ -79,12 +76,6 @@ Default is 1e-20}
 \item{nb_iter}{Number of MCMC iterations. Default is 2000.}
 
 \item{burnin}{Number of MCMC iterations used as burnin.}
-
-\item{chains}{Number of chains.}
-
-\item{cores}{Number of cores for parallel computation.}
-
-\item{refresh}{Show intemediate results. Default is nb_iter/10 so intermediate results are shown every 1000 iterations.}
 
 \item{...}{Other arguments passed to `rstan::sampling`.}
 }

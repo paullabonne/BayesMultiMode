@@ -133,10 +133,7 @@ gibbs_SFM_skew_n <- function(y,
     
     ## SFM: MH step for e0
     ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
-    MH_step = draw_e0(e0,a0,A0,eta[m, ])
-    e0 = MH_step[[1]]
-    ind_update_e0 = MH_step[[2]]
-    cnt_update_e0 = cnt_update_e0 + ind_update_e0
+    e0 = draw_e0(e0,a0,A0,eta[m, ])[[1]]
 
     # compute log lik
     lp[m] = sum(probs)
@@ -144,8 +141,7 @@ gibbs_SFM_skew_n <- function(y,
     ## counter
     if(prt){
       if(m %% (round(nb_iter / 10)) == 0){
-        naccept_e0 = 100*cnt_update_e0/m
-        cat(paste(100 * m / nb_iter, ' % draws finished. Accept. prob of e0 =', round(naccept_e0), 'percent'), fill=TRUE)
+        cat(paste(100 * m / nb_iter, ' % draws finished'), fill=TRUE)
       }
     }
   }
@@ -175,9 +171,4 @@ tr_normal <- function(N,mu,sigma2){
   }
   
   return(rd_sample[1:N])
-}
-
-#' @keywords snbis
-SN_bis <- function(y,xi,omega,alpha){
-  2*dnorm(y-xi,sd=sqrt(omega))*pnorm(alpha/sqrt(omega)*(y-xi))
 }

@@ -33,9 +33,7 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
   dist = x$dist
   y = x$data
   pars_names = x$pars_names
-  fit = as_draws_df(x$fit)
-  colour_range = hue_pal()(length(unique(fit$.chain)))
-  
+
   if (x$dist_type == "continuous") {
     ## plot the data
     g = ggplot(data.frame(y = y), aes(y)) +
@@ -61,8 +59,7 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
         geom_function(fun = dist_mixture,
                       args = list(dist = dist,
                                   pars = pars),
-                      alpha = transparency,
-                      colour = colour_range[fit$.chain[i]])
+                      alpha = transparency)
     } 
   }
   

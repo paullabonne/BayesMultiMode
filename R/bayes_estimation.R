@@ -88,38 +88,9 @@ bayes_estimation <- function(data,
   }
   assert_that(is.scalar(D0) & D0 > 0, msg = "D0 should be a positive integer")
   
-  mixture_data <- list(K = K,
-                       N = length(data),
-                       y = data,
-                       a0 = a0,
-                       A0 = A0,
-                       b0 = b0,
-                       B0 = B0,
-                       c0 = c0,
-                       e0 = e0,
-                       g0 = g0,
-                       G0 = G0,
-                       h0 = h0,
-                       H0 = H0,
-                       n0 = n0,
-                       N0 = N0,
-                       l0 = l0,
-                       L0 = L0,
-                       e0_kappa = e0_kappa,
-                       d0 = d0,
-                       D0 = D0)
-  
-  if (dist == "student") {
-    pars_names = c("theta", "mu", "sigma", "nu")
-  }
-  
-  if (dist == "skew_t") {
-    pars_names = c("theta", "mu", "sigma", "xi", "nu")
-  }
-  
   if (dist %in% c("normal")) {
     
-    fit = gibbs_SFM_normal(y = data,
+    mcmc = gibbs_SFM_normal(y = data,
                            K,
                            nb_iter)
     pars_names = c("theta", "mu", "sigma")
@@ -127,13 +98,19 @@ bayes_estimation <- function(data,
     
   } else if (dist == "skew_normal") {
     
-    fit <- gibbs_SFM_skew_n(y = data, K, nb_iter)
+    mcmc <- gibbs_SFM_skew_n(y = data, K, nb_iter)
     pars_names = c("theta", "xi", "omega", "alpha")
     dist_type = "continuous"
     
-  }else if (dist == "shifted_poisson") {
+  } else if (dist == "poisson") {
     
-    fit <- gibbs_SFM_sp(y = data, K, nb_iter)
+    mcmc <- gibbs_SFM_poisson(y = data, K, nb_iter)
+    pars_names = c("theta", "lambda")
+    dist_type = "discrete"
+    
+  } else if (dist == "shifted_poisson") {
+    
+    mcmc <- gibbs_SFM_sp(y = data, K, nb_iter)
     pars_names = c("theta", "kappa", "lambda")
     dist_type = "discrete"
     
@@ -141,11 +118,7 @@ bayes_estimation <- function(data,
     stop("mixture distribution not supported")
   }
   
-  
-  attr(fit, "K") = K
-  attr(fit, "warmup") = burnin
-  
-  BayesMixture = new_BayesMixture(fit, data, dist, dist_type = dist_type, pars_names = pars_names)
+  BayesMixture = new_BayesMixture(mcmc, data, K, burnin, dist, dist_type = dist_type, pars_names = pars_names)
   
   return(BayesMixture)
 }

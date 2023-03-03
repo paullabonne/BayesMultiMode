@@ -2,8 +2,10 @@
 #' This function is helpful for users who want to explore modes in MCMC draws which have not been
 #' derived using the function `bayes_estimation()`.
 #' 
-#' @param fit A matrix of MCMC draws.
+#' @param mcmc A matrix of MCMC draws.
 #' @param data A vector containing the data used for estimating the model and generating the MCMC draws.
+#' @param K Number of mixture components.
+#' @param burnin Number of draws to discard as burnin.
 #' @param dist Distribution family of the mixture components supported by
 #' the package (e.g. "normal", "student", "skew_normal", "shifted_poisson").
 #' @param pars_names Mapping between the distribution parameters names.
@@ -22,7 +24,14 @@
 #' 
 #' @export
 
-new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL, dist_type) {
+new_BayesMixture <- function(mcmc,
+                             data,
+                             K,
+                             burnin,
+                             dist = "NA",
+                             pars_names,
+                             pdf_func = NULL,
+                             dist_type) {
   ## input checks
   assert_that(is.string(dist),
               msg = "dist should be a string")
@@ -33,16 +42,11 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
   ##
   
   BayesMix = list(data = data,
-                  fit = fit,
+                  mcmc = mcmc,
                   dist_type = dist_type)
   
-  mcmc <- as_draws_matrix(fit)
-  
-  if (dist %in% c("shifted_poisson", "normal")) {
-    mcmc_par <- attributes(mcmc)
-    #Burn in
-    mcmc = mcmc[(mcmc_par$warmup+1):nrow(mcmc), ]
-  }
+  mcmc = as_draws_matrix(mcmc)
+  mcmc = mcmc[(burnin+1):nrow(mcmc), ]
   
   # check that pars_names and mcmc match
   names_mcmc = str_to_lower(colnames(mcmc))
@@ -67,9 +71,12 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
   names_mcmc = unique(names_mcmc)
   
   if (dist == "NA") {
+    
     assert_that(sum(pars_names %in% names_mcmc)==length(pars_names),
-                msg = "the name of the parameters provided by pars_names and those of the mcmc object do not match") 
+                msg = "the name of the parameters provided by pars_names and those of the mcmc object do not match")
+    
   } else {
+    
     change = FALSE
     
     if (dist == "poisson" & sum(c("theta", "lambda") %in% names_mcmc) < 2){
@@ -93,16 +100,7 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
       assert_that(sum(names_mcmc %in% pars_names)==3,
                   msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
     }
-    if (dist == "student" & sum(c("theta", "mu", "sigma", "nu") %in% names_mcmc)<4){
-      change = TRUE
-      
-      assert_that(!is.null(names(pars_names)),
-                  msg = "pars_names should be a named vector with names : theta, mu, sigma and nu")
-      assert_that(sum(names(pars_names) %in% c("theta", "mu", "sigma", "nu"))==4,
-                  msg = "the name of the parameters provided by pars_names should be theta, mu, sigma and nu")
-      assert_that(sum(names_mcmc %in% pars_names)==4,
-                  msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
-    }
+    
     if (dist == "skew_normal" & sum(c("theta", "xi", "omega", "alpha") %in% names_mcmc)<4){
       change = TRUE
       
@@ -111,16 +109,6 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
       assert_that(sum(names(pars_names) %in% c("theta", "mu", "sigma", "xi"))==4,
                   msg = "the name of the parameters provided by pars_names should be theta, mu, sigma and xi")
       assert_that(sum(names_mcmc %in% pars_names)==4,
-                  msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
-    }
-    if (dist == "skew_t" & sum(c("theta", "mu", "sigma", "xi", "nu") %in% names_mcmc)<5){
-      change = TRUE
-      
-      assert_that(!is.null(names(pars_names)),
-                  msg = "pars_names should be a named vector with names : theta, mu, sigma, xi and nu")
-      assert_that(sum(names(pars_names) %in% c("theta", "mu", "sigma", "xi", "nu"))==5,
-                  msg = "the name of the parameters provided by pars_names should be theta, mu, sigma, xi and nu")
-      assert_that(sum(names_mcmc %in% pars_names)==5,
                   msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
     }
     
@@ -139,7 +127,7 @@ new_BayesMixture <- function(fit, data, dist = "NA", pars_names, pdf_func = NULL
     } 
   }
   
-  if (dist %in% c("normal", "student", "skew_normal", "skew_t",
+  if (dist %in% c("normal", "skew_normal",
                   "poisson", "shifted_poisson")) {
     BayesMix$dist = dist
   } else {

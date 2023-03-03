@@ -48,12 +48,8 @@ MEM <- function(mcmc, dist = "NA", pars_names, data, pdf_func = NULL, tol_p = 1e
   assert_that(sum(pars_names %in% names_mcmc)==length(pars_names),
               msg = paste0("the name of the parameters provided by pars_names and those of the mcmc vector do not match; ", fail))
   
-  if (dist %in% c("student", "skew_normal")) {
+  if (dist %in% c("skew_normal")) {
     assert_that(length(pars_names) == 4,
-                msg = paste0("the number of elements in pars_names does not match with dist; ", fail)) 
-  }
-  if (dist %in% c("skew_t")) {
-    assert_that(length(pars_names) == 5,
                 msg = paste0("the number of elements in pars_names does not match with dist; ", fail)) 
   }
   ##

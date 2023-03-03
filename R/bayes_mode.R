@@ -25,10 +25,6 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
   dist_type = BayesMix$dist_type
   pdf_func = BayesMix$pdf_func
   pars_names = BayesMix$pars_names
-  
-  if (!is.na(nb_iter) & nb_iter < nrow(mcmc)) {
-    mcmc = mcmc[sample(1:nrow(mcmc), nb_iter), ]
-  }
     
   assert_that(inherits(BayesMix$mcmc, "draws_matrix"),
               msg = "mcmc in BayesMix is not of type draws_matrix")

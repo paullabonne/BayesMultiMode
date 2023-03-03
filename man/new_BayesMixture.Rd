@@ -7,8 +7,10 @@ This function is helpful for users who want to explore modes in MCMC draws which
 derived using the function `bayes_estimation()`.}
 \usage{
 new_BayesMixture(
-  fit,
+  mcmc,
   data,
+  K,
+  burnin,
   dist = "NA",
   pars_names,
   pdf_func = NULL,
@@ -16,9 +18,13 @@ new_BayesMixture(
 )
 }
 \arguments{
-\item{fit}{A matrix of MCMC draws.}
+\item{mcmc}{A matrix of MCMC draws.}
 
 \item{data}{A vector containing the data used for estimating the model and generating the MCMC draws.}
+
+\item{K}{Number of mixture components.}
+
+\item{burnin}{Number of draws to discard as burnin.}
 
 \item{dist}{Distribution family of the mixture components supported by
 the package (e.g. "normal", "student", "skew_normal", "shifted_poisson").}
