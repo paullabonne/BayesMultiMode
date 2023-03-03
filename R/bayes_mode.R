@@ -38,6 +38,12 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
               dist should be either normal, student, skew_normal, skew_t, poisson,
               shifted_poisson, shifted_poisson_bis or NA")
   
+  
+  # if nb_iter is specified (find the mode on a limited number of iterations):
+  if (!is.na(nb_iter)) {
+    mcmc = mcmc[sample(1:nrow(mcmc), nb_iter), ]
+  }
+  
   if (dist_type == "continuous") {
     if (dist == "normal") {
       # fixed point

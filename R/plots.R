@@ -37,7 +37,12 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
   if (x$dist_type == "continuous") {
     ## plot the data
     g = ggplot(data.frame(y = y), aes(y)) +
+      theme_gg +
+      ggtitle(paste0("Estimated mixture density from ",max_size, " iterations and histogram of the data")) +
+      theme(legend.position="none") +
+      xlab("") + ylab("Density") +
       geom_histogram(aes_string(y = "..density.."),
+                     fill="grey33",
                      colour = "white",
                      bins = 70)
     
@@ -59,7 +64,15 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
         geom_function(fun = dist_mixture,
                       args = list(dist = dist,
                                   pars = pars),
-                      alpha = transparency)
+                      alpha = transparency,
+                      colour = "#FF6347")
+      
+      # g = g +
+      #   geom_line(aes(y=value,colour=component),alpha= transparency) +
+      #   scale_colour_manual(values=rep("#FF6347",length(unique(df_y$component)))) +
+      #   scale_fill_manual(name = "",
+      #                     values = c("grey33"), # Color specification
+      #                     labels = c("Data density"))
     } 
   }
   
@@ -113,9 +126,9 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
     
     g = ggplot(df_y, aes(x=x)) + 
       theme_gg +
-      ggtitle("Estimated mixture density at each iteration and histogram of the data") +
+      ggtitle(paste0("Estimated mixture density from ",max_size, " iterations and histogram of the data")) +
       theme(legend.position="none") +
-      xlab("Repeat units") + ylab("Density") +
+      xlab("") + ylab("Density") +
       geom_col(data = filter(df_y,component=="1"),aes(y=density,fill="grey33"),colour="white",alpha=1) +
       geom_line(aes(y=value,colour=component),alpha= transparency) +
       scale_colour_manual(values=rep("#FF6347",length(unique(df_y$component)))) +
