@@ -3,7 +3,6 @@
 #' 
 #' @param mcmc A vector of estimated mixture parameters.
 #' @param data A vector data used for estimating the mixtures.
-#' @param tol_p Tolerance parameter for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.
 #' @param tol_x Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
 #' @param show_plot Show the data and estimated modes.
 #' 
@@ -15,7 +14,7 @@
 #' @importFrom stringr str_remove
 #' @export
 
-fixed_point <- function(mcmc, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot = F) {
+fixed_point <- function(mcmc, data, tol_x = sd(data)/10, show_plot = F) {
   
   ## input checks
   fail = "inputs to the fixed point algorithm are corrupted"
@@ -23,7 +22,6 @@ fixed_point <- function(mcmc, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot
               msg = paste0("mcmc should be a vector of length >= 3; ", fail))
   assert_that(is.vector(data) & length(data) > 0,
               msg = paste0("data should be a vector of length > 0; ", fail))
-  assert_that(is.vector(tol_p) & tol_p > 0, msg = paste0("tol_p should be a positive scalar; ", fail))
   assert_that(is.vector(tol_x) & tol_x > 0, msg = paste0("tol_x should be a positive scalar; ", fail))
   assert_that(is.logical(show_plot), msg = paste0("show_plot should be TRUE or FALSE; ", fail))
   
@@ -35,17 +33,18 @@ fixed_point <- function(mcmc, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot
               msg = paste0("missing parameter in mcmc; ", fail))
   ##
   
+  modes = rep(NA,length(mcmc)/3)
+  mcmc = mcmc[!is.na(mcmc)]
   p = mcmc[grep("theta", names(mcmc))]
-  mu = mcmc[grep("mu", names(mcmc))][p > tol_p]
-  sigma = mcmc[grep("sigma", names(mcmc))][p > tol_p]
-  
-  modes = rep(NA,length(p))
-  p = p[p > tol_p]
+  mu = mcmc[grep("mu", names(mcmc))]
+  sigma = mcmc[grep("sigma", names(mcmc))]
 
   assert_that(length(p) == length(mu) & length(sigma) == length(mu),
               msg = paste0("p, mu and sigma should have the same lengths", fail))
   
   iter = 0
+  
+  
   
   for (i in 1:length(mu)) {
     
@@ -57,6 +56,8 @@ fixed_point <- function(mcmc, data, tol_p = 1e-3, tol_x = sd(data)/10, show_plot
       x1 = f_fp(x, p, mu, sigma)
       delta = abs(x - x1)
       x = x1
+      
+      if (is.na(delta)){browser()}
     }
     
     ## check that the mode is not too close to other modes
@@ -91,6 +92,8 @@ f_fp <- function(x, p, mu, sigma) {
   pmx = pmx/sum(pmx)
 
   f = 1/sum(pmx/sigma^2) * sum(pmx/sigma^2*mu)
+  
+  if (is.na(f)){browser()}
   
   return(f)
 }

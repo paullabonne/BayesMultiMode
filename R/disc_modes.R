@@ -55,7 +55,7 @@ disc_modes <- function(y, py, mode.sel = NULL){
 
 #' @keywords internal
 ### COUNT NUMBER OF MODES
-fn.sub.mixpois <- function(mcmc, y, which.r, pars_names, tol_p, dist, pdf_func = NULL){
+fn.sub.mixpois <- function(mcmc, y, which.r, pars_names, dist, pdf_func = NULL){
   
   if (!is.null(pdf_func)) {
     pdf_func <- pdf_func_vec(pdf_func)
@@ -69,7 +69,6 @@ fn.sub.mixpois <- function(mcmc, y, which.r, pars_names, tol_p, dist, pdf_func =
               msg = paste0("dist should be a string", fail))
   assert_that(is.vector(y) & length(y) > 0,
               msg = "y should be a vector of length > 0")
-  assert_that(is.vector(tol_p) & tol_p > 0, msg = paste0("tol_p should be a positive scalar", fail))
   ##
   
   ##
@@ -98,11 +97,7 @@ fn.sub.mixpois <- function(mcmc, y, which.r, pars_names, tol_p, dist, pdf_func =
   colnames(pars) <- pars_names
   ##
   
-  # mcmc = mcmc[!is.na(mcmc)]
   Khat = nrow(pars)
-  
-  # keep = which(pars[,1] > tol_p)
-  # pars = pars[keep, , drop = F]
   
   ### Getting individual component densities
   pdf = matrix(0, nrow=length(y), ncol=Khat) 

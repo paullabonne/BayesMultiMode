@@ -2,8 +2,7 @@
 #'
 #' @param BayesMix object of class `BayesMixture`.
 #' @param rd Rounding parameter.
-#' @param tol_x Tolerance parameter for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.
-#' @param tol_p Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
+#' @param tol_x ...
 #' 
 #' @return An object of class `BayesMode`.
 #' 
@@ -12,11 +11,10 @@
 #' 
 #' @export
 
-bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)/10, show_plot = F, nb_iter = NA) {
+bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot = F, nb_iter = NA) {
   
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   assert_that(is.scalar(rd) & rd >= 0, msg = "rd should be greater or equal than zero")
-  assert_that(is.vector(tol_p) & tol_p > 0, msg = "tol_p should be a positive scalar")
   assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
   
   dist = BayesMix$dist
@@ -26,8 +24,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
   pdf_func = BayesMix$pdf_func
   pars_names = BayesMix$pars_names
     
-  assert_that(inherits(BayesMix$mcmc, "draws_matrix"),
-              msg = "mcmc in BayesMix is not of type draws_matrix")
+  # assert_that(inherits(BayesMix$mcmc, "draws_matrix"),
+  #             msg = "mcmc in BayesMix is not of type draws_matrix")
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
   assert_that(dist_type %in% c("continuous", "discrete"),
@@ -41,19 +39,19 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
   
   # if nb_iter is specified (find the mode on a limited number of iterations):
   if (!is.na(nb_iter)) {
-    mcmc = mcmc[sample(1:nrow(mcmc), nb_iter), ]
+    mcmc = mcmc[sample(1:nrow(mcmc), nb_iter), , drop = FALSE]
   }
   
   if (dist_type == "continuous") {
     if (dist == "normal") {
       # fixed point
-      modes = t(apply(mcmc, 1, fixed_point, data = data, tol_x = tol_x, tol_p = tol_p, show_plot = show_plot))
+      modes = t(apply(mcmc, 1, fixed_point, data = data, tol_x = tol_x, show_plot = show_plot))
     } else {
       # MEM algorithm
       modes = t(apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, 
-                    pdf_func = pdf_func, tol_x = tol_x, tol_p = tol_p, show_plot = show_plot))
+                    pdf_func = pdf_func, tol_x = tol_x, show_plot = show_plot))
     }
-
+   
     ### Posterior probability of being a mode for each location
     m_range = seq(from = min(round(data,rd)), to = max(round(data,rd)), by = 1/(10^rd)) # range of potential values for the modes
     modes_disc = round(modes, rd)
@@ -74,16 +72,16 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
     y.pos <- min(data):max(data) # Range
     
     n.modes <- apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 1,
-                     pars_names, tol_p, dist, pdf_func) # number modes
+                     pars_names, dist, pdf_func) # number modes
     modes <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 2,
-                     pars_names, tol_p, dist, pdf_func)) # location modes
+                     pars_names, dist, pdf_func)) # location modes
     
     modes = as.matrix(modes[, 1:max(n.modes)], nrow = nrow(mcmc))
     colnames(modes) = paste('mode',1:max(n.modes))
 
     # Posterior probability of being a mode for each location
     modes_incl_flats <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 4,
-                                pars_names, tol_p, dist, pdf_func)) # modes including flat ones
+                                pars_names, dist, pdf_func)) # modes including flat ones
     sum_modes_incl_flats = apply(modes_incl_flats,2,sum)
     probs_modes = sum_modes_incl_flats/nrow(mcmc)
     probs_modes = probs_modes[probs_modes>0]
@@ -92,7 +90,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_p = 1e-3, tol_x = sd(BayesMix$data)
     
     table_location = rbind(location_at_modes, probs_modes)
   }
-  
+ 
   # Number of modes 
   n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw
   

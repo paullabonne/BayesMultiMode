@@ -21,12 +21,20 @@
 gibbs_SFM_poisson <- function(y,
                               K,
                               nb_iter,
-                              a0 = 1,
-                              A0 = 1/200,
-                              l0 = 5,
-                              L0 = l0 - 1,
-                              e0 = a0*A0,
-                              prt = TRUE){
+                              priors = list(),
+                              printing = TRUE){
+  
+  # unpacking priors
+  # a0 = ifelse(is.null(priors$a0), 10, priors$a0)
+  # A0 = ifelse(is.null(priors$A0), a0*K, priors$A0)
+  a0 = ifelse(is.null(priors$a0), 1, priors$a0)
+  A0 = ifelse(is.null(priors$A0), 200, priors$A0)
+  e0 = ifelse(is.null(priors$A0), a0/A0, priors$e0)
+  l0 = ifelse(is.null(priors$l0), 1.1, priors$l0)
+  L0 = ifelse(is.null(priors$L0), 1.1/median(y), priors$L0)
+  
+  assert_that(is.scalar(A0) & A0 > 0, msg = "A0 should be positive")
+  assert_that(is.scalar(L0) & L0 > 0, msg = "L0 should be a positive integer")
   
   # Error Messages  
   if(round(K) != K | K < 1){
@@ -73,7 +81,7 @@ gibbs_SFM_poisson <- function(y,
       
       # Sample lambda from Gamma distribution 
       lambda[m,k] = rgamma(1, shape = sum(yk) + l0,
-                           scale = 1/(N[k] + L0))
+                           rate = N[k] + L0)
       
       # 
       probs[,k] = eta[m,k]*dpois(y,lambda[m,k])
@@ -84,13 +92,13 @@ gibbs_SFM_poisson <- function(y,
     S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
     
     ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
-    e0 = draw_e0(e0,a0,A0,eta[m, ])[[1]]
+    e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
     lp[m] = sum(probs)
     
     ## counter
-    if(prt){
+    if(printing){
       if(m %% (round(nb_iter / 10)) == 0){
         cat(paste(100 * m / nb_iter, ' % draws finished'), fill=TRUE)
       }

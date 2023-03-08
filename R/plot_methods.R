@@ -2,7 +2,6 @@
 #' 
 #' @param x ...
 #' @param max_size ...
-#' @param tol_p ...
 #' @param transparency ...
 #' @param ... ...
 #' 
@@ -23,9 +22,9 @@
 #' 
 #' @export
 
-plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
+plot.BayesMixture <- function(x, max_size = 250, 
                               transparency = 0.1, ...) {
-  component <- value <- NULL
+  density <- component <- value <- NULL
   
   assert_that(inherits(x, "BayesMixture"), msg = "input should be an object of class BayesMixture")
   
@@ -41,7 +40,7 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
       ggtitle(paste0("Estimated mixture density from ",max_size, " iterations and histogram of the data")) +
       theme(legend.position="none") +
       xlab("") + ylab("Density") +
-      geom_histogram(aes_string(y = "..density.."),
+      geom_histogram(aes(y = after_stat(density)),
                      fill="grey33",
                      colour = "white",
                      bins = 70)
@@ -51,15 +50,12 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
       mcmc_i = mcmc[i, ]
       pars = c()
       for (j in 1:length(pars_names)) {
-        pars = cbind(pars, mcmc_i[grep(pars_names[j], colnames(mcmc_i))])
+        pars = cbind(pars, mcmc_i[grep(pars_names[j], names(mcmc_i))])
       }
       
       colnames(pars) <- pars_names
       
       est_mode = rep(NA, nrow(pars))
-      
-      # pars = pars[pars[,1] > tol_p, ]
-      
       g = g +
         geom_function(fun = dist_mixture,
                       args = list(dist = dist,
@@ -151,7 +147,7 @@ plot.BayesMixture <- function(x, max_size = 200, tol_p = 1e-3,
 #' @import ggplot2
 #' 
 #' @export
-plot.BayesMode <- function(x, ...) {
+plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
   Pb <- value <- location_at_modes <- probs_modes <- unique_modes <- prob_nb_modes <- NULL
   
   stopifnot(inherits(x, "BayesMode"))
@@ -196,8 +192,31 @@ plot.BayesMode <- function(x, ...) {
     xlab("") + ylab("Posterior probability") +
     geom_bar(stat="identity")
   
-  g <- ggarrange(g0, g2, g1,
-                 ncol = 3, nrow = 1, widths = c(0.7,1, 1))
+  # selecting which graphs to show
+  plot_list = list()
+  i = 0
+  
+  if("p1" %in% graphs) {
+    i = i + 1
+    plot_list[[i]] <- g0
+  }
+  
+  if("number" %in% graphs) {
+    i = i + 1
+    plot_list[[i]] <- g2
+  }
+  
+  if("loc" %in% graphs) {
+    i = i + 1
+    plot_list[[i]] <- g1
+  }
+  
+  if (i > 1) {
+    g <- ggarrange(plotlist = plot_list,
+                   ncol = 3, nrow = 1, widths = c(0.7,1, 1))  
+  } else {
+    g <- plot_list[[i]] 
+  }
   
   g
 }

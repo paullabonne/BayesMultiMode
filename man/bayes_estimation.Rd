@@ -8,26 +8,10 @@ bayes_estimation(
   data,
   K,
   dist,
-  a0 = 10,
-  A0 = 10 * K,
-  b0 = mean(data),
-  B0 = (max(data) - min(data))^2,
-  c0 = 2.5,
-  e0 = 0,
-  g0 = 0.5,
-  G0 = 100 * g0/c0/B0,
-  h0 = 0,
-  H0 = 10,
-  n0 = 2,
-  N0 = 0.1,
-  l0 = 1.1,
-  L0 = 1.1/mean(data),
-  e0_kappa = 1e-20,
-  d0 = 10,
-  D0 = 10 * (max(data) - min(data)),
+  priors = list(),
   nb_iter = 2000,
   burnin = nb_iter/2,
-  ...
+  printing = TRUE
 )
 }
 \arguments{
@@ -38,46 +22,13 @@ bayes_estimation(
 \item{dist}{String indicating the distribution of the mixture components.
 Currently supports "normal", "student" and "skew_normal".}
 
-\item{a0}{Mean of the gamma hyperprior used for the dirichlet prior. Default is 10.}
-
-\item{A0}{Variance of the gamma hyperprior used for the dirichlet prior. Default is 10*K.}
-
-\item{b0}{Mean of the mean priors. Default is mean(data).}
-
-\item{B0}{Variance of the mean priors. Default is R^2 where R = (max(data) - min(data)).}
-
-\item{c0}{Variance prior. Default is 2.5.}
-
-\item{e0}{Dirichlet prior parameter. Must be positive or zero. If set to 0 then an hyperprior is used instead. Default is 0.}
-
-\item{g0}{Variance inverse gamma hyperprior. Default is 0.5.}
-
-\item{G0}{Variance inverse gamma hyperprior. Default is 100*2.5/0.5/R^2.}
-
-\item{h0}{Mean of the skew parameters priors. Default is 0.}
-
-\item{H0}{Variance of the skew parameters priors. Default is 10.}
-
-\item{n0}{Mean of the degree of freedom gamma priors. Default is 2.}
-
-\item{N0}{Variance of the degree of freedom gamma priors. Default is 2.}
-
-\item{l0}{... Prior for lambda}
-
-\item{L0}{... Prior for lambda}
-
-\item{e0_kappa}{Dirichlet prior parameter for kappa (shifted poisson). Must be positive or zero. If set to 0 then an hyperprior is used instead.
-Default is 1e-20}
-
-\item{d0}{...}
-
-\item{D0}{...}
+\item{priors}{Number of MCMC iterations. Default is 2000.}
 
 \item{nb_iter}{Number of MCMC iterations. Default is 2000.}
 
 \item{burnin}{Number of MCMC iterations used as burnin.}
 
-\item{...}{Other arguments passed to `rstan::sampling`.}
+\item{printing}{Showing MCMC progression ?}
 }
 \value{
 An object of class `BayesMixture`.

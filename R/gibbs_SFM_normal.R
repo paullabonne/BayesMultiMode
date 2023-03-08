@@ -17,18 +17,27 @@
 
 #' @keywords internal
 gibbs_SFM_normal <- function(y,
-                            K,
-                            nb_iter,
-                            a0 = 1,
-                            A0 = 1/200,
-                            b0 = median(y),
-                            B0 = (max(y) - min(y))^2,
-                            c0 = 2.5,
-                            e0 = a0*A0,
-                            g0 = 0.5,
-                            G0 = 100*g0/c0/B0,
-                            prt = TRUE){
-   
+                             K,
+                             nb_iter,
+                             priors = list(),
+                             printing = TRUE){
+  
+  # unpacking priors
+  # a0 = ifelse(is.null(priors$a0), 10, priors$a0)
+  # A0 = ifelse(is.null(priors$A0), a0*K, priors$A0)
+  a0 = ifelse(is.null(priors$a0), 1, priors$a0)
+  A0 = ifelse(is.null(priors$A0), 200, priors$A0)
+  b0 = ifelse(is.null(priors$b0), median(y), priors$b0)
+  B0 = ifelse(is.null(priors$B0), (max(y) - min(y))^2, priors$B0)
+  c0 = ifelse(is.null(priors$c0), 2.5, priors$c0)
+  e0 = ifelse(is.null(priors$e0), a0/A0, priors$e0)
+  g0 = ifelse(is.null(priors$g0), 0.5, priors$g0)
+  G0 = ifelse(is.null(priors$G0), 100*g0/c0/B0, priors$G0)
+  
+  # checking priors' validity
+  assert_that(is.scalar(A0) & A0 > 0, msg = "A0 should be positive")
+  assert_that(is.scalar(B0) & B0 > 0, msg = "B0 should be a positive integer")
+  
   #empty objects to store parameters
   mu = matrix(NA, nb_iter, K)
   sigma2 = matrix(NA, nb_iter, K)
@@ -44,9 +53,9 @@ gibbs_SFM_normal <- function(y,
   }
   
   mu[1,] <- cbind(t(cl_y$centers))
-
+  
   C0 = g0 #not sure
-
+  
   # sampling
   for (m in 2:nb_iter){
     # 1. parameter simulation conditional on the classification
@@ -71,7 +80,7 @@ gibbs_SFM_normal <- function(y,
         b = B*(b0/B0)
       }
       
-      mu[m, k] = rnorm(1, b, B)
+      mu[m, k] = rnorm(1, b, sqrt(B))
       
       # 2. classification
       probs[, k] = eta[m, k] * dnorm(y, mu[m, k], sqrt(sigma2[m, k]))
@@ -88,8 +97,8 @@ gibbs_SFM_normal <- function(y,
     
     ## MH step for e0
     ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
-    e0 = draw_e0(e0,a0,A0,eta[m, ])[[1]]
-
+    e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
+    
     ## c. sample lambda, the penalty parameter for b0 / skip for now
     
     ## d. sample b0 / skip for now
@@ -100,7 +109,7 @@ gibbs_SFM_normal <- function(y,
     lp[m] = sum(probs)
     
     ## counter
-    if(prt){
+    if(printing){
       if(m %% (round(nb_iter / 10)) == 0){
         cat(paste(100 * m / nb_iter, ' % draws finished'), fill=TRUE)
       }
@@ -113,8 +122,8 @@ gibbs_SFM_normal <- function(y,
   
   for (i in 1:K){
     colnames(mcmc)[c(i, K+i, 2*K+i)] = c(paste0("theta", i),
-                                                paste0("mu", i),
-                                                paste0("sigma", i))
+                                         paste0("mu", i),
+                                         paste0("sigma", i))
   }
   colnames(mcmc)[ncol(mcmc)] = "loglik"
   

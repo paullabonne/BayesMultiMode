@@ -21,12 +21,20 @@
 gibbs_SFM_sp <- function(y,
                          K,
                          nb_iter,
-                         a0 = 1,
-                         A0 = 1/200,
-                         l0 = 5,
-                         L0 = l0 - 1,
-                         e0 = a0*A0,
-                         prt = TRUE){
+                         priors = list(),
+                         printing = TRUE){
+  
+  # unpacking priors
+  # a0 = ifelse(is.null(priors$a0), 10, priors$a0)
+  # A0 = ifelse(is.null(priors$A0), a0*K, priors$A0)
+  a0 = ifelse(is.null(priors$a0), 1, priors$a0)
+  A0 = ifelse(is.null(priors$A0), 200, priors$A0)
+  e0 = ifelse(is.null(priors$A0), a0/A0, priors$e0)
+  l0 = ifelse(is.null(priors$l0), 1.1, priors$l0)
+  L0 = ifelse(is.null(priors$L0), 1.1/median(y), priors$L0)
+  
+  assert_that(is.scalar(A0) & A0 > 0, msg = "A0 should be positive")
+  assert_that(is.scalar(L0) & L0 > 0, msg = "L0 should be a positive integer")
   
   # Error Messages  
   if(round(K) != K | K < 1){
@@ -98,7 +106,7 @@ gibbs_SFM_sp <- function(y,
     S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
     
     ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
-    e0 = draw_e0(e0,a0,A0,eta[m, ])[[1]]
+    e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
     lp[m] = sum(probs)
@@ -108,7 +116,7 @@ gibbs_SFM_sp <- function(y,
     kappa[m, ] = kappa_m
     
     ## counter
-    if(prt){
+    if(printing){
       if(m %% (round(nb_iter / 10)) == 0){
         cat(paste(100 * m / nb_iter, ' % draws finished'), fill=TRUE)
       }
@@ -128,86 +136,4 @@ gibbs_SFM_sp <- function(y,
   
   # Return output   
   return(mcmc)
-}
-
-## functions used in the MCMC algorithm
-
-#' @keywords internal
-# Posterior of kappa
-post_kap <- function(x,LAMBDA,KAPPA) {
-  n = length(x) # Number of elements in the component
-  result <-  exp(-LAMBDA)*(LAMBDA^(sum(x)-n*KAPPA))/prod(factorial(x-KAPPA)) 
-}
-
-#' @keywords internal
-# Draw kappa from posterior using MH step
-draw_kap <- function(x,LAMBDA,KAPPA,kaplb,kapub) {
-  n = length(x) # Number of elements in the component
-  KAPPAhat = sample(kaplb:kapub, 1) # Draw candidate from uniform proposal
-  accratio = post_kap(x,LAMBDA,KAPPAhat)/post_kap(x,LAMBDA,KAPPA) # Acceptance ratio
-  if(is.na(accratio)){
-    accprob = 1 # Acceptance probability if denominator = inf (numerical error due to large number) 
-  } else {
-    accprob = min(c(accratio,1)) # Acceptance probability if denominator not 0
-  }
-  rand = runif(1, min = 0, max = 1) # Random draw from unifrom (0,1)
-  if (rand < accprob) {
-    KAPPA = KAPPAhat; # update
-    acc = 1; # indicate update
-  } else{
-    KAPPA = KAPPA; # don't update
-    acc = 0;  # indicate failure to update
-  }
-  out <- list(KAPPA, acc) # Store output in list
-  return(out)           # Return output
-}
-
-#' @keywords internal
-# Probability mass function for shifted Poisson distribution
-spoisspdf <- function(x,LAMDA,KAPPA){
-  n = length(x) # number of points
-  # Undefined pdf = 0    
-  ind1 = which(x<KAPPA)  # spoisspdf not defined for these values
-  nundef = length(ind1) # number of undefined points
-  pdf1 = matrix(data=0,nrow=nundef,ncol=1) # set pdf = 0 for undefined values
-  # Defined pdf        
-  ind2 = which(x>=KAPPA) 
-  ndef = sum(ind2) # number of undefined points
-  x = x[ind2]
-  pdf2 = exp(-LAMDA)*(LAMDA^(x-KAPPA))/factorial(x-KAPPA)
-  # Combine 
-  pdfc = matrix(data=NA,nrow=n,ncol=1)
-  pdfc[ind1] = pdf1
-  pdfc[ind2] = pdf2
-  return(pdfc)           # Return output
-}
-
-# Posterior of e0 - Unnormalized target pdf
-post_e0 <- function(e0,nu0_p,S0_p,p) {
-  K = length(p) # Number of components
-  result <-  dgamma(e0,shape = nu0_p, scale = S0_p)*gamma(K*e0)/(gamma(e0)^K)*((prod(p))^(e0-1))
-}
-
-#' @keywords internal
-# Draw from the unnormalized target pdf for hyperparameter e0
-draw_e0 <- function(e0,nu0,S0,p){
-  # Define terms
-  e0hat = e0 + rnorm(1,0,0.1) # Draw a candidate from Random walk proposal
-  accratio = post_e0(e0hat,nu0,S0,p)/post_e0(e0,nu0,S0,p) # Acceptance ratio
-  if(is.na(accratio)){
-    accprob = 0 # Acceptance probability if denominator = 0 
-  } else {
-    accprob = min(c(accratio,1)) # Acceptance probability if denominator not 0
-  }
-  # MH Step
-  rand = runif(1, min = 0, max = 1) # Random draw from unifrom (0,1)
-  if (rand < accprob) {
-    e0 = e0hat; # update
-    acc = 1; # indicate update
-  } else{
-    e0 = e0; # don't update
-    acc = 0;  # indicate failure to update
-  }
-  out <- list(e0, acc) # Store output in list
-  return(out)           # Return output
 }

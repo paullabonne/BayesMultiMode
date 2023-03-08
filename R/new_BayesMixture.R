@@ -21,6 +21,7 @@
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_to_lower
 #' @importFrom stringr str_replace
+#' @importFrom stringr str_locate
 #' 
 #' @export
 
@@ -52,24 +53,6 @@ new_BayesMixture <- function(mcmc,
   names_mcmc = str_to_lower(colnames(mcmc))
   names_mcmc = str_extract(names_mcmc, "[a-z]+")
 
-  # adapt cols names
-  col_names = names_mcmc
-  j = 1
-  name_previous = "NA"
-  
-  for (i in 1:length(col_names)) {
-    if (col_names[i] == name_previous) {
-      j = j+1
-    } else {
-      j = 1
-    }
-    name_previous = col_names[i]
-    col_names[i] = paste0(col_names[i], "[", j, "]")
-  }
-  colnames(mcmc) <- col_names
-  
-  names_mcmc = unique(names_mcmc)
-  
   if (dist == "NA") {
     
     assert_that(sum(pars_names %in% names_mcmc)==length(pars_names),
@@ -86,7 +69,7 @@ new_BayesMixture <- function(mcmc,
                   msg = "pars_names should be a named vector with names : theta and lambda")
       assert_that(sum(names(pars_names) %in% c("theta", "lambda"))==2,
                   msg = "the name of the parameters provided by pars_names should be theta and lambda")
-      assert_that(sum(names_mcmc %in% pars_names)==2,
+      assert_that(sum(pars_names %in% names_mcmc)==2,
                   msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
     }
     
@@ -97,7 +80,7 @@ new_BayesMixture <- function(mcmc,
                   msg = "pars_names should be a named vector with names : theta, mu, sigma")
       assert_that(sum(names(pars_names) %in% c("theta", "mu", "sigma"))==3,
                   msg = "the name of the parameters provided by pars_names should be theta, mu and sigma")
-      assert_that(sum(names_mcmc %in% pars_names)==3,
+      assert_that(sum(pars_names %in% names_mcmc)==3,
                   msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
     }
     
@@ -108,12 +91,9 @@ new_BayesMixture <- function(mcmc,
                   msg = "pars_names should be a named vector with names : theta, mu, sigma and xi")
       assert_that(sum(names(pars_names) %in% c("theta", "mu", "sigma", "xi"))==4,
                   msg = "the name of the parameters provided by pars_names should be theta, mu, sigma and xi")
-      assert_that(sum(names_mcmc %in% pars_names)==4,
+      assert_that(sum(pars_names %in% names_mcmc)==4,
                   msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
     }
-    
-    # keep only relevant variables
-    mcmc = subset_draws(mcmc, variable = pars_names)
     
     # change the parameter names in mcmc using pars_names
     if (change) {
@@ -127,8 +107,33 @@ new_BayesMixture <- function(mcmc,
     } 
   }
   
+  ### arrange the mcmc matrix by variable type (mu1,mu2,...,muN,sigma...)
+  # and select only the variables of interest
+  mcmc_new = matrix(NA, nrow = nrow(mcmc), ncol = length(pars_names)*K)
+  colnames(mcmc_new) = 1:ncol(mcmc_new)
+  k_end = K
+  k_start = 1
+  for (par in names(pars_names)) {
+
+    #reorder
+    cols_par = str_locate(colnames(mcmc), par)[,1]
+    cols_par = which(!is.na(cols_par))
+    mcmc_new[,k_start:k_end] = mcmc[, cols_par]
+    
+    #rename
+    numb = gregexpr('[0-9]+', colnames(mcmc)[cols_par])
+    numb = unlist(regmatches(colnames(mcmc)[cols_par],numb))
+    
+    colnames(mcmc_new)[k_start:k_end] = paste0(par, numb)
+    
+    k_start = k_end + 1
+    k_end = k_start + K - 1
+  }
+
+  mcmc = mcmc_new
+  
   if (dist %in% c("normal", "skew_normal",
-                  "poisson", "shifted_poisson")) {
+                  "poisson", "shifted_poisson") & is.null(pdf_func)) {
     BayesMix$dist = dist
   } else {
     BayesMix$dist = "NA"

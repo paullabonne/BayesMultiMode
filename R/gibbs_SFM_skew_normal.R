@@ -20,17 +20,26 @@
 gibbs_SFM_skew_n <- function(y,
                              K,
                              nb_iter,
-                             a0 = 1,
-                             A0 = 1/200,
-                             b0 = median(y),
-                             c0 = 2.5,
-                             C0 = 0.5*var(y),
-                             e0 = a0*A0,
-                             g0 = 0.5,
-                             G0 = g0/(0.5*var(y)),
-                             D_xipsi = 10,
-                             prt = TRUE){
+                             priors = list(),
+                             printing = TRUE){
+
+  # unpacking priors
+  # a0 = ifelse(is.null(priors$a0), 10, priors$a0)
+  # A0 = ifelse(is.null(priors$A0), a0*K, priors$A0)
+  a0 = ifelse(is.null(priors$a0), 1, priors$a0)
+  A0 = ifelse(is.null(priors$A0), 200, priors$A0)
+  b0 = ifelse(is.null(priors$b0), median(y), priors$b0)
+  B0 = ifelse(is.null(priors$B0), (max(y) - min(y))^2, priors$B0)
+  c0 = ifelse(is.null(priors$c0), 2.5, priors$c0)
+  C0 = ifelse(is.null(priors$C0), 0.5*var(y), priors$C0)
+  e0 = ifelse(is.null(priors$e0), a0/A0, priors$e0)
+  g0 = ifelse(is.null(priors$g0), 0.5, priors$g0)
+  G0 = ifelse(is.null(priors$G0), g0/(0.5*var(y)), priors$G0)
+  D_xi = ifelse(is.null(priors$D_xi), 1, priors$D_xi)
+  D_psi = ifelse(is.null(priors$D_psi), 1, priors$D_psi)
   
+  assert_that(is.scalar(A0) & A0 > 0, msg = "A0 should be positive")
+
   n_obs = length(y)
   
   #empty objects to store parameters
@@ -50,9 +59,8 @@ gibbs_SFM_skew_n <- function(y,
     S[cl_y$cluster==k ,k] = 1
   }
   
-  # b0 = matrix(c(b0, 0),nrow=2)
-  b0 = matrix(c(0, 0),nrow=2)
-  B0_inv = diag(1/c(D_xipsi,D_xipsi))
+  b0 = matrix(c(b0, 0),nrow=2)
+  B0_inv = diag(1/c(D_xi,D_psi))
 
   for (k in 1:K){
     xi[1, k] = mean(y[S[, k]==1])
@@ -115,7 +123,7 @@ gibbs_SFM_skew_n <- function(y,
       }
       sigma2[k] = 1/rgamma(1, ck, Ck)
       
-      # b.1.1 classification
+      # storing
       xi[m, k] = beta[k, 1]
       omega[m, k] = sqrt(sigma2[k] + beta[k, 2]^2)
       alpha[m, k] = beta[k, 2]/sqrt(sigma2[k])
@@ -123,7 +131,7 @@ gibbs_SFM_skew_n <- function(y,
     }
     # browser()
     
-    # b.1.2 classification
+    # classification
     pnorm = probs/rowSums(probs)
     S = t(apply(pnorm, 1, function(x) rmultinom(n = 1, size = 1, prob = x)))
   
@@ -133,13 +141,13 @@ gibbs_SFM_skew_n <- function(y,
     
     ## SFM: MH step for e0
     ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
-    e0 = draw_e0(e0,a0,A0,eta[m, ])[[1]]
+    e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
 
     # compute log lik
     lp[m] = sum(probs)
     
     ## counter
-    if(prt){
+    if(printing){
       if(m %% (round(nb_iter / 10)) == 0){
         cat(paste(100 * m / nb_iter, ' % draws finished'), fill=TRUE)
       }

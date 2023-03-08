@@ -10,7 +10,6 @@
 #' @param data Numeric vector of observations.
 #' @param pars_names Names of the variables mcmc draws variables
 #' @param pdf_func Pdf or pmf of the mixture components associated with the mcmc draws (if estimation not in-house)
-#' @param tol_p Tolerance for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.
 #' @param tol_x Tolerance for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
 #' @param show_plot Show the data and estimated modes.
 #' 
@@ -26,7 +25,7 @@
 #' 
 #' @export
 
-MEM <- function(mcmc, dist = "NA", pars_names, data, pdf_func = NULL, tol_p = 1e-3, tol_x = sd(data)/10, show_plot = FALSE) {
+MEM <- function(mcmc, dist = "NA", pars_names, data, pdf_func = NULL, tol_x = sd(data)/10, show_plot = FALSE) {
   ## input checks
   fail = "inputs to the Mode-finding EM algorithm are corrupted"
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
@@ -35,7 +34,6 @@ MEM <- function(mcmc, dist = "NA", pars_names, data, pdf_func = NULL, tol_p = 1e
               msg = paste0("dist should be a string", fail))
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
-  assert_that(is.vector(tol_p) & tol_p > 0, msg = paste0("tol_p should be a positive scalar", fail))
   assert_that(is.vector(tol_x) & tol_x > 0, msg = paste0("tol_x should be a positive scalar", fail))
   assert_that(is.logical(show_plot), msg = paste0("show_plot should be TRUE or FALSE", fail))
   ##
@@ -63,15 +61,17 @@ MEM <- function(mcmc, dist = "NA", pars_names, data, pdf_func = NULL, tol_p = 1e
 
   est_mode = rep(NA, nrow(pars))
 
-  pars = pars[pars[,1] > tol_p, , drop = F]
-  
   nK = nrow(pars)
   post_prob = rep(NA, nK)
   
+  # vectorising function
   if (!is.null(pdf_func)) {
     pdf_func <- pdf_func_vec(pdf_func)
   }
 
+  # remove empty components (a feature of some MCMC methods)
+  pars = na.omit(pars)
+  
   for (j in 1:nK) {
     x = pars[j,2]
     

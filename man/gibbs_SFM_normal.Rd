@@ -4,20 +4,7 @@
 \alias{gibbs_SFM_normal}
 \title{Bayesian estimation of mixture of normals}
 \usage{
-gibbs_SFM_normal(
-  y,
-  K,
-  nb_iter,
-  a0 = 1,
-  A0 = 1/200,
-  b0 = median(y),
-  B0 = (max(y) - min(y))^2,
-  c0 = 2.5,
-  e0 = a0 * A0,
-  g0 = 0.5,
-  G0 = 100 * g0/c0/B0,
-  prt = TRUE
-)
+gibbs_SFM_normal(y, K, nb_iter, priors = list(), printing = TRUE)
 }
 \arguments{
 \item{y}{(a vector of integers) Observations used to fit the model.}

@@ -4,17 +4,7 @@
 \alias{gibbs_SFM_poisson}
 \title{Estimation of a mixture of Poisson distributions.}
 \usage{
-gibbs_SFM_poisson(
-  y,
-  K,
-  nb_iter,
-  a0 = 1,
-  A0 = 1/200,
-  l0 = 5,
-  L0 = l0 - 1,
-  e0 = a0 * A0,
-  prt = TRUE
-)
+gibbs_SFM_poisson(y, K, nb_iter, priors = list(), printing = TRUE)
 }
 \arguments{
 \item{y}{(a vector of integers) Observations used to fit the model.}

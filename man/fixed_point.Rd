@@ -5,14 +5,12 @@
 \title{Fixed-point algorithm for finding the modes of a gaussian mixture.
 See Carreira-Perpinan (2000), section 4 equation (10) https://doi.org/10.1109/34.888716.}
 \usage{
-fixed_point(mcmc, data, tol_p = 0.001, tol_x = sd(data)/10, show_plot = F)
+fixed_point(mcmc, data, tol_x = sd(data)/10, show_plot = F)
 }
 \arguments{
 \item{mcmc}{A vector of estimated mixture parameters.}
 
 \item{data}{A vector data used for estimating the mixtures.}
-
-\item{tol_p}{Tolerance parameter for small components. Default is 1e-3. All components with mixture weights lower than tol_p are dropped.}
 
 \item{tol_x}{Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
 

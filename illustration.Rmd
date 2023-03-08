@@ -1,11 +1,10 @@
 ---
-title: "testing the estimation of continuous mixtures using stan"
+title: "illustration"
 output: html_document
 ---
 
 # Load package
 ```{r}
-# install.packages("rstan", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
 library(BayesMultiMode)
 ```
 
@@ -14,23 +13,10 @@ library(BayesMultiMode)
 
 ## Galaxy data
 ```{r}
-y = multimode::galaxyrg
+y = MASS::galaxies
 
 plot(density(y), type="l")
 ```
-
-```{r}
-out = gibbsSFM_normal(y,
-                5,
-                2000)
-
-for (i in 1:5){
-  plot(out[,i], type="l")
-}
-
-plot(out[,16], type = "l")
-```
-
 
 ## Fish data
 ```{r}
@@ -158,56 +144,22 @@ hist(y)
 
 # Bayesian estimation
 ```{r, message =FALSE, warning=FALSE}
-K = 2
+K = 5
 # y = y/1000
 dist = "normal"
 hist(y)
-bayesmix = bayes_estimation(data = y, K = K,
+bayesmix = bayes_estimation(data = y,
+                            K = K,
                             dist = dist,
                             nb_iter = 2000)
 
 plot(bayesmix, max_size = 500, transparency = 0.2)
 ```
 
-# convergence
-```{r}
-# for (i in 1:length(wesanderson::wes_palettes)){
-#   scales::show_col(unlist(wesanderson::wes_palettes[i]))
-# }
-library(magrittr)
-model_var = bayesmix$pars_names
-
-mcmc = posterior::as_draws_df(bayesmix$fit)
-mcmc %<>% dplyr::select(-tidyr::contains("sigmaSQ"))
-# mcmc[is.na(mcmc)] = 0
-theme_p <- ggplot2::theme_minimal()
-bayesplot::bayesplot_theme_set(theme_p)
-j=15
-col = c(wesanderson::wes_palettes[[j]], wesanderson::wes_palettes[[j]][2])
-bayesplot::color_scheme_set(scheme = col[1:6])
-for (par in model_var){
- show(bayesplot::mcmc_trace(mcmc,
-                 pars = colnames(mcmc)[grep(par,colnames(mcmc))])) 
-}
-
-mcmc %>%
-  tidyr::gather(-.chain, -.iteration, -.draw, key = "var", value = "value") %>%
-  dplyr::group_by(.chain, var) %>%
-  dplyr::summarise(rhat = posterior::rhat(value)) %>%
-  tidyr::spread(key = "var", value = "rhat") %>%
-  dplyr::select(lp__) %>%
-  dplyr::ungroup() %>%
-  dplyr::select(-.chain)
-```
-
 # Mode estimation
 ```{r}
 modes = bayes_mode(bayesmix, rd=1)
 plot(modes)
-```
-
-## illustration using ten iterations
-```{r}
-modes = t(apply(mcmc_output_post[1:10,], 1, MEM, plots=T))
+summary(modes)
 ```
 
