@@ -140,6 +140,7 @@ plot.BayesMixture <- function(x, max_size = 250,
 
 #' Plot modes
 #' @param x ...
+#' @param graphs which plot to show ? Default is all three.
 #' @param ... ...
 #' 
 #' @importFrom posterior as_draws_matrix

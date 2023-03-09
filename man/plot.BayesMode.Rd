@@ -9,6 +9,8 @@
 \arguments{
 \item{x}{...}
 
+\item{graphs}{which plot to show ? Default is all three.}
+
 \item{...}{...}
 }
 \description{

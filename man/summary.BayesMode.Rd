@@ -4,10 +4,10 @@
 \alias{summary.BayesMode}
 \title{Summary modes}
 \usage{
-\method{summary}{BayesMode}(x, ...)
+\method{summary}{BayesMode}(object, ...)
 }
 \arguments{
-\item{x}{...}
+\item{object}{...}
 
 \item{...}{...}
 }

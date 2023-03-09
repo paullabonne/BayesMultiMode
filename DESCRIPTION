@@ -16,9 +16,7 @@ Description: The testing approach works in two stages. First, a mixture distribu
       through the SFM approach. Second, the resulting MCMC output is used to calculate the
       number of modes and their locations following Basturk, Hoogerheide and van Dijk (2021)
       <doi:10.2139/ssrn.3783351>. Posterior probabilities are retrieved for both of these
-      quantities providing a powerful tool for mode inference. Currently the package
-      supports a flexible mixture of shifted Poisson distributions (see
-      Basturk, Hoogerheide and van Dijk (2021) <doi:10.2139/ssrn.3783351>).
+      quantities providing a powerful tool for mode inference.
 License: GPL (>= 3)
 Imports: 
     assertthat,
@@ -27,6 +25,8 @@ Imports:
     ggpubr,
     gtools,
     magrittr,
+    MCMCglmm,
+    mvtnorm,
     posterior,
     sn,
     stringr,

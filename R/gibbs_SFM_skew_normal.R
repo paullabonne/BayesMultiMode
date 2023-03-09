@@ -12,6 +12,8 @@
 #' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
 #' 
 #' @importFrom gtools rdirichlet
+#' @importFrom MCMCglmm rtnorm
+#' @importFrom mvtnorm rmvnorm
 #' @importFrom sn dsn
 #' @importFrom Rdpack reprompt
 #' @importFrom stats median kmeans rgamma rmultinom rnorm 
@@ -101,8 +103,7 @@ gibbs_SFM_skew_n <- function(y,
         # update z
         Ak = 1/(1 + beta[k, 2]^2/sigma2[k])
         ak = Ak*beta[k, 2]/sigma2[k]*(yk-beta[k, 1])
-        # z =  tr_normal(n_obs, ak, diag(Ak, n_obs))
-        zk <- MCMCglmm::rtnorm(N[k], ak, sqrt(Ak), lower=0) 
+        zk <- rtnorm(N[k], ak, sqrt(Ak), lower=0) 
 
         Xk = matrix(c(rep(1, N[k]), zk), nrow=N[k])
       }
@@ -112,8 +113,8 @@ gibbs_SFM_skew_n <- function(y,
         Bk = solve(crossprod(Xk)/sigma2[k] + B0_inv)
         bk = Bk%*%(crossprod(Xk, yk)/sigma2[k] + B0_inv%*%b0)
       }
-      # beta[k, ] = t(chol(sigma2[k]*Bk)) %*% rnorm(2) + t(bk)
-      beta[k, ] = mvtnorm::rmvnorm(1, bk, Bk)
+      
+      beta[k, ] = rmvnorm(1, bk, Bk)
    
       ## a.1 sample Sigma
       if(!empty){
@@ -167,16 +168,4 @@ gibbs_SFM_skew_n <- function(y,
   colnames(mcmc_result)[ncol(mcmc_result)] = "loglik"
   
   return(mcmc_result)
-}
-
-#' @keywords internal
-tr_normal <- function(N,mu,sigma2){
-  rd_sample = rnorm(N,mu,sqrt(sigma2))
-  rd_sample = rd_sample[rd_sample>=0]
-  while (length(rd_sample)<N) {
-    rd_sample = c(rnorm(N,mu,sqrt(sigma2)),rd_sample)
-    rd_sample = rd_sample[rd_sample>=0] 
-  }
-  
-  return(rd_sample[1:N])
 }

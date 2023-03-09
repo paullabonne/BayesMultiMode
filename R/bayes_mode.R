@@ -3,6 +3,8 @@
 #' @param BayesMix object of class `BayesMixture`.
 #' @param rd Rounding parameter.
 #' @param tol_x ...
+#' @param nb_iter Number of draws on which the mode-finding algorithm is run
+#' @param show_plot Show density with estimate mode as vertical bars
 #' 
 #' @return An object of class `BayesMode`.
 #' 

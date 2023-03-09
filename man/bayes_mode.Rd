@@ -18,6 +18,10 @@ bayes_mode(
 \item{rd}{Rounding parameter.}
 
 \item{tol_x}{...}
+
+\item{show_plot}{Show density with estimate mode as vertical bars}
+
+\item{nb_iter}{Number of draws on which the mode-finding algorithm is run}
 }
 \value{
 An object of class `BayesMode`.

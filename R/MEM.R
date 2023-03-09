@@ -18,7 +18,7 @@
 #' @importFrom sn dst
 #' @importFrom sn dsn
 #' @importFrom graphics abline curve
-#' @importFrom stats optim
+#' @importFrom stats optim na.omit var
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.string
 

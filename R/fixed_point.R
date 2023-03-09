@@ -8,7 +8,7 @@
 #' 
 #' @return A vector of estimated modes. 
 #' 
-#' @importFrom stats dnorm sd 
+#' @importFrom stats dnorm sd
 #' @importFrom graphics abline curve
 #' @importFrom assertthat assert_that
 #' @importFrom stringr str_remove
