@@ -100,15 +100,14 @@ for (i in 1:length(PY_result$p)) {
 }
 
 mcmc_py = bind_rows(mcmc_py)
-
-##
-pars_names = c(theta = "theta",
-               mu = "mu",
-               sigma = "sigma")
 ```
 
 #### Creating an object of class `BayesMixture`
 ```{r}
+pars_names = c(theta = "theta",
+               mu = "mu",
+               sigma = "sigma")
+
 py_BayesMix = new_BayesMixture(mcmc = mcmc_py,
                                data = y,
                                K = (ncol(mcmc_py)-1)/3,

@@ -96,8 +96,8 @@ summary(bayesmode)
     ## 
     ## The number of estimated modes and their posterior probabilities is:
     ##      Number of modes Posterior probabilty
-    ## [1,]               2                0.986
-    ## [2,]               3                0.014
+    ## [1,]               2                0.993
+    ## [2,]               3                0.007
 
 ### Using BayesMultiMode for mode inference with external MCMC output
 
@@ -118,18 +118,18 @@ PY_result = PYdensity(y,
                      output = list(out_param = TRUE))
 ```
 
-    ## Completed:   1000/10000 - in 0.109396 sec
-    ## Completed:   2000/10000 - in 0.224506 sec
-    ## Completed:   3000/10000 - in 0.330747 sec
-    ## Completed:   4000/10000 - in 0.441394 sec
-    ## Completed:   5000/10000 - in 0.552644 sec
-    ## Completed:   6000/10000 - in 0.67687 sec
-    ## Completed:   7000/10000 - in 0.790151 sec
-    ## Completed:   8000/10000 - in 0.904305 sec
-    ## Completed:   9000/10000 - in 1.01536 sec
-    ## Completed:   10000/10000 - in 1.12912 sec
+    ## Completed:   1000/10000 - in 0.107395 sec
+    ## Completed:   2000/10000 - in 0.217573 sec
+    ## Completed:   3000/10000 - in 0.336229 sec
+    ## Completed:   4000/10000 - in 0.439392 sec
+    ## Completed:   5000/10000 - in 0.557764 sec
+    ## Completed:   6000/10000 - in 0.670676 sec
+    ## Completed:   7000/10000 - in 0.787221 sec
+    ## Completed:   8000/10000 - in 0.90798 sec
+    ## Completed:   9000/10000 - in 1.02621 sec
+    ## Completed:   10000/10000 - in 1.13895 sec
     ## 
-    ## Estimation done in 1.12913 seconds
+    ## Estimation done in 1.13897 seconds
 
 ``` r
 plot(PY_result)
@@ -161,16 +161,15 @@ for (i in 1:length(PY_result$p)) {
 }
 
 mcmc_py = bind_rows(mcmc_py)
-
-##
-pars_names = c(theta = "theta",
-               mu = "mu",
-               sigma = "sigma")
 ```
 
 #### Creating an object of class `BayesMixture`
 
 ``` r
+pars_names = c(theta = "theta",
+               mu = "mu",
+               sigma = "sigma")
+
 py_BayesMix = new_BayesMixture(mcmc = mcmc_py,
                                data = y,
                                K = (ncol(mcmc_py)-1)/3,
@@ -201,11 +200,10 @@ summary(bayesmode)
     ## 
     ## The number of estimated modes and their posterior probabilities is:
     ##      Number of modes Posterior probabilty
-    ## [1,]               2               0.8104
-    ## [2,]               3               0.1608
-    ## [3,]               4               0.0264
-    ## [4,]               5               0.0022
-    ## [5,]               6               0.0002
+    ## [1,]               2               0.8162
+    ## [2,]               3               0.1612
+    ## [3,]               4               0.0214
+    ## [4,]               5               0.0012
 
 ### References
 
