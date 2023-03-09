@@ -32,8 +32,11 @@ Imports:
     stringr,
     tidyr,
     Rdpack,
-    scales,
-    testthat
+    scales
+Depends: 
+    R (>= 3.4.0)
+Suggests: 
+    testthat (>= 3.0.0)
 RdMacros: Rdpack
 Encoding: UTF-8
 LazyData: true
@@ -41,8 +44,4 @@ URL: https://github.com/paullabonne/BayesMultiMode
 BugReports: https://github.com/paullabonne/BayesMultiMode/issues
 NeedsCompilation: no
 RoxygenNote: 7.2.3
-Depends: 
-    R (>= 3.4.0)
-Suggests: 
-    testthat (>= 3.0.0)
 Config/testthat/edition: 3
