@@ -32,7 +32,8 @@ Imports:
     stringr,
     tidyr,
     Rdpack,
-    scales
+    scales,
+    testthat
 RdMacros: Rdpack
 Encoding: UTF-8
 LazyData: true
