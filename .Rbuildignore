@@ -6,3 +6,6 @@
 ^README_files
 ^\.github$
 ^CRAN-SUBMISSION$
+^install_etc.Rmd
+^illustration.Rmd
+^SNB.Rmd

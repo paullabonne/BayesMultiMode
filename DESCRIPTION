@@ -1,7 +1,7 @@
 Package: BayesMultiMode
 Type: Package
 Title: Testing and Detecting Multimodality using Bayesian Methods
-Version: 0.1.2
+Version: 0.1.2.9000
 Authors@R: c(person(given = "Nalan", family = "Baştürk", role = "aut"),
   person(given = "Jamie", family = "Cross", role = "aut"),
   person(given = "Peter", family = "de Knijff", role = "aut"),
@@ -20,11 +20,28 @@ Description: The testing approach works in two stages. First, a mixture distribu
       supports a flexible mixture of shifted Poisson distributions (see
       Basturk, Hoogerheide and van Dijk (2021) <doi:10.2139/ssrn.3783351>).
 License: GPL (>= 3)
-Imports: ggpubr, dplyr, tidyr, ggplot2, stringr, ggh4x, magrittr, gtools, Rdpack
+Imports: 
+    assertthat,
+    dplyr,
+    ggplot2,
+    ggpubr,
+    gtools,
+    magrittr,
+    posterior,
+    sn,
+    stringr,
+    tidyr,
+    Rdpack,
+    scales
 RdMacros: Rdpack
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/paullabonne/BayesMultiMode
 BugReports: https://github.com/paullabonne/BayesMultiMode/issues
 NeedsCompilation: no
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 3.4.0)
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

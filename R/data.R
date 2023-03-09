@@ -9,3 +9,12 @@
 #' @references
 #' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}
 "d4z4"
+
+#' Galaxy data set
+#'
+#' https://people.maths.bris.ac.uk/~mapjg/mixdat
+#' (Richardson S, Green PJ (1997) https://doi.org/10.1111/1467-9868.00095)
+#'
+#' @format
+#' Univariate measurements representing velocities of galaxies moving away from our galaxy. 82 observations.
+"galaxy"

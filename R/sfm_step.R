@@ -1,11 +1,13 @@
-## functions used in the MCMC algorithm
+## functions used in the SFM MCMC algorithm
 
+#' @keywords internal
 # Posterior of kappa
 post_kap <- function(x,LAMBDA,KAPPA) {
   n = length(x) # Number of elements in the component
   result <-  exp(-LAMBDA)*(LAMBDA^(sum(x)-n*KAPPA))/prod(factorial(x-KAPPA)) 
 }
 
+#' @keywords internal
 # Draw kappa from posterior using MH step
 draw_kap <- function(x,LAMBDA,KAPPA,kaplb,kapub) {
   n = length(x) # Number of elements in the component
@@ -28,31 +30,13 @@ draw_kap <- function(x,LAMBDA,KAPPA,kaplb,kapub) {
   return(out)           # Return output
 }
 
-# Probability mass function for shifted Poisson distribution
-spoisspdf <- function(x,LAMDA,KAPPA){
-  n = length(x) # number of points
-  # Undefined pdf = 0    
-  ind1 = which(x<KAPPA)  # spoisspdf not defined for these values
-  nundef = length(ind1) # number of undefined points
-  pdf1 = matrix(data=0,nrow=nundef,ncol=1) # set pdf = 0 for undefined values
-  # Defined pdf        
-  ind2 = which(x>=KAPPA) 
-  ndef = sum(ind2) # number of undefined points
-  x = x[ind2]
-  pdf2 = exp(-LAMDA)*(LAMDA^(x-KAPPA))/factorial(x-KAPPA)
-  # Combine 
-  pdfc = matrix(data=NA,nrow=n,ncol=1)
-  pdfc[ind1] = pdf1
-  pdfc[ind2] = pdf2
-  return(pdfc)           # Return output
-}
-
 # Posterior of e0 - Unnormalized target pdf
 post_e0 <- function(e0,nu0_p,S0_p,p) {
   K = length(p) # Number of components
   result <-  dgamma(e0,shape = nu0_p, scale = S0_p)*gamma(K*e0)/(gamma(e0)^K)*((prod(p))^(e0-1))
 }
 
+#' @keywords internal
 # Draw from the unnormalized target pdf for hyperparameter e0
 draw_e0 <- function(e0,nu0,S0,p){
   # Define terms

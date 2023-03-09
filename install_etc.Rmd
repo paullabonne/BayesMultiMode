@@ -1,0 +1,108 @@
+## Loading packages
+```{r}
+# roxygen2::roxygenize("BayesMultiMode") #not sure if needed
+
+######## Run this line when adding new functions to the package + adding the function name into NAMESPACE
+# devtools::document("BayesMultiMode") #create rd files to export functions
+#### Run this line to install the package after every modification
+# devtools::install("BayesMultiMode")
+# devtools::run_examples("BayesMultiMode")
+# devtools::build_manual("BayesMultiMode")
+# devtools::build("BayesMultiMode")
+# devtools::check("BayesMultiMode")
+# devtools::check_rhub("BayesMultiMode")
+# rcmdcheck::rcmdcheck("BayesMultiMode")
+# Default data analysis using BayesMultimode
+library(BayesMultiMode)
+# devtools::install_github("jumpingrivers/inteRgrate")
+# inteRgrate::check_pkg("BayesMultiMode")
+```
+
+## 
+```{r}
+roxygen2::roxygenize()
+devtools::document()
+
+devtools::test()
+
+devtools::install()
+
+devtools::check()
+```
+
+#### Loading all functions for testing before installing
+```{r, eval = FALSE}
+devtools::load_all()
+```
+
+#### Testing / https://r-pkgs.org/testing-design.html
+```{r}
+library(usethis)
+# use_r("MEM")    # creates and opens R/fixed_point.R
+use_test("new_BayesMixture") # creates and opens tests/testthat/test-fixed_point.R
+```
+
+```{r}
+# 
+# test_that("some long-running thing works", {
+#   skip_on_cran()
+#   # test code that can potentially take "a while" to run  
+# })
+# 
+# # test second element of output
+# 
+# # if the test use mcmc estimation result we could do this :
+# test_that("foofy() does this", {
+#   useful_thing1 <- readRDS(test_path("fixtures", "useful_thing1.rds"))
+#   expect_equal(foofy(useful_thing1, x = "this"), EXPECTED_FOOFY_OUTPUT)
+# })
+# 
+# test_that("foofy() does that", {
+#   useful_thing2 <- readRDS(test_path("fixtures", "useful_thing2.rds"))
+#   expect_equal(foofy(useful_thing2, x = "that"), EXPECTED_FOOFY_OUTPUT)
+# })
+
+# # Objects or functions defined in a helper file are available to all of your tests. such as :
+# new_useful_thing <- function() {
+#   # your fiddly code to create a useful_thing goes here like create a dataset ?
+# }
+```
+
+### DNA data
+```{r, eval=TRUE}
+# install.packages("readxl")
+library(readxl)
+library(gdata)
+
+file = "d4z4_4_411obs_a1_c2_y3.xls"# data with 4 mode acc. to AIC BIC
+mydata = read.xls(paste0("results.dnadata/data/", file))
+df_d4z4 = tibble(value = mydata[,1],
+                 type = "d4z4")
+
+df_DNA = df_d4z4
+
+ggplot(df_DNA, aes(x=value)) + 
+  ggtitle("Data") +
+  xlab("") + ylab("") +
+  geom_histogram(binwidth=1,color="white")
+
+d4z4 = df_d4z4$value
+save(d4z4,file="BayesMultiMode/data/d4z4.rda")
+```
+
+### galaxy data
+```{r, eval=TRUE}
+# source : https://people.maths.bris.ac.uk/~mapjg/mixdata (Richardson S, Green PJ (1997) https://doi.org/10.1111/1467-9868.00095)
+
+galaxy = c(9.172, 9.350,9.483,9.558,9.775,10.227,10.406,16.084,16.170,18.419,
+           18.552,18.600,18.927,19.052,19.070,19.330,19.343,19.349,19.440,19.473,
+           19.529,19.541,19.547,19.663,19.846,19.856,19.863,19.914,19.918,19.973,
+           19.989,20.166,20.175,20.179,20.196,20.215,20.221,20.415,20.629,20.795,
+           20.821,20.846,20.875,20.986,21.137,21.492,21.701,21.814,21.921,21.960,
+           22.185,22.209,22.242,22.249,22.314,22.374,22.495,22.746,22.747,22.888,
+           22.914,23.206,23.241,23.263,23.484,23.538,23.542,23.666,23.706,23.711,
+           24.129,24.285,24.289,24.366,24.717,24.990,25.633,26.960,26.995,32.065,
+           32.789,34.279)
+
+save(galaxy, file="data/galaxy.rda")
+```

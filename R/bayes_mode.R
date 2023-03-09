@@ -1,233 +1,137 @@
-#' Mode inference using post-processed SFM MCMC draws.
-#' 
-#' Computes the number of modes, their locations and posterior probabilities.
-#' @param theta_draws a (M x 3xJb) matrix. Output of `sfm_mcmc_spmix()` giving MCMC parameter draws after burn-in and discarding empty components.
-#' @param y (a vector of integers) Observations used to fit the model.
-#' @param mixt (a string) giving the mixture distribution. Default is "shifted_poisson".
-#' @returns 
-#' A list containing:
-#' \itemize{
-#'   \item Prob_unimod : Posterior probability of unimodality. (1-Prob_unimod) is equal to the posterior probability of multimodality.
-#'   \item table_nb_modes : Possible number of modes and posterior probability for each of those.
-#'   \item table_locations : Possible locations of modes and posterior probability for each of those.
-#'   \item A list of graphs showing : 
-#'   \itemize{
-#'        \item 1: The posterior probability of multimodality;
-#'        \item 2: Possible number of modes and posterior probability for each of those;
-#'        \item 3: Possible locations of modes and posterior probability for each of those;
-#' }
-#' }
+#' Bayesian estimation of mixture distributions
 #'
-#' @import dplyr
-#' @import tidyr
-#' @importFrom magrittr %>%
-#' @import ggplot2
-#' @importFrom ggpubr ggarrange
-#' @importFrom Rdpack reprompt
+#' @param BayesMix object of class `BayesMixture`.
+#' @param rd Rounding parameter.
+#' @param tol_x ...
 #' 
-#' @examples
-#' # Example with simulated data ================================================
-#' #set seed for random number generation
-#' set.seed(1) 
+#' @return An object of class `BayesMode`.
 #' 
-#' # Set the parameters for drawing from a two-component shifted Poisson mixture
-#' p1 = 0.3
-#' p2 = 1-p1
-#' kap1 = 3
-#' kap2 = 0
-#' lam1 = 1
-#' lam2 = 0.5
-#' length_data = 70
+#' @importFrom assertthat assert_that
+#' @importFrom assertthat is.scalar
 #' 
-#' # Generate data
-#' y <- c(rpois(length_data*p1, lam1)+kap1, rpois(length_data*p2, lam2)+kap2)
-#' 
-#' # Set parameters for the SFM MCMC estimation
-#' M = 1000 # Number of MCMC iterations 
-#' Jmax = 4 # Maximum number of mixture components
-#' 
-#' # Estimation with SFM MCMC
-#' sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
-#' 
-#' # Proportion of draws burned in
-#' S = 0.5
-#' 
-#' # Post processing
-#' post_sfm_mcmc = post_sfm_mcmc(sfm_mcmc, S=S)
-#' 
-#' # Mode inference
-#' bayes_mode(post_sfm_mcmc$theta_draws_slim,y)
-#' 
-#' # Example with DNA data =====================================================
-#' \donttest{
-#' y = d4z4
-#' M = 5000 # Number of MCMC iterations 
-#' Jmax = 10 # Maximum number of mixture components
-#' 
-#' # Estimation with SFM MCMC
-#' 
-#' sfm_mcmc = sfm_mcmc_spmix(y=y,Jmax=Jmax, M=M)
-#' # Proportion of draws burned in
-#' S = 0.5
-#' 
-#' # Mode inference
-#' bayes_mode(post_sfm_mcmc$theta_draws_slim,y)
-#' }
 #' @export
-#' 
-#' @importFrom Rdpack reprompt
-#' @references
-#' \insertRef{basturk_bayes_2021}{BayesMultiMode}
-#' 
 
-bayes_mode <- function(theta_draws, y, mixt="shifted_poisson"){
-  Pb <- value <- NULL
+bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot = F, nb_iter = NA) {
   
-  if(!is.vector(y)) stop("y should be a vector")
-  if(mixt!="shifted_poisson") stop("mixture not suported. Mixtures suported are : shifted_poisson")
+  assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
+  assert_that(is.scalar(rd) & rd >= 0, msg = "rd should be greater or equal than zero")
+  assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
   
-  
-  ### COUNT NUMBER OF MODES
-  fn.sub.mixpois<-function(theta.draws_i,y, which.r){
-    theta.draws_i = theta.draws_i[!is.na(theta.draws_i)]
-    Khat = length(theta.draws_i)/3
+  dist = BayesMix$dist
+  data = BayesMix$data
+  mcmc = BayesMix$mcmc
+  dist_type = BayesMix$dist_type
+  pdf_func = BayesMix$pdf_func
+  pars_names = BayesMix$pars_names
     
-    if (mixt=="shifted_poisson"){
-      theta <- cbind(theta.draws_i[1:Khat],
-                     theta.draws_i[(Khat+1):(2*Khat)],
-                     theta.draws_i[(2*Khat+1):(3*Khat)])
-      
-      p <- theta[,1]
-      kappa <- theta[,2]
-      lambda <-  theta[,3]
-      
-      ### Getting individual component densities
-      pdf.J = matrix(nrow=length(y),ncol=Khat) 
-      for(j in 1:Khat){
-        pdf.J[,j] = dpois((y-kappa[j]),lambda[j]) * p[j]
-      }
+  # assert_that(inherits(BayesMix$mcmc, "draws_matrix"),
+  #             msg = "mcmc in BayesMix is not of type draws_matrix")
+  assert_that(is.vector(data) & length(data) > 0,
+              msg = "data should be a vector of length > 0")
+  assert_that(dist_type %in% c("continuous", "discrete"),
+              msg = "dist_type should be either continuous or discrete")
+  assert_that(dist %in% c("normal", "student", "skew_t", "poisson", "shifted_poisson_bis",
+                          "skew_normal", "poisson", "shifted_poisson") & is.character(dist),
+              msg = "Unsupported distribution. 
+              dist should be either normal, student, skew_normal, skew_t, poisson,
+              shifted_poisson, shifted_poisson_bis or NA")
+  
+  
+  # if nb_iter is specified (find the mode on a limited number of iterations):
+  if (!is.na(nb_iter)) {
+    mcmc = mcmc[sample(1:nrow(mcmc), nb_iter), , drop = FALSE]
+  }
+  
+  if (dist_type == "continuous") {
+    if (dist == "normal") {
+      # fixed point
+      modes = t(apply(mcmc, 1, fixed_point, data = data, tol_x = tol_x, show_plot = show_plot))
+    } else {
+      # MEM algorithm
+      modes = t(apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, 
+                    pdf_func = pdf_func, tol_x = tol_x, show_plot = show_plot))
+    }
+   
+    ### Posterior probability of being a mode for each location
+    m_range = seq(from = min(round(data,rd)), to = max(round(data,rd)), by = 1/(10^rd)) # range of potential values for the modes
+    modes_disc = round(modes, rd)
+    
+    matrix_modes = matrix(0, nrow = nrow(modes), ncol = length(m_range))
+    for (i in 1:nrow(matrix_modes)) {
+      matrix_modes[i, modes_disc[i, ][!is.na(modes_disc[i, ])] %.in% m_range] = 1
     }
     
-    ### summing up to get the mixture
-    py <- rowSums(pdf.J)
+    sum_modes = apply(matrix_modes,2,sum)
+    probs_modes = sum_modes/nrow(modes)
+    probs_modes = probs_modes[probs_modes>0]
+    location_at_modes = m_range[sum_modes>0]
+    table_location = rbind(location_at_modes, probs_modes)
+  }
+  
+  if (dist_type == "discrete") {
+    y.pos <- min(data):max(data) # Range
     
-    ### Finding the modes
-    out <- count_modes(y,py, mode.sel = "leftmode")
-    r <- num.modes <- out$num.modes
-    if(which.r == 2){
-      # mode locations
-      r = rep(NA,ncol(theta_draws))
-      r[1:length(out$y.peaks)] = out$y.peaks
-    }
-    if(which.r == 3){
-      r = rep(NA,ncol(theta_draws))
-      #density at modes
-      r[1:length(out$py.peaks)] = out$py.peaks
-    }
-    if(which.r == 4){
-      r = rep(0,length(y))
-      
-      # account for flat modes
-      out_right <- count_modes(y,py, mode.sel = "rightmode")
-      for(i in 1:length(out$y.peaks)){
-        r[y==out$y.peaks[i]] = 1
-        
-        if(out$y.peaks[i]!=out_right$y.peaks[i]){
-          r[y==out_right$y.peaks[i]] = 1
-          
-          diff = out_right$y.peaks[i]-out$y.peaks[i]
-          if(diff>1){
-            for(j in 1:(diff-1))
-              r[y==out$y.peaks[i]+j] = 1
-          }
-        }
-      }
-      #
-    }
-    return(r)
+    n.modes <- apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 1,
+                     pars_names, dist, pdf_func) # number modes
+    modes <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 2,
+                     pars_names, dist, pdf_func)) # location modes
+    
+    modes = as.matrix(modes[, 1:max(n.modes)], nrow = nrow(mcmc))
+    colnames(modes) = paste('mode',1:max(n.modes))
+
+    # Posterior probability of being a mode for each location
+    modes_incl_flats <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 4,
+                                pars_names, dist, pdf_func)) # modes including flat ones
+    sum_modes_incl_flats = apply(modes_incl_flats,2,sum)
+    probs_modes = sum_modes_incl_flats/nrow(mcmc)
+    probs_modes = probs_modes[probs_modes>0]
+    range = min(data):max(data)
+    location_at_modes = range[sum_modes_incl_flats>0]
+    
+    table_location = rbind(location_at_modes, probs_modes)
   }
-  
-  # Implement function     
-  y.pos <- min(y):max(y) # Range
-  n.modes <- apply(theta_draws,1,FUN = fn.sub.mixpois, y = y.pos,which.r = 1) # number modes
-  modes <- t(apply(theta_draws,1,FUN = fn.sub.mixpois, y = y.pos,which.r = 2)) # location modes
-  modes = as.matrix(modes[, 1:max(n.modes)])
-  colnames(modes) = paste('mode',1:max(n.modes))
-  p.modes <- t(apply(theta_draws,1,FUN = fn.sub.mixpois, y = y.pos,which.r = 3)) # location modes
-  p.modes = as.matrix(p.modes[, 1:max(n.modes)])
-  colnames(p.modes) = paste('mode',1:max(n.modes))
-  
-  # Reshape into a vector
-  vec_modes = as.vector(modes)
-  vec_modes_without_NAs = vec_modes[!is.na(vec_modes)] # Remove NA values
-  
-  ## Nb of modes per draw
-  nb_modes_per_draw = rep(NA,nrow(modes))
-  for(i in 1:nrow(modes)){
-    nb_modes_per_draw[i] = length(which(!is.na(modes[i,])))
-  }
-  
-  ##### testing unimodality
-  if(any(nb_modes_per_draw==1)){
-    Post_prob_number_modes_equal_one = length(n.modes[n.modes==1])/nrow(theta_draws)
-  } else {
-    Post_prob_number_modes_equal_one = 0
-  }
-  
-  ## Test for number of modes : number of modes and their posterior probability
-  possible_nb_modes = unique(nb_modes_per_draw)
-  post_prob_nb_modes = rep(NA,length(possible_nb_modes))
-  for (i in 1:length(possible_nb_modes)){
-    post_prob_nb_modes[i] = length(n.modes[n.modes==possible_nb_modes[i]])/nrow(theta_draws)
-  }
-  table_nb_modes = rbind(possible_nb_modes,post_prob_nb_modes)
-  
+ 
   # Number of modes 
   n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw
   
+  ##### testing unimodality
+  p1 = 0 #Post_prob_number_modes_equal_one
   
-  # Posterior probability of being a mode for each location
-  modes_incl_flats <- t(apply(theta_draws,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 4)) # modes including flat ones
-  sum_modes_incl_flats = apply(modes_incl_flats,2,sum)
-  probs_modes = sum_modes_incl_flats/nrow(theta_draws)
-  probs_modes = probs_modes[probs_modes>0]
-  range = min(y):max(y)
-  location_at_modes = range[sum_modes_incl_flats>0]
+  if(any(n_modes==1)){
+    p1 = length(n_modes[n_modes==1])/nrow(modes)
+  }
   
-  table_location = rbind(location_at_modes,probs_modes)
+  # Test for number of modes : number of modes and their posterior probability
+  unique_modes = unique(n_modes) #possible number of modes
+  prob_nb_modes = rep(NA,length(unique_modes))
+  for (i in 1:length(unique_modes)){
+    prob_nb_modes[i] = length(n_modes[n_modes==unique_modes[i]])/nrow(modes)
+  }
+  tb_nb_modes = rbind(unique_modes,prob_nb_modes)
   
-  df_g0 = tibble(Pb = "Pb",
-                 value = (1-Post_prob_number_modes_equal_one))
+  BayesMode = list()
+  BayesMode$data = data
+  BayesMode$dist = dist
+  BayesMode$dist_type = dist_type
+  BayesMode$pars_names = pars_names
+  BayesMode$modes = modes
+  BayesMode$p1 = p1
+  BayesMode$tb_nb_modes = tb_nb_modes
+  BayesMode$table_location = table_location
   
-  g0 = ggplot(data=df_g0, aes(x=Pb, y=value)) +
-    ggtitle("Nb. modes > 1") +
-    theme_gg + 
-    ylim(0, 1) +
-    xlab("") + ylab("Posterior probability") +
-    geom_bar(stat="identity")
+  class(BayesMode) <- "BayesMode"
   
-  df_g1 = as_tibble(t(table_location))
-  g1 = ggplot(data=df_g1, aes(x=location_at_modes, y=probs_modes)) +
-    theme_gg + 
-    ggtitle("Mode locations") +
-    ylim(0, 1) +
-    xlab("") + ylab("Posterior probability") +
-    geom_bar(stat="identity",colour="white")
-  
-  df_g2 = as_tibble(t(table_nb_modes))
-  g2= ggplot(data=df_g2, aes(x=possible_nb_modes, y=post_prob_nb_modes)) +
-    theme_gg +
-    scale_x_continuous(breaks=possible_nb_modes) +
-    ggtitle("Number of modes") +
-    ylim(0, 1) +
-    xlab("") + ylab("Posterior probability") +
-    geom_bar(stat="identity")
-  
-  graphs <- ggarrange(g0, g2, g1,
-                      ncol = 3, nrow = 1, widths = c(0.7,1, 1))
-  
-  return(list(Prob_unimod = Post_prob_number_modes_equal_one,
-              table_nb_modes = table_nb_modes,
-              table_locations = table_location,
-              graphs = graphs))
+  return(BayesMode)
+}
+
+## This function overcomes the problem arising from comparing floating points
+## (0.1==0.1 can be false for instance,
+## see https://stackoverflow.com/questions/9508518/why-are-these-numbers-not-equal/9508558#9508558)
+#' @keywords internal
+`%.in%` = function(a, b, eps = sqrt(.Machine$double.eps)) {
+  output = rep(F,length(b))
+  for (x in a){
+    output <- (abs(b-x) <= eps) | output
+  }
+  output
 }
