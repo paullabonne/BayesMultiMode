@@ -36,13 +36,13 @@ library(BayesMultiMode)
 #### Estimation
 ```{r, out.width = '70%', fig.align = "center"}
 # retrieve acidity data
-# y = multimode::acidity
-y = d4z4
+y = multimode::acidity
+# y = d4z4
 
 # estimation
 bayesmix = bayes_estimation(data = y,
                             K = 5,
-                            dist = "shifted_poisson",
+                            dist = "skew_normal",
                             nb_iter = 2000,
                             burnin = 1000)
 
