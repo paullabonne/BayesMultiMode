@@ -25,18 +25,16 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot
   dist_type = BayesMix$dist_type
   pdf_func = BayesMix$pdf_func
   pars_names = BayesMix$pars_names
-    
-  # assert_that(inherits(BayesMix$mcmc, "draws_matrix"),
-  #             msg = "mcmc in BayesMix is not of type draws_matrix")
+  
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
   assert_that(dist_type %in% c("continuous", "discrete"),
               msg = "dist_type should be either continuous or discrete")
-  assert_that(dist %in% c("normal", "student", "skew_t", "poisson", "shifted_poisson_bis",
-                          "skew_normal", "poisson", "shifted_poisson") & is.character(dist),
+  assert_that(dist %in% c("normal", "poisson",
+                          "shifted_poisson", "skew_normal") & is.character(dist),
               msg = "Unsupported distribution. 
-              dist should be either normal, student, skew_normal, skew_t, poisson,
-              shifted_poisson, shifted_poisson_bis or NA")
+              dist should be either normal, skew_normal, poisson,
+              shifted_poisson, or NA")
   
   
   # if nb_iter is specified (find the mode on a limited number of iterations):
@@ -51,9 +49,9 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot
     } else {
       # MEM algorithm
       modes = t(apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, 
-                    pdf_func = pdf_func, tol_x = tol_x, show_plot = show_plot))
+                      pdf_func = pdf_func, tol_x = tol_x, show_plot = show_plot))
     }
-   
+    
     ### Posterior probability of being a mode for each location
     m_range = seq(from = min(round(data,rd)), to = max(round(data,rd)), by = 1/(10^rd)) # range of potential values for the modes
     modes_disc = round(modes, rd)
@@ -68,36 +66,48 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot
     probs_modes = probs_modes[probs_modes>0]
     location_at_modes = m_range[sum_modes>0]
     table_location = rbind(location_at_modes, probs_modes)
+    
+    # Number of modes 
+    n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw
   }
   
   if (dist_type == "discrete") {
-    y.pos <- min(data):max(data) # Range
-    
-    n.modes <- apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 1,
-                     pars_names, dist, pdf_func) # number modes
-    modes <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 2,
-                     pars_names, dist, pdf_func)) # location modes
-    
-    modes = as.matrix(modes[, 1:max(n.modes)], nrow = nrow(mcmc))
-    colnames(modes) = paste('mode',1:max(n.modes))
 
     # Posterior probability of being a mode for each location
-    modes_incl_flats <- t(apply(mcmc,1,FUN = fn.sub.mixpois, y = y.pos, which.r = 4,
-                                pars_names, dist, pdf_func)) # modes including flat ones
-    sum_modes_incl_flats = apply(modes_incl_flats,2,sum)
-    probs_modes = sum_modes_incl_flats/nrow(mcmc)
+    modes <- t(apply(mcmc,1,FUN = discrete_MF, data = data,
+                     pars_names = pars_names, dist = dist,
+                     pdf_func = pdf_func, show_plot = show_plot))
+    
+    modes_xid = matrix(0, nrow(modes), ncol(modes))
+    x = min(data):max(data)
+    for (i in 1:nrow(modes)) {
+      modes_xid[i, which(x %in% na.omit(modes[i,]))] = 1
+    }
+ 
+    # number of modes
+    n_modes = rowSums(modes_xid)
+    
+    sum_modes = apply(modes_xid,2,sum)
+    probs_modes = sum_modes/nrow(mcmc)
     probs_modes = probs_modes[probs_modes>0]
-    range = min(data):max(data)
-    location_at_modes = range[sum_modes_incl_flats>0]
+    x = min(data):max(data)
+    location_at_modes = x[sum_modes>0]
+    
+    modes = as.matrix(modes[, 1:max(n_modes)], nrow = nrow(mcmc))
+    colnames(modes) = paste('mode',1:max(n_modes))
     
     table_location = rbind(location_at_modes, probs_modes)
+    
+    # unique modes to calculate post probs of number of modes
+    modes <-  t(apply(mcmc,1,FUN = discrete_MF, data = data, type = "unique",
+                      pars_names = pars_names, dist = dist,
+                      pdf_func = pdf_func, show_plot = show_plot))
+    
+    n_modes = apply(!is.na(modes),1,sum)
   }
- 
-  # Number of modes 
-  n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw
   
   ##### testing unimodality
-  p1 = 0 #Post_prob_number_modes_equal_one
+  p1 = 0 # posterior probability of unimodality
   
   if(any(n_modes==1)){
     p1 = length(n_modes[n_modes==1])/nrow(modes)

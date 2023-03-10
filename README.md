@@ -47,12 +47,13 @@ and discrete.
 
 ``` r
 # retrieve acidity data
-y = multimode::acidity
+# y = multimode::acidity
+y = d4z4
 
 # estimation
 bayesmix = bayes_estimation(data = y,
                             K = 5,
-                            dist = "skew_normal",
+                            dist = "shifted_poisson",
                             nb_iter = 2000,
                             burnin = 1000)
 ```
@@ -72,6 +73,10 @@ bayesmix = bayes_estimation(data = y,
 # plot estimated mixture
 plot(bayesmix, max_size = 200)
 ```
+
+    ## Warning: Removed 41 rows containing missing values (`position_stack()`).
+
+    ## Warning: Removed 86400 rows containing missing values (`geom_line()`).
 
 <img src="README_files/figure-gfm/unnamed-chunk-4-1.png" width="70%" style="display: block; margin: auto;" />
 
@@ -95,9 +100,11 @@ summary(bayesmode)
     ## The posterior probability of the data being multimodal is 1 .
     ## 
     ## The number of estimated modes and their posterior probabilities is:
+
     ##      Number of modes Posterior probabilty
-    ## [1,]               2                0.993
-    ## [2,]               3                0.007
+    ## [1,]               3                0.003
+    ## [2,]               4                0.068
+    ## [3,]               5                0.929
 
 ### Using BayesMultiMode for mode inference with external MCMC output
 
@@ -118,18 +125,18 @@ PY_result = PYdensity(y,
                      output = list(out_param = TRUE))
 ```
 
-    ## Completed:   1000/10000 - in 0.107395 sec
-    ## Completed:   2000/10000 - in 0.217573 sec
-    ## Completed:   3000/10000 - in 0.336229 sec
-    ## Completed:   4000/10000 - in 0.439392 sec
-    ## Completed:   5000/10000 - in 0.557764 sec
-    ## Completed:   6000/10000 - in 0.670676 sec
-    ## Completed:   7000/10000 - in 0.787221 sec
-    ## Completed:   8000/10000 - in 0.90798 sec
-    ## Completed:   9000/10000 - in 1.02621 sec
-    ## Completed:   10000/10000 - in 1.13895 sec
+    ## Completed:   1000/10000 - in 0.110366 sec
+    ## Completed:   2000/10000 - in 0.22061 sec
+    ## Completed:   3000/10000 - in 0.337596 sec
+    ## Completed:   4000/10000 - in 0.455925 sec
+    ## Completed:   5000/10000 - in 0.576245 sec
+    ## Completed:   6000/10000 - in 0.695143 sec
+    ## Completed:   7000/10000 - in 0.814366 sec
+    ## Completed:   8000/10000 - in 0.933063 sec
+    ## Completed:   9000/10000 - in 1.06379 sec
+    ## Completed:   10000/10000 - in 1.18592 sec
     ## 
-    ## Estimation done in 1.13897 seconds
+    ## Estimation done in 1.18593 seconds
 
 ``` r
 plot(PY_result)
@@ -199,11 +206,13 @@ summary(bayesmode)
     ## The posterior probability of the data being multimodal is 1 .
     ## 
     ## The number of estimated modes and their posterior probabilities is:
+
     ##      Number of modes Posterior probabilty
-    ## [1,]               2               0.8162
-    ## [2,]               3               0.1612
-    ## [3,]               4               0.0214
-    ## [4,]               5               0.0012
+    ## [1,]               2               0.8126
+    ## [2,]               3               0.1648
+    ## [3,]               4               0.0216
+    ## [4,]               5               0.0008
+    ## [5,]               6               0.0002
 
 ### References
 

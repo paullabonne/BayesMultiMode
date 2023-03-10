@@ -36,12 +36,13 @@ library(BayesMultiMode)
 #### Estimation
 ```{r, out.width = '70%', fig.align = "center"}
 # retrieve acidity data
-y = multimode::acidity
+# y = multimode::acidity
+y = d4z4
 
 # estimation
 bayesmix = bayes_estimation(data = y,
                             K = 5,
-                            dist = "skew_normal",
+                            dist = "shifted_poisson",
                             nb_iter = 2000,
                             burnin = 1000)
 
@@ -52,7 +53,7 @@ plot(bayesmix, max_size = 200)
 #### Mode inference
 ```{r, out.width = '70%', fig.align = "center"}
 # mode estimation
-bayesmode = bayes_mode(bayesmix)
+bayesmode = bayes_mode(bayesmix, show_plot = F)
 
 # plot 
 plot(bayesmode, max_size = 200)
@@ -60,7 +61,6 @@ plot(bayesmode, max_size = 200)
 # Summary 
 summary(bayesmode)
 ```
-
 
 ### Using BayesMultiMode for mode inference with external MCMC output
 `BayesMultiMode` also works on MCMC output generated using external software. The function `new_BayesMixture()` creates an object of class `BayesMixture` which can then be used as input in the mode inference function of `bayes_mode()`. Here is an example where the `BNPmix` package is used for MCMC estimation.
