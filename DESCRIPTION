@@ -20,6 +20,7 @@ Description: The testing approach works in two stages. First, a mixture distribu
 License: GPL (>= 3)
 Imports: 
     assertthat,
+    bayesplot,
     dplyr,
     ggplot2,
     ggpubr,
