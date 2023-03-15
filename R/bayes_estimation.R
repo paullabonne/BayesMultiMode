@@ -42,10 +42,10 @@ bayes_estimation <- function(data,
     priors_labels = c("a0", "A0", "e0", "b0", "B0", "c0", "g0", "G0")
     
     mcmc = gibbs_SFM_normal(y = data,
-                           K = K,
-                           nb_iter = nb_iter,
-                           priors = priors[priors_labels],
-                           printing = printing)
+                            K = K,
+                            nb_iter = nb_iter,
+                            priors = priors[priors_labels],
+                            printing = printing)
     pars_names = c(theta = "theta", mu = "mu", sigma = "sigma")
     dist_type = "continuous"
     
