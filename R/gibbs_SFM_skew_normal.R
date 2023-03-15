@@ -70,7 +70,7 @@ gibbs_SFM_skew_n <- function(y,
   sigma2 = rep(max(y)^2,K)
   beta = cbind(xi[1, ],0)
 
-  z = matrix(0,n_obs,K)
+  zk = matrix(0,n_obs,1)
   cnt_update_e0 = 0
   
   for (m in 1:nb_iter){
@@ -94,8 +94,7 @@ gibbs_SFM_skew_n <- function(y,
         empty = TRUE
       }
       
-      #
-      
+      # sample z
       if(!empty){
         # allocate y
         yk = y[S[ ,k] == 1]
@@ -104,18 +103,10 @@ gibbs_SFM_skew_n <- function(y,
         Ak = 1/(1 + beta[k, 2]^2/sigma2[k])
         ak = Ak*beta[k, 2]/sigma2[k]*(yk-beta[k, 1])
         zk <- rtnorm(N[k], ak, sqrt(Ak), lower=0) 
-
+        
         Xk = matrix(c(rep(1, N[k]), zk), nrow=N[k])
       }
-   
-      ## a.2 sample xi and psi jointly
-      if(!empty){
-        Bk = solve(crossprod(Xk)/sigma2[k] + B0_inv)
-        bk = Bk%*%(crossprod(Xk, yk)/sigma2[k] + B0_inv%*%b0)
-      }
       
-      beta[k, ] = rmvnorm(1, bk, Bk)
-   
       ## a.1 sample Sigma
       if(!empty){
         eps = yk - Xk%*%beta[k, ]
@@ -123,6 +114,13 @@ gibbs_SFM_skew_n <- function(y,
         ck = c0 + N[k]/2
       }
       sigma2[k] = 1/rgamma(1, ck, Ck)
+   
+      ## a.2 sample xi and psi jointly
+      if(!empty){
+        Bk = solve(crossprod(Xk)/sigma2[k] + B0_inv)
+        bk = Bk%*%(crossprod(Xk, yk)/sigma2[k] + B0_inv%*%b0)
+      }
+      beta[k, ] = rmvnorm(1, bk, Bk)
       
       # storing
       xi[m, k] = beta[k, 1]

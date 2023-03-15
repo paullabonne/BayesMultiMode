@@ -3,7 +3,7 @@
 \docType{data}
 \name{d4z4}
 \alias{d4z4}
-\title{DNA data}
+\title{DNA dataset}
 \format{
 A vector of counts with 410 elements.
 }
