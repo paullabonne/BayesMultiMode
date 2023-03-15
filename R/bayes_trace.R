@@ -4,7 +4,7 @@
 #' @param mcmc_vars Variables to plot. Default is all the variable in the MCMC output.
 #' @param ... arguments passed to mcmc_trace.
 #' 
-#' @importFrom assertthat assert_that
+#' @importFrom bayesplot mcmc_trace
 #' @importFrom assertthat assert_that
 #' 
 #' @return A trace plot.
