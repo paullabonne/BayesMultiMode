@@ -1,6 +1,7 @@
 #' Creating a S3 object of class `BayesMixture`.
-#' This function is helpful for users who want to explore modes in MCMC draws which have not been
-#' derived using the function `bayes_estimation()`.
+#' 
+#' This function is for users who want to explore modes in MCMC draws which have not been
+#' derived using the function bayes_estimation().
 #' 
 #' @param mcmc A matrix of MCMC draws.
 #' @param data A vector containing the data used for estimating the model and generating the MCMC draws.

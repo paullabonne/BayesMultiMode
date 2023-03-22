@@ -10,7 +10,7 @@
 #' @param printing Print intermediate of the MCMC estimation ? default = TRUE.
 #' 
 #' @returns 
-#' mcmc_draws Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix. 
+#' mcmc_draws : Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix. 
 #' 
 #' @references
 #' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr

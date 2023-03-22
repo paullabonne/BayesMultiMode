@@ -1,6 +1,6 @@
 #' Fixed-point algorithm for finding the modes of a gaussian mixture.
 #' 
-#' See Carreira-Perpinan (2000), section 4 equation (10).
+#' See Carreira-Perpinan (2000), section 4.
 #' 
 #' @param mcmc Vector of estimated mixture parameters.
 #' @param data Vector of observations used for estimating the mixture.
@@ -10,7 +10,7 @@
 #' @return Vector of estimated modes. 
 #' 
 #' @references
-#' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr
+#' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}
 #' 
 #' @importFrom stats dnorm sd
 #' @importFrom graphics abline curve

@@ -2,7 +2,7 @@
 % Please edit documentation in R/bayes_trace.R
 \name{bayes_trace}
 \alias{bayes_trace}
-\title{Trace plots. This is wrapper around the mcmc_trace function from package bayesplot.}
+\title{Trace plots.}
 \usage{
 bayes_trace(BayesMix, mcmc_vars = NULL, ...)
 }
@@ -11,11 +11,11 @@ bayes_trace(BayesMix, mcmc_vars = NULL, ...)
 
 \item{mcmc_vars}{Variables to plot. Default is all the variable in the MCMC output.}
 
-\item{...}{arguments passed to mcmc_trace.}
+\item{...}{Additional arguments passed to function mcmc_trace() from the package bayesplot.}
 }
 \value{
 A trace plot.
 }
 \description{
-Trace plots. This is wrapper around the mcmc_trace function from package bayesplot.
+This is wrapper around the mcmc_trace function from package bayesplot.
 }

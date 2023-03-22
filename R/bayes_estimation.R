@@ -2,8 +2,8 @@
 #' 
 #' Gibbs sampler for Spare Finite Mixture MCMC estimation of mixture distributions.
 #' 
-#' @param data Numeric vector of input values.
-#' @param K Integer indicating the maximum number of mixture components.
+#' @param data Vector of observations.
+#' @param K Maximum number of mixture components.
 #' @param dist String indicating the distribution of the mixture components.
 #' Currently supports "normal", "skew_normal", "poisson" and "shifted_poisson".
 #' @param priors List of priors. Default in an empty list.
@@ -13,6 +13,7 @@
 #' 
 #' @return An object of class `BayesMixture`.
 #' 
+#' @references
 #' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
 #' \insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
 #' 

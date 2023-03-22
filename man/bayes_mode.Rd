@@ -13,11 +13,11 @@ bayes_mode(
 )
 }
 \arguments{
-\item{BayesMix}{object of class `BayesMixture`.}
+\item{BayesMix}{An object of class `BayesMixture`.}
 
 \item{rd}{Rounding parameter.}
 
-\item{tol_x}{Tolerance parameter for distance in-between modes. Default is sd(data)/10.
+\item{tol_x}{Tolerance parameter for distance in-between modes. Default is sd(data)/10 where data is an element of BayesMix.
 If two modes are closer than tol_x, only the first estimated mode is kept.
 Not needed for mixtures of discrete distributions.}
 
@@ -27,12 +27,13 @@ Not needed for mixtures of discrete distributions.}
 }
 \value{
 An object of class `BayesMode`.
-
-\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
-\insertRef{li_nonparametric_2007}{BayesMultiMode}\cr
 }
 \description{
-Modes are estimated for each mcmc draws and these are used to compute posterior probabilities for the number of modes and their locations.
+Estimates modes for each mcmc draws which are then used to compute posterior probabilities for the number of modes and their locations.
 The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures
 while the Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
+}
+\references{
+\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
+\insertRef{li_nonparametric_2007}{BayesMultiMode}
 }

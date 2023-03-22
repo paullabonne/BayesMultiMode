@@ -19,8 +19,8 @@ fixed_point(mcmc, data, tol_x = sd(data)/10, show_plot = F)
 Vector of estimated modes.
 }
 \description{
-See Carreira-Perpinan (2000), section 4 equation (10).
+See Carreira-Perpinan (2000), section 4.
 }
 \references{
-\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr
+\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}
 }

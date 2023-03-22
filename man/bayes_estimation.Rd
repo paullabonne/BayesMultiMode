@@ -15,9 +15,9 @@ bayes_estimation(
 )
 }
 \arguments{
-\item{data}{Numeric vector of input values.}
+\item{data}{Vector of observations.}
 
-\item{K}{Integer indicating the maximum number of mixture components.}
+\item{K}{Maximum number of mixture components.}
 
 \item{dist}{String indicating the distribution of the mixture components.
 Currently supports "normal", "skew_normal", "poisson" and "shifted_poisson".}
@@ -32,10 +32,11 @@ Currently supports "normal", "skew_normal", "poisson" and "shifted_poisson".}
 }
 \value{
 An object of class `BayesMixture`.
-
-\insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
-\insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
 }
 \description{
 Gibbs sampler for Spare Finite Mixture MCMC estimation of mixture distributions.
+}
+\references{
+\insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
+\insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
 }

@@ -33,9 +33,10 @@ Currently supports "normal" and "skew_normal".}
 }
 \value{
 A vector estimated modes.
-
-\insertRef{li_nonparametric_2007}{BayesMultiMode}
 }
 \description{
-Mode-finding EM algorithm (MEM)
+MEM algorithm from Li et al. (2007).
+}
+\references{
+\insertRef{li_nonparametric_2007}{BayesMultiMode}
 }

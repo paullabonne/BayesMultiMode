@@ -1,20 +1,21 @@
 #' Bayesian mode inference.
 #' 
-#' Modes are estimated for each mcmc draws and these are used to compute posterior probabilities for the number of modes and their locations.
+#' Estimates modes for each mcmc draws which are then used to compute posterior probabilities for the number of modes and their locations.
 #' The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures
 #' while the Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
 #'
-#' @param BayesMix object of class `BayesMixture`.
+#' @param BayesMix An object of class `BayesMixture`.
 #' @param rd Rounding parameter.
-#' @param tol_x Tolerance parameter for distance in-between modes. Default is sd(data)/10.
+#' @param tol_x Tolerance parameter for distance in-between modes. Default is sd(data)/10 where data is an element of BayesMix.
 #' If two modes are closer than tol_x, only the first estimated mode is kept.
 #' Not needed for mixtures of discrete distributions.
 #' @param show_plot Show density with estimate mode as vertical bars
 #' @param nb_iter Number of draws on which the mode-finding algorithm is run. Deault is NULL which means the algorithm is run on all draws.
 #' @return An object of class `BayesMode`.
 #' 
-#'\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
-#' \insertRef{li_nonparametric_2007}{BayesMultiMode}\cr
+#' @references
+#' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
+#' \insertRef{li_nonparametric_2007}{BayesMultiMode}
 #' 
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.scalar

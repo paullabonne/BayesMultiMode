@@ -3,8 +3,7 @@
 \docType{data}
 \name{enzyme}
 \alias{enzyme}
-\title{Enzyme dataset
-Enzyme series}
+\title{Enzyme series}
 \format{
 ...
 }
@@ -12,7 +11,6 @@ Enzyme series}
 enzyme
 }
 \description{
-Enzyme dataset
 Enzyme series
 }
 \references{

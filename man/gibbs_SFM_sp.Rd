@@ -19,7 +19,7 @@ list(a0 = 1, A0 = 200, e0 = a0/A0, l0 = 1.1, L0 = 1.1/median(y))}
 \item{printing}{Print intermediate of the MCMC estimation ? default = TRUE.}
 }
 \value{
-mcmc_draws Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix.
+mcmc_draws : Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix.
 }
 \description{
 MCMC estimation using a Spare Finite Mixture algorithm.

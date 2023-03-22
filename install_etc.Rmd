@@ -27,6 +27,8 @@ devtools::test()
 
 devtools::install()
 
+devtools::build_manual()
+
 devtools::check()
 ```
 

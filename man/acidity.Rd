@@ -3,8 +3,7 @@
 \docType{data}
 \name{acidity}
 \alias{acidity}
-\title{Acidity dataset
-Acidity series}
+\title{Acidity series}
 \format{
 ...
 }
@@ -12,7 +11,6 @@ Acidity series}
 acidity
 }
 \description{
-Acidity dataset
 Acidity series
 }
 \references{

@@ -12,7 +12,8 @@
 #' 
 #' @return A vector estimated modes.
 #' 
-#' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}\cr
+#' @references
+#' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}
 #' 
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.string

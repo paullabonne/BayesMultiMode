@@ -33,9 +33,10 @@ Currently supports "poisson" and "shifted_poisson". Default is "NA".}
 }
 \value{
 A vector estimated modes.
-
-\insertRef{schaap_genome-wide_2013}{BayesMultiMode}\cr
 }
 \description{
 Mode-finding algorithm for mixture of discrete distributions
+}
+\references{
+\insertRef{schaap_genome-wide_2013}{BayesMultiMode}
 }

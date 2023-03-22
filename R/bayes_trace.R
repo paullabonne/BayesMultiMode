@@ -1,8 +1,10 @@
-#' Trace plots. This is wrapper around the mcmc_trace function from package bayesplot.
+#' Trace plots.
+#' 
+#' This is wrapper around the mcmc_trace function from package bayesplot.
 #'
 #' @param BayesMix An object of class BayesMixture.
 #' @param mcmc_vars Variables to plot. Default is all the variable in the MCMC output.
-#' @param ... arguments passed to mcmc_trace.
+#' @param ... Additional arguments passed to function mcmc_trace() from the package bayesplot.
 #' 
 #' @importFrom bayesplot mcmc_trace
 #' @importFrom assertthat assert_that

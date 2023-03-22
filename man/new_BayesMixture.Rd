@@ -2,9 +2,7 @@
 % Please edit documentation in R/new_BayesMixture.R
 \name{new_BayesMixture}
 \alias{new_BayesMixture}
-\title{Creating a S3 object of class `BayesMixture`.
-This function is helpful for users who want to explore modes in MCMC draws which have not been
-derived using the function `bayes_estimation()`.}
+\title{Creating a S3 object of class `BayesMixture`.}
 \usage{
 new_BayesMixture(
   mcmc,
@@ -41,7 +39,6 @@ This input is used only if dist_name is invalid or NULL.}
 An object of class `BayesMixture`.
 }
 \description{
-Creating a S3 object of class `BayesMixture`.
-This function is helpful for users who want to explore modes in MCMC draws which have not been
-derived using the function `bayes_estimation()`.
+This function is for users who want to explore modes in MCMC draws which have not been
+derived using the function bayes_estimation().
 }

@@ -10,7 +10,6 @@
 #' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}
 "d4z4"
 
-#' Galaxy dataset
 #' Galaxy series
 #' @format
 #' ...
@@ -19,7 +18,6 @@
 #' \insertRef{Richardson_Green_1997_RJMCMC}{BayesMultiMode}
 "galaxy"
 
-#' Enzyme dataset
 #' Enzyme series
 #' @format
 #' ...
@@ -28,7 +26,6 @@
 #' \insertRef{Richardson_Green_1997_RJMCMC}{BayesMultiMode}
 "enzyme"
 
-#' Acidity dataset
 #' Acidity series
 #' @format
 #' ...

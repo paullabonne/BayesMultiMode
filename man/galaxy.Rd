@@ -3,8 +3,7 @@
 \docType{data}
 \name{galaxy}
 \alias{galaxy}
-\title{Galaxy dataset
-Galaxy series}
+\title{Galaxy series}
 \format{
 ...
 }
@@ -12,7 +11,6 @@ Galaxy series}
 galaxy
 }
 \description{
-Galaxy dataset
 Galaxy series
 }
 \references{

@@ -1,5 +1,6 @@
 #' Mode-finding EM algorithm (MEM)
 #' 
+#' MEM algorithm from Li et al. (2007).
 #' 
 #' @param mcmc Vector of estimated mixture parameters.
 #' @param data Vector of observations used for estimating the mixture.
@@ -13,6 +14,7 @@
 #' 
 #' @return A vector estimated modes.
 #' 
+#' @references
 #' \insertRef{li_nonparametric_2007}{BayesMultiMode}
 #' 
 #' @importFrom sn dst
