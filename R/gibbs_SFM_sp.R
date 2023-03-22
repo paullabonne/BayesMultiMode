@@ -6,7 +6,7 @@
 #' @param K Maximum number of mixture components.
 #' @param nb_iter Number of MCMC iterations.
 #' @param priors List of priors. Default is :
-#' list(a0 = 1, A0 = 200, e0 = a0/A0, l0 = 1.1, L0 = 1.1/median(y))
+#' list(a0 = 1, A0 = 200, l0 = 1.1, L0 = 1.1/median(y))
 #' @param printing Print intermediate of the MCMC estimation ? default = TRUE.
 #' 
 #' @returns 
@@ -33,7 +33,6 @@ gibbs_SFM_sp <- function(y,
   # A0 = ifelse(is.null(priors$A0), a0*K, priors$A0)
   a0 = ifelse(is.null(priors$a0), 1, priors$a0)
   A0 = ifelse(is.null(priors$A0), 200, priors$A0)
-  e0 = ifelse(is.null(priors$e0), a0/A0, priors$e0)
   l0 = ifelse(is.null(priors$l0), 1.1, priors$l0)
   L0 = ifelse(is.null(priors$L0), 1.1/median(y), priors$L0)
   
@@ -58,6 +57,8 @@ gibbs_SFM_sp <- function(y,
   for (k in 1:K) {
     S[cl_y$cluster==k ,k] = 1
   }
+  
+  e0 = a0/A0
   
   # storage matrices
   kappa = matrix(data=NA,nrow=nb_iter,ncol=K) 

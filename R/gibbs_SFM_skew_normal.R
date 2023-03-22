@@ -6,7 +6,7 @@
 #' @param K Maximum number of mixture components.
 #' @param nb_iter Number of MCMC iterations.
 #' @param priors List of priors. Default is :
-#' list(a0 = 1, A0 = 200, b0 = median(y), B0 = (max(y) - min(y))^2, c0 = 2.5, e0 = a0/A0, g0 = 0.5, G0 = 100*g0/c0/B0, D_xi = 1, D_psi = 1)
+#' list(a0 = 1, A0 = 200, b0 = median(y), B0 = (max(y) - min(y))^2, c0 = 2.5, g0 = 0.5, G0 = 100*g0/c0/B0, D_xi = 1, D_psi = 1)
 #' @param printing Print intermediate of the MCMC estimation ? default = TRUE.
 #' 
 #' @returns 
@@ -40,7 +40,6 @@ gibbs_SFM_skew_n <- function(y,
   B0 = ifelse(is.null(priors$B0), (max(y) - min(y))^2, priors$B0)
   c0 = ifelse(is.null(priors$c0), 2.5, priors$c0)
   C0 = ifelse(is.null(priors$C0), 0.5*var(y), priors$C0)
-  e0 = ifelse(is.null(priors$e0), a0/A0, priors$e0)
   g0 = ifelse(is.null(priors$g0), 0.5, priors$g0)
   G0 = ifelse(is.null(priors$G0), g0/(0.5*var(y)), priors$G0)
   D_xi = ifelse(is.null(priors$D_xi), 1, priors$D_xi)
@@ -69,7 +68,8 @@ gibbs_SFM_skew_n <- function(y,
   
   b0 = matrix(c(b0, 0),nrow=2)
   B0_inv = diag(1/c(D_xi,D_psi))
-
+  e0 = a0/A0
+  
   for (k in 1:K){
     xi[1, k] = mean(y[S[, k]==1])
   }
