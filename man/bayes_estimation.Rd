@@ -22,7 +22,9 @@ bayes_estimation(
 \item{dist}{String indicating the distribution of the mixture components.
 Currently supports "normal", "skew_normal", "poisson" and "shifted_poisson".}
 
-\item{priors}{List of priors. Default in an empty list.}
+\item{priors}{List of priors. Default in an empty list which implies the following priors :\cr
+a0 = 1,\cr A0 = 200,\cr b0 = median(y),\cr B0 = (max(y) - min(y))^2,\cr c0 = 2.5,\cr e0 = a0/A0,\cr
+l0 = 1.1,\cr L0 = 1.1/median(y),\cr g0 = 0.5,\cr G0 = 100*g0/c0/B0,\cr D_xi = 1,\cr D_psi =1.}
 
 \item{nb_iter}{Number of MCMC iterations. Default is 2000.}
 
@@ -38,5 +40,7 @@ Gibbs sampler for Spare Finite Mixture MCMC estimation of mixture distributions.
 }
 \references{
 \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
-\insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
+\insertRef{fruhwirth-schnatter_bayesian_2010}{BayesMultiMode}\cr\cr
+\insertRef{SFS:Mal:2019}{BayesMultiMode}\cr\cr
+\insertRef{viallefont2002bayesian}{BayesMultiMode}
 }

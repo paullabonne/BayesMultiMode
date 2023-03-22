@@ -21,6 +21,7 @@
 #' @importFrom Rdpack reprompt
 #' @importFrom stats median kmeans rgamma rmultinom rnorm
 
+#' @keywords internal
 gibbs_SFM_normal <- function(y,
                              K,
                              nb_iter,

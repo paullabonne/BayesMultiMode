@@ -20,6 +20,7 @@
 #' @importFrom gtools rdirichlet
 #' @importFrom stats density dgamma dpois rgamma rmultinom rnorm runif
 
+#' @keywords internal
 gibbs_SFM_poisson <- function(y,
                               K,
                               nb_iter,

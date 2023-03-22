@@ -28,3 +28,4 @@ MCMC estimation using a Spare Finite Mixture algorithm.
 \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
 \insertRef{SFS:Mal:2019}{BayesMultiMode}
 }
+\keyword{internal}
