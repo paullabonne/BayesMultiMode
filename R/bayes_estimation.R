@@ -1,18 +1,23 @@
 #' Bayesian estimation of mixture distributions
-#'
+#' 
+#' Gibbs sampler for Spare Finite Mixture MCMC estimation of mixture distributions.
+#' 
 #' @param data Numeric vector of input values.
 #' @param K Integer indicating the maximum number of mixture components.
 #' @param dist String indicating the distribution of the mixture components.
 #' Currently supports "normal", "student" and "skew_normal".
+#' @param priors List of priors. Default in an empty list.
 #' @param nb_iter Number of MCMC iterations. Default is 2000.
-#' @param priors Number of MCMC iterations. Default is 2000.
-#' @param burnin Number of MCMC iterations used as burnin.
+#' @param burnin Number of MCMC iterations used as burnin. Default is nb_iter/2.
 #' @param printing Showing MCMC progression ?
+#' 
+#' @return An object of class `BayesMixture`.
+#' 
+#' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
+#' \insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
 #' 
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.scalar
-
-#' @return An object of class `BayesMixture`.
 #' 
 #' @export
 #'

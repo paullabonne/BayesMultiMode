@@ -1,6 +1,7 @@
-#' Summary modes
-#' @param object ...
-#' @param ... ...
+#' Summary of Bayesian mode estimates.
+#' 
+#' @param object An object of class BayesMode.
+#' @param ... Not used.
 #' 
 #' @export
 summary.BayesMode <- function(object, ...) {

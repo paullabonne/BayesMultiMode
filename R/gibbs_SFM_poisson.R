@@ -1,23 +1,25 @@
-#' Estimation of a mixture of Poisson distributions.
+#' Bayesian estimation of a mixture of shifted Poisson distributions.
 #' 
-#' Bayesian estimation of a mixture of Poisson distributions using a Sparse Finite Mixture MCMC algorithm.
-#' @param y (a vector of integers) Observations used to fit the model.
-#' @param K (an integer) Maximum number of mixture components.
-#' @param nb_iter (an integer) Number of MCMC iterations.
-#' @param prt print intermediate of the MCMC estimation ? default = TRUE.
+#' MCMC estimation using a Spare Finite Mixture algorithm.
+#' 
+#' @param y Vector of discrete observations.
+#' @param K Maximum number of mixture components.
+#' @param nb_iter Number of MCMC iterations.
+#' @param priors List of priors. Default is :
+#' list(a0 = 1, A0 = 200, e0 = a0/A0, l0 = 1.1, L0 = 1.1/median(y))
+#' @param printing Print intermediate of the MCMC estimation ? default = TRUE.
 #' 
 #' @returns 
-#' mcmc_draws : a (nb_iter x 2K + 1) matrix. Parameter draws from the posterior distribution at each MCMC iteration.
+#' mcmc_draws Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix. 
 #' 
-#' @importFrom Rdpack reprompt
 #' @references
 #' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
-#' \insertRef{basturk_bayes_2021}{BayesMultiMode}
-
+#' \insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
+#' 
+#' @importFrom Rdpack reprompt
 #' @importFrom gtools rdirichlet
 #' @importFrom stats density dgamma dpois rgamma rmultinom rnorm runif
 
-#' @keywords internal
 gibbs_SFM_poisson <- function(y,
                               K,
                               nb_iter,

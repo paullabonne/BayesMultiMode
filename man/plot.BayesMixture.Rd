@@ -2,19 +2,19 @@
 % Please edit documentation in R/plot_methods.R
 \name{plot.BayesMixture}
 \alias{plot.BayesMixture}
-\title{Plot mixture}
+\title{Plot an estimated mixture for a given number of draws with an histogram of the data.}
 \usage{
 \method{plot}{BayesMixture}(x, max_size = 250, transparency = 0.1, ...)
 }
 \arguments{
-\item{x}{...}
+\item{x}{An object of class BayesMixture.}
 
-\item{max_size}{...}
+\item{max_size}{The number of MCMC draws to plot.}
 
-\item{transparency}{...}
+\item{transparency}{transparency of the density lines. Default is 0.1. Should be greater than 0 and below or equal to 1.}
 
-\item{...}{...}
+\item{...}{Not used.}
 }
 \description{
-Plot mixture
+Plot an estimated mixture for a given number of draws with an histogram of the data.
 }

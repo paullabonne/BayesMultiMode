@@ -1,9 +1,9 @@
-#' Plot mixture
+#' Plot an estimated mixture for a given number of draws with an histogram of the data.
 #' 
-#' @param x ...
-#' @param max_size ...
-#' @param transparency ...
-#' @param ... ...
+#' @param x An object of class BayesMixture.
+#' @param max_size The number of MCMC draws to plot.
+#' @param transparency transparency of the density lines. Default is 0.1. Should be greater than 0 and below or equal to 1.
+#' @param ... Not used.
 #' 
 #' @importFrom posterior as_draws_matrix
 #' @importFrom posterior as_draws_df
@@ -138,10 +138,10 @@ plot.BayesMixture <- function(x, max_size = 250,
 }
 
 
-#' Plot modes
-#' @param x ...
-#' @param graphs which plot to show ? Default is all three.
-#' @param ... ...
+#' Plot Bayesian mode estimates.
+#' @param x An object of class BayesMode.
+#' @param graphs which plot to show ? Default is all three c("p1", "number", "loc").
+#' @param ... Not used.
 #' 
 #' @importFrom posterior as_draws_matrix
 #' @importFrom ggpubr ggarrange

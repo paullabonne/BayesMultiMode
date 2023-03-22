@@ -11,7 +11,7 @@ test_that("MEM function returns expected results with dist = skew_normal", {
   data = c(sn::rsn(p[1]*100, xi[1], omega[1], alpha[1]),
            sn::rsn(p[2]*100, xi[2], omega[2], alpha[2]))
   
-  modes = MEM(params, dist, pars_names, data)
+  modes = MEM(params, data = data, pars_names = pars_names, dist = dist)
   expect_equal(abs(sum(modes-xi))<1,  TRUE)
   # the two densities are far appart so the modes should coincide with the location parameters
 })

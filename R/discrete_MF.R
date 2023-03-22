@@ -1,23 +1,25 @@
-#' Mode-finding for mmixture of discrete distributions
+#' Mode-finding algorithm for mixture of discrete distributions
 #' 
-#' @param mcmc a vector of estimated mixture parameters.
+#' @param mcmc Vector of estimated mixture parameters.
+#' @param data Vector of observations used for estimating the mixture.
+#' @param pars_names Names of of the mcmc variables.
 #' @param dist String indicating the distribution of the mixture components.
-#' Currently supports "normal", "student" and "skew_normal".
-#' @param data Numeric vector of observations.
-#' @param type Type of modes, either unique or all (the latter includes flat modes).
-#' @param pars_names Names of the variables mcmc draws variables
-#' @param pdf_func Pdf or pmf of the mixture components associated with the mcmc draws (if estimation not in-house)
-#' @param show_plot Show the data and estimated modes.
+#' Currently supports "poisson" and "shifted_poisson". Default is "NA".
+#' @param pdf_func Pmf of the mixture components associated with the mcmc draws
+#' (if mcmc estimation has not been carried out with BayesMultiMode); default is null.
+#' @param type Type of modes, either unique or all (the latter includes flat modes); default is "all".
+#' @param show_plot If true show the data and estimated modes; default is false.
 #' 
 #' @return A vector estimated modes.
 #' 
+#' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}\cr
+#' 
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.string
-
 #' 
 #' @export
-discrete_MF <- function(mcmc, data, pars_names, dist, type = "all",
-                        pdf_func = NULL, show_plot = FALSE){
+discrete_MF <- function(mcmc, data, pars_names, dist = "NA",
+                        pdf_func = NULL, type = "all", show_plot = FALSE){
   
   if (!is.null(pdf_func)) {
     pdf_func <- pdf_func_vec(pdf_func)
@@ -26,8 +28,8 @@ discrete_MF <- function(mcmc, data, pars_names, dist, type = "all",
   x = min(data):max(data)
   
   ## input checks
-  assert_that(is.vector(mcmc) & length(mcmc) >= 3,
-              msg = "mcmc should be a vector of length >= 3")
+  assert_that(is.vector(mcmc),
+              msg = "mcmc should be a vector")
   assert_that(is.string(dist),
               msg = "dist should be a string")
   assert_that(is.vector(x) & length(x) > 0,
@@ -92,7 +94,7 @@ discrete_MF <- function(mcmc, data, pars_names, dist, type = "all",
   }
   
   if (show_plot) {
-    plot(x, py, type = "l")
+    plot(x, py, type = "l", xlab = "", ylab = "")
     for (mode_i in loc_modes) {
       abline(v = mode_i)
     }

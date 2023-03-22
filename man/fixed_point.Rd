@@ -2,24 +2,25 @@
 % Please edit documentation in R/fixed_point.R
 \name{fixed_point}
 \alias{fixed_point}
-\title{Fixed-point algorithm for finding the modes of a gaussian mixture.
-See Carreira-Perpinan (2000), section 4 equation (10) https://doi.org/10.1109/34.888716.}
+\title{Fixed-point algorithm for finding the modes of a gaussian mixture.}
 \usage{
 fixed_point(mcmc, data, tol_x = sd(data)/10, show_plot = F)
 }
 \arguments{
-\item{mcmc}{A vector of estimated mixture parameters.}
+\item{mcmc}{Vector of estimated mixture parameters.}
 
-\item{data}{A vector data used for estimating the mixtures.}
+\item{data}{Vector of observations used for estimating the mixture.}
 
 \item{tol_x}{Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
 
-\item{show_plot}{Show the data and estimated modes.}
+\item{show_plot}{If true show the data and estimated modes; default is false.}
 }
 \value{
-A vector of estimated modes.
+Vector of estimated modes.
 }
 \description{
-Fixed-point algorithm for finding the modes of a gaussian mixture.
-See Carreira-Perpinan (2000), section 4 equation (10) https://doi.org/10.1109/34.888716.
+See Carreira-Perpinan (2000), section 4 equation (10).
+}
+\references{
+\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr
 }

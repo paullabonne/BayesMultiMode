@@ -1,15 +1,21 @@
-#' Bayesian estimation of mixture of skew normal
+#' Bayesian estimation of a mixture of Skew Normal distributions.
 #' 
-#' Gibbs sampler for estimating a SFM of skew normal distributions from xxx 20..
-#' @param y (a vector of integers) Observations used to fit the model.
-#' @param K (an integer) Maximum number of mixture components.
-#' @param nb_iter (an integer) Number of MCMC iterations.
-#' @param prt print intermediate of the MCMC estimation ? default = TRUE.
+#' MCMC estimation using a Spare Finite Mixture algorithm.
+#' 
+#' @param y Vector of observations.
+#' @param K Maximum number of mixture components.
+#' @param nb_iter Number of MCMC iterations.
+#' @param priors List of priors. Default is :
+#' list(a0 = 1, A0 = 200, b0 = median(y), B0 = (max(y) - min(y))^2, c0 = 2.5, e0 = a0/A0, g0 = 0.5, G0 = 100*g0/c0/B0, D_xi = 1, D_psi = 1)
+#' @param printing Print intermediate of the MCMC estimation ? default = TRUE.
+#' 
 #' @returns 
-#' A matrix of MCMC samples
+#' mcmc_draws Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix. 
 #' 
 #' @references
 #' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
+#' \insertRef{fruhwirth-schnatter_bayesian_2010}{BayesMultiMode}\cr
+#' \insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
 #' 
 #' @importFrom gtools rdirichlet
 #' @importFrom MCMCglmm rtnorm

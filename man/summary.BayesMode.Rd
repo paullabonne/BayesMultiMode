@@ -2,15 +2,15 @@
 % Please edit documentation in R/summary_methods.R
 \name{summary.BayesMode}
 \alias{summary.BayesMode}
-\title{Summary modes}
+\title{Summary of Bayesian mode estimates.}
 \usage{
 \method{summary}{BayesMode}(object, ...)
 }
 \arguments{
-\item{object}{...}
+\item{object}{An object of class BayesMode.}
 
-\item{...}{...}
+\item{...}{Not used.}
 }
 \description{
-Summary modes
+Summary of Bayesian mode estimates.
 }

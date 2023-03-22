@@ -1,19 +1,27 @@
-#' Bayesian estimation of mixture distributions
+#' Bayesian mode inference.
+#' 
+#' Modes are estimated for each mcmc draws and these are used to compute posterior probabilities for the number of modes and their locations.
+#' The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures
+#' while the Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
 #'
 #' @param BayesMix object of class `BayesMixture`.
 #' @param rd Rounding parameter.
-#' @param tol_x ...
-#' @param nb_iter Number of draws on which the mode-finding algorithm is run
+#' @param tol_x Tolerance parameter for distance in-between modes. Default is sd(data)/10.
+#' If two modes are closer than tol_x, only the first estimated mode is kept.
+#' Not needed for mixtures of discrete distributions.
 #' @param show_plot Show density with estimate mode as vertical bars
-#' 
+#' @param nb_iter Number of draws on which the mode-finding algorithm is run. Deault is NULL which means the algorithm is run on all draws.
 #' @return An object of class `BayesMode`.
+#' 
+#'\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr
+#' \insertRef{li_nonparametric_2007}{BayesMultiMode}\cr
 #' 
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.scalar
 #' 
 #' @export
 
-bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot = F, nb_iter = NA) {
+bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot = F, nb_iter = NULL) {
   
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   assert_that(is.scalar(rd) & rd >= 0, msg = "rd should be greater or equal than zero")
@@ -38,7 +46,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot
   
   
   # if nb_iter is specified (find the mode on a limited number of iterations):
-  if (!is.na(nb_iter)) {
+  if (!is.null(nb_iter)) {
     mcmc = mcmc[sample(1:nrow(mcmc), nb_iter), , drop = FALSE]
   }
   

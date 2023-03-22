@@ -1,12 +1,16 @@
 #' Fixed-point algorithm for finding the modes of a gaussian mixture.
-#' See Carreira-Perpinan (2000), section 4 equation (10) https://doi.org/10.1109/34.888716.
 #' 
-#' @param mcmc A vector of estimated mixture parameters.
-#' @param data A vector data used for estimating the mixtures.
+#' See Carreira-Perpinan (2000), section 4 equation (10).
+#' 
+#' @param mcmc Vector of estimated mixture parameters.
+#' @param data Vector of observations used for estimating the mixture.
 #' @param tol_x Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
-#' @param show_plot Show the data and estimated modes.
+#' @param show_plot If true show the data and estimated modes; default is false.
 #' 
-#' @return A vector of estimated modes. 
+#' @return Vector of estimated modes. 
+#' 
+#' @references
+#' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr
 #' 
 #' @importFrom stats dnorm sd
 #' @importFrom graphics abline curve
@@ -77,7 +81,7 @@ fixed_point <- function(mcmc, data, tol_x = sd(data)/10, show_plot = F) {
   }
   
   if (show_plot) {
-    curve(normal_mix(x, p, mu, sigma), from = min(data), to =  max(data))
+    curve(normal_mix(x, p, mu, sigma), from = min(data), to =  max(data), xlab = "", ylab = "")
     for (x in modes) {
       abline(v = x) 
     } 

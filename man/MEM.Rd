@@ -6,35 +6,36 @@
 \usage{
 MEM(
   mcmc,
-  dist = "NA",
-  pars_names,
   data,
+  pars_names,
+  dist = "NA",
   pdf_func = NULL,
   tol_x = sd(data)/10,
   show_plot = FALSE
 )
 }
 \arguments{
-\item{mcmc}{a vector of estimated mixture parameters.}
+\item{mcmc}{Vector of estimated mixture parameters.}
 
-\item{dist}{String indicating the distribution of the mixture components.
-Currently supports "normal", "student" and "skew_normal".}
+\item{data}{Vector of observations used for estimating the mixture.}
 
-\item{pars_names}{Names of the variables mcmc draws variables}
+\item{pars_names}{Names of the variables mcmc draws variables.}
 
-\item{data}{Numeric vector of observations.}
+\item{dist}{String indicating the distribution of the mixture components. Default is "NA".
+Currently supports "normal" and "skew_normal".}
 
-\item{pdf_func}{Pdf or pmf of the mixture components associated with the mcmc draws (if estimation not in-house)}
+\item{pdf_func}{Pdf of the mixture components associated with the mcmc draws
+(if mcmc estimation has not been carried out with BayesMultiMode); default is null.}
 
-\item{tol_x}{Tolerance for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
+\item{tol_x}{Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
 
-\item{show_plot}{Show the data and estimated modes.}
+\item{show_plot}{If true show the data and estimated modes; default is false.}
 }
 \value{
 A vector estimated modes.
+
+\insertRef{li_nonparametric_2007}{BayesMultiMode}\cr
 }
 \description{
-From Li, Jia, Surajit Ray, and Bruce G. Lindsay.
-"A nonparametric statistical approach to clustering via mode identification."
-Journal of Machine Learning Research 8 (2007): 1687-1723.
+Mode-finding EM algorithm (MEM)
 }

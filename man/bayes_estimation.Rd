@@ -22,17 +22,20 @@ bayes_estimation(
 \item{dist}{String indicating the distribution of the mixture components.
 Currently supports "normal", "student" and "skew_normal".}
 
-\item{priors}{Number of MCMC iterations. Default is 2000.}
+\item{priors}{List of priors. Default in an empty list.}
 
 \item{nb_iter}{Number of MCMC iterations. Default is 2000.}
 
-\item{burnin}{Number of MCMC iterations used as burnin.}
+\item{burnin}{Number of MCMC iterations used as burnin. Default is nb_iter/2.}
 
 \item{printing}{Showing MCMC progression ?}
 }
 \value{
 An object of class `BayesMixture`.
+
+\insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
+\insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
 }
 \description{
-Bayesian estimation of mixture distributions
+Gibbs sampler for Spare Finite Mixture MCMC estimation of mixture distributions.
 }

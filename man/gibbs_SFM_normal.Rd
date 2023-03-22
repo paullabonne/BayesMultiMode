@@ -2,26 +2,30 @@
 % Please edit documentation in R/gibbs_SFM_normal.R
 \name{gibbs_SFM_normal}
 \alias{gibbs_SFM_normal}
-\title{Bayesian estimation of mixture of normals}
+\title{Bayesian estimation of a mixture of Normal distributions.}
 \usage{
 gibbs_SFM_normal(y, K, nb_iter, priors = list(), printing = TRUE)
 }
 \arguments{
-\item{y}{(a vector of integers) Observations used to fit the model.}
+\item{y}{Vector of observations.}
 
-\item{K}{(an integer) Maximum number of mixture components.}
+\item{K}{Maximum number of mixture components.}
 
-\item{nb_iter}{(an integer) Number of MCMC iterations.}
+\item{nb_iter}{Number of MCMC iterations.}
 
-\item{prt}{print intermediate of the MCMC estimation ? default = TRUE.}
+\item{priors}{List of priors. Default is :
+list(a0 = 1, A0 = 200, b0 = median(y), B0 = (max(y) - min(y))^2, c0 = 2.5, e0 = a0/A0, g0 = 0.5, G0 = 100*g0/c0/B0)}
+
+\item{printing}{Print intermediate of the MCMC estimation ? default = TRUE.}
 }
 \value{
-A matrix of MCMC samples
+mcmc_draws Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix.
 }
 \description{
-Gibbs sampler for estimating a SFM of normal distributions from xxx 20.. (univariate version)
+MCMC estimation using a Spare Finite Mixture algorithm.
 }
 \references{
 \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
+\insertRef{viallefont2002bayesian}{BayesMultiMode}\cr
+\insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
 }
-\keyword{internal}

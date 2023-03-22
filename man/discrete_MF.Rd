@@ -2,37 +2,40 @@
 % Please edit documentation in R/discrete_MF.R
 \name{discrete_MF}
 \alias{discrete_MF}
-\title{Mode-finding for mmixture of discrete distributions}
+\title{Mode-finding algorithm for mixture of discrete distributions}
 \usage{
 discrete_MF(
   mcmc,
   data,
   pars_names,
-  dist,
-  type = "all",
+  dist = "NA",
   pdf_func = NULL,
+  type = "all",
   show_plot = FALSE
 )
 }
 \arguments{
-\item{mcmc}{a vector of estimated mixture parameters.}
+\item{mcmc}{Vector of estimated mixture parameters.}
 
-\item{data}{Numeric vector of observations.}
+\item{data}{Vector of observations used for estimating the mixture.}
 
-\item{pars_names}{Names of the variables mcmc draws variables}
+\item{pars_names}{Names of of the mcmc variables.}
 
 \item{dist}{String indicating the distribution of the mixture components.
-Currently supports "normal", "student" and "skew_normal".}
+Currently supports "poisson" and "shifted_poisson". Default is "NA".}
 
-\item{type}{Type of modes, either unique or all (the latter includes flat modes).}
+\item{pdf_func}{Pmf of the mixture components associated with the mcmc draws
+(if mcmc estimation has not been carried out with BayesMultiMode); default is null.}
 
-\item{pdf_func}{Pdf or pmf of the mixture components associated with the mcmc draws (if estimation not in-house)}
+\item{type}{Type of modes, either unique or all (the latter includes flat modes); default is "all".}
 
-\item{show_plot}{Show the data and estimated modes.}
+\item{show_plot}{If true show the data and estimated modes; default is false.}
 }
 \value{
 A vector estimated modes.
+
+\insertRef{schaap_genome-wide_2013}{BayesMultiMode}\cr
 }
 \description{
-Mode-finding for mmixture of discrete distributions
+Mode-finding algorithm for mixture of discrete distributions
 }

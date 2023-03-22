@@ -2,27 +2,29 @@
 % Please edit documentation in R/gibbs_SFM_poisson.R
 \name{gibbs_SFM_poisson}
 \alias{gibbs_SFM_poisson}
-\title{Estimation of a mixture of Poisson distributions.}
+\title{Bayesian estimation of a mixture of shifted Poisson distributions.}
 \usage{
 gibbs_SFM_poisson(y, K, nb_iter, priors = list(), printing = TRUE)
 }
 \arguments{
-\item{y}{(a vector of integers) Observations used to fit the model.}
+\item{y}{Vector of discrete observations.}
 
-\item{K}{(an integer) Maximum number of mixture components.}
+\item{K}{Maximum number of mixture components.}
 
-\item{nb_iter}{(an integer) Number of MCMC iterations.}
+\item{nb_iter}{Number of MCMC iterations.}
 
-\item{prt}{print intermediate of the MCMC estimation ? default = TRUE.}
+\item{priors}{List of priors. Default is :
+list(a0 = 1, A0 = 200, e0 = a0/A0, l0 = 1.1, L0 = 1.1/median(y))}
+
+\item{printing}{Print intermediate of the MCMC estimation ? default = TRUE.}
 }
 \value{
-mcmc_draws : a (nb_iter x 2K + 1) matrix. Parameter draws from the posterior distribution at each MCMC iteration.
+mcmc_draws Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix.
 }
 \description{
-Bayesian estimation of a mixture of Poisson distributions using a Sparse Finite Mixture MCMC algorithm.
+MCMC estimation using a Spare Finite Mixture algorithm.
 }
 \references{
 \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
-\insertRef{basturk_bayes_2021}{BayesMultiMode}
+\insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
 }
-\keyword{internal}

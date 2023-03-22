@@ -1,21 +1,26 @@
-#' Bayesian estimation of mixture of normals
+#' Bayesian estimation of a mixture of Normal distributions.
 #' 
-#' Gibbs sampler for estimating a SFM of normal distributions from xxx 20.. (univariate version)
-#' @param y (a vector of integers) Observations used to fit the model.
-#' @param K (an integer) Maximum number of mixture components.
-#' @param nb_iter (an integer) Number of MCMC iterations.
-#' @param prt print intermediate of the MCMC estimation ? default = TRUE.
+#' MCMC estimation using a Spare Finite Mixture algorithm.
+#' 
+#' @param y Vector of observations.
+#' @param K Maximum number of mixture components.
+#' @param nb_iter Number of MCMC iterations.
+#' @param priors List of priors. Default is :
+#' list(a0 = 1, A0 = 200, b0 = median(y), B0 = (max(y) - min(y))^2, c0 = 2.5, e0 = a0/A0, g0 = 0.5, G0 = 100*g0/c0/B0)
+#' @param printing Print intermediate of the MCMC estimation ? default = TRUE.
+#' 
 #' @returns 
-#' A matrix of MCMC samples
+#' mcmc_draws Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix. 
 #' 
 #' @references
 #' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
+#' \insertRef{viallefont2002bayesian}{BayesMultiMode}\cr
+#' \insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
 #' 
 #' @importFrom gtools rdirichlet
 #' @importFrom Rdpack reprompt
 #' @importFrom stats median kmeans rgamma rmultinom rnorm
 
-#' @keywords internal
 gibbs_SFM_normal <- function(y,
                              K,
                              nb_iter,

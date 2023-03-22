@@ -1,19 +1,19 @@
 #' Mode-finding EM algorithm (MEM)
 #' 
-#' From Li, Jia, Surajit Ray, and Bruce G. Lindsay.
-#' "A nonparametric statistical approach to clustering via mode identification."
-#' Journal of Machine Learning Research 8 (2007): 1687-1723.
 #' 
-#' @param mcmc a vector of estimated mixture parameters.
-#' @param dist String indicating the distribution of the mixture components.
-#' Currently supports "normal", "student" and "skew_normal".
-#' @param data Numeric vector of observations.
-#' @param pars_names Names of the variables mcmc draws variables
-#' @param pdf_func Pdf or pmf of the mixture components associated with the mcmc draws (if estimation not in-house)
-#' @param tol_x Tolerance for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
-#' @param show_plot Show the data and estimated modes.
+#' @param mcmc Vector of estimated mixture parameters.
+#' @param data Vector of observations used for estimating the mixture.
+#' @param pars_names Names of the variables mcmc draws variables.
+#' @param dist String indicating the distribution of the mixture components. Default is "NA".
+#' Currently supports "normal" and "skew_normal".
+#' @param pdf_func Pdf of the mixture components associated with the mcmc draws
+#' (if mcmc estimation has not been carried out with BayesMultiMode); default is null.
+#' @param tol_x Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
+#' @param show_plot If true show the data and estimated modes; default is false.
 #' 
 #' @return A vector estimated modes.
+#' 
+#' \insertRef{li_nonparametric_2007}{BayesMultiMode}\cr
 #' 
 #' @importFrom sn dst
 #' @importFrom sn dsn
@@ -21,11 +21,10 @@
 #' @importFrom stats optim na.omit var
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.string
-
 #' 
-#' @export
 
-MEM <- function(mcmc, dist = "NA", pars_names, data, pdf_func = NULL, tol_x = sd(data)/10, show_plot = FALSE) {
+#' @export
+MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd(data)/10, show_plot = FALSE) {
   ## input checks
   fail = "inputs to the Mode-finding EM algorithm are corrupted"
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
