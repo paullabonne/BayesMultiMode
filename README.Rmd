@@ -37,7 +37,6 @@ library(BayesMultiMode)
 ```{r, out.width = '70%', fig.align = "center"}
 # retrieve acidity data
 y = acidity
-# y = d4z4
 
 # estimation
 bayesmix = bayes_estimation(data = y,
@@ -67,7 +66,7 @@ summary(bayesmode)
 ```{r, out.width = '70%', fig.align = "center"}
 library(BNPmix)
 
-y = multimode::acidity
+y = acidity
 
 ## estimation
 PY_result = PYdensity(y,
