@@ -20,7 +20,7 @@ bayes_estimation(
 \item{K}{Integer indicating the maximum number of mixture components.}
 
 \item{dist}{String indicating the distribution of the mixture components.
-Currently supports "normal", "student" and "skew_normal".}
+Currently supports "normal", "skew_normal", "poisson" and "shifted_poisson".}
 
 \item{priors}{List of priors. Default in an empty list.}
 
@@ -33,7 +33,7 @@ Currently supports "normal", "student" and "skew_normal".}
 \value{
 An object of class `BayesMixture`.
 
-\insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
+\insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
 \insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
 }
 \description{

@@ -5,7 +5,7 @@
 #' @param data Numeric vector of input values.
 #' @param K Integer indicating the maximum number of mixture components.
 #' @param dist String indicating the distribution of the mixture components.
-#' Currently supports "normal", "student" and "skew_normal".
+#' Currently supports "normal", "skew_normal", "poisson" and "shifted_poisson".
 #' @param priors List of priors. Default in an empty list.
 #' @param nb_iter Number of MCMC iterations. Default is 2000.
 #' @param burnin Number of MCMC iterations used as burnin. Default is nb_iter/2.
@@ -13,7 +13,7 @@
 #' 
 #' @return An object of class `BayesMixture`.
 #' 
-#' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
+#' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
 #' \insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
 #' 
 #' @importFrom assertthat assert_that

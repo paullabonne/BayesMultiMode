@@ -13,9 +13,9 @@
 #' mcmc_draws Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix. 
 #' 
 #' @references
-#' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
-#' \insertRef{fruhwirth-schnatter_bayesian_2010}{BayesMultiMode}\cr
-#' \insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
+#' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
+#' \insertRef{fruhwirth-schnatter_bayesian_2010}{BayesMultiMode}\cr\cr
+#' \insertRef{SFS:Mal:2019}{BayesMultiMode}
 #' 
 #' @importFrom gtools rdirichlet
 #' @importFrom MCMCglmm rtnorm

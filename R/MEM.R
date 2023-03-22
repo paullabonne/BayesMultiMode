@@ -13,7 +13,7 @@
 #' 
 #' @return A vector estimated modes.
 #' 
-#' \insertRef{li_nonparametric_2007}{BayesMultiMode}\cr
+#' \insertRef{li_nonparametric_2007}{BayesMultiMode}
 #' 
 #' @importFrom sn dst
 #' @importFrom sn dsn

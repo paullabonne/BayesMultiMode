@@ -28,7 +28,7 @@ Not needed for mixtures of discrete distributions.}
 \value{
 An object of class `BayesMode`.
 
-\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr
+\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
 \insertRef{li_nonparametric_2007}{BayesMultiMode}\cr
 }
 \description{

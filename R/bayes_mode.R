@@ -13,7 +13,7 @@
 #' @param nb_iter Number of draws on which the mode-finding algorithm is run. Deault is NULL which means the algorithm is run on all draws.
 #' @return An object of class `BayesMode`.
 #' 
-#'\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr
+#'\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
 #' \insertRef{li_nonparametric_2007}{BayesMultiMode}\cr
 #' 
 #' @importFrom assertthat assert_that

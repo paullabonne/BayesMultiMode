@@ -14,9 +14,9 @@
 #' 
 #' @importFrom Rdpack reprompt
 #' @references
-#' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
-#' \insertRef{basturk_bayes_2021}{BayesMultiMode}
-#' \insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
+#' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
+#' \insertRef{basturk_bayes_2021}{BayesMultiMode}\cr\cr
+#' \insertRef{SFS:Mal:2019}{BayesMultiMode}
 #' 
 #' @importFrom gtools rdirichlet
 #' @importFrom stats density dgamma dpois rgamma rmultinom rnorm runif

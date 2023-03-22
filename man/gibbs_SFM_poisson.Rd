@@ -25,6 +25,6 @@ mcmc_draws Parameter draws from the posterior distribution at each MCMC iteratio
 MCMC estimation using a Spare Finite Mixture algorithm.
 }
 \references{
-\insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr
-\insertRef{SFS:Mal:2019}{BayesMultiMode}\cr
+\insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
+\insertRef{SFS:Mal:2019}{BayesMultiMode}
 }
