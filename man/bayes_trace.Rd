@@ -4,12 +4,14 @@
 \alias{bayes_trace}
 \title{Trace plots.}
 \usage{
-bayes_trace(BayesMix, mcmc_vars = NULL, ...)
+bayes_trace(BayesMix, mcmc_vars = NULL, with_burnin = FALSE, ...)
 }
 \arguments{
 \item{BayesMix}{An object of class BayesMixture.}
 
 \item{mcmc_vars}{Variables to plot. Default is all the variable in the MCMC output.}
+
+\item{with_burnin}{Plot all draws ?}
 
 \item{...}{Additional arguments passed to function mcmc_trace() from the package bayesplot.}
 }

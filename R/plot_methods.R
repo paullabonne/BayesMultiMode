@@ -37,7 +37,6 @@ plot.BayesMixture <- function(x, max_size = 250,
     ## plot the data
     g = ggplot(data.frame(y = y), aes(y)) +
       theme_gg +
-      ggtitle(paste0("Estimated mixture density from ",max_size, " iterations and histogram of the data")) +
       theme(legend.position="none") +
       xlab("") + ylab("Density") +
       geom_histogram(aes(y = after_stat(density)),

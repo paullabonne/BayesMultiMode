@@ -96,7 +96,11 @@ bayes_estimation <- function(data,
     stop("mixture distribution not supported")
   }
   
-  BayesMixture = new_BayesMixture(mcmc, data, K, burnin, dist, dist_type = dist_type, pars_names = pars_names)
+  BayesMixture = new_BayesMixture(mcmc = mcmc,
+                                  data = data, K = K,
+                                  burnin = burnin, dist = dist,
+                                  dist_type = dist_type,
+                                  pars_names = pars_names)
   
   return(BayesMixture)
 }

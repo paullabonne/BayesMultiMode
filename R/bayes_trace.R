@@ -4,6 +4,7 @@
 #'
 #' @param BayesMix An object of class BayesMixture.
 #' @param mcmc_vars Variables to plot. Default is all the variable in the MCMC output.
+#' @param with_burnin Plot all draws ?
 #' @param ... Additional arguments passed to function mcmc_trace() from the package bayesplot.
 #' 
 #' @importFrom bayesplot mcmc_trace
@@ -16,13 +17,20 @@
 #'
 bayes_trace <- function(BayesMix,
                         mcmc_vars = NULL,
+                        with_burnin = FALSE,
                         ...) {
   
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   
-  if (is.null(mcmc_vars)) {
-    mcmc_vars = colnames(BayesMix$mcmc) 
+  if (with_burnin){
+    mcmc = BayesMix$mcmc_all
+  } else {
+    mcmc = BayesMix$mcmc
   }
   
-  mcmc_trace(BayesMix$mcmc, pars = mcmc_vars)
+  if (is.null(mcmc_vars)) {
+    mcmc_vars = colnames(mcmc) 
+  }
+  
+  mcmc_trace(mcmc, pars = mcmc_vars)
 }

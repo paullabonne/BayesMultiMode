@@ -12,7 +12,7 @@
 
 #' Galaxy series
 #' @format
-#' ...
+#' Velocity at which 82 galaxies in the Corona Borealis region are moving away from our galaxy, scaled by 1000.
 #' @importFrom Rdpack reprompt
 #' @references
 #' \insertRef{Richardson_Green_1997_RJMCMC}{BayesMultiMode}

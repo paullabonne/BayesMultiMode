@@ -44,12 +44,10 @@ new_BayesMixture <- function(mcmc,
   ##
   
   BayesMix = list(data = data,
-                  mcmc = mcmc,
                   dist_type = dist_type)
   
   mcmc = as_draws_matrix(mcmc)
-  mcmc = mcmc[(burnin+1):nrow(mcmc), ]
-  
+
   # check that pars_names and mcmc match
   names_mcmc = str_to_lower(colnames(mcmc))
   names_mcmc = str_extract(names_mcmc, "[a-z]+")
@@ -131,7 +129,9 @@ new_BayesMixture <- function(mcmc,
     k_end = k_start + K - 1
   }
 
-  mcmc = mcmc_new
+  mcmc_all = mcmc_new
+  mcmc = mcmc_all[(burnin+1):nrow(mcmc_all), ]
+  
   
   if (dist %in% c("normal", "skew_normal",
                   "poisson", "shifted_poisson") & is.null(pdf_func)) {
@@ -143,6 +143,7 @@ new_BayesMixture <- function(mcmc,
   
   BayesMix$pars_names = pars_names
   BayesMix$mcmc = mcmc
+  BayesMix$mcmc_all = mcmc_all
   
   class(BayesMix) <- "BayesMixture"
   
