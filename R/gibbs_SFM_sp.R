@@ -33,8 +33,8 @@ gibbs_SFM_sp <- function(y,
   # A0 = ifelse(is.null(priors$A0), a0*K, priors$A0)
   a0 = ifelse(is.null(priors$a0), 1, priors$a0)
   A0 = ifelse(is.null(priors$A0), 200, priors$A0)
-  l0 = ifelse(is.null(priors$l0), 1.1, priors$l0)
-  L0 = ifelse(is.null(priors$L0), 1.1/median(y), priors$L0)
+  l0 = ifelse(is.null(priors$l0), 5, priors$l0)
+  L0 = ifelse(is.null(priors$L0), l0 - 1, priors$L0)
   
   assert_that(is.scalar(A0) & A0 > 0, msg = "A0 should be positive")
   assert_that(is.scalar(L0) & L0 > 0, msg = "L0 should be a positive integer")

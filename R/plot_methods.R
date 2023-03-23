@@ -121,7 +121,6 @@ plot.BayesMixture <- function(x, max_size = 250,
     
     g = ggplot(df_y, aes(x=x)) + 
       theme_gg +
-      ggtitle(paste0("Estimated mixture density from ",max_size, " iterations and histogram of the data")) +
       theme(legend.position="none") +
       xlab("") + ylab("Density") +
       geom_col(data = filter(df_y,component=="1"),aes(y=density,fill="grey33"),colour="white",alpha=1) +

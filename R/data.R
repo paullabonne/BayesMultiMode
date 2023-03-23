@@ -1,6 +1,4 @@
-#' DNA dataset
-#'
-#' Macrosatellite repeat D4Z4 (4q).
+#' DNA Macrosatellite repeat D4Z4 (4q).
 #' Locus (hg18): 4q35.2; Unit (kb): 3.3; Encoded product: DUX4.
 #'
 #' @format
@@ -9,6 +7,26 @@
 #' @references
 #' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}
 "d4z4"
+
+#' DNA Macrosatellite repeat msr5p (4q).
+#' Locus (hg18): 4q35.2; Unit (kb): 3.3; Encoded product: DUX4.
+#'
+#' @format
+#' A vector of counts with 410 elements.
+#' @importFrom Rdpack reprompt
+#' @references
+#' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}
+"msr5p"
+
+#' DNA Macrosatellite repeat ct47 (4q).
+#' Locus (hg18): 4q35.2; Unit (kb): 3.3; Encoded product: DUX4.
+#'
+#' @format
+#' A vector of counts with 410 elements.
+#' @importFrom Rdpack reprompt
+#' @references
+#' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}
+"ct47"
 
 #' Galaxy series
 #' @format
