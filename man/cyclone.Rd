@@ -14,6 +14,7 @@ cyclone
 Tropical cylcone lifetime maximum intensity
 }
 \references{
-\insertRef{Richardson_Green_1997_RJMCMC}{BayesMultiMode}
+\insertRef{knapp_international_2010}{BayesMultiMode}\cr\cr
+\insertRef{knapp_international_2018}{BayesMultiMode}
 }
 \keyword{datasets}

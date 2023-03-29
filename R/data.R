@@ -23,7 +23,8 @@
 #' See https://www.ncei.noaa.gov/products/international-best-track-archive
 #' @importFrom Rdpack reprompt
 #' @references
-#' \insertRef{Richardson_Green_1997_RJMCMC}{BayesMultiMode}
+#' \insertRef{knapp_international_2010}{BayesMultiMode}\cr\cr
+#' \insertRef{knapp_international_2018}{BayesMultiMode}
 "cyclone"
 
 #' Galaxy series
