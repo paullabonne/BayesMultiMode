@@ -1,5 +1,7 @@
 ## Version 0.2.0 
-* Restructured the code to make use of S3 methods like plot()
+* Restructured the code to make use of S3 generic functions plot() and summary()
 * The package now handles continuous data
-* Added a mixture of normals
+* Added a mixtures of normals and skew_normals
+* Added galaxy and cyclone data
+* Added support for external MCMC output
 * Added tests through testthats
