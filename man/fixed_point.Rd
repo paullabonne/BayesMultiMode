@@ -21,6 +21,17 @@ Vector of estimated modes.
 \description{
 See Carreira-Perpinan (2000), section 4.
 }
+\examples{
+mu = c(0,5)
+sigma = c(1,2)
+p = c(0.5,0.5)
+
+data = c(rnorm(p[1]*100, mu[1], sigma[1]), rnorm(p[2]*100, mu[2], sigma[2]))
+params = c(eta = p, mu = mu, sigma = sigma)
+
+modes = fixed_point(params, data)
+
+}
 \references{
 \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}
 }

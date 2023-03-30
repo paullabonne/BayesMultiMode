@@ -16,6 +16,17 @@
 #' @importFrom graphics abline curve
 #' @importFrom assertthat assert_that
 #' @importFrom stringr str_remove
+#' 
+#' @examples
+#' mu = c(0,5)
+#' sigma = c(1,2)
+#' p = c(0.5,0.5)
+#'
+#' data = c(rnorm(p[1]*100, mu[1], sigma[1]), rnorm(p[2]*100, mu[2], sigma[2]))
+#' params = c(eta = p, mu = mu, sigma = sigma)
+#' 
+#' modes = fixed_point(params, data)
+#' 
 #' @export
 
 fixed_point <- function(mcmc, data, tol_x = sd(data)/10, show_plot = F) {

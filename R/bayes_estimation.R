@@ -31,9 +31,42 @@
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.scalar
 #' 
+#' @examples
+#' # Example with galaxy data ================================================
+#' set.seed(123) 
+#' 
+#' # retrieve galaxy data
+#' y = galaxy
+#'
+#' # estimation
+#' bayesmix = bayes_estimation(data = y,
+#'                            K = 5, #not many to run the example rapidly
+#'                            dist = "normal",
+#'                            nb_iter = 500, #not many to run the example rapidly
+#'                            burnin = 100)
+#'                            
+#' # plot estimated mixture
+#' # plot(bayesmix, max_size = 200)
+#' 
+#' # Example with DNA data =====================================================
+#' \donttest{
+#' set.seed(123) 
+#' 
+#' # retrieve galaxy data
+#' y = d4z4
+#'
+#' # estimation
+#' bayesmix = bayes_estimation(data = y,
+#'                            K = 5, #not many to run the example rapidly
+#'                            dist = "shifted_poisson",
+#'                            nb_iter = 500, #not many to run the example rapidly
+#'                            burnin = 100)
+#'                            
+#' # plot estimated mixture
+#' # plot(bayesmix, max_size = 200)
+#' }
+#' 
 #' @export
-#'
-#'
 bayes_estimation <- function(data,
                              K,
                              dist,

@@ -8,7 +8,7 @@ bayes_mode(
   BayesMix,
   rd = 1,
   tol_x = sd(BayesMix$data)/10,
-  show_plot = F,
+  show_plot = FALSE,
   nb_iter = NULL
 )
 }
@@ -42,6 +42,30 @@ A list of class `BayesMode` containing
 Estimates modes for each mcmc draws which are then used to compute posterior probabilities for the number of modes and their locations.
 The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures
 while the Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
+}
+\examples{
+# Example with galaxy data ================================================
+set.seed(123) 
+
+# retrieve galaxy data
+y = galaxy
+
+# estimation
+bayesmix = bayes_estimation(data = y,
+                           K = 5, #not many to run the example rapidly
+                           dist = "normal",
+                           nb_iter = 500, #not many to run the example rapidly
+                           burnin = 100)
+
+# mode estimation
+bayesmode = bayes_mode(bayesmix)
+
+# plot 
+# plot(bayesmode, max_size = 200)
+
+# summary 
+# summary(bayesmode)
+
 }
 \references{
 \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr

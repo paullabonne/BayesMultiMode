@@ -9,7 +9,7 @@ discrete_MF(
   data,
   pars_names,
   dist = "NA",
-  pdf_func = NULL,
+  pmf_func = NULL,
   type = "all",
   show_plot = FALSE
 )
@@ -24,7 +24,7 @@ discrete_MF(
 \item{dist}{String indicating the distribution of the mixture components.
 Currently supports "poisson" and "shifted_poisson". Default is "NA".}
 
-\item{pdf_func}{Pmf of the mixture components associated with the mcmc draws
+\item{pmf_func}{Pmf of the mixture components associated with the mcmc draws
 (if mcmc estimation has not been carried out with BayesMultiMode); default is null.}
 
 \item{type}{Type of modes, either unique or all (the latter includes flat modes); default is "all".}
@@ -36,6 +36,37 @@ A vector estimated modes.
 }
 \description{
 Mode-finding algorithm for mixture of discrete distributions
+}
+\examples{
+# Example with the poisson distribution ====================================
+lambda = c(0.1,10)
+p = c(0.5,0.5)
+params = c(eta = p, lambda = lambda)
+pars_names = c("eta", "lambda")
+dist = "poisson"
+
+data = c(rpois(p[1]*1e3, lambda[1]),
+         rpois(p[2]*1e3, lambda[2]))
+
+modes = discrete_MF(params, data = data, pars_names = pars_names, dist = dist)
+
+# Example with an arbitrary distribution ===================================
+mu = c(20,5)
+size = c(20,0.5)
+p = c(0.5,0.5)
+params = c(eta = p, mu = mu, size = size)
+pars_names = c("eta", "mu", "size")
+
+data = c(rnbinom(p[1]*1e3, mu = mu[1], size = size[1]),
+         rnbinom(p[2]*1e3, mu = mu[2], size = size[2]))
+hist(data, breaks = 30)
+
+pmf_func <- function(x, pars) {
+  dnbinom(x, mu = pars["mu"], size = pars["size"])
+}
+
+modes = discrete_MF(params, data = data, pars_names = pars_names, pmf_func = pmf_func)
+
 }
 \references{
 \insertRef{schaap_genome-wide_2013}{BayesMultiMode}

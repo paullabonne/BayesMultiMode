@@ -8,8 +8,8 @@ test_that("MEM function returns expected results with dist = skew_normal", {
   pars_names = c("eta", "xi", "omega", "alpha")
   dist = "skew_normal"
   
-  data = c(sn::rsn(p[1]*100, xi[1], omega[1], alpha[1]),
-           sn::rsn(p[2]*100, xi[2], omega[2], alpha[2]))
+  data = c(sn::rsn(p[1]*1e3, xi[1], omega[1], alpha[1]),
+           sn::rsn(p[2]*1e3, xi[2], omega[2], alpha[2]))
   
   modes = MEM(params, data = data, pars_names = pars_names, dist = dist)
   expect_equal(abs(sum(modes-xi))<1,  TRUE)
@@ -32,8 +32,8 @@ test_that("MEM function returns expected results with an arbitrary function", {
     sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
   }
   
-  data = c(sn::rst(p[1]*100, xi[1], omega[1], alpha = alpha[1], nu = nu[1]),
-           sn::rst(p[2]*100, xi[2], omega[2], alpha = alpha[2], nu = nu[2]))
+  data = c(sn::rst(p[1]*1e3, xi[1], omega[1], alpha = alpha[1], nu = nu[1]),
+           sn::rst(p[2]*1e3, xi[2], omega[2], alpha = alpha[2], nu = nu[2]))
   
   modes = MEM(params, pars_names = pars_names, data = data, pdf_func = pdf_func)
   expect_equal(abs(sum(modes-xi))<1,  TRUE)

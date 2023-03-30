@@ -24,8 +24,42 @@
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.string
 #' 
-
+#' @examples
+#' 
+#' # Example with the skew normal =============================================
+#' xi = c(0,6)
+#' omega = c(1,2)
+#' alpha = c(0,0)
+#' p = c(0.8,0.2)
+#' params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
+#' pars_names = c("eta", "xi", "omega", "alpha")
+#' dist = "skew_normal"
+#' 
+#' data = c(sn::rsn(p[1]*100, xi[1], omega[1], alpha[1]),
+#'          sn::rsn(p[2]*100, xi[2], omega[2], alpha[2]))
+#' 
+#' modes = MEM(params, data = data, pars_names = pars_names, dist = dist)
+#' 
+#' # Example with an arbitrary distribution ===================================
+#' xi = c(0,6)
+#' omega = c(1,2)
+#' alpha = c(0,0)
+#' nu = c(3,100)
+#' p = c(0.8,0.2)
+#' params = c(eta = p, mu = xi, sigma = omega, xi = alpha, nu = nu)
+#' pars_names = c("eta", "mu", "sigma", "xi", "nu")
+#' 
+#' pdf_func <- function(x, pars) {
+#'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
+#' }
+#' 
+#' data = c(sn::rst(p[1]*100, xi[1], omega[1], alpha = alpha[1], nu = nu[1]),
+#'          sn::rst(p[2]*100, xi[2], omega[2], alpha = alpha[2], nu = nu[2]))
+#' 
+#' modes = MEM(params, pars_names = pars_names, data = data, pdf_func = pdf_func)
+#' 
 #' @export
+
 MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd(data)/10, show_plot = FALSE) {
   ## input checks
   fail = "inputs to the Mode-finding EM algorithm are corrupted"
@@ -66,11 +100,6 @@ MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd
 
   nK = nrow(pars)
   post_prob = rep(NA, nK)
-  
-  # vectorising function
-  if (!is.null(pdf_func)) {
-    pdf_func <- pdf_func_vec(pdf_func)
-  }
 
   # remove empty components (a feature of some MCMC methods)
   pars = na.omit(pars)
@@ -85,14 +114,14 @@ MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd
       f_mix = dist_mixture(x, dist, pars, pdf_func)
       
       for (k in 1:nK){ 
-        post_prob[k] = pars[k, 1] * dist_pdf(x, dist, pars[k, -1, drop = F], pdf_func)/f_mix 
+        post_prob[k] = pars[k, 1] * dist_pdf(x, dist, pars[k, -1], pdf_func)/f_mix 
       }
      
       # M-step
       Min = optim(par = x, Q_func, method = "L-BFGS-B",
                   dist = dist, 
                   post_prob = post_prob,
-                  pars = pars[, -1, drop = F],
+                  pars = pars[, -1],
                   pdf_func = pdf_func,
                   control = list(fnscale = -1))
       
@@ -120,7 +149,7 @@ MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd
   }
   
   if (show_plot) {
-    curve(dist_mixture(x, dist, pars), from = min(data), to =  max(data))
+    curve(dist_mixture(x, dist, pars, pdf_func), from = min(data), to =  max(data))
     for (x in est_mode) {
       abline(v = x) 
     } 
@@ -132,8 +161,14 @@ MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd
 #' @keywords internal
 Q_func = function(x, dist, post_prob, pars, pdf_func){
   
-  pdf = dist_pdf(x, dist, pars, pdf_func = pdf_func)
+  pdf = rep(NA, nrow(pars))
+  
+  for (i in 1:nrow(pars)) {
+    pdf[i] = dist_pdf(x, dist, pars[i,], pdf_func = pdf_func)
+  } 
+  
   pdf[pdf==0] = 1e-10 #otherwise the log operation below through infs
+  
   Q = sum(post_prob * log(pdf))
   
   if(is.na(Q)|!is.finite(Q)){

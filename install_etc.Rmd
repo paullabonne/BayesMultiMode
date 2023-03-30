@@ -10,13 +10,13 @@ devtools::document()
 
 devtools::test()
 
+devtools::run_examples()
+
 devtools::install()
 
 devtools::build_manual()
 
 devtools::check()
-
-BayesMultiMode::bayes_estimation(c(0,0), dist = "skew_")
 ```
 
 #### Loading all functions for testing before installing

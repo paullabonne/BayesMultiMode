@@ -5,7 +5,7 @@
 #' @param pars_names Names of of the mcmc variables.
 #' @param dist String indicating the distribution of the mixture components.
 #' Currently supports "poisson" and "shifted_poisson". Default is "NA".
-#' @param pdf_func Pmf of the mixture components associated with the mcmc draws
+#' @param pmf_func Pmf of the mixture components associated with the mcmc draws
 #' (if mcmc estimation has not been carried out with BayesMultiMode); default is null.
 #' @param type Type of modes, either unique or all (the latter includes flat modes); default is "all".
 #' @param show_plot If true show the data and estimated modes; default is false.
@@ -18,19 +18,46 @@
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.string
 #' 
+#' @examples
+#' # Example with the poisson distribution ====================================
+#' lambda = c(0.1,10)
+#' p = c(0.5,0.5)
+#' params = c(eta = p, lambda = lambda)
+#' pars_names = c("eta", "lambda")
+#' dist = "poisson"
+#' 
+#' data = c(rpois(p[1]*1e3, lambda[1]),
+#'          rpois(p[2]*1e3, lambda[2]))
+#' 
+#' modes = discrete_MF(params, data = data, pars_names = pars_names, dist = dist)
+#' 
+#' # Example with an arbitrary distribution ===================================
+#' mu = c(20,5)
+#' size = c(20,0.5)
+#' p = c(0.5,0.5)
+#' params = c(eta = p, mu = mu, size = size)
+#' pars_names = c("eta", "mu", "size")
+#' 
+#' data = c(rnbinom(p[1]*1e3, mu = mu[1], size = size[1]),
+#'          rnbinom(p[2]*1e3, mu = mu[2], size = size[2]))
+#' hist(data, breaks = 30)
+#' 
+#' pmf_func <- function(x, pars) {
+#'   dnbinom(x, mu = pars["mu"], size = pars["size"])
+#' }
+#' 
+#' modes = discrete_MF(params, data = data, pars_names = pars_names, pmf_func = pmf_func)
+#' 
 #' @export
+
 discrete_MF <- function(mcmc, data, pars_names, dist = "NA",
-                        pdf_func = NULL, type = "all", show_plot = FALSE){
+                        pmf_func = NULL, type = "all", show_plot = FALSE){
   
   ## input checks
   assert_that(is.vector(mcmc),
               msg = "mcmc should be a vector")
   assert_that(is.string(dist),
               msg = "dist should be a string")
-  
-  if (!is.null(pdf_func)) {
-    pdf_func <- pdf_func_vec(pdf_func)
-  }
   
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
@@ -74,20 +101,21 @@ discrete_MF <- function(mcmc, data, pars_names, dist = "NA",
   Khat = nrow(pars)
   
   ### Getting individual component densities
+  
   pdf_k = matrix(0, nrow=length(x), ncol=Khat) 
   for(k in 1:nrow(pars)){
-    pdf_k[,k] = pars[k,1] * dist_pdf(x, dist, pars[k, -1, drop = F], pdf_func)
+    pdf_k[,k] = pars[k,1] * dist_pdf(x, dist, pars[k, -1], pmf_func)
   }
-  
+
   ### summing up to get the mixture
   py <- rowSums(pdf_k, na.rm = T)
 
   # change in the pdf
-  d_py = py[-1] - py[-length(py)]
+  d_py = diff(py)
   
   # where does the pdf decrease ?
   x_decrease = x[d_py<0]
-  
+
   # Only keep the points where the pdf starts to decrease; these are modes
   d2_py = c(0, x_decrease[-1] - x_decrease[-length(x_decrease)])
   x_decrease = x_decrease[which(d2_py!=1)]
@@ -95,7 +123,7 @@ discrete_MF <- function(mcmc, data, pars_names, dist = "NA",
   # get pdf at these modes 
   pdf_modes = py[x %in% x_decrease]
   
-  # get all the points at these peaks (it's unlikely but there might be flat modes) 
+  # get all the points at these peaks (there might be flat modes) 
   loc_modes = x[which(py %in% pdf_modes)]
   
   if (length(loc_modes) != length(x_decrease)) {

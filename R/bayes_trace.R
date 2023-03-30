@@ -12,8 +12,24 @@
 #' 
 #' @return A trace plot.
 #' 
-#' @export
+#' @examples
+#' # Example with galaxy data ================================================
+#' set.seed(123) 
+#' 
+#' # retrieve galaxy data
+#' y = galaxy
 #'
+#' # estimation
+#' bayesmix = bayes_estimation(data = y,
+#'                            K = 5, #not many to run the example rapidly
+#'                            dist = "normal",
+#'                            nb_iter = 500, #not many to run the example rapidly
+#'                            burnin = 100)
+#'
+#' # trace plot
+#' bayes_trace(bayesmix)
+#' 
+#' @export
 #'
 bayes_trace <- function(BayesMix,
                         mcmc_vars = NULL,
