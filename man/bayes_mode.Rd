@@ -26,7 +26,17 @@ Not needed for mixtures of discrete distributions.}
 \item{nb_iter}{Number of draws on which the mode-finding algorithm is run. Deault is NULL which means the algorithm is run on all draws.}
 }
 \value{
-An object of class `BayesMode`.
+A list of class `BayesMode` containing
+\itemize{
+ \item{data}{ - from BayesMix argument}
+ \item{dist}{ - from BayesMix argument}
+ \item{dist_type}{ - from BayesMix argument}
+ \item{pars_names}{ - from BayesMix argument}
+ \item{modes}{ - Matrix with a row for each draw and colmns showing modes}
+ \item{p1}{ - Posterior probability of unimodality}
+ \item{tb_nb_modes}{ - Matrix showing posterior probilities for the number of modes}
+ \item{table_location}{ - Matrix showing the posterior probilities for location points being modes}
+}
 }
 \description{
 Estimates modes for each mcmc draws which are then used to compute posterior probabilities for the number of modes and their locations.

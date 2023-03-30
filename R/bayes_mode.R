@@ -11,8 +11,17 @@
 #' Not needed for mixtures of discrete distributions.
 #' @param show_plot Show density with estimate mode as vertical bars
 #' @param nb_iter Number of draws on which the mode-finding algorithm is run. Deault is NULL which means the algorithm is run on all draws.
-#' @return An object of class `BayesMode`.
-#' 
+#' @return A list of class `BayesMode` containing
+#' \itemize{
+#'  \item{data}{ - from BayesMix argument}
+#'  \item{dist}{ - from BayesMix argument}
+#'  \item{dist_type}{ - from BayesMix argument}
+#'  \item{pars_names}{ - from BayesMix argument}
+#'  \item{modes}{ - Matrix with a row for each draw and colmns showing modes}
+#'  \item{p1}{ - Posterior probability of unimodality}
+#'  \item{tb_nb_modes}{ - Matrix showing posterior probilities for the number of modes}
+#'  \item{table_location}{ - Matrix showing the posterior probilities for location points being modes}
+#' }
 #' @references
 #' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
 #' \insertRef{li_nonparametric_2007}{BayesMultiMode}

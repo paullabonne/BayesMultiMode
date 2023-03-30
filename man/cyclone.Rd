@@ -5,7 +5,8 @@
 \alias{cyclone}
 \title{Tropical cyclones lifetime maximum intensity}
 \format{
-The raw data is the ibtracs.ALL.list.v04r00.csv dataset from https://www.ncei.noaa.gov/products/international-best-track-archive
+A dataset with three columns showing the identification of the cyclone, its year of occurence and its lifetime maximum intensity (LMI).
+LMI is calculated as the maximum wind speed for each cyclone with unit ks.
 }
 \source{
 https://www.ncei.noaa.gov/products/international-best-track-archive
@@ -14,7 +15,9 @@ https://www.ncei.noaa.gov/products/international-best-track-archive
 cyclone
 }
 \description{
-Tropical cyclones lifetime maximum intensity
+Dataset constructed using the International Best Track Archive for Climate Stewardship (IBTrACS).
+Toprical cyclones lifetime maximum intensity data are known across the globe are known
+to be bimodal which has important implications for climate modelling.
 }
 \references{
 \insertRef{knapp_international_2010}{BayesMultiMode}\cr\cr

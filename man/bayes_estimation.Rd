@@ -33,7 +33,14 @@ l0 = 1.1,\cr L0 = 1.1/median(y),\cr g0 = 0.5,\cr G0 = 100*g0/c0/B0,\cr D_xi = 1,
 \item{printing}{Showing MCMC progression ?}
 }
 \value{
-An object of class `BayesMixture`.
+A list of class `BayesMixture` containing
+\itemize{
+ \item{data}{ - same as argument}
+ \item{dist_type}{ - type of the distribution (continuous or discrete)}
+ \item{pars_names}{ - names of the mixture components' parameters}
+ \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded}
+ \item{mcmc_all}{ - Original matrix of MCMC draws}
+}
 }
 \description{
 Gibbs sampler for Spare Finite Mixture MCMC estimation of mixture distributions.

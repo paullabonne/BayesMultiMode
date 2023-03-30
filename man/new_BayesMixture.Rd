@@ -36,9 +36,15 @@ This input is used only if dist_name is invalid or NULL.}
 \item{dist_type}{Either "continous" or "discrete"}
 }
 \value{
-An object of class `BayesMixture`.
+A list of class `BayesMixture` containing :
+\itemize{
+ \item{data}{ - same as argument}
+ \item{dist_type}{ - same as argument}
+ \item{pars_names}{ - same as argument}
+ \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded}
+ \item{mcmc_all}{ - Original matrix of MCMC draws}
+}
 }
 \description{
-This function is for users who want to explore modes in MCMC draws which have not been
-derived using the function bayes_estimation().
+Function for creating an object of class `bayes_estimation()` which can subsequently used as argument in `bayes_mode()`.
 }

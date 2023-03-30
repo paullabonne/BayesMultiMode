@@ -3,8 +3,7 @@
 \docType{data}
 \name{ct47}
 \alias{ct47}
-\title{DNA Macrosatellite repeat ct47 (4q).
-Locus (hg18): 4q35.2; Unit (kb): 3.3; Encoded product: DUX4.}
+\title{X chromosomal macrosatellite repeats ct47}
 \format{
 A vector of counts with 410 elements.
 }
@@ -12,8 +11,11 @@ A vector of counts with 410 elements.
 ct47
 }
 \description{
-DNA Macrosatellite repeat ct47 (4q).
-Locus (hg18): 4q35.2; Unit (kb): 3.3; Encoded product: DUX4.
+Repeat units that encode for a cancer testis antigen.
+Locus (hg18): Xq24 \cr
+Unit (kb): 4.8 \cr
+Restriction enzyme: EcoRI \cr
+Encoded product : cancer testis antigen 47
 }
 \references{
 \insertRef{schaap_genome-wide_2013}{BayesMultiMode}

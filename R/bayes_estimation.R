@@ -13,7 +13,14 @@
 #' @param burnin Number of MCMC iterations used as burnin. Default is nb_iter/2.
 #' @param printing Showing MCMC progression ?
 #' 
-#' @return An object of class `BayesMixture`.
+#' @return A list of class `BayesMixture` containing
+#' \itemize{
+#'  \item{data}{ - same as argument}
+#'  \item{dist_type}{ - type of the distribution (continuous or discrete)}
+#'  \item{pars_names}{ - names of the mixture components' parameters}
+#'  \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded}
+#'  \item{mcmc_all}{ - Original matrix of MCMC draws}
+#' }
 #' 
 #' @references
 #' \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
