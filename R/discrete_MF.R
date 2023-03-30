@@ -22,25 +22,33 @@
 discrete_MF <- function(mcmc, data, pars_names, dist = "NA",
                         pdf_func = NULL, type = "all", show_plot = FALSE){
   
-  if (!is.null(pdf_func)) {
-    pdf_func <- pdf_func_vec(pdf_func)
-  }
-  
-  x = min(data):max(data)
-  
   ## input checks
   assert_that(is.vector(mcmc),
               msg = "mcmc should be a vector")
   assert_that(is.string(dist),
               msg = "dist should be a string")
-  assert_that(is.vector(x) & length(x) > 0,
-              msg = "x should be a vector of length > 0")
+  
+  if (!is.null(pdf_func)) {
+    pdf_func <- pdf_func_vec(pdf_func)
+  }
+  
+  assert_that(is.vector(data) & length(data) > 0,
+              msg = "data should be a vector of length > 0")
+  assert_that(!any(is.na(data)) & !any(is.infinite(data)),
+              msg = "y should not include missing or infinite values")
+  assert_that(type %in% c("unique", "all"),
+              msg = "type should be either 'unique' or 'all' ")
+  assert_that(is.logical(show_plot), msg = "show_plot should be either TRUE or FALSE")
+  assert_that(is.vector(pars_names) & is.character(pars_names) > 0,
+              msg = "pars_names should be a character vector")
   ##
   
   ##
   names_mcmc = str_to_lower(names(mcmc))
   names_mcmc = str_extract(names_mcmc, "[a-z]+")
   names_mcmc = unique(names_mcmc)
+  
+  x = min(data):max(data)
   
   assert_that(sum(pars_names %in% names_mcmc)==length(pars_names),
               msg = "the name of the parameters provided by pars_names and those of the mcmc vector do not match")

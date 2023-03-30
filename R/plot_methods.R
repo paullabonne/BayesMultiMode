@@ -27,6 +27,8 @@ plot.BayesMixture <- function(x, max_size = 250,
   density <- component <- value <- NULL
   
   assert_that(inherits(x, "BayesMixture"), msg = "input should be an object of class BayesMixture")
+  assert_that(is.scalar(transparency) & transparency >= 0 & transparency <= 1,
+              msg = "transparency should be a scalar between zero and one")
   
   mcmc = x$mcmc
   dist = x$dist
@@ -150,6 +152,8 @@ plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
   Pb <- value <- location_at_modes <- probs_modes <- unique_modes <- prob_nb_modes <- NULL
   
   stopifnot(inherits(x, "BayesMode"))
+  assert_that(is.vector(graphs) & is.character(graphs),
+              msg = "graphs should be a character vector")
   
   modes = x$modes
   p1 = x$p1

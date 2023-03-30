@@ -21,6 +21,7 @@ bayes_trace <- function(BayesMix,
                         ...) {
   
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
+  assert_that(is.logical(with_burnin), msg = "with_burnin should be either TRUE or FALSE")
   
   if (with_burnin){
     mcmc = BayesMix$mcmc_all

@@ -48,6 +48,12 @@ new_BayesMixture <- function(mcmc,
               msg = "dist_type should be a string")
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
+  assert_that(is.scalar(K) & K > 0, msg = "K should be a positive integer")
+  assert_that(is.scalar(burnin), msg = "nb_iter should be an integer positive or zero")
+  assert_that(burnin < nrow(mcmc),
+              msg = "burnin parameter should be less than the number of mcmc draws")
+  assert_that(is.vector(pars_names) & is.character(pars_names) > 0,
+              msg = "pars_names should be a character vector")
   ##
   
   BayesMix = list(data = data,

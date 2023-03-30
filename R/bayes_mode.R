@@ -32,11 +32,12 @@
 #' @export
 
 bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot = F, nb_iter = NULL) {
-  
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   assert_that(is.scalar(rd) & rd >= 0, msg = "rd should be greater or equal than zero")
   assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
-  
+  assert_that(is.scalar(nb_iter) & nb_iter > 0, msg = "nb_iter should be a positive integer")
+  assert_that(is.logical(show_plot), msg = "show_plot should be either TRUE or FALSE")
+
   dist = BayesMix$dist
   data = BayesMix$data
   mcmc = BayesMix$mcmc

@@ -41,19 +41,24 @@ bayes_estimation <- function(data,
                              nb_iter = 2000,
                              burnin = nb_iter/2,
                              printing = TRUE) {
-  K = round(K)
-  nb_iter = round(nb_iter)
-  burnin = round(burnin)
   
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
+  assert_that(!any(is.na(data)) & !any(is.infinite(data)),
+              msg = "y should not include missing or infinite values")
   assert_that(dist %in% c("normal", "skew_normal", "poisson", "shifted_poisson") & is.character(dist),
               msg = "Unsupported distribution. 
-              dist should be either normal, skew_normal, poisson, shifted_poisson or NA")
+              dist should be either normal, skew_normal, poisson, shifted_poisson or 'NA'")
   assert_that(is.scalar(nb_iter) & nb_iter > 0, msg = "nb_iter should be a positive integer")
   assert_that(is.scalar(burnin) & burnin > 0 & burnin < nb_iter,
               msg = "nb_iter should be a positive integer lower than burnin")
   assert_that(is.scalar(K) & K > 0, msg = "K should be a positive integer")
+  assert_that(is.logical(printing), msg = "printing should be either TRUE or FALSE")
+
+  # rounding parameters that should be integers
+  K = round(K)
+  nb_iter = round(nb_iter)
+  burnin = round(burnin)
   
   if (dist %in% c("normal")) {
     priors_labels = c("a0", "A0", "e0", "b0", "B0", "c0", "g0", "G0")

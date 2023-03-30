@@ -30,13 +30,15 @@ MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd
   ## input checks
   fail = "inputs to the Mode-finding EM algorithm are corrupted"
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
-              msg = paste0("mcmc should be a vector of length >= 3", fail))
+              msg = "mcmc should be a vector of length >= 3")
   assert_that(is.string(dist),
-              msg = paste0("dist should be a string", fail))
+              msg = "dist should be a string")
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
-  assert_that(is.vector(tol_x) & tol_x > 0, msg = paste0("tol_x should be a positive scalar", fail))
-  assert_that(is.logical(show_plot), msg = paste0("show_plot should be TRUE or FALSE", fail))
+  assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
+  assert_that(is.logical(show_plot), msg = "show_plot should be TRUE or FALSE")
+  assert_that(is.vector(pars_names) & is.character(pars_names) > 0,
+              msg = "pars_names should be a character vector")
   ##
   
   ##
@@ -45,11 +47,11 @@ MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd
   names_mcmc = unique(names_mcmc)
   
   assert_that(sum(pars_names %in% names_mcmc)==length(pars_names),
-              msg = paste0("the name of the parameters provided by pars_names and those of the mcmc vector do not match; ", fail))
+              msg = "the name of the parameters provided by pars_names and those of the mcmc vector do not match")
   
   if (dist %in% c("skew_normal")) {
     assert_that(length(pars_names) == 4,
-                msg = paste0("the number of elements in pars_names does not match with dist; ", fail)) 
+                msg = "the number of elements in pars_names does not match with dist") 
   }
   ##
   

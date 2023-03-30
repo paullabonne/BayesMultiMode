@@ -21,20 +21,19 @@
 fixed_point <- function(mcmc, data, tol_x = sd(data)/10, show_plot = F) {
   
   ## input checks
-  fail = "inputs to the fixed point algorithm are corrupted"
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
-              msg = paste0("mcmc should be a vector of length >= 3; ", fail))
+              msg = "mcmc should be a vector of length >= 3; ")
   assert_that(is.vector(data) & length(data) > 0,
-              msg = paste0("data should be a vector of length > 0; ", fail))
-  assert_that(is.vector(tol_x) & tol_x > 0, msg = paste0("tol_x should be a positive scalar; ", fail))
-  assert_that(is.logical(show_plot), msg = paste0("show_plot should be TRUE or FALSE; ", fail))
+              msg = "data should be a vector of length > 0; ")
+  assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
+  assert_that(is.logical(show_plot), msg = "show_plot should be TRUE or FALSE")
   
   names_mcmc = str_to_lower(names(mcmc))
   names_mcmc = str_extract(names_mcmc, "[a-z]+")
   names_mcmc = unique(names_mcmc)
   
   assert_that(sum(c("eta", "mu", "sigma") %in% names_mcmc)==3,
-              msg = paste0("missing parameter in mcmc; ", fail))
+              msg = "missing parameter in mcmc; variables should be theta, mu and sigma")
   ##
   
   modes = rep(NA,length(mcmc)/3)
@@ -44,7 +43,7 @@ fixed_point <- function(mcmc, data, tol_x = sd(data)/10, show_plot = F) {
   sigma = mcmc[grep("sigma", names(mcmc))]
 
   assert_that(length(p) == length(mu) & length(sigma) == length(mu),
-              msg = paste0("p, mu and sigma should have the same lengths", fail))
+              msg = "p, mu and sigma should have the same lengths")
   
   iter = 0
   
