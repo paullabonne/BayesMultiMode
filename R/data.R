@@ -18,9 +18,12 @@
 #' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}
 "ct47"
 
-#' Tropical cylcone lifetime maximum intensity
+#' Tropical cyclones lifetime maximum intensity
 #' @format
-#' See https://www.ncei.noaa.gov/products/international-best-track-archive
+#' The raw data is the ibtracs.ALL.list.v04r00.csv dataset from https://www.ncei.noaa.gov/products/international-best-track-archive
+#' 
+#' @source
+#' https://www.ncei.noaa.gov/products/international-best-track-archive
 #' @importFrom Rdpack reprompt
 #' @references
 #' \insertRef{knapp_international_2010}{BayesMultiMode}\cr\cr
@@ -28,8 +31,11 @@
 "cyclone"
 
 #' Galaxy series
-#' @format
 #' Velocity at which 82 galaxies in the Corona Borealis region are moving away from our galaxy, scaled by 1000.
+#' 
+#' @source
+#' https://people.maths.bris.ac.uk/~mapjg/mixdata
+#' 
 #' @importFrom Rdpack reprompt
 #' @references
 #' \insertRef{Richardson_Green_1997_RJMCMC}{BayesMultiMode}

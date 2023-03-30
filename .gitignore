@@ -2,5 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
-^SNB.Rmd
+^install_etc.Rmd
 .DS_Store

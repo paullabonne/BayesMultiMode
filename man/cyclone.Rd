@@ -3,15 +3,31 @@
 \docType{data}
 \name{cyclone}
 \alias{cyclone}
-\title{Tropical cylcone lifetime maximum intensity}
+\title{Tropical cyclones lifetime maximum intensity}
 \format{
-See https://www.ncei.noaa.gov/products/international-best-track-archive
+The raw data is the ibtracs.ALL.list.v04r00.csv dataset from https://www.ncei.noaa.gov/products/international-best-track-archive
+The code to generate the lifetime maximum intensity series from this dataset is :
+cycle_all = read.csv("ibtracs.ALL.list.v04r00.csv")
+cyclone = as_tibble(cycle_all) %>%
+select(SEASON,
+         USA_WIND,
+         BASIN,
+         SID) %>%
+  mutate(SEASON = as.numeric(SEASON),
+         USA_WIND = as.numeric(USA_WIND),
+         BASIN = ifelse(is.na(BASIN), "NHA", BASIN)) %>%
+  filter(!is.na(USA_WIND)) %>%
+  group_by(SID) %>%
+  summarise(max_wind = max(USA_WIND, na.rm = T),
+            BASIN = unique(BASIN),
+            SEASON = unique(SEASON)) %>%
+  ungroup()
 }
 \usage{
 cyclone
 }
 \description{
-Tropical cylcone lifetime maximum intensity
+Tropical cyclones lifetime maximum intensity
 }
 \references{
 \insertRef{knapp_international_2010}{BayesMultiMode}\cr\cr
