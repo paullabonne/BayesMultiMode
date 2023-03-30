@@ -121,7 +121,7 @@ gibbs_SFM_normal <- function(y,
   colnames(mcmc) = 1:ncol(mcmc)
   
   for (i in 1:K){
-    colnames(mcmc)[c(i, K+i, 2*K+i)] = c(paste0("theta", i),
+    colnames(mcmc)[c(i, K+i, 2*K+i)] = c(paste0("eta", i),
                                          paste0("mu", i),
                                          paste0("sigma", i))
   }

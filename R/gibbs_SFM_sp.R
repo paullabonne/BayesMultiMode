@@ -133,7 +133,7 @@ gibbs_SFM_sp <- function(y,
   colnames(mcmc) = 1:ncol(mcmc)
   
   for (i in 1:K){
-    colnames(mcmc)[c(i, K+i, 2*K+i)] = c(paste0("theta", i),
+    colnames(mcmc)[c(i, K+i, 2*K+i)] = c(paste0("eta", i),
                                          paste0("kappa", i),
                                          paste0("lambda", i))
   }

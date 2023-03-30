@@ -68,35 +68,35 @@ new_BayesMixture <- function(mcmc,
     
     change = FALSE
     
-    if (dist == "poisson" & sum(c("theta", "lambda") %in% names_mcmc) < 2){
+    if (dist == "poisson" & sum(c("eta", "lambda") %in% names_mcmc) < 2){
       change = TRUE
       
       assert_that(!is.null(names(pars_names)),
-                  msg = "pars_names should be a named vector with names : theta and lambda")
-      assert_that(sum(names(pars_names) %in% c("theta", "lambda"))==2,
-                  msg = "the name of the parameters provided by pars_names should be theta and lambda")
+                  msg = "pars_names should be a named vector with names : eta and lambda")
+      assert_that(sum(names(pars_names) %in% c("eta", "lambda"))==2,
+                  msg = "the name of the parameters provided by pars_names should be eta and lambda")
       assert_that(sum(pars_names %in% names_mcmc)==2,
                   msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
     }
     
-    if (dist == "normal" & sum(c("theta", "mu", "sigma") %in% names_mcmc)<3){
+    if (dist == "normal" & sum(c("eta", "mu", "sigma") %in% names_mcmc)<3){
       change = TRUE
       
       assert_that(!is.null(names(pars_names)),
-                  msg = "pars_names should be a named vector with names : theta, mu, sigma")
-      assert_that(sum(names(pars_names) %in% c("theta", "mu", "sigma"))==3,
-                  msg = "the name of the parameters provided by pars_names should be theta, mu and sigma")
+                  msg = "pars_names should be a named vector with names : eta, mu, sigma")
+      assert_that(sum(names(pars_names) %in% c("eta", "mu", "sigma"))==3,
+                  msg = "the name of the parameters provided by pars_names should be eta, mu and sigma")
       assert_that(sum(pars_names %in% names_mcmc)==3,
                   msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
     }
     
-    if (dist == "skew_normal" & sum(c("theta", "xi", "omega", "alpha") %in% names_mcmc)<4){
+    if (dist == "skew_normal" & sum(c("eta", "xi", "omega", "alpha") %in% names_mcmc)<4){
       change = TRUE
       
       assert_that(!is.null(names(pars_names)),
-                  msg = "pars_names should be a named vector with names : theta, mu, sigma and xi")
-      assert_that(sum(names(pars_names) %in% c("theta", "mu", "sigma", "xi"))==4,
-                  msg = "the name of the parameters provided by pars_names should be theta, mu, sigma and xi")
+                  msg = "pars_names should be a named vector with names : eta, mu, sigma and xi")
+      assert_that(sum(names(pars_names) %in% c("eta", "mu", "sigma", "xi"))==4,
+                  msg = "the name of the parameters provided by pars_names should be eta, mu, sigma and xi")
       assert_that(sum(pars_names %in% names_mcmc)==4,
                   msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
     }

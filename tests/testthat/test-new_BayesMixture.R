@@ -3,11 +3,11 @@ test_that("New_BayesMixture works returns expected results for the normal distri
   mu = c(0,5)
   sigma = c(1,2)
   p = c(0.8,0.2)
-  pars_names = c(theta = "theta", mu = "mu", sigma = "sigma")
+  pars_names = c(eta = "eta", mu = "mu", sigma = "sigma")
   dist_type = "continuous"
   
   data = c(rnorm(p[1]*100, mu[1], sigma[1]), rnorm(p[2]*100, mu[2], sigma[2]))
-  fit = c(theta = p, mu = mu, sigma = sigma)
+  fit = c(eta = p, mu = mu, sigma = sigma)
   fit = rbind(fit, fit)
 
   BM = new_BayesMixture(fit, data, K = length(mu), burnin = 1, dist = "normal", pars_names = pars_names, pdf_func = NULL, dist_type = dist_type)
@@ -19,11 +19,11 @@ test_that("New_BayesMixture works returns expected results for the normal distri
   mu = c(0,5)
   omega = c(1,2)
   p = c(0.8,0.2)
-  pars_names = c(theta = "theta", mu = "mu", sigma = "omega")
+  pars_names = c(eta = "eta", mu = "mu", sigma = "omega")
   dist_type = "continuous"
   
   data = c(rnorm(p[1]*100, mu[1], omega[1]), rnorm(p[2]*100, mu[2], omega[2]))
-  fit = c(theta = p, mu = mu, omega = omega)
+  fit = c(eta = p, mu = mu, omega = omega)
   fit = rbind(fit, fit)
 
   BM = new_BayesMixture(fit, data, K = 2, burnin = 1, dist = "normal", pars_names = pars_names, pdf_func = NULL, dist_type = dist_type)
@@ -36,15 +36,15 @@ test_that("New_BayesMixture works returns expected results for the student distr
   sigma = c(1,2)
   nu = c(5,5)
   p = c(0.8,0.2)
-  params = c(theta = p, mu = mu, sigma = sigma, nu = nu)
-  pars_names = c(theta = "theta", mu =  "mu", sigma = "sigma", nu = "nu")
+  params = c(eta = p, mu = mu, sigma = sigma, nu = nu)
+  pars_names = c(eta = "eta", mu =  "mu", sigma = "sigma", nu = "nu")
   dist = "student"
   dist_type = "continuous"
   
   data = c(sn::rst(p[1]*1000, mu[1], sigma[1], nu = nu[1]),
            sn::rst(p[2]*1000, mu[2], sigma[2], nu = nu[2]))
   
-  fit = c(theta = p, mu = mu, sigma = sigma, nu = nu)
+  fit = c(eta = p, mu = mu, sigma = sigma, nu = nu)
   fit = rbind(fit, fit)
   
   BM = new_BayesMixture(fit, data, K = 2, burnin = 1, dist = dist, pars_names = pars_names, pdf_func = NULL, dist_type = dist_type)

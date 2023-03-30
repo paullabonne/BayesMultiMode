@@ -4,8 +4,8 @@ test_that("MEM function returns expected results with dist = skew_normal", {
   omega = c(1,2)
   alpha = c(0,0)
   p = c(0.8,0.2)
-  params = c(theta = p, xi = xi, omega = omega, alpha = alpha)
-  pars_names = c("theta", "xi", "omega", "alpha")
+  params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
+  pars_names = c("eta", "xi", "omega", "alpha")
   dist = "skew_normal"
   
   data = c(sn::rsn(p[1]*100, xi[1], omega[1], alpha[1]),
@@ -25,8 +25,8 @@ test_that("MEM function returns expected results with an arbitrary function", {
   alpha = c(0,0)
   nu = c(3,100)
   p = c(0.8,0.2)
-  params = c(theta = p, mu = xi, sigma = omega, xi = alpha, nu = nu)
-  pars_names = c("theta", "mu", "sigma", "xi", "nu")
+  params = c(eta = p, mu = xi, sigma = omega, xi = alpha, nu = nu)
+  pars_names = c("eta", "mu", "sigma", "xi", "nu")
   
   pdf_func <- function(x, pars) {
     sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])

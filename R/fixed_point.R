@@ -33,13 +33,13 @@ fixed_point <- function(mcmc, data, tol_x = sd(data)/10, show_plot = F) {
   names_mcmc = str_extract(names_mcmc, "[a-z]+")
   names_mcmc = unique(names_mcmc)
   
-  assert_that(sum(c("theta", "mu", "sigma") %in% names_mcmc)==3,
+  assert_that(sum(c("eta", "mu", "sigma") %in% names_mcmc)==3,
               msg = paste0("missing parameter in mcmc; ", fail))
   ##
   
   modes = rep(NA,length(mcmc)/3)
   mcmc = mcmc[!is.na(mcmc)]
-  p = mcmc[grep("theta", names(mcmc))]
+  p = mcmc[grep("eta", names(mcmc))]
   mu = mcmc[grep("mu", names(mcmc))]
   sigma = mcmc[grep("sigma", names(mcmc))]
 

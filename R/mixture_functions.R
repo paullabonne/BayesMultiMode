@@ -134,27 +134,27 @@ dist_mixture <- function(x, dist, pars, pdf_func = NULL) {
     
   } else {
     if (dist == "normal") {
-      output = normal_mix(x, pars[, "theta"], pars[, "mu"], pars[, "sigma"])
+      output = normal_mix(x, pars[, "eta"], pars[, "mu"], pars[, "sigma"])
     }
     
     if (dist == "student") {
-      output = student_mix(x, pars[, "theta"], pars[, "mu"], pars[, "sigma"], pars[, "nu"])
+      output = student_mix(x, pars[, "eta"], pars[, "mu"], pars[, "sigma"], pars[, "nu"])
     }
     
     if (dist == "skew_normal") {
-      output = skew_norm_mix(x, pars[, "theta"], pars[, "xi"], pars[, "omega"], pars[, "alpha"])
+      output = skew_norm_mix(x, pars[, "eta"], pars[, "xi"], pars[, "omega"], pars[, "alpha"])
     }
     
     if (dist == "skew_t") {
-      output = skew_t_mix(x, pars[, "theta"], pars[, "mu"], pars[, "sigma"], pars[, "xi"], pars[, "nu"])
+      output = skew_t_mix(x, pars[, "eta"], pars[, "mu"], pars[, "sigma"], pars[, "xi"], pars[, "nu"])
     }
     
     if (dist == "pois_mix") {
-      output = pois_mix(x, pars[, "theta"], pars[, "lambda"])
+      output = pois_mix(x, pars[, "eta"], pars[, "lambda"])
     }
     
     if (dist == "shift_pois_mix") {
-      output = shift_pois_mix(x, pars[, "theta"], pars[, "lambda"], pars[, "kappa"])
+      output = shift_pois_mix(x, pars[, "eta"], pars[, "lambda"], pars[, "kappa"])
     }
   }
   

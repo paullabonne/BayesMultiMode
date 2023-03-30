@@ -86,7 +86,7 @@ plot.BayesMixture <- function(x, max_size = 250,
     mixture_uncertainty = matrix(NA, length(x_all), nrow(mcmc))
     
     if(x$dist %in% c("poisson", "shifted_poisson")){
-      theta = mcmc[, grep("theta", colnames(mcmc))]
+      eta = mcmc[, grep("eta", colnames(mcmc))]
       lambda = mcmc[, grep("lambda", colnames(mcmc))]
       
       if (x$dist == "shifted_poisson") {
@@ -98,10 +98,10 @@ plot.BayesMixture <- function(x, max_size = 250,
       for (draw in sample(1:(min(nrow(mcmc), max_size)))) {
         ##
         
-        pdf = matrix(0, nrow=length(x_all),ncol=ncol(theta))
-        for(j in 1:ncol(theta)){
-          if(!is.na(theta[draw,j])){
-            pdf[,j] = dpois((x_all-kappa[draw, j, drop = T]), lambda[draw, j, drop = T]) * theta[draw, j, drop = T]
+        pdf = matrix(0, nrow=length(x_all),ncol=ncol(eta))
+        for(j in 1:ncol(eta)){
+          if(!is.na(eta[draw,j])){
+            pdf[,j] = dpois((x_all-kappa[draw, j, drop = T]), lambda[draw, j, drop = T]) * eta[draw, j, drop = T]
           }
         } 
         

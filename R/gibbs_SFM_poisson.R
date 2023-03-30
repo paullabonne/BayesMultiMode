@@ -114,7 +114,7 @@ gibbs_SFM_poisson <- function(y,
   colnames(mcmc) = 1:ncol(mcmc)
   
   for (i in 1:K){
-    colnames(mcmc)[c(i, K+i)] = c(paste0("theta", i),
+    colnames(mcmc)[c(i, K+i)] = c(paste0("eta", i),
                                          paste0("lambda", i))
   }
   colnames(mcmc)[ncol(mcmc)] = "loglik"

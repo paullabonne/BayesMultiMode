@@ -164,7 +164,7 @@ gibbs_SFM_skew_n <- function(y,
   colnames(mcmc_result) = 1:ncol(mcmc_result)
   
   for (i in 1:K){
-    colnames(mcmc_result)[c(i, K+i, 2*K+i,3*K+i)] = c(paste0("theta", i),
+    colnames(mcmc_result)[c(i, K+i, 2*K+i,3*K+i)] = c(paste0("eta", i),
                                                       paste0("xi", i),
                                                       paste0("omega", i),
                                                       paste0("alpha", i))
