@@ -46,13 +46,15 @@ and discrete.
 #### Estimation
 
 ``` r
-# retrieve acidity data
-y = acidity
+set.seed(123)
+
+# retrieve cyclone data
+y = galaxy
 
 # estimation
 bayesmix = bayes_estimation(data = y,
-                            K = 5,
-                            dist = "skew_normal",
+                            K = 10,
+                            dist = "normal",
                             nb_iter = 2000,
                             burnin = 1000)
 ```
@@ -92,13 +94,15 @@ plot(bayesmode, max_size = 200)
 summary(bayesmode)
 ```
 
-    ## The posterior probability of the data being multimodal is 1 .
+    ## The posterior probability of the data being multimodal is 0.993 .
     ## 
     ## The number of estimated modes and their posterior probabilities is:
 
     ##      Number of modes Posterior probabilty
-    ## [1,]               2                0.977
-    ## [2,]               3                0.023
+    ## [1,]               1                0.007
+    ## [2,]               2                0.133
+    ## [3,]               3                0.840
+    ## [4,]               4                0.020
 
 ### Using BayesMultiMode for mode inference with external MCMC output
 
@@ -110,27 +114,45 @@ package is used for MCMC estimation.
 
 ``` r
 library(BNPmix)
+library(dplyr)
+```
 
-y = acidity
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
+y = cyclone %>%
+  filter(BASIN == "SI",
+         SEASON > "1981") %>%
+  select(max_wind) %>%
+  unlist()
 
 ## estimation
 PY_result = PYdensity(y,
-                     mcmc = list(niter = 10000, nburn = 5000),
-                     output = list(out_param = TRUE))
+                      mcmc = list(niter = 2000, nburn = 1000),
+                      output = list(out_param = TRUE))
 ```
 
-    ## Completed:   1000/10000 - in 0.093852 sec
-    ## Completed:   2000/10000 - in 0.184289 sec
-    ## Completed:   3000/10000 - in 0.274799 sec
-    ## Completed:   4000/10000 - in 0.360535 sec
-    ## Completed:   5000/10000 - in 0.45362 sec
-    ## Completed:   6000/10000 - in 0.54145 sec
-    ## Completed:   7000/10000 - in 0.634023 sec
-    ## Completed:   8000/10000 - in 0.722045 sec
-    ## Completed:   9000/10000 - in 0.807763 sec
-    ## Completed:   10000/10000 - in 0.894157 sec
+    ## Completed:   200/2000 - in 0.043548 sec
+    ## Completed:   400/2000 - in 0.090827 sec
+    ## Completed:   600/2000 - in 0.147723 sec
+    ## Completed:   800/2000 - in 0.19929 sec
+    ## Completed:   1000/2000 - in 0.247688 sec
+    ## Completed:   1200/2000 - in 0.296832 sec
+    ## Completed:   1400/2000 - in 0.348728 sec
+    ## Completed:   1600/2000 - in 0.401649 sec
+    ## Completed:   1800/2000 - in 0.457473 sec
+    ## Completed:   2000/2000 - in 0.511906 sec
     ## 
-    ## Estimation done in 0.894165 seconds
+    ## Estimation done in 0.511914 seconds
 
 ``` r
 plot(PY_result)
@@ -202,10 +224,8 @@ summary(bayesmode)
     ## The number of estimated modes and their posterior probabilities is:
 
     ##      Number of modes Posterior probabilty
-    ## [1,]               2               0.8246
-    ## [2,]               3               0.1576
-    ## [3,]               4               0.0166
-    ## [4,]               5               0.0012
+    ## [1,]               2                0.897
+    ## [2,]               3                0.103
 
 ### References
 

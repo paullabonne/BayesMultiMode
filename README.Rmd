@@ -35,13 +35,15 @@ library(BayesMultiMode)
 
 #### Estimation
 ```{r, out.width = '70%', fig.align = "center"}
-# retrieve acidity data
-y = acidity
+set.seed(123)
+
+# retrieve cyclone data
+y = galaxy
 
 # estimation
 bayesmix = bayes_estimation(data = y,
-                            K = 5,
-                            dist = "skew_normal",
+                            K = 10,
+                            dist = "normal",
                             nb_iter = 2000,
                             burnin = 1000)
 
@@ -65,6 +67,7 @@ summary(bayesmode)
 `BayesMultiMode` also works on MCMC output generated using external software. The function `new_BayesMixture()` creates an object of class `BayesMixture` which can then be used as input in the mode inference function of `bayes_mode()`. Here is an example where the `BNPmix` package is used for MCMC estimation.
 ```{r, out.width = '70%', fig.align = "center"}
 library(BNPmix)
+library(dplyr)
 
 y = cyclone %>%
   filter(BASIN == "SI",
