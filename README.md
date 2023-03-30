@@ -141,18 +141,18 @@ PY_result = PYdensity(y,
                       output = list(out_param = TRUE))
 ```
 
-    ## Completed:   200/2000 - in 0.044853 sec
-    ## Completed:   400/2000 - in 0.092393 sec
-    ## Completed:   600/2000 - in 0.150048 sec
-    ## Completed:   800/2000 - in 0.201257 sec
-    ## Completed:   1000/2000 - in 0.251024 sec
-    ## Completed:   1200/2000 - in 0.300741 sec
-    ## Completed:   1400/2000 - in 0.353878 sec
-    ## Completed:   1600/2000 - in 0.407208 sec
-    ## Completed:   1800/2000 - in 0.463335 sec
-    ## Completed:   2000/2000 - in 0.518389 sec
+    ## Completed:   200/2000 - in 0.043494 sec
+    ## Completed:   400/2000 - in 0.090789 sec
+    ## Completed:   600/2000 - in 0.147315 sec
+    ## Completed:   800/2000 - in 0.198337 sec
+    ## Completed:   1000/2000 - in 0.246515 sec
+    ## Completed:   1200/2000 - in 0.295788 sec
+    ## Completed:   1400/2000 - in 0.347609 sec
+    ## Completed:   1600/2000 - in 0.400314 sec
+    ## Completed:   1800/2000 - in 0.455866 sec
+    ## Completed:   2000/2000 - in 0.510797 sec
     ## 
-    ## Estimation done in 0.518402 seconds
+    ## Estimation done in 0.510814 seconds
 
 ``` r
 plot(PY_result)
