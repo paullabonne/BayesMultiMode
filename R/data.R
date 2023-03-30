@@ -1,6 +1,10 @@
-#' DNA Macrosatellite repeat D4Z4 (4q).
-#' Locus (hg18): 4q35.2; Unit (kb): 3.3; Encoded product: DUX4.
-#'
+#' Autosomal macrosatellite repeats d4z4
+#' 
+#' Macrosatellite repeats D4Z4 in the subtelomere of chromosome 4q.
+#' Locus (hg18): 4q35.2 \cr
+#' Unit (kb): 3.3 \cr
+#' Restriction enzyme: EcoRI + HindIII/EcoRI + BlnI/XapI \cr
+#' Encoded product : DUX4
 #' @format
 #' A vector of counts with 410 elements.
 #' @importFrom Rdpack reprompt
@@ -8,9 +12,14 @@
 #' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}
 "d4z4"
 
-#' DNA Macrosatellite repeat ct47 (4q).
-#' Locus (hg18): 4q35.2; Unit (kb): 3.3; Encoded product: DUX4.
-#'
+#' X chromosomal macrosatellite repeats ct47
+#' 
+#' Repeat units that encode for a cancer testis antigen.
+#' Locus (hg18): Xq24 \cr
+#' Unit (kb): 4.8 \cr
+#' Restriction enzyme: EcoRI \cr
+#' Encoded product : cancer testis antigen 47
+#' 
 #' @format
 #' A vector of counts with 410 elements.
 #' @importFrom Rdpack reprompt
@@ -19,8 +28,14 @@
 "ct47"
 
 #' Tropical cyclones lifetime maximum intensity
+#' 
+#' Dataset constructed using the International Best Track Archive for Climate Stewardship (IBTrACS).
+#' Toprical cyclones lifetime maximum intensity data are known across the globe are known
+#' to be bimodal which has important implications for climate modelling.
+#' 
 #' @format
-#' The raw data is the ibtracs.ALL.list.v04r00.csv dataset from https://www.ncei.noaa.gov/products/international-best-track-archive
+#' A dataset with three columns showing the identification of the cyclone, its year of occurence and its lifetime maximum intensity (LMI).
+#' LMI is calculated as the maximum wind speed for each cyclone with unit ks.
 #' 
 #' @source
 #' https://www.ncei.noaa.gov/products/international-best-track-archive

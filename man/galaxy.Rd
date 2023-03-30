@@ -3,15 +3,20 @@
 \docType{data}
 \name{galaxy}
 \alias{galaxy}
-\title{Galaxy series}
+\title{Galaxy series
+Velocity at which 82 galaxies in the Corona Borealis region are moving away from our galaxy, scaled by 1000.}
 \format{
-Velocity at which 82 galaxies in the Corona Borealis region are moving away from our galaxy, scaled by 1000.
+An object of class \code{numeric} of length 82.
+}
+\source{
+https://people.maths.bris.ac.uk/~mapjg/mixdata
 }
 \usage{
 galaxy
 }
 \description{
 Galaxy series
+Velocity at which 82 galaxies in the Corona Borealis region are moving away from our galaxy, scaled by 1000.
 }
 \references{
 \insertRef{Richardson_Green_1997_RJMCMC}{BayesMultiMode}
