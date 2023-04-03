@@ -1,25 +1,25 @@
-#' Creating a S3 object of class `BayesMixture`.
+#' Creating a S3 object of class `BayesMixture`
 #' 
-#' Function for creating an object of class `bayes_estimation()` which can subsequently used as argument in `bayes_mode()`.
+#' Function for creating an object of class `bayes_estimation()` which can subsequently be used as argument in `bayes_mode()`.
 #' 
-#' @param mcmc A matrix of MCMC draws.
-#' @param data A vector containing the data used for estimating the model and generating the MCMC draws.
-#' @param K Number of mixture components.
-#' @param burnin Number of draws to discard as burnin.
+#' @param mcmc A matrix of MCMC draws
+#' @param data A vector containing the data used for estimating the model and generating the MCMC draws
+#' @param K Number of mixture components
+#' @param burnin Number of draws to discard as burnin
 #' @param dist Distribution family of the mixture components supported by
-#' the package (e.g. "normal", "student", "skew_normal", "shifted_poisson").
-#' @param pars_names Mapping between the distribution parameters names.
-#' This input is used only if dist_name is invalid or NULL.
-#' @param pdf_func Pdf or pmf of the mixture components.
-#' This input is used only if dist_name is invalid or NULL.
+#' the package (e.g. "normal", "student", "skew_normal", "shifted_poisson")
+#' @param pars_names Mapping between the distribution parameters names
+#' This input is used only if dist_name is invalid or NULL
+#' @param pdf_func Pdf or pmf of the mixture components;
+#' this input is used only if dist_name is invalid or NULL.
 #' @param dist_type Either "continous" or "discrete"
 #' 
 #' @returns
 #' A list of class `BayesMixture` containing :
 #' \itemize{
-#'  \item{data}{ - same as argument}
-#'  \item{dist_type}{ - same as argument}
-#'  \item{pars_names}{ - same as argument}
+#'  \item{data}{ - Same as argument}
+#'  \item{dist_type}{ - Same as argument}
+#'  \item{pars_names}{ - Same as argument}
 #'  \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded}
 #'  \item{mcmc_all}{ - Original matrix of MCMC draws}
 #' }

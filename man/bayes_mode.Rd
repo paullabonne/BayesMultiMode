@@ -2,7 +2,7 @@
 % Please edit documentation in R/bayes_mode.R
 \name{bayes_mode}
 \alias{bayes_mode}
-\title{Bayesian mode inference.}
+\title{Bayesian mode inference}
 \usage{
 bayes_mode(
   BayesMix,
@@ -13,17 +13,17 @@ bayes_mode(
 )
 }
 \arguments{
-\item{BayesMix}{An object of class `BayesMixture`.}
+\item{BayesMix}{An object of class `BayesMixture`}
 
-\item{rd}{Rounding parameter.}
+\item{rd}{Rounding parameter}
 
-\item{tol_x}{Tolerance parameter for distance in-between modes. Default is sd(data)/10 where data is an element of BayesMix.
+\item{tol_x}{Tolerance parameter for distance in-between modes; default is sd(data)/10 where data is an element of BayesMix.
 If two modes are closer than tol_x, only the first estimated mode is kept.
 Not needed for mixtures of discrete distributions.}
 
-\item{show_plot}{Show density with estimate mode as vertical bars}
+\item{show_plot}{Show density with estimated mode as vertical bars ?}
 
-\item{nb_iter}{Number of draws on which the mode-finding algorithm is run. Deault is NULL which means the algorithm is run on all draws.}
+\item{nb_iter}{Number of draws on which the mode-finding algorithm is run; default is NULL which means the algorithm is run on all draws.}
 }
 \value{
 A list of class `BayesMode` containing

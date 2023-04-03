@@ -15,35 +15,38 @@ bayes_estimation(
 )
 }
 \arguments{
-\item{data}{Vector of observations.}
+\item{data}{Vector of observations}
 
-\item{K}{Maximum number of mixture components.}
+\item{K}{Maximum number of mixture components}
 
-\item{dist}{String indicating the distribution of the mixture components.
-Currently supports "normal", "skew_normal", "poisson" and "shifted_poisson".}
+\item{dist}{String indicating the distribution of the mixture components
+Currently supports "normal", "skew_normal", "poisson" and "shifted_poisson"}
 
-\item{priors}{List of priors. Default in an empty list which implies the following priors :\cr
-a0 = 1,\cr A0 = 200,\cr b0 = median(y),\cr B0 = (max(y) - min(y))^2,\cr c0 = 2.5,\cr
-l0 = 1.1,\cr L0 = 1.1/median(y),\cr g0 = 0.5,\cr G0 = 100*g0/c0/B0,\cr D_xi = 1,\cr D_psi =1.}
+\item{priors}{List of priors; default is an empty list which implies the following priors :\cr
+a0 = 1,\cr A0 = 200,\cr b0 = median(y),\cr B0 = (max(y) - min(y))^2 (normal),\cr
+D_xi = 1,\cr D_psi =1, (skew normal: B0 = diag(D_xi,D_psi)), \cr c0 = 2.5,\cr
+l0 = 1.1 (poisson),\cr l0 = 5 (shifted poisson),\cr L0 = 1.1/median(y),\cr L0 = l0 - 1 (shifted poisson),\cr
+g0 = 0.5,\cr G0 = 100*g0/c0/B0 (normal),\cr 
+G0 = g0/(0.5*var(y)) (skew normal)}
 
-\item{nb_iter}{Number of MCMC iterations. Default is 2000.}
+\item{nb_iter}{Number of MCMC iterations; default is 2000}
 
-\item{burnin}{Number of MCMC iterations used as burnin. Default is nb_iter/2.}
+\item{burnin}{Number of MCMC iterations used as burnin; default is nb_iter/2}
 
 \item{printing}{Showing MCMC progression ?}
 }
 \value{
 A list of class `BayesMixture` containing
 \itemize{
- \item{data}{ - same as argument}
- \item{dist_type}{ - type of the distribution (continuous or discrete)}
- \item{pars_names}{ - names of the mixture components' parameters}
+ \item{data}{ - Same as argument}
+ \item{dist_type}{ - Type of the distribution (continuous or discrete)}
+ \item{pars_names}{ - Names of the mixture components' parameters}
  \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded}
  \item{mcmc_all}{ - Original matrix of MCMC draws}
 }
 }
 \description{
-Gibbs sampler for Spare Finite Mixture MCMC estimation of mixture distributions.
+Gibbs samplers for sparse finite mixture Markov chain Monte Carlo (SFM MCMC) estimation.
 }
 \examples{
 # Example with galaxy data ================================================
@@ -66,7 +69,7 @@ bayesmix = bayes_estimation(data = y,
 \donttest{
 set.seed(123) 
 
-# retrieve galaxy data
+# retrieve DNA data
 y = d4z4
 
 # estimation

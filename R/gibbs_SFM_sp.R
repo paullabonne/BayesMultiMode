@@ -1,16 +1,16 @@
 #' Bayesian estimation of a mixture of Poisson distributions.
 #' 
-#' MCMC estimation using a Spare Finite Mixture algorithm.
+#' MCMC estimation using a sparse finite mixture (SFM) algorithm.
 #' 
 #' @param y Vector of discrete observations.
 #' @param K Maximum number of mixture components.
 #' @param nb_iter Number of MCMC iterations.
 #' @param priors List of priors. Default is :
 #' list(a0 = 1, A0 = 200, l0 = 5, L0 = l0 - 1)
-#' @param printing Print intermediate of the MCMC estimation ? default = TRUE.
+#' @param printing Print intermediate output of the MCMC estimation ? default = TRUE.
 #' 
 #' @returns 
-#' mcmc_draws : Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix. 
+#' mcmc_draws : Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 3K + 1) matrix. 
 #' 
 #' @importFrom Rdpack reprompt
 #' @references

@@ -1,16 +1,16 @@
 #' Mode-finding algorithm for mixture of discrete distributions
 #' 
-#' @param mcmc Vector of estimated mixture parameters.
-#' @param data Vector of observations used for estimating the mixture.
-#' @param pars_names Names of of the mcmc variables.
-#' @param dist String indicating the distribution of the mixture components.
-#' Currently supports "poisson" and "shifted_poisson". Default is "NA".
+#' @param mcmc Vector of estimated mixture parameters
+#' @param data Vector of observations used for estimating the mixture
+#' @param pars_names Names of the mixture components' parameters
+#' @param dist String indicating the distribution of the mixture components
+#' Currently supports "poisson" and "shifted_poisson"; default is "NA"
 #' @param pmf_func Pmf of the mixture components associated with the mcmc draws
-#' (if mcmc estimation has not been carried out with BayesMultiMode); default is null.
-#' @param type Type of modes, either unique or all (the latter includes flat modes); default is "all".
-#' @param show_plot If true show the data and estimated modes; default is false.
+#' (if mcmc estimation has not been carried out with BayesMultiMode); default is null
+#' @param type Type of modes, either unique or all (the latter includes flat modes); default is "all"
+#' @param show_plot If true show the data and estimated modes; default is false
 #' 
-#' @return A vector estimated modes.
+#' @return Vector of estimated modes
 #' 
 #' @references
 #' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}

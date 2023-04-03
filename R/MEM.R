@@ -1,18 +1,18 @@
-#' Mode-finding EM algorithm (MEM)
+#' Modal EM algorithm (MEM)
 #' 
-#' MEM algorithm from Li et al. (2007).
+#' Algorithm to find modes in mixture of continuous distributions.
 #' 
-#' @param mcmc Vector of estimated mixture parameters.
-#' @param data Vector of observations used for estimating the mixture.
-#' @param pars_names Names of the variables mcmc draws variables.
-#' @param dist String indicating the distribution of the mixture components. Default is "NA".
-#' Currently supports "normal" and "skew_normal".
+#' @param mcmc Vector of estimated mixture parameters
+#' @param data Vector of observations used for estimating the mixture
+#' @param pars_names Names of the mixture components' parameters
+#' @param dist String indicating the distribution of the mixture components; default is "NA"
+#' Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided
 #' @param pdf_func Pdf of the mixture components associated with the mcmc draws
-#' (if mcmc estimation has not been carried out with BayesMultiMode); default is null.
-#' @param tol_x Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
-#' @param show_plot If true show the data and estimated modes; default is false.
+#' (if mcmc estimation has not been carried out with BayesMultiMode); default is null
+#' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.
+#' @param show_plot If true show the data and estimated modes; default is false
 #' 
-#' @return A vector estimated modes.
+#' @return Vector of estimated modes
 #' 
 #' @references
 #' \insertRef{li_nonparametric_2007}{BayesMultiMode}

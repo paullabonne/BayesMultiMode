@@ -14,15 +14,15 @@ gibbs_SFM_skew_n(y, K, nb_iter, priors = list(), printing = TRUE)
 \item{nb_iter}{Number of MCMC iterations.}
 
 \item{priors}{List of priors. Default is :
-list(a0 = 1, A0 = 200, b0 = median(y), B0 = (max(y) - min(y))^2, c0 = 2.5, g0 = 0.5, G0 = 100*g0/c0/B0, D_xi = 1, D_psi = 1)}
+list(a0 = 1, A0 = 200, b0 = median(y), D_xi = 1, D_psi = 1, # where (B0 = diag(D_xi, D_psi)), c0 = 2.5, g0 = 0.5, G0 = g0/(0.5*var(y)))}
 
-\item{printing}{Print intermediate of the MCMC estimation ? default = TRUE.}
+\item{printing}{Print intermediate output of the MCMC estimation ? default = TRUE.}
 }
 \value{
-mcmc_draws : Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix.
+mcmc_draws : Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 4K + 1) matrix.
 }
 \description{
-MCMC estimation using a Spare Finite Mixture algorithm.
+MCMC estimation using a sparse finite mixture (SFM) algorithm.
 }
 \references{
 \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr

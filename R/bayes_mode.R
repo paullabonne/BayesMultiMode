@@ -1,16 +1,16 @@
-#' Bayesian mode inference.
+#' Bayesian mode inference
 #' 
 #' Estimates modes for each mcmc draws which are then used to compute posterior probabilities for the number of modes and their locations.
 #' The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures
 #' while the Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
 #'
-#' @param BayesMix An object of class `BayesMixture`.
-#' @param rd Rounding parameter.
-#' @param tol_x Tolerance parameter for distance in-between modes. Default is sd(data)/10 where data is an element of BayesMix.
+#' @param BayesMix An object of class `BayesMixture`
+#' @param rd Rounding parameter
+#' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10 where data is an element of BayesMix.
 #' If two modes are closer than tol_x, only the first estimated mode is kept.
 #' Not needed for mixtures of discrete distributions.
-#' @param show_plot Show density with estimate mode as vertical bars
-#' @param nb_iter Number of draws on which the mode-finding algorithm is run. Deault is NULL which means the algorithm is run on all draws.
+#' @param show_plot Show density with estimated mode as vertical bars ?
+#' @param nb_iter Number of draws on which the mode-finding algorithm is run; default is NULL which means the algorithm is run on all draws.
 #' @return A list of class `BayesMode` containing
 #' \itemize{
 #'  \item{data}{ - from BayesMix argument}

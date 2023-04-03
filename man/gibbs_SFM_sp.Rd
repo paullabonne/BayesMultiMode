@@ -16,13 +16,13 @@ gibbs_SFM_sp(y, K, nb_iter, priors = list(), printing = TRUE)
 \item{priors}{List of priors. Default is :
 list(a0 = 1, A0 = 200, l0 = 5, L0 = l0 - 1)}
 
-\item{printing}{Print intermediate of the MCMC estimation ? default = TRUE.}
+\item{printing}{Print intermediate output of the MCMC estimation ? default = TRUE.}
 }
 \value{
-mcmc_draws : Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 2K + 1) matrix.
+mcmc_draws : Parameter draws from the posterior distribution at each MCMC iteration. A (nb_iter x 3K + 1) matrix.
 }
 \description{
-MCMC estimation using a Spare Finite Mixture algorithm.
+MCMC estimation using a sparse finite mixture (SFM) algorithm.
 }
 \references{
 \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr

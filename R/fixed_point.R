@@ -1,13 +1,13 @@
-#' Fixed-point algorithm for finding the modes of a gaussian mixture.
+#' Modal Fixed-point algorithm
 #' 
-#' See Carreira-Perpinan (2000), section 4.
+#' Algorithm for estimating modes in mixture of Normal distributions.
 #' 
-#' @param mcmc Vector of estimated mixture parameters.
-#' @param data Vector of observations used for estimating the mixture.
-#' @param tol_x Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.
-#' @param show_plot If true show the data and estimated modes; default is false.
+#' @param mcmc Vector of estimated mixture parameters
+#' @param data Vector of observations used for estimating the mixture
+#' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.
+#' @param show_plot If true show the data and estimated modes; default is false
 #' 
-#' @return Vector of estimated modes. 
+#' @return Vector of estimated modes 
 #' 
 #' @references
 #' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}
@@ -106,8 +106,6 @@ f_fp <- function(x, p, mu, sigma) {
   pmx = pmx/sum(pmx)
 
   f = 1/sum(pmx/sigma^2) * sum(pmx/sigma^2*mu)
-  
-  if (is.na(f)){browser()}
-  
+
   return(f)
 }

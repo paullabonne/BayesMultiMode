@@ -2,24 +2,24 @@
 % Please edit documentation in R/bayes_trace.R
 \name{bayes_trace}
 \alias{bayes_trace}
-\title{Trace plots.}
+\title{Trace plots}
 \usage{
 bayes_trace(BayesMix, mcmc_vars = NULL, with_burnin = FALSE, ...)
 }
 \arguments{
-\item{BayesMix}{An object of class BayesMixture.}
+\item{BayesMix}{An object of class BayesMixture}
 
-\item{mcmc_vars}{Variables to plot. Default is all the variable in the MCMC output.}
+\item{mcmc_vars}{Variables to plot; default is all the variable in the MCMC output}
 
 \item{with_burnin}{Plot all draws ?}
 
-\item{...}{Additional arguments passed to function mcmc_trace() from the package bayesplot.}
+\item{...}{Additional arguments passed to function `mcmc_trace()` from the package bayesplot.}
 }
 \value{
 A trace plot.
 }
 \description{
-This is wrapper around the mcmc_trace function from package bayesplot.
+This is wrapper around the `mcmc_trace()` function from package bayesplot.
 }
 \examples{
 # Example with galaxy data ================================================
