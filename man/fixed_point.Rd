@@ -2,7 +2,7 @@
 % Please edit documentation in R/fixed_point.R
 \name{fixed_point}
 \alias{fixed_point}
-\title{Modal Fixed-point algorithm}
+\title{Modal fixed-point algorithm}
 \usage{
 fixed_point(mcmc, data, pars_names, tol_x = sd(data)/10, show_plot = F)
 }

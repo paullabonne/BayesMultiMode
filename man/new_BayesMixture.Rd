@@ -33,7 +33,7 @@ correspond to the mixture proportions.}
 \item{pdf_func}{Pdf or pmf of the mixture components;
 this input is used only if dist_name is invalid or NULL.}
 
-\item{dist_type}{Either "continous" or "discrete"}
+\item{dist_type}{Either "continuous" or "discrete"}
 }
 \value{
 A list of class `BayesMixture` containing :

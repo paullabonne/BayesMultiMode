@@ -17,6 +17,8 @@ devtools::install()
 devtools::build_manual()
 
 devtools::check()
+
+devtools::check_rhub()
 ```
 
 #### Loading all functions for testing before installing
