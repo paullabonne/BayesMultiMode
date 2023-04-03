@@ -12,7 +12,7 @@ knitr::opts_chunk$set(dpi=600)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/BayesMultiMode)](https://cran.r-project.org/package=BayesMultiMode)
 <!-- badges: end -->
 
-`BayesMultiMode` is an R package for detecting and exploring multimodality using Bayesian techniques. The approach works in two stages. First, a mixture distribution is fitted on the data using a spare finite mixture Markoc chain Monte Carlo (SFM MCMC) algorihtm. The number of mixture components does not have to be specified; the size of the mixture is estimated simultaneously with the mixture weights and components through a SFM approach. Second, the resulting MCMC draws are used to calculate the number of modes and their locations. Posterior probabilities are retrieved for both of these quantities providing a powerful tool for mode inference. 
+`BayesMultiMode` is an R package for detecting and exploring multimodality using Bayesian techniques. The approach works in two stages. First, a mixture distribution is fitted on the data using a sparse finite mixture Markov chain Monte Carlo (SFM MCMC) algorithm. The number of mixture components does not have to be specified; the size of the mixture is estimated simultaneously with the mixture weights and components through a SFM approach. Second, the resulting MCMC draws are used to calculate the number of modes and their locations. Posterior probabilities are retrieved for both of these quantities providing a powerful tool for mode inference. 
 
 ### Installing BayesMultiMode from CRAN
 ```{r, eval = FALSE}

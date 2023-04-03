@@ -1,4 +1,4 @@
-#' Modal Fixed-point algorithm
+#' Modal fixed-point algorithm
 #' 
 #' Algorithm for estimating modes in mixture of Normal distributions.
 #' 

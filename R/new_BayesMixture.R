@@ -12,7 +12,7 @@
 #' correspond to the mixture proportions.
 #' @param pdf_func Pdf or pmf of the mixture components;
 #' this input is used only if dist_name is invalid or NULL.
-#' @param dist_type Either "continous" or "discrete"
+#' @param dist_type Either "continuous" or "discrete"
 #' 
 #' @returns
 #' A list of class `BayesMixture` containing :

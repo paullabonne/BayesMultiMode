@@ -17,9 +17,9 @@
 #'  \item{dist}{ - from BayesMix argument}
 #'  \item{dist_type}{ - from BayesMix argument}
 #'  \item{pars_names}{ - from BayesMix argument}
-#'  \item{modes}{ - Matrix with a row for each draw and colmns showing modes}
+#'  \item{modes}{ - Matrix with a row for each draw and columns showing modes}
 #'  \item{p1}{ - Posterior probability of unimodality}
-#'  \item{tb_nb_modes}{ - Matrix showing posterior probilities for the number of modes}
+#'  \item{tb_nb_modes}{ - Matrix showing posterior probabilities for the number of modes}
 #'  \item{table_location}{ - Matrix showing the posterior probilities for location points being modes}
 #' }
 #' @references
