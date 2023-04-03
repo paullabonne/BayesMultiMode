@@ -9,13 +9,14 @@ BayesMultiMode
 
 `BayesMultiMode` is an R package for detecting and exploring
 multimodality using Bayesian techniques. The approach works in two
-stages. First, a mixture distribution is fitted on the data. The number
-of mixture components does not have to be specified; the size of the
-mixture is estimated simultaneously with the mixture weights and
-components through a Sparse Finite Mixture approach. Second, the
-resulting MCMC draws are used to calculate the number of modes and their
-locations. Posterior probabilities are retrieved for both of these
-quantities providing a powerful tool for mode inference.
+stages. First, a mixture distribution is fitted on the data using a
+spare finite mixture Markoc chain Monte Carlo (SFM MCMC) algorihtm. The
+number of mixture components does not have to be specified; the size of
+the mixture is estimated simultaneously with the mixture weights and
+components through a SFM approach. Second, the resulting MCMC draws are
+used to calculate the number of modes and their locations. Posterior
+probabilities are retrieved for both of these quantities providing a
+powerful tool for mode inference.
 
 ### Installing BayesMultiMode from CRAN
 
@@ -74,207 +75,6 @@ bayesmix = bayes_estimation(data = y,
 # plot estimated mixture
 plot(bayesmix, max_size = 200)
 ```
-
-    ## Warning: Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
-    ## Removed 101 rows containing missing values (`geom_function()`).
 
 <img src="README_files/figure-gfm/unnamed-chunk-4-1.png" width="70%" style="display: block; margin: auto;" />
 
@@ -342,18 +142,18 @@ PY_result = PYdensity(y,
                       output = list(out_param = TRUE))
 ```
 
-    ## Completed:   200/2000 - in 0.043786 sec
-    ## Completed:   400/2000 - in 0.092098 sec
-    ## Completed:   600/2000 - in 0.148721 sec
-    ## Completed:   800/2000 - in 0.199775 sec
-    ## Completed:   1000/2000 - in 0.248279 sec
-    ## Completed:   1200/2000 - in 0.297229 sec
-    ## Completed:   1400/2000 - in 0.350234 sec
-    ## Completed:   1600/2000 - in 0.403797 sec
-    ## Completed:   1800/2000 - in 0.459634 sec
-    ## Completed:   2000/2000 - in 0.513988 sec
+    ## Completed:   200/2000 - in 0.044587 sec
+    ## Completed:   400/2000 - in 0.091954 sec
+    ## Completed:   600/2000 - in 0.148712 sec
+    ## Completed:   800/2000 - in 0.199659 sec
+    ## Completed:   1000/2000 - in 0.248127 sec
+    ## Completed:   1200/2000 - in 0.297433 sec
+    ## Completed:   1400/2000 - in 0.349425 sec
+    ## Completed:   1600/2000 - in 0.402354 sec
+    ## Completed:   1800/2000 - in 0.457898 sec
+    ## Completed:   2000/2000 - in 0.512556 sec
     ## 
-    ## Estimation done in 0.513996 seconds
+    ## Estimation done in 0.512571 seconds
 
 ``` r
 plot(PY_result)
@@ -430,19 +230,7 @@ summary(bayesmode)
 
 ### References
 
-(Basturk, Hoogerheide, and Dijk 2021) (Malsiner-Walli,
-Fruhwirth-Schnatter, and Grun 2016) (Schaap et al. 2013)
-
 <div id="refs" class="references csl-bib-body hanging-indent">
-
-<div id="ref-basturk_bayes_2021" class="csl-entry">
-
-Basturk, Nalan, Lennart F. Hoogerheide, and Herman van Dijk. 2021.
-“Bayes Estimates of Multimodal Density Features Using DNA and Economic
-Data.” *SSRN Electronic Journal*.
-<https://doi.org/10.2139/ssrn.3783351>.
-
-</div>
 
 <div id="ref-malsiner-walli_model-based_2016" class="csl-entry">
 

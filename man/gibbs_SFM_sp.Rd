@@ -14,7 +14,7 @@ gibbs_SFM_sp(y, K, nb_iter, priors = list(), printing = TRUE)
 \item{nb_iter}{Number of MCMC iterations.}
 
 \item{priors}{List of priors. Default is :
-list(a0 = 1, A0 = 200, l0 = 1.1, L0 = 1.1/median(y))}
+list(a0 = 1, A0 = 200, l0 = 5, L0 = l0 - 1)}
 
 \item{printing}{Print intermediate of the MCMC estimation ? default = TRUE.}
 }
