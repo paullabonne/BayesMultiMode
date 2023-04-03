@@ -4,9 +4,13 @@ output: github_document
 bibliography: inst/REFERENCES.bib
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(dpi=600)
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  dpi=600,
+  fig.path = "man/figures/README-"
+)
 ```
+
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/paullabonne/BayesMultiMode/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/paullabonne/BayesMultiMode/actions/workflows/R-CMD-check.yaml)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/BayesMultiMode)](https://cran.r-project.org/package=BayesMultiMode)

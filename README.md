@@ -77,7 +77,7 @@ bayesmix = bayes_estimation(data = y,
 plot(bayesmix, max_size = 200)
 ```
 
-<img src="README_files/figure-gfm/unnamed-chunk-4-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" />
 
 #### Mode inference
 
@@ -89,7 +89,7 @@ bayesmode = bayes_mode(bayesmix)
 plot(bayesmode, max_size = 200)
 ```
 
-<img src="README_files/figure-gfm/unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;" />
 
 ``` r
 # Summary 
@@ -143,24 +143,24 @@ PY_result = PYdensity(y,
                       output = list(out_param = TRUE))
 ```
 
-    ## Completed:   200/2000 - in 0.0436 sec
-    ## Completed:   400/2000 - in 0.090849 sec
-    ## Completed:   600/2000 - in 0.147477 sec
-    ## Completed:   800/2000 - in 0.198369 sec
-    ## Completed:   1000/2000 - in 0.247426 sec
-    ## Completed:   1200/2000 - in 0.297645 sec
-    ## Completed:   1400/2000 - in 0.349516 sec
-    ## Completed:   1600/2000 - in 0.402532 sec
-    ## Completed:   1800/2000 - in 0.458097 sec
-    ## Completed:   2000/2000 - in 0.512414 sec
+    ## Completed:   200/2000 - in 0.04397 sec
+    ## Completed:   400/2000 - in 0.092474 sec
+    ## Completed:   600/2000 - in 0.150462 sec
+    ## Completed:   800/2000 - in 0.203457 sec
+    ## Completed:   1000/2000 - in 0.257092 sec
+    ## Completed:   1200/2000 - in 0.309165 sec
+    ## Completed:   1400/2000 - in 0.364087 sec
+    ## Completed:   1600/2000 - in 0.420503 sec
+    ## Completed:   1800/2000 - in 0.48094 sec
+    ## Completed:   2000/2000 - in 0.542625 sec
     ## 
-    ## Estimation done in 0.512417 seconds
+    ## Estimation done in 0.542634 seconds
 
 ``` r
 plot(PY_result)
 ```
 
-<img src="README_files/figure-gfm/unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="70%" style="display: block; margin: auto;" />
 
 #### Transforming the output into a mcmc matrix with one column per variable
 
@@ -214,7 +214,7 @@ bayesmode = bayes_mode(py_BayesMix)
 plot(bayesmode, max_size = 200)
 ```
 
-<img src="README_files/figure-gfm/unnamed-chunk-9-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="70%" style="display: block; margin: auto;" />
 
 ``` r
 # Summary 
