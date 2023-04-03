@@ -26,7 +26,6 @@ MCMC estimation using a sparse finite mixture (SFM) algorithm.
 }
 \references{
 \insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
-\insertRef{basturk_bayes_2021}{BayesMultiMode}\cr\cr
 \insertRef{SFS:Mal:2019}{BayesMultiMode}
 }
 \keyword{internal}

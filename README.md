@@ -10,7 +10,7 @@ BayesMultiMode
 `BayesMultiMode` is an R package for detecting and exploring
 multimodality using Bayesian techniques. The approach works in two
 stages. First, a mixture distribution is fitted on the data using a
-spare finite mixture Markoc chain Monte Carlo (SFM MCMC) algorihtm. The
+sparse finite mixture Markov chain Monte Carlo (SFM MCMC) algorithm. The
 number of mixture components does not have to be specified; the size of
 the mixture is estimated simultaneously with the mixture weights and
 components through a SFM approach. Second, the resulting MCMC draws are
@@ -142,18 +142,18 @@ PY_result = PYdensity(y,
                       output = list(out_param = TRUE))
 ```
 
-    ## Completed:   200/2000 - in 0.044587 sec
-    ## Completed:   400/2000 - in 0.091954 sec
-    ## Completed:   600/2000 - in 0.148712 sec
-    ## Completed:   800/2000 - in 0.199659 sec
-    ## Completed:   1000/2000 - in 0.248127 sec
-    ## Completed:   1200/2000 - in 0.297433 sec
-    ## Completed:   1400/2000 - in 0.349425 sec
-    ## Completed:   1600/2000 - in 0.402354 sec
-    ## Completed:   1800/2000 - in 0.457898 sec
-    ## Completed:   2000/2000 - in 0.512556 sec
+    ## Completed:   200/2000 - in 0.04387 sec
+    ## Completed:   400/2000 - in 0.091126 sec
+    ## Completed:   600/2000 - in 0.147774 sec
+    ## Completed:   800/2000 - in 0.198662 sec
+    ## Completed:   1000/2000 - in 0.246839 sec
+    ## Completed:   1200/2000 - in 0.295992 sec
+    ## Completed:   1400/2000 - in 0.347768 sec
+    ## Completed:   1600/2000 - in 0.40079 sec
+    ## Completed:   1800/2000 - in 0.456545 sec
+    ## Completed:   2000/2000 - in 0.511032 sec
     ## 
-    ## Estimation done in 0.512571 seconds
+    ## Estimation done in 0.511042 seconds
 
 ``` r
 plot(PY_result)
@@ -229,6 +229,9 @@ summary(bayesmode)
     ## [2,]               3                0.103
 
 ### References
+
+(Malsiner-Walli, Fruhwirth-Schnatter, and Grun 2016) (Schaap et al.
+2013)
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
