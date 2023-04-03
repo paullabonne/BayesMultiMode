@@ -15,24 +15,24 @@ discrete_MF(
 )
 }
 \arguments{
-\item{mcmc}{Vector of estimated mixture parameters.}
+\item{mcmc}{Vector of estimated mixture parameters}
 
-\item{data}{Vector of observations used for estimating the mixture.}
+\item{data}{Vector of observations used for estimating the mixture}
 
-\item{pars_names}{Names of of the mcmc variables.}
+\item{pars_names}{Names of the mixture components' parameters}
 
-\item{dist}{String indicating the distribution of the mixture components.
-Currently supports "poisson" and "shifted_poisson". Default is "NA".}
+\item{dist}{String indicating the distribution of the mixture components
+Currently supports "poisson" and "shifted_poisson"; default is "NA"}
 
 \item{pmf_func}{Pmf of the mixture components associated with the mcmc draws
-(if mcmc estimation has not been carried out with BayesMultiMode); default is null.}
+(if mcmc estimation has not been carried out with BayesMultiMode); default is null}
 
-\item{type}{Type of modes, either unique or all (the latter includes flat modes); default is "all".}
+\item{type}{Type of modes, either unique or all (the latter includes flat modes); default is "all"}
 
-\item{show_plot}{If true show the data and estimated modes; default is false.}
+\item{show_plot}{If true show the data and estimated modes; default is false}
 }
 \value{
-A vector estimated modes.
+Vector of estimated modes
 }
 \description{
 Mode-finding algorithm for mixture of discrete distributions

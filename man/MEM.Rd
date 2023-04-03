@@ -2,7 +2,7 @@
 % Please edit documentation in R/MEM.R
 \name{MEM}
 \alias{MEM}
-\title{Mode-finding EM algorithm (MEM)}
+\title{Modal EM algorithm (MEM)}
 \usage{
 MEM(
   mcmc,
@@ -15,27 +15,27 @@ MEM(
 )
 }
 \arguments{
-\item{mcmc}{Vector of estimated mixture parameters.}
+\item{mcmc}{Vector of estimated mixture parameters}
 
-\item{data}{Vector of observations used for estimating the mixture.}
+\item{data}{Vector of observations used for estimating the mixture}
 
-\item{pars_names}{Names of the variables mcmc draws variables.}
+\item{pars_names}{Names of the mixture components' parameters}
 
-\item{dist}{String indicating the distribution of the mixture components. Default is "NA".
-Currently supports "normal" and "skew_normal".}
+\item{dist}{String indicating the distribution of the mixture components; default is "NA"
+Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided}
 
 \item{pdf_func}{Pdf of the mixture components associated with the mcmc draws
-(if mcmc estimation has not been carried out with BayesMultiMode); default is null.}
+(if mcmc estimation has not been carried out with BayesMultiMode); default is null}
 
-\item{tol_x}{Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
+\item{tol_x}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.}
 
-\item{show_plot}{If true show the data and estimated modes; default is false.}
+\item{show_plot}{If true show the data and estimated modes; default is false}
 }
 \value{
-A vector estimated modes.
+Vector of estimated modes
 }
 \description{
-MEM algorithm from Li et al. (2007).
+Algorithm to find modes in mixture of continuous distributions.
 }
 \examples{
 

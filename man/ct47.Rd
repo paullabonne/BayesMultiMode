@@ -11,7 +11,7 @@ A vector of counts with 410 elements.
 ct47
 }
 \description{
-Repeat units that encode for a cancer testis antigen.
+Repeat units that encode for a cancer testis antigen.\cr
 Locus (hg18): Xq24 \cr
 Unit (kb): 4.8 \cr
 Restriction enzyme: EcoRI \cr

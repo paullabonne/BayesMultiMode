@@ -11,7 +11,7 @@ A vector of counts with 410 elements.
 d4z4
 }
 \description{
-Macrosatellite repeats D4Z4 in the subtelomere of chromosome 4q.
+Macrosatellite repeats D4Z4 in the subtelomere of chromosome 4q.\cr
 Locus (hg18): 4q35.2 \cr
 Unit (kb): 3.3 \cr
 Restriction enzyme: EcoRI + HindIII/EcoRI + BlnI/XapI \cr

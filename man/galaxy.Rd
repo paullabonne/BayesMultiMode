@@ -3,8 +3,7 @@
 \docType{data}
 \name{galaxy}
 \alias{galaxy}
-\title{Galaxy series
-Velocity at which 82 galaxies in the Corona Borealis region are moving away from our galaxy, scaled by 1000.}
+\title{Galaxy series}
 \format{
 An object of class \code{numeric} of length 82.
 }
@@ -15,7 +14,6 @@ https://people.maths.bris.ac.uk/~mapjg/mixdata
 galaxy
 }
 \description{
-Galaxy series
 Velocity at which 82 galaxies in the Corona Borealis region are moving away from our galaxy, scaled by 1000.
 }
 \references{

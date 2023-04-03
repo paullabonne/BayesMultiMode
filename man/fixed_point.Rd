@@ -2,24 +2,24 @@
 % Please edit documentation in R/fixed_point.R
 \name{fixed_point}
 \alias{fixed_point}
-\title{Fixed-point algorithm for finding the modes of a gaussian mixture.}
+\title{Modal Fixed-point algorithm}
 \usage{
 fixed_point(mcmc, data, tol_x = sd(data)/10, show_plot = F)
 }
 \arguments{
-\item{mcmc}{Vector of estimated mixture parameters.}
+\item{mcmc}{Vector of estimated mixture parameters}
 
-\item{data}{Vector of observations used for estimating the mixture.}
+\item{data}{Vector of observations used for estimating the mixture}
 
-\item{tol_x}{Tolerance parameter for distance in-between modes. Default is sd(data)/10. If two modes are closer than tol_x, only the first estimated mode is kept.}
+\item{tol_x}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.}
 
-\item{show_plot}{If true show the data and estimated modes; default is false.}
+\item{show_plot}{If true show the data and estimated modes; default is false}
 }
 \value{
-Vector of estimated modes.
+Vector of estimated modes
 }
 \description{
-See Carreira-Perpinan (2000), section 4.
+Algorithm for estimating modes in mixture of Normal distributions.
 }
 \examples{
 mu = c(0,5)
