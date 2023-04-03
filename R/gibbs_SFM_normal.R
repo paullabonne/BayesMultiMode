@@ -29,8 +29,6 @@ gibbs_SFM_normal <- function(y,
                              printing = TRUE){
   
   # unpacking priors
-  # a0 = ifelse(is.null(priors$a0), 10, priors$a0)
-  # A0 = ifelse(is.null(priors$A0), a0*K, priors$A0)
   a0 = ifelse(is.null(priors$a0), 1, priors$a0)
   A0 = ifelse(is.null(priors$A0), 200, priors$A0)
   b0 = ifelse(is.null(priors$b0), median(y), priors$b0)

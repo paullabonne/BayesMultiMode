@@ -51,6 +51,28 @@
 #'
 #' # summary 
 #' # summary(bayesmode)
+#' 
+#' # Example with DNA data ================================================
+#' set.seed(123) 
+#' 
+#' # retrieve galaxy data
+#' y = d4z4
+#'
+#' # estimation
+#' bayesmix = bayes_estimation(data = y,
+#'                            K = 5, #not many to run the example rapidly
+#'                            dist = "shifted_poisson",
+#'                            nb_iter = 500, #not many to run the example rapidly
+#'                            burnin = 100)
+#' 
+#' # mode estimation
+#' bayesmode = bayes_mode(bayesmix)
+#'
+#' # plot 
+#' # plot(bayesmode, max_size = 200)
+#'
+#' # summary 
+#' # summary(bayesmode)
 #'
 #' @export
 
@@ -121,7 +143,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot
     # Posterior probability of being a mode for each location
     modes <- t(apply(mcmc,1,FUN = discrete_MF, data = data,
                      pars_names = pars_names, dist = dist,
-                     pdf_func = pdf_func, show_plot = show_plot))
+                     pmf_func = pdf_func, show_plot = show_plot))
     
     modes_xid = matrix(0, nrow(modes), ncol(modes))
     x = min(data):max(data)
@@ -146,7 +168,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot
     # unique modes to calculate post probs of number of modes
     modes <-  t(apply(mcmc,1,FUN = discrete_MF, data = data, type = "unique",
                       pars_names = pars_names, dist = dist,
-                      pdf_func = pdf_func, show_plot = show_plot))
+                      pmf_func = pdf_func, show_plot = show_plot))
     
     n_modes = apply(!is.na(modes),1,sum)
   }

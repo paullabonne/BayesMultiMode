@@ -28,8 +28,6 @@ gibbs_SFM_poisson <- function(y,
                               printing = TRUE){
   
   # unpacking priors
-  # a0 = ifelse(is.null(priors$a0), 10, priors$a0)
-  # A0 = ifelse(is.null(priors$A0), a0*K, priors$A0)
   a0 = ifelse(is.null(priors$a0), 1, priors$a0)
   A0 = ifelse(is.null(priors$A0), 200, priors$A0)
   l0 = ifelse(is.null(priors$l0), 1.1, priors$l0)

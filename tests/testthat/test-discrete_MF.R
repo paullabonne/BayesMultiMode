@@ -42,7 +42,6 @@ test_that("discrete_MF function returns expected results with arbitrary function
 
   data = c(rnbinom(p[1]*1e3, mu = mu[1], size = size[1]),
            rnbinom(p[2]*1e3, mu = mu[2], size = size[2]))
-  hist(data, breaks = 30)
 
   pmf_func <- function(x, pars) {
     dnbinom(x, mu = pars["mu"], size = pars["size"])

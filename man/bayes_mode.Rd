@@ -66,6 +66,28 @@ bayesmode = bayes_mode(bayesmix)
 # summary 
 # summary(bayesmode)
 
+# Example with DNA data ================================================
+set.seed(123) 
+
+# retrieve galaxy data
+y = d4z4
+
+# estimation
+bayesmix = bayes_estimation(data = y,
+                           K = 5, #not many to run the example rapidly
+                           dist = "shifted_poisson",
+                           nb_iter = 500, #not many to run the example rapidly
+                           burnin = 100)
+
+# mode estimation
+bayesmode = bayes_mode(bayesmix)
+
+# plot 
+# plot(bayesmode, max_size = 200)
+
+# summary 
+# summary(bayesmode)
+
 }
 \references{
 \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr

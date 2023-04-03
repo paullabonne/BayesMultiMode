@@ -66,11 +66,11 @@ dist_mixture <- function(x, dist, pars, pdf_func = NULL) {
     
   } else {
     if (dist == "normal") {
-      output = normal_mix(x, pars["eta"], pars["mu"], pars["sigma"])
+      output = normal_mix(x, pars[, "eta"], pars[, "mu"], pars[, "sigma"])
     }
     
     if (dist == "skew_normal") {
-      output = skew_norm_mix(x, pars["eta"], pars["xi"], pars["omega"], pars["alpha"])
+      output = skew_norm_mix(x, pars[, "eta"], pars[, "xi"], pars[, "omega"], pars[, "alpha"])
     }
   }
   

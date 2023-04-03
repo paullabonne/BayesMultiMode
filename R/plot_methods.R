@@ -56,20 +56,12 @@ plot.BayesMixture <- function(x, max_size = 250,
       
       colnames(pars) <- pars_names
       
-      est_mode = rep(NA, nrow(pars))
       g = g +
         geom_function(fun = dist_mixture,
                       args = list(dist = dist,
                                   pars = pars),
                       alpha = transparency,
                       colour = "#FF6347")
-      
-      # g = g +
-      #   geom_line(aes(y=value,colour=component),alpha= transparency) +
-      #   scale_colour_manual(values=rep("#FF6347",length(unique(df_y$component)))) +
-      #   scale_fill_manual(name = "",
-      #                     values = c("grey33"), # Color specification
-      #                     labels = c("Data density"))
     } 
   }
   

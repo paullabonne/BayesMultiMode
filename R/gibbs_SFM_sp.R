@@ -6,7 +6,7 @@
 #' @param K Maximum number of mixture components.
 #' @param nb_iter Number of MCMC iterations.
 #' @param priors List of priors. Default is :
-#' list(a0 = 1, A0 = 200, l0 = 1.1, L0 = 1.1/median(y))
+#' list(a0 = 1, A0 = 200, l0 = 5, L0 = l0 - 1)
 #' @param printing Print intermediate of the MCMC estimation ? default = TRUE.
 #' 
 #' @returns 
@@ -29,8 +29,6 @@ gibbs_SFM_sp <- function(y,
                          printing = TRUE){
   
   # unpacking priors
-  # a0 = ifelse(is.null(priors$a0), 10, priors$a0)
-  # A0 = ifelse(is.null(priors$A0), a0*K, priors$A0)
   a0 = ifelse(is.null(priors$a0), 1, priors$a0)
   A0 = ifelse(is.null(priors$A0), 200, priors$A0)
   l0 = ifelse(is.null(priors$l0), 5, priors$l0)
