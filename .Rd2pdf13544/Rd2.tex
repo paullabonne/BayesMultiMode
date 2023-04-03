@@ -1,0 +1,817 @@
+\nonstopmode{}
+\documentclass[a4paper]{book}
+\usepackage[times,inconsolata,hyper]{Rd}
+\usepackage{makeidx}
+\usepackage[utf8]{inputenc} % @SET ENCODING@
+% \usepackage{graphicx} % @USE GRAPHICX@
+\makeindex{}
+\begin{document}
+\chapter*{}
+\begin{center}
+{\textbf{\huge Package `BayesMultiMode'}}
+\par\bigskip{\large \today}
+\end{center}
+\inputencoding{utf8}
+\ifthenelse{\boolean{Rd@use@hyper}}{\hypersetup{pdftitle = {BayesMultiMode: Bayesian Mode Inference}}}{}
+\ifthenelse{\boolean{Rd@use@hyper}}{\hypersetup{pdfauthor = {Nalan Baştürk; Jamie Cross; Peter de Knijff; Lennart Hoogerheide; Paul Labonne; Herman van Dijk}}}{}
+\begin{description}
+\raggedright{}
+\item[Type]\AsIs{Package}
+\item[Title]\AsIs{Bayesian Mode Inference}
+\item[Version]\AsIs{0.5.0}
+\item[Description]\AsIs{A bayesian approach for mode inference which works in two steps. First, a mixture distribution is
+fitted on the data using a sparse finite mixture (SFM) Markov chain Monte Carlo
+(MCMC) algorithm following Malsiner-Walli, Frühwirth-Schnatter and Grün (2016)
+<}\Rhref{https://doi.org/10.1007/s11222-014-9500-2}{doi:10.1007/s11222-014-9500-2}\AsIs{>). The number of mixture components does not have
+to be specified; the size of the mixture is estimated endogenously through the SFM
+approach. Second, the modes of the estimated mixture at each MCMC draw are retrieved
+using algorithms specifically tailored for mode detection. These estimates are then
+used to construct posterior probabilities for the number of modes, their locations
+and uncertainties, providing a powerful tool for mode inference.}
+\item[License]\AsIs{GPL (>= 3)}
+\item[Imports]\AsIs{assertthat,
+bayesplot,
+dplyr,
+ggplot2,
+ggpubr,
+gtools,
+magrittr,
+MCMCglmm,
+mvtnorm,
+posterior,
+sn,
+stringr,
+tidyr,
+Rdpack,
+scales}
+\item[Depends]\AsIs{R (>= 3.4.0)}
+\item[Suggests]\AsIs{testthat (>= 3.0.0)}
+\item[RdMacros]\AsIs{Rdpack}
+\item[Encoding]\AsIs{UTF-8}
+\item[LazyData]\AsIs{true}
+\item[URL]\AsIs{}\url{https://github.com/paullabonne/BayesMultiMode}\AsIs{}
+\item[BugReports]\AsIs{}\url{https://github.com/paullabonne/BayesMultiMode/issues}\AsIs{}
+\item[NeedsCompilation]\AsIs{no}
+\item[RoxygenNote]\AsIs{7.2.3}
+\item[Config/testthat/edition]\AsIs{3}
+\end{description}
+\Rdcontents{\R{} topics documented:}
+\inputencoding{utf8}
+\HeaderA{bayes\_estimation}{Bayesian estimation of mixture distributions}{bayes.Rul.estimation}
+%
+\begin{Description}\relax
+Gibbs samplers for sparse finite mixture Markov chain Monte Carlo (SFM MCMC) estimation.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+bayes_estimation(
+  data,
+  K,
+  dist,
+  priors = list(),
+  nb_iter = 2000,
+  burnin = nb_iter/2,
+  printing = TRUE
+)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{data}] Vector of observations
+
+\item[\code{K}] Maximum number of mixture components
+
+\item[\code{dist}] String indicating the distribution of the mixture components
+Currently supports "normal", "skew\_normal", "poisson" and "shifted\_poisson"
+
+\item[\code{priors}] List of priors; default is an empty list which implies the following priors :\\{}
+a0 = 1,\\{} A0 = 200,\\{} b0 = median(y),\\{} B0 = (max(y) - min(y))\textasciicircum{}2 (normal),\\{}
+D\_xi = 1,\\{} D\_psi =1, (skew normal: B0 = diag(D\_xi,D\_psi)), \\{} c0 = 2.5,\\{}
+l0 = 1.1 (poisson),\\{} l0 = 5 (shifted poisson),\\{} L0 = 1.1/median(y),\\{} L0 = l0 - 1 (shifted poisson),\\{}
+g0 = 0.5,\\{} G0 = 100*g0/c0/B0 (normal),\\{} 
+G0 = g0/(0.5*var(y)) (skew normal)
+
+\item[\code{nb\_iter}] Number of MCMC iterations; default is 2000
+
+\item[\code{burnin}] Number of MCMC iterations used as burnin; default is nb\_iter/2
+
+\item[\code{printing}] Showing MCMC progression ?
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+A list of class `BayesMixture` containing
+\begin{itemize}
+
+\item{} data - Same as argument
+\item{} dist\_type - Type of the distribution (continuous or discrete)
+\item{} pars\_names - Names of the mixture components' parameters
+\item{} mcmc - Matrix of MCMC draws where the rows corresponding to burnin have been discarded
+\item{} mcmc\_all - Original matrix of MCMC draws
+
+\end{itemize}
+
+\end{Value}
+%
+\begin{References}\relax
+Malsiner-Walli G, Fruhwirth-Schnatter S, Grun B (2016).
+``Model-based clustering based on sparse finite Gaussian mixtures.''
+\emph{Statistics and Computing}, \bold{26}(1), 303--324.
+ISSN 1573-1375, \Rhref{https://doi.org/10.1007/s11222-014-9500-2}{doi:10.1007\slash{}s11222\-014\-9500\-2}.\\{}\\{}
+Frühwirth-Schnatter S, Pyne S (2010).
+``Bayesian inference for finite mixtures of univariate and multivariate skew-normal and skew-t distributions.''
+\emph{Biostatistics}, \bold{11}(2), 317--336.
+ISSN 1465-4644, \Rhref{https://doi.org/10.1093/biostatistics/kxp062}{doi:10.1093\slash{}biostatistics\slash{}kxp062}, \url{2023-02-22}.\\{}\\{}
+Frühwirth-Schnatter S, Malsiner-Walli G (2019).
+``From here to infinity: sparse finite versus Dirichlet process mixtures in model-based clustering.''
+\emph{Advances in Data Analysis and Classification}, \bold{13}, 33--64.\\{}\\{}
+Viallefont V, Richardson S, Peter
+J (2002).
+``Bayesian analysis of Poisson mixtures.''
+\emph{Journal of Nonparametric Statistics}, \bold{14}(1-2), 181--202.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+# Example with galaxy data ================================================
+set.seed(123) 
+
+# retrieve galaxy data
+y = galaxy
+
+# estimation
+bayesmix = bayes_estimation(data = y,
+                           K = 5, #not many to run the example rapidly
+                           dist = "normal",
+                           nb_iter = 500, #not many to run the example rapidly
+                           burnin = 100)
+                           
+# plot estimated mixture
+# plot(bayesmix, max_size = 200)
+
+# Example with DNA data =====================================================
+
+set.seed(123) 
+
+# retrieve DNA data
+y = d4z4
+
+# estimation
+bayesmix = bayes_estimation(data = y,
+                           K = 5, #not many to run the example rapidly
+                           dist = "shifted_poisson",
+                           nb_iter = 500, #not many to run the example rapidly
+                           burnin = 100)
+                           
+# plot estimated mixture
+# plot(bayesmix, max_size = 200)
+
+
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{bayes\_mode}{Bayesian mode inference}{bayes.Rul.mode}
+%
+\begin{Description}\relax
+Estimates modes for each mcmc draws which are then used to compute posterior probabilities for the number of modes and their locations.
+The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures
+while the Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+bayes_mode(
+  BayesMix,
+  rd = 1,
+  tol_x = sd(BayesMix$data)/10,
+  show_plot = FALSE,
+  nb_iter = NULL
+)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{BayesMix}] An object of class `BayesMixture`
+
+\item[\code{rd}] Rounding parameter
+
+\item[\code{tol\_x}] Tolerance parameter for distance in-between modes; default is sd(data)/10 where data is an element of BayesMix.
+If two modes are closer than tol\_x, only the first estimated mode is kept.
+Not needed for mixtures of discrete distributions.
+
+\item[\code{show\_plot}] Show density with estimated mode as vertical bars ?
+
+\item[\code{nb\_iter}] Number of draws on which the mode-finding algorithm is run; default is NULL which means the algorithm is run on all draws.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+A list of class `BayesMode` containing
+\begin{itemize}
+
+\item{} data - from BayesMix argument
+\item{} dist - from BayesMix argument
+\item{} dist\_type - from BayesMix argument
+\item{} pars\_names - from BayesMix argument
+\item{} modes - Matrix with a row for each draw and columns showing modes
+\item{} p1 - Posterior probability of unimodality
+\item{} tb\_nb\_modes - Matrix showing posterior probabilities for the number of modes
+\item{} table\_location - Matrix showing the posterior probilities for location points being modes
+
+\end{itemize}
+
+\end{Value}
+%
+\begin{References}\relax
+Carreira-Perpinan MA (2000).
+``Mode-finding for mixtures of Gaussian distributions.''
+\emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, \bold{22}(11), 1318--1323.
+ISSN 1939-3539, \Rhref{https://doi.org/10.1109/34.888716}{doi:10.1109\slash{}34.888716}, Conference Name: IEEE Transactions on Pattern Analysis and Machine Intelligence.\\{}\\{}
+Li J, Ray S, Lindsay BG (2007).
+``A Nonparametric Statistical Approach to Clustering via Mode Identiﬁcation.''
+\emph{Journal of Machine Learning Research}, \bold{8}, 1687-1723.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+# Example with galaxy data ================================================
+set.seed(123) 
+
+# retrieve galaxy data
+y = galaxy
+
+# estimation
+bayesmix = bayes_estimation(data = y,
+                           K = 5, #not many to run the example rapidly
+                           dist = "normal",
+                           nb_iter = 500, #not many to run the example rapidly
+                           burnin = 100)
+
+# mode estimation
+bayesmode = bayes_mode(bayesmix)
+
+# plot 
+# plot(bayesmode, max_size = 200)
+
+# summary 
+# summary(bayesmode)
+
+# Example with DNA data ================================================
+set.seed(123) 
+
+# retrieve galaxy data
+y = d4z4
+
+# estimation
+bayesmix = bayes_estimation(data = y,
+                           K = 5, #not many to run the example rapidly
+                           dist = "shifted_poisson",
+                           nb_iter = 500, #not many to run the example rapidly
+                           burnin = 100)
+
+# mode estimation
+bayesmode = bayes_mode(bayesmix)
+
+# plot 
+# plot(bayesmode, max_size = 200)
+
+# summary 
+# summary(bayesmode)
+
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{bayes\_trace}{Trace plots}{bayes.Rul.trace}
+%
+\begin{Description}\relax
+This is wrapper around the `mcmc\_trace()` function from package bayesplot.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+bayes_trace(BayesMix, mcmc_vars = NULL, with_burnin = FALSE, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{BayesMix}] An object of class BayesMixture
+
+\item[\code{mcmc\_vars}] Variables to plot; default is all the variable in the MCMC output
+
+\item[\code{with\_burnin}] Plot all draws ?
+
+\item[\code{...}] Additional arguments passed to function `mcmc\_trace()` from the package bayesplot.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+A trace plot.
+\end{Value}
+%
+\begin{Examples}
+\begin{ExampleCode}
+# Example with galaxy data ================================================
+set.seed(123) 
+
+# retrieve galaxy data
+y = galaxy
+
+# estimation
+bayesmix = bayes_estimation(data = y,
+                           K = 5, #not many to run the example rapidly
+                           dist = "normal",
+                           nb_iter = 500, #not many to run the example rapidly
+                           burnin = 100)
+
+# trace plot
+bayes_trace(bayesmix)
+
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{ct47}{X chromosomal macrosatellite repeats ct47}{ct47}
+\keyword{datasets}{ct47}
+%
+\begin{Description}\relax
+Repeat units that encode for a cancer testis antigen.\\{}
+Locus (hg18): Xq24 \\{}
+Unit (kb): 4.8 \\{}
+Restriction enzyme: EcoRI \\{}
+Encoded product : cancer testis antigen 47
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+ct47
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A vector of counts with 410 elements.
+\end{Format}
+%
+\begin{References}\relax
+Schaap M, Lemmers RJ, Maassen R, van der Vliet PJ, Hoogerheide LF, van Dijk HK, Basturk N, de Knijff P, van der Maarel SM (2013).
+``Genome-wide analysis of macrosatellite repeat copy number variation in worldwide populations: evidence for differences and commonalities in size distributions and size restrictions.''
+\emph{BMC Genomics}, \bold{14}(1), 143.
+ISSN 1471-2164, \Rhref{https://doi.org/10.1186/1471-2164-14-143}{doi:10.1186\slash{}1471\-2164\-14\-143}.
+\end{References}
+\inputencoding{utf8}
+\HeaderA{cyclone}{Tropical cyclones lifetime maximum intensity}{cyclone}
+\keyword{datasets}{cyclone}
+%
+\begin{Description}\relax
+Dataset constructed using the International Best Track Archive for Climate Stewardship (IBTrACS).
+The distribution of tropical cyclones lifetime maximum intensity across the globe is known
+to be bimodal which has important implications for climate modelling.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+cyclone
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A dataset with three columns showing the identification of the cyclone, its year of occurrence and its lifetime maximum intensity (LMI).
+LMI is calculated as the maximum wind speed for each cyclone with unit ks.
+\end{Format}
+%
+\begin{Source}\relax
+https://www.ncei.noaa.gov/products/international-best-track-archive
+\end{Source}
+%
+\begin{References}\relax
+Knapp KR, Kruk MC, Levinson DH, Diamond HJ, Neumann CJ (2010).
+``The International Best Track Archive for Climate Stewardship (IBTrACS): Unifying Tropical Cyclone Data.''
+\emph{Bulletin of the American Meteorological Society}, \bold{91}(3), 363--376.
+ISSN 0003-0007, 1520-0477, \Rhref{https://doi.org/10.1175/2009BAMS2755.1}{doi:10.1175\slash{}2009BAMS2755.1}, Publisher: American Meteorological Society Section: Bulletin of the American Meteorological Society, \url{2023-03-29}.\\{}\\{}
+Knapp KR, Diamond HJ, J.P. K, Kruk MC, Schreck CJ (2018).
+``International Best Track Archive for Climate Stewardship (IBTrACS) Project, Version 4.''
+\emph{NOAA National Centers for Environmental Information}.
+\Rhref{https://doi.org/10.1175/2009BAMS2755.1}{doi:10.1175\slash{}2009BAMS2755.1}.
+\end{References}
+\inputencoding{utf8}
+\HeaderA{d4z4}{Autosomal macrosatellite repeats d4z4}{d4z4}
+\keyword{datasets}{d4z4}
+%
+\begin{Description}\relax
+Macrosatellite repeats D4Z4 in the subtelomere of chromosome 4q.\\{}
+Locus (hg18): 4q35.2 \\{}
+Unit (kb): 3.3 \\{}
+Restriction enzyme: EcoRI + HindIII/EcoRI + BlnI/XapI \\{}
+Encoded product : DUX4
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+d4z4
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+A vector of counts with 410 elements.
+\end{Format}
+%
+\begin{References}\relax
+Schaap M, Lemmers RJ, Maassen R, van der Vliet PJ, Hoogerheide LF, van Dijk HK, Basturk N, de Knijff P, van der Maarel SM (2013).
+``Genome-wide analysis of macrosatellite repeat copy number variation in worldwide populations: evidence for differences and commonalities in size distributions and size restrictions.''
+\emph{BMC Genomics}, \bold{14}(1), 143.
+ISSN 1471-2164, \Rhref{https://doi.org/10.1186/1471-2164-14-143}{doi:10.1186\slash{}1471\-2164\-14\-143}.
+\end{References}
+\inputencoding{utf8}
+\HeaderA{discrete\_MF}{Mode-finding algorithm for mixture of discrete distributions}{discrete.Rul.MF}
+%
+\begin{Description}\relax
+Mode-finding algorithm for mixture of discrete distributions
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+discrete_MF(
+  mcmc,
+  data,
+  pars_names,
+  dist = "NA",
+  pmf_func = NULL,
+  type = "all",
+  show_plot = FALSE
+)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{mcmc}] Vector of estimated mixture parameters
+
+\item[\code{data}] Vector of observations used for estimating the mixture
+
+\item[\code{pars\_names}] Names of the mixture parameters; first element should 
+correspond to the mixture proportions.
+
+\item[\code{dist}] String indicating the distribution of the mixture components
+Currently supports "poisson" and "shifted\_poisson"; default is "NA"; only
+use this argument if you have used Poisson and shifted Poisson distributions
+identical to the one used in the package.
+
+\item[\code{pmf\_func}] Pmf of the mixture components associated with the mcmc draws
+(if mcmc estimation has not been carried out with BayesMultiMode); default is null
+
+\item[\code{type}] Type of modes, either unique or all (the latter includes flat modes); default is "all"
+
+\item[\code{show\_plot}] If true show the data and estimated modes; default is false
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+Vector of estimated modes
+\end{Value}
+%
+\begin{References}\relax
+Schaap M, Lemmers RJ, Maassen R, van der Vliet PJ, Hoogerheide LF, van Dijk HK, Basturk N, de Knijff P, van der Maarel SM (2013).
+``Genome-wide analysis of macrosatellite repeat copy number variation in worldwide populations: evidence for differences and commonalities in size distributions and size restrictions.''
+\emph{BMC Genomics}, \bold{14}(1), 143.
+ISSN 1471-2164, \Rhref{https://doi.org/10.1186/1471-2164-14-143}{doi:10.1186\slash{}1471\-2164\-14\-143}.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+# Example with the poisson distribution ====================================
+lambda = c(0.1,10)
+p = c(0.5,0.5)
+params = c(eta = p, lambda = lambda)
+pars_names = c("eta", "lambda")
+dist = "poisson"
+
+data = c(rpois(p[1]*1e3, lambda[1]),
+         rpois(p[2]*1e3, lambda[2]))
+
+modes = discrete_MF(params, data = data, pars_names = pars_names, dist = dist)
+
+# Example with an arbitrary distribution ===================================
+mu = c(20,5)
+size = c(20,0.5)
+p = c(0.5,0.5)
+params = c(eta = p, mu = mu, size = size)
+pars_names = c("eta", "mu", "size")
+
+data = c(rnbinom(p[1]*1e3, mu = mu[1], size = size[1]),
+         rnbinom(p[2]*1e3, mu = mu[2], size = size[2]))
+
+pmf_func <- function(x, pars) {
+  dnbinom(x, mu = pars["mu"], size = pars["size"])
+}
+
+modes = discrete_MF(params, data = data, pars_names = pars_names, pmf_func = pmf_func)
+
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{fixed\_point}{Modal fixed-point algorithm}{fixed.Rul.point}
+%
+\begin{Description}\relax
+Algorithm for estimating modes in mixture of Normal distributions.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+fixed_point(mcmc, data, pars_names, tol_x = sd(data)/10, show_plot = F)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{mcmc}] Vector of estimated mixture parameters
+
+\item[\code{data}] Vector of observations used for estimating the mixture
+
+\item[\code{pars\_names}] Names of the mixture parameters; first element should 
+correspond to the mixture proportions; second to the mean; third to the 
+standard deviation.
+
+\item[\code{tol\_x}] Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol\_x, only the first estimated mode is kept.
+
+\item[\code{show\_plot}] If true show the data and estimated modes; default is false
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+Vector of estimated modes
+\end{Value}
+%
+\begin{References}\relax
+Carreira-Perpinan MA (2000).
+``Mode-finding for mixtures of Gaussian distributions.''
+\emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, \bold{22}(11), 1318--1323.
+ISSN 1939-3539, \Rhref{https://doi.org/10.1109/34.888716}{doi:10.1109\slash{}34.888716}, Conference Name: IEEE Transactions on Pattern Analysis and Machine Intelligence.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+mu = c(0,5)
+sigma = c(1,2)
+p = c(0.5,0.5)
+
+data = c(rnorm(p[1]*100, mu[1], sigma[1]), rnorm(p[2]*100, mu[2], sigma[2]))
+params = c(eta = p, mu = mu, sigma = sigma)
+pars_names = c("eta", "mu", "sigma")
+modes = fixed_point(params, data, pars_names)
+
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{galaxy}{Galaxy series}{galaxy}
+\keyword{datasets}{galaxy}
+%
+\begin{Description}\relax
+Velocity at which 82 galaxies in the Corona Borealis region are moving away from our galaxy, scaled by 1000.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+galaxy
+\end{verbatim}
+\end{Usage}
+%
+\begin{Format}
+An object of class \code{numeric} of length 82.
+\end{Format}
+%
+\begin{Source}\relax
+https://people.maths.bris.ac.uk/\textasciitilde{}mapjg/mixdata
+\end{Source}
+%
+\begin{References}\relax
+Richardson S, Green PJ (1997).
+``On Bayesian Analysis of Mixtures with an Unknown Number of Components.''
+\emph{Journal of the Royal Statistical Society. Series B (Methodological)}, \bold{59}(4), pp. 731--792.
+ISSN 00359246.
+\end{References}
+\inputencoding{utf8}
+\HeaderA{MEM}{Modal EM algorithm (MEM)}{MEM}
+%
+\begin{Description}\relax
+Algorithm to find modes in mixture of continuous distributions.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+MEM(
+  mcmc,
+  data,
+  pars_names,
+  dist = "NA",
+  pdf_func = NULL,
+  tol_x = sd(data)/10,
+  show_plot = FALSE
+)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{mcmc}] Vector of estimated mixture parameters
+
+\item[\code{data}] Vector of observations used for estimating the mixture
+
+\item[\code{pars\_names}] Names of the mixture parameters; the first element of 
+this vector should be the name of the mixture proportions. If you have used 
+the skew normal of Azzalini, then the second element should correspond to the location,
+the third to the scale and the fourth to the shape.
+
+\item[\code{dist}] String indicating the distribution of the mixture components; default is "NA"
+Currently supports "normal" and "skew\_normal"; not needed if pdf\_func is provided
+
+\item[\code{pdf\_func}] Pdf of the mixture components associated with the mcmc draws
+(if mcmc estimation has not been carried out with BayesMultiMode); default is null
+
+\item[\code{tol\_x}] Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol\_x, only the first estimated mode is kept.
+
+\item[\code{show\_plot}] If true show the data and estimated modes; default is false
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+Vector of estimated modes
+\end{Value}
+%
+\begin{References}\relax
+Li J, Ray S, Lindsay BG (2007).
+``A Nonparametric Statistical Approach to Clustering via Mode Identiﬁcation.''
+\emph{Journal of Machine Learning Research}, \bold{8}, 1687-1723.\\{}\\{}
+Azzalini A (1985).
+``A Class of Distributions Which Includes the Normal Ones.''
+\emph{Scandinavian Journal of Statistics}, \bold{12}(2), 171--178.
+ISSN 0303-6898, Publisher: [Board of the Foundation of the Scandinavian Journal of Statistics, Wiley], \url{2023-03-13}.
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+
+# Example with the skew normal =============================================
+xi = c(0,6)
+omega = c(1,2)
+alpha = c(0,0)
+p = c(0.8,0.2)
+params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
+pars_names = c("eta", "xi", "omega", "alpha")
+dist = "skew_normal"
+
+data = c(sn::rsn(p[1]*100, xi[1], omega[1], alpha[1]),
+         sn::rsn(p[2]*100, xi[2], omega[2], alpha[2]))
+
+modes = MEM(params, data = data, pars_names = pars_names, dist = dist)
+
+# Example with an arbitrary distribution ===================================
+xi = c(0,6)
+omega = c(1,2)
+alpha = c(0,0)
+nu = c(3,100)
+p = c(0.8,0.2)
+params = c(eta = p, mu = xi, sigma = omega, xi = alpha, nu = nu)
+pars_names = c("eta", "mu", "sigma", "xi", "nu")
+
+pdf_func <- function(x, pars) {
+  sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
+}
+
+data = c(sn::rst(p[1]*100, xi[1], omega[1], alpha = alpha[1], nu = nu[1]),
+         sn::rst(p[2]*100, xi[2], omega[2], alpha = alpha[2], nu = nu[2]))
+
+modes = MEM(params, pars_names = pars_names, data = data, pdf_func = pdf_func)
+
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{new\_BayesMixture}{Creating a S3 object of class `BayesMixture`}{new.Rul.BayesMixture}
+%
+\begin{Description}\relax
+Function for creating an object of class `bayes\_estimation()` which can subsequently be used as argument in `bayes\_mode()`.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+new_BayesMixture(
+  mcmc,
+  data,
+  K,
+  burnin,
+  dist = "NA",
+  pars_names,
+  pdf_func = NULL,
+  dist_type
+)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{mcmc}] A matrix of MCMC draws
+
+\item[\code{data}] A vector containing the data used for estimating the model and generating the MCMC draws
+
+\item[\code{K}] Number of mixture components
+
+\item[\code{burnin}] Number of draws to discard as burnin
+
+\item[\code{dist}] Distribution family of the mixture components supported by
+the package (e.g. "normal", "student", "skew\_normal" or "shifted\_poisson")
+
+\item[\code{pars\_names}] Names of the mixture parameters; first element should 
+correspond to the mixture proportions.
+
+\item[\code{pdf\_func}] Pdf or pmf of the mixture components;
+this input is used only if dist\_name is invalid or NULL.
+
+\item[\code{dist\_type}] Either "continuous" or "discrete"
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+A list of class `BayesMixture` containing :
+\begin{itemize}
+
+\item{} data - Same as argument
+\item{} dist\_type - Same as argument
+\item{} pars\_names - Same as argument
+\item{} mcmc - Matrix of MCMC draws where the rows corresponding to burnin have been discarded
+\item{} mcmc\_all - Original matrix of MCMC draws
+
+\end{itemize}
+
+\end{Value}
+\inputencoding{utf8}
+\HeaderA{plot.BayesMixture}{Plot an estimated mixture for a given number of draws with an histogram of the data.}{plot.BayesMixture}
+%
+\begin{Description}\relax
+Plot an estimated mixture for a given number of draws with an histogram of the data.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+## S3 method for class 'BayesMixture'
+plot(x, max_size = 250, transparency = 0.1, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] An object of class BayesMixture.
+
+\item[\code{max\_size}] The number of MCMC draws to plot.
+
+\item[\code{transparency}] transparency of the density lines. Default is 0.1. Should be greater than 0 and below or equal to 1.
+
+\item[\code{...}] Not used.
+\end{ldescription}
+\end{Arguments}
+\inputencoding{utf8}
+\HeaderA{plot.BayesMode}{Plot Bayesian mode estimates.}{plot.BayesMode}
+%
+\begin{Description}\relax
+Plot Bayesian mode estimates.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+## S3 method for class 'BayesMode'
+plot(x, graphs = c("p1", "number", "loc"), ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] An object of class BayesMode.
+
+\item[\code{graphs}] which plot to show ? Default is all three c("p1", "number", "loc").
+
+\item[\code{...}] Not used.
+\end{ldescription}
+\end{Arguments}
+\inputencoding{utf8}
+\HeaderA{summary.BayesMode}{Summary of Bayesian mode estimates.}{summary.BayesMode}
+%
+\begin{Description}\relax
+Summary of Bayesian mode estimates.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+## S3 method for class 'BayesMode'
+summary(object, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{object}] An object of class BayesMode.
+
+\item[\code{...}] Not used.
+\end{ldescription}
+\end{Arguments}
+\printindex{}
+\end{document}

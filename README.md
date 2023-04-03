@@ -12,11 +12,12 @@ multimodality using Bayesian techniques. The approach works in two
 stages. First, a mixture distribution is fitted on the data using a
 sparse finite mixture Markov chain Monte Carlo (SFM MCMC) algorithm. The
 number of mixture components does not have to be specified; the size of
-the mixture is estimated simultaneously with the mixture weights and
-components through a SFM approach. Second, the resulting MCMC draws are
-used to calculate the number of modes and their locations. Posterior
-probabilities are retrieved for both of these quantities providing a
-powerful tool for mode inference.
+the mixture is estimated endogenously through the SFM approach. Second,
+the modes of the estimated mixture at each MCMC are retrieved using
+algorithms specifically tailored for mode detection. These estimates are
+then used to construct posterior probabilities for the number of modes,
+their locations and uncertainties, providing a powerful tool for mode
+inference.
 
 ### Installing BayesMultiMode from CRAN
 
@@ -142,18 +143,18 @@ PY_result = PYdensity(y,
                       output = list(out_param = TRUE))
 ```
 
-    ## Completed:   200/2000 - in 0.04387 sec
-    ## Completed:   400/2000 - in 0.091126 sec
-    ## Completed:   600/2000 - in 0.147774 sec
-    ## Completed:   800/2000 - in 0.198662 sec
-    ## Completed:   1000/2000 - in 0.246839 sec
-    ## Completed:   1200/2000 - in 0.295992 sec
-    ## Completed:   1400/2000 - in 0.347768 sec
-    ## Completed:   1600/2000 - in 0.40079 sec
-    ## Completed:   1800/2000 - in 0.456545 sec
-    ## Completed:   2000/2000 - in 0.511032 sec
+    ## Completed:   200/2000 - in 0.0436 sec
+    ## Completed:   400/2000 - in 0.090849 sec
+    ## Completed:   600/2000 - in 0.147477 sec
+    ## Completed:   800/2000 - in 0.198369 sec
+    ## Completed:   1000/2000 - in 0.247426 sec
+    ## Completed:   1200/2000 - in 0.297645 sec
+    ## Completed:   1400/2000 - in 0.349516 sec
+    ## Completed:   1600/2000 - in 0.402532 sec
+    ## Completed:   1800/2000 - in 0.458097 sec
+    ## Completed:   2000/2000 - in 0.512414 sec
     ## 
-    ## Estimation done in 0.511042 seconds
+    ## Estimation done in 0.512417 seconds
 
 ``` r
 plot(PY_result)

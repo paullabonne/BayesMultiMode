@@ -1,0 +1,50 @@
+\begin{theindex}
+
+  \item $*$ {\textbf  {datasets}}
+    \subitem \texttt  {ct47}, \hyperpage{6}
+    \subitem \texttt  {cyclone}, \hyperpage{7}
+    \subitem \texttt  {d4z4}, \hyperpage{8}
+    \subitem \texttt  {galaxy}, \hyperpage{11}
+
+  \indexspace
+
+  \item \texttt  {bayes\_estimation}, \hyperpage{2}
+  \item \texttt  {bayes\_mode}, \hyperpage{4}
+  \item \texttt  {bayes\_trace}, \hyperpage{6}
+
+  \indexspace
+
+  \item \texttt  {ct47}, \hyperpage{6}
+  \item \texttt  {cyclone}, \hyperpage{7}
+
+  \indexspace
+
+  \item \texttt  {d4z4}, \hyperpage{8}
+  \item \texttt  {discrete\_MF}, \hyperpage{8}
+
+  \indexspace
+
+  \item \texttt  {fixed\_point}, \hyperpage{10}
+
+  \indexspace
+
+  \item \texttt  {galaxy}, \hyperpage{11}
+
+  \indexspace
+
+  \item \texttt  {MEM}, \hyperpage{11}
+
+  \indexspace
+
+  \item \texttt  {new\_BayesMixture}, \hyperpage{13}
+
+  \indexspace
+
+  \item \texttt  {plot.BayesMixture}, \hyperpage{14}
+  \item \texttt  {plot.BayesMode}, \hyperpage{14}
+
+  \indexspace
+
+  \item \texttt  {summary.BayesMode}, \hyperpage{15}
+
+\end{theindex}

@@ -1,4 +1,4 @@
-## Version 0.2.0 
+## Version 0.5.0 
 * Restructured the code to make use of S3 generic functions plot() and summary()
 * The package now handles continuous data
 * Added a mixtures of normals and skew_normals

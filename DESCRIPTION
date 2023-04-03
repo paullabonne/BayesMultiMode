@@ -8,14 +8,15 @@ Authors@R: c(person(given = "Nalan", family = "Baştürk", role = "aut"),
   person(given = "Lennart", family = "Hoogerheide", role = "aut"),
   person(given = "Paul", family = "Labonne", email= "paul.labonne@bi.no", role = c("aut", "cre")),
   person(given = "Herman", family = "van Dijk", role = "aut"))
-Description: Bayesian approach for mode inference which works in two steps. First, a mixture distribution is
+Description: A bayesian approach for mode inference which works in two steps. First, a mixture distribution is
       fitted on the data using a sparse finite mixture (SFM) Markov chain Monte Carlo
       (MCMC) algorithm following Malsiner-Walli, Frühwirth-Schnatter and Grün (2016)
-      <doi:10.1007/s11222-014-9500-2>). The number of mixture components does not have to
-      be specified; it is estimated simultaneously with the mixture weights and components
-      through the SFM approach. Second, the resulting MCMC output is used to calculate the
-      number of modes and their locations. Posterior probabilities are retrieved for both of these
-      quantities, providing a powerful tool for mode inference.
+      <doi:10.1007/s11222-014-9500-2>). The number of mixture components does not have
+      to be specified; the size of the mixture is estimated endogenously through the SFM
+      approach. Second, the modes of the estimated mixture at each MCMC draw are retrieved
+      using algorithms specifically tailored for mode detection. These estimates are then
+      used to construct posterior probabilities for the number of modes, their locations
+      and uncertainties, providing a powerful tool for mode inference.
 License: GPL (>= 3)
 Imports: 
     assertthat,
