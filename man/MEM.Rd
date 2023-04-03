@@ -19,7 +19,10 @@ MEM(
 
 \item{data}{Vector of observations used for estimating the mixture}
 
-\item{pars_names}{Names of the mixture components' parameters}
+\item{pars_names}{Names of the mixture parameters; the first element of 
+this vector should be the name of the mixture proportions. If you have used 
+the skew normal of Azzalini, then the second element should correspond to the location,
+the third to the scale and the fourth to the shape.}
 
 \item{dist}{String indicating the distribution of the mixture components; default is "NA"
 Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided}
@@ -73,5 +76,6 @@ modes = MEM(params, pars_names = pars_names, data = data, pdf_func = pdf_func)
 
 }
 \references{
-\insertRef{li_nonparametric_2007}{BayesMultiMode}
+\insertRef{li_nonparametric_2007}{BayesMultiMode}\cr\cr
+\insertRef{azzalini_1985}{BayesMultiMode}
 }

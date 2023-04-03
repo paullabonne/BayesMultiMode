@@ -4,6 +4,9 @@
 #' 
 #' @param mcmc Vector of estimated mixture parameters
 #' @param data Vector of observations used for estimating the mixture
+#' @param pars_names Names of the mixture parameters; first element should 
+#' correspond to the mixture proportions; second to the mean; third to the 
+#' standard deviation.
 #' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.
 #' @param show_plot If true show the data and estimated modes; default is false
 #' 
@@ -24,12 +27,12 @@
 #'
 #' data = c(rnorm(p[1]*100, mu[1], sigma[1]), rnorm(p[2]*100, mu[2], sigma[2]))
 #' params = c(eta = p, mu = mu, sigma = sigma)
-#' 
-#' modes = fixed_point(params, data)
+#' pars_names = c("eta", "mu", "sigma")
+#' modes = fixed_point(params, data, pars_names)
 #' 
 #' @export
 
-fixed_point <- function(mcmc, data, tol_x = sd(data)/10, show_plot = F) {
+fixed_point <- function(mcmc, data, pars_names, tol_x = sd(data)/10, show_plot = F) {
   
   ## input checks
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
@@ -38,6 +41,8 @@ fixed_point <- function(mcmc, data, tol_x = sd(data)/10, show_plot = F) {
               msg = "data should be a vector of length > 0; ")
   assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
   assert_that(is.logical(show_plot), msg = "show_plot should be TRUE or FALSE")
+  assert_that(is.vector(pars_names) & is.character(pars_names),
+              msg = "pars_names should be a character vector")
   
   names_mcmc = str_to_lower(names(mcmc))
   names_mcmc = str_extract(names_mcmc, "[a-z]+")
@@ -49,9 +54,9 @@ fixed_point <- function(mcmc, data, tol_x = sd(data)/10, show_plot = F) {
   
   modes = rep(NA,length(mcmc)/3)
   mcmc = mcmc[!is.na(mcmc)]
-  p = mcmc[grep("eta", names(mcmc))]
-  mu = mcmc[grep("mu", names(mcmc))]
-  sigma = mcmc[grep("sigma", names(mcmc))]
+  p = mcmc[grep(pars_names[1], names(mcmc))]
+  mu = mcmc[grep(pars_names[2], names(mcmc))]
+  sigma = mcmc[grep(pars_names[3], names(mcmc))]
 
   assert_that(length(p) == length(mu) & length(sigma) == length(mu),
               msg = "p, mu and sigma should have the same lengths")

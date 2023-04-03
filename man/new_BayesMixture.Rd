@@ -25,10 +25,10 @@ new_BayesMixture(
 \item{burnin}{Number of draws to discard as burnin}
 
 \item{dist}{Distribution family of the mixture components supported by
-the package (e.g. "normal", "student", "skew_normal", "shifted_poisson")}
+the package (e.g. "normal", "student", "skew_normal" or "shifted_poisson")}
 
-\item{pars_names}{Mapping between the distribution parameters names
-This input is used only if dist_name is invalid or NULL}
+\item{pars_names}{Names of the mixture parameters; first element should 
+correspond to the mixture proportions.}
 
 \item{pdf_func}{Pdf or pmf of the mixture components;
 this input is used only if dist_name is invalid or NULL.}

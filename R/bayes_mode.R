@@ -112,7 +112,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot
   if (dist_type == "continuous") {
     if (dist == "normal") {
       # fixed point
-      modes = t(apply(mcmc, 1, fixed_point, data = data, tol_x = tol_x, show_plot = show_plot))
+      modes = t(apply(mcmc, 1, fixed_point, data = data, pars_names = pars_names,
+                      tol_x = tol_x, show_plot = show_plot))
     } else {
       # MEM algorithm
       modes = t(apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, 

@@ -104,7 +104,7 @@ bayes_estimation <- function(data,
                             nb_iter = nb_iter,
                             priors = priors[priors_labels],
                             printing = printing)
-    pars_names = c(eta = "eta", mu = "mu", sigma = "sigma")
+    pars_names = c("eta", "mu", "sigma")
     dist_type = "continuous"
     
   } else if (dist == "skew_normal") {
@@ -115,7 +115,7 @@ bayes_estimation <- function(data,
                              nb_iter = nb_iter,
                              priors = priors[priors_labels],
                              printing = printing)
-    pars_names = c(eta = "eta", xi = "xi", omega = "omega", alpha = "alpha")
+    pars_names = c("eta", "xi", "omega", "alpha")
     dist_type = "continuous"
     
   } else if (dist == "poisson") {
@@ -126,7 +126,7 @@ bayes_estimation <- function(data,
                               nb_iter = nb_iter,
                               priors = priors[priors_labels],
                               printing = printing)
-    pars_names = c(eta = "eta", lambda = "lambda")
+    pars_names = c("eta", "lambda")
     dist_type = "discrete"
     
   } else if (dist == "shifted_poisson") {
@@ -137,7 +137,7 @@ bayes_estimation <- function(data,
                          nb_iter = nb_iter,
                          priors = priors[priors_labels],
                          printing = printing)
-    pars_names = c(eta = "eta", kappa = "kappa", lambda = "lambda")
+    pars_names = c("eta", "kappa", "lambda")
     dist_type = "discrete"
     
   } else {

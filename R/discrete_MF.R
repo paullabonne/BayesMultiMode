@@ -2,9 +2,12 @@
 #' 
 #' @param mcmc Vector of estimated mixture parameters
 #' @param data Vector of observations used for estimating the mixture
-#' @param pars_names Names of the mixture components' parameters
+#' @param pars_names Names of the mixture parameters; first element should 
+#' correspond to the mixture proportions. 
 #' @param dist String indicating the distribution of the mixture components
-#' Currently supports "poisson" and "shifted_poisson"; default is "NA"
+#' Currently supports "poisson" and "shifted_poisson"; default is "NA"; only
+#' use this argument if you have used Poisson and shifted Poisson distributions
+#' identical to the one used in the package.
 #' @param pmf_func Pmf of the mixture components associated with the mcmc draws
 #' (if mcmc estimation has not been carried out with BayesMultiMode); default is null
 #' @param type Type of modes, either unique or all (the latter includes flat modes); default is "all"
@@ -40,7 +43,6 @@
 #' 
 #' data = c(rnbinom(p[1]*1e3, mu = mu[1], size = size[1]),
 #'          rnbinom(p[2]*1e3, mu = mu[2], size = size[2]))
-#' hist(data, breaks = 30)
 #' 
 #' pmf_func <- function(x, pars) {
 #'   dnbinom(x, mu = pars["mu"], size = pars["size"])
@@ -66,7 +68,7 @@ discrete_MF <- function(mcmc, data, pars_names, dist = "NA",
   assert_that(type %in% c("unique", "all"),
               msg = "type should be either 'unique' or 'all' ")
   assert_that(is.logical(show_plot), msg = "show_plot should be either TRUE or FALSE")
-  assert_that(is.vector(pars_names) & is.character(pars_names) > 0,
+  assert_that(is.vector(pars_names) & is.character(pars_names),
               msg = "pars_names should be a character vector")
   ##
   

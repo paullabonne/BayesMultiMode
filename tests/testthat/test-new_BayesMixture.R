@@ -3,7 +3,7 @@ test_that("New_BayesMixture works returns expected results for the normal distri
   mu = c(0,5)
   sigma = c(1,2)
   p = c(0.8,0.2)
-  pars_names = c(eta = "eta", mu = "mu", sigma = "sigma")
+  pars_names = c("eta", "mu", "sigma")
   dist_type = "continuous"
   
   data = c(rnorm(p[1]*100, mu[1], sigma[1]), rnorm(p[2]*100, mu[2], sigma[2]))
@@ -14,22 +14,6 @@ test_that("New_BayesMixture works returns expected results for the normal distri
   expect_s3_class(BM, "BayesMixture")
 })
 
-test_that("New_BayesMixture works returns expected results for the normal distribution and custom pars names", {
-  set.seed(1)
-  mu = c(0,5)
-  omega = c(1,2)
-  p = c(0.8,0.2)
-  pars_names = c(eta = "eta", mu = "mu", sigma = "omega")
-  dist_type = "continuous"
-  
-  data = c(rnorm(p[1]*100, mu[1], omega[1]), rnorm(p[2]*100, mu[2], omega[2]))
-  fit = c(eta = p, mu = mu, omega = omega)
-  fit = rbind(fit, fit)
-
-  BM = new_BayesMixture(fit, data, K = 2, burnin = 1, dist = "normal", pars_names = pars_names, pdf_func = NULL, dist_type = dist_type)
-  expect_s3_class(BM, "BayesMixture")
-})
-
 test_that("New_BayesMixture works returns expected results for the student distribution", {
   set.seed(1)
   mu = c(0.5,6)
@@ -37,7 +21,7 @@ test_that("New_BayesMixture works returns expected results for the student distr
   nu = c(5,5)
   p = c(0.8,0.2)
   params = c(eta = p, mu = mu, sigma = sigma, nu = nu)
-  pars_names = c(eta = "eta", mu =  "mu", sigma = "sigma", nu = "nu")
+  pars_names = c("eta", "mu", "sigma", "nu")
   dist = "student"
   dist_type = "continuous"
   

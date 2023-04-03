@@ -4,7 +4,10 @@
 #' 
 #' @param mcmc Vector of estimated mixture parameters
 #' @param data Vector of observations used for estimating the mixture
-#' @param pars_names Names of the mixture components' parameters
+#' @param pars_names Names of the mixture parameters; the first element of 
+#' this vector should be the name of the mixture proportions. If you have used 
+#' the skew normal of Azzalini, then the second element should correspond to the location,
+#' the third to the scale and the fourth to the shape.
 #' @param dist String indicating the distribution of the mixture components; default is "NA"
 #' Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided
 #' @param pdf_func Pdf of the mixture components associated with the mcmc draws
@@ -15,7 +18,8 @@
 #' @return Vector of estimated modes
 #' 
 #' @references
-#' \insertRef{li_nonparametric_2007}{BayesMultiMode}
+#' \insertRef{li_nonparametric_2007}{BayesMultiMode}\cr\cr
+#' \insertRef{azzalini_1985}{BayesMultiMode}
 #' 
 #' @importFrom sn dst
 #' @importFrom sn dsn
@@ -71,7 +75,7 @@ MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd
               msg = "data should be a vector of length > 0")
   assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
   assert_that(is.logical(show_plot), msg = "show_plot should be TRUE or FALSE")
-  assert_that(is.vector(pars_names) & is.character(pars_names) > 0,
+  assert_that(is.vector(pars_names) & is.character(pars_names),
               msg = "pars_names should be a character vector")
   ##
   

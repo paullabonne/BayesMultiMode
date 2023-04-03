@@ -19,10 +19,13 @@ discrete_MF(
 
 \item{data}{Vector of observations used for estimating the mixture}
 
-\item{pars_names}{Names of the mixture components' parameters}
+\item{pars_names}{Names of the mixture parameters; first element should 
+correspond to the mixture proportions.}
 
 \item{dist}{String indicating the distribution of the mixture components
-Currently supports "poisson" and "shifted_poisson"; default is "NA"}
+Currently supports "poisson" and "shifted_poisson"; default is "NA"; only
+use this argument if you have used Poisson and shifted Poisson distributions
+identical to the one used in the package.}
 
 \item{pmf_func}{Pmf of the mixture components associated with the mcmc draws
 (if mcmc estimation has not been carried out with BayesMultiMode); default is null}
@@ -59,7 +62,6 @@ pars_names = c("eta", "mu", "size")
 
 data = c(rnbinom(p[1]*1e3, mu = mu[1], size = size[1]),
          rnbinom(p[2]*1e3, mu = mu[2], size = size[2]))
-hist(data, breaks = 30)
 
 pmf_func <- function(x, pars) {
   dnbinom(x, mu = pars["mu"], size = pars["size"])

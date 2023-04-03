@@ -4,12 +4,16 @@
 \alias{fixed_point}
 \title{Modal Fixed-point algorithm}
 \usage{
-fixed_point(mcmc, data, tol_x = sd(data)/10, show_plot = F)
+fixed_point(mcmc, data, pars_names, tol_x = sd(data)/10, show_plot = F)
 }
 \arguments{
 \item{mcmc}{Vector of estimated mixture parameters}
 
 \item{data}{Vector of observations used for estimating the mixture}
+
+\item{pars_names}{Names of the mixture parameters; first element should 
+correspond to the mixture proportions; second to the mean; third to the 
+standard deviation.}
 
 \item{tol_x}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.}
 
@@ -28,8 +32,8 @@ p = c(0.5,0.5)
 
 data = c(rnorm(p[1]*100, mu[1], sigma[1]), rnorm(p[2]*100, mu[2], sigma[2]))
 params = c(eta = p, mu = mu, sigma = sigma)
-
-modes = fixed_point(params, data)
+pars_names = c("eta", "mu", "sigma")
+modes = fixed_point(params, data, pars_names)
 
 }
 \references{
