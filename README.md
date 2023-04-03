@@ -11,9 +11,9 @@ BayesMultiMode
 multimodality using Bayesian techniques. The approach works in two
 stages. First, a mixture distribution is fitted on the data using a
 sparse finite mixture Markov chain Monte Carlo (SFM MCMC) algorithm. The
-number of mixture components does not have to be specified; the size of
-the mixture is estimated endogenously through the SFM approach. Second,
-the modes of the estimated mixture at each MCMC are retrieved using
+number of mixture components does not have to be known; the size of the
+mixture is estimated endogenously through the SFM approach. Second, the
+modes of the estimated mixture at each MCMC are retrieved using
 algorithms specifically tailored for mode detection. These estimates are
 then used to construct posterior probabilities for the number of modes,
 their locations and uncertainties, providing a powerful tool for mode
@@ -143,18 +143,18 @@ PY_result = PYdensity(y,
                       output = list(out_param = TRUE))
 ```
 
-    ## Completed:   200/2000 - in 0.04397 sec
-    ## Completed:   400/2000 - in 0.092474 sec
-    ## Completed:   600/2000 - in 0.150462 sec
-    ## Completed:   800/2000 - in 0.203457 sec
-    ## Completed:   1000/2000 - in 0.257092 sec
-    ## Completed:   1200/2000 - in 0.309165 sec
-    ## Completed:   1400/2000 - in 0.364087 sec
-    ## Completed:   1600/2000 - in 0.420503 sec
-    ## Completed:   1800/2000 - in 0.48094 sec
-    ## Completed:   2000/2000 - in 0.542625 sec
+    ## Completed:   200/2000 - in 0.044338 sec
+    ## Completed:   400/2000 - in 0.091791 sec
+    ## Completed:   600/2000 - in 0.148233 sec
+    ## Completed:   800/2000 - in 0.200009 sec
+    ## Completed:   1000/2000 - in 0.248294 sec
+    ## Completed:   1200/2000 - in 0.297524 sec
+    ## Completed:   1400/2000 - in 0.349355 sec
+    ## Completed:   1600/2000 - in 0.402126 sec
+    ## Completed:   1800/2000 - in 0.457695 sec
+    ## Completed:   2000/2000 - in 0.512106 sec
     ## 
-    ## Estimation done in 0.542634 seconds
+    ## Estimation done in 0.512113 seconds
 
 ``` r
 plot(PY_result)
