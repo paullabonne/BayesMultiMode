@@ -138,6 +138,14 @@ gibbs_SFM_skew_n <- function(y,
     
     # classification
     pnorm = probs/rowSums(probs)
+    
+    ## if the initial classification is bad then some data points won't be 
+    # allocated to any components and some rows will be 
+    # NAs (because if dividing by zero). We correct this by replacing NAs with
+    # equal probabilities
+    NA_id = which(is.na(pnorm[,1]))
+    pnorm[NA_id, ] = 1/ncol(pnorm)
+    
     S = t(apply(pnorm, 1, function(x) rmultinom(n = 1, size = 1, prob = x)))
   
     # 3. sample hyperparameters
