@@ -13,6 +13,24 @@
 #' 
 #' @return Vector of estimated modes 
 #' 
+#' @details
+#' 
+#' This algorithm returns the local maxima of the mixture
+#' \deqn{p(x) = \sum_{k=1}^{K}\pi_k p_k(x),}
+#' where \eqn{p_k} comes from the Normal family.
+#' Following Carreira-perpinan (2000), a mode \eqn{x} is found by iterating the two steps:
+#' \deqn{(i) \quad p(k|x^{(n)}) = \frac{\pi_k p_k(x^{(n)})}{p(x^{(n)})},}
+#' \deqn{(ii) \quad x^{(n+1)} = f(x^{(n)}),}
+#' with
+#' \deqn{f(x) = (\sum_k p(k|x) \sigma_k)^{-1}\sum_k p(k|x) \sigma_k \mu_k,}
+#' until convergence, that is, until \eqn{abs(x^{(n+1)}-x^{(n)})< \text{tol}_\text{conv}},
+#' where \eqn{\text{tol}_\text{conv}} is an argument with default value \eqn{1e-8}.
+#' Following Carreira-perpinan (2000), the algorithm is started at each component location.
+#' Separately, it is necessary to identify identical modes which diverge only up to
+#' a small value. By default modes which are closer
+#' than \eqn{sd(y)/10} are merged; this tolerance value can be controlled with the argument
+#' tol_x.
+#' 
 #' @references
 #' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}
 #' 

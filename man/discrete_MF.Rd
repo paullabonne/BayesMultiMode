@@ -40,6 +40,16 @@ Vector of estimated modes
 \description{
 Mode-finding algorithm for mixture of discrete distributions
 }
+\details{
+This algorithm returns the local maxima of the mixture
+\deqn{p(x) = \sum_{k=1}^{K}\pi_k p_k(x).}
+
+ By definition, modes must satisfy either: 
+ \deqn{p_k(y_{m}-1) < p_k(y_{m}) > p_k(y_{m}+1)};
+ \deqn{p_k(y_{m}-1) < p_k(y_{m}) = p_k(y_{m}+1) = \ldots = p_k(y_{m}+l-1) > p_k(y_{m}+l).}
+ 
+ The algorithm evaluate each location point with these two conditions.
+}
 \examples{
 # Example with the poisson distribution ====================================
 lambda = c(0.1,10)

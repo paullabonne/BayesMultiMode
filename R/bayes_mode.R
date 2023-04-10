@@ -1,8 +1,10 @@
 #' Bayesian mode inference
 #' 
-#' Estimates modes for each mcmc draws which are then used to compute posterior probabilities for the number of modes and their locations.
-#' The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures
-#' while the Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
+#' Estimates modes for each mcmc draws which are then used to compute posterior
+#' probabilities for the number of modes and their locations.
+#' The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures;
+#' the Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures;
+#' and a basic algorithm is used for discrete mixtures.
 #'
 #' @param BayesMix An object of class `BayesMixture`
 #' @param rd Rounding parameter
@@ -23,6 +25,24 @@
 #'  \item{tb_nb_modes}{ - Matrix showing posterior probabilities for the number of modes}
 #'  \item{table_location}{ - Matrix showing the posterior probabilities for location points being modes}
 #' }
+#' 
+#' @details
+#' Each draw, \eqn{\theta^{(d)}}, from the MCMC output leads to a posterior predictive probability
+#' density/mass function: 
+#' \deqn{p(y | \theta^{(d)}) =\sum_{k=1}^{K} \pi_k^{(d)} p(y | \theta_k^{(d)}).}
+#' Using this posterior function, the modes \eqn{y_{m}^{(d)}}, \eqn{m = 1,..., M^{(d)}},
+#' where \eqn{M^{(d)}} is the number of modes, are estimated using the algorithm mentioned
+#' in the description above.
+#' 
+#' After running this procedure across all retained posterior draws, 
+#' posterior probabilities for the number of modes are given by the usual Bayes estimate:
+#' \deqn{P(\#\text{modes}=M)=\frac{1}{D}\sum_{d=1}^{D}1(M^{(d)} = M).}
+#' Similarly, posterior probabilities for locations of the modes are given by 
+#' \deqn{P(y=\text{mode})=\frac{1}{M}\sum_{m=1}^{M^{(d)}} 1(y = y_m^{(d)}).}
+#' for each observation in the data range \eqn{[\min(y),\max(y)]}. Obviously,
+#' continuous data are not defined on a discrete support;
+#' it is therefore necessary to choose a rounding decimal to discretise their support.
+#' 
 #' @references
 #' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
 #' \insertRef{li_nonparametric_2007}{BayesMultiMode}
