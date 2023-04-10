@@ -11,6 +11,7 @@ MEM(
   dist = "NA",
   pdf_func = NULL,
   tol_x = sd(data)/10,
+  tol_conv = 1e-08,
   show_plot = FALSE
 )
 }
@@ -30,7 +31,9 @@ Currently supports "normal" and "skew_normal"; not needed if pdf_func is provide
 \item{pdf_func}{Pdf of the mixture components associated with the mcmc draws
 (if mcmc estimation has not been carried out with BayesMultiMode); default is null}
 
-\item{tol_x}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.}
+\item{tol_x}{Tolerance parameter for convergence of the algorithm; default is 1e-8.}
+
+\item{tol_conv}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.}
 
 \item{show_plot}{If true show the data and estimated modes; default is false}
 }

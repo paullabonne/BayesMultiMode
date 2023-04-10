@@ -7,7 +7,8 @@
 #' @param pars_names Names of the mixture parameters; first element should 
 #' correspond to the mixture proportions; second to the mean; third to the 
 #' standard deviation.
-#' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.
+#' @param tol_x Tolerance parameter for convergence of the algorithm; default is 1e-8.
+#' @param tol_conv Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.
 #' @param show_plot If true show the data and estimated modes; default is false
 #' 
 #' @return Vector of estimated modes 
@@ -32,7 +33,7 @@
 #' 
 #' @export
 
-fixed_point <- function(mcmc, data, pars_names, tol_x = sd(data)/10, show_plot = F) {
+fixed_point <- function(mcmc, data, pars_names, tol_x = sd(data)/10, tol_conv = 1e-8, show_plot = F) {
   
   ## input checks
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
@@ -70,13 +71,11 @@ fixed_point <- function(mcmc, data, pars_names, tol_x = sd(data)/10, show_plot =
     x = mu[i]
     delta = 1
     
-    while (delta > 1e-8) {
+    while (delta > tol_conv) {
       iter = iter + 1
       x1 = f_fp(x, p, mu, sigma)
       delta = abs(x - x1)
       x = x1
-      
-      if (is.na(delta)){browser()}
     }
     
     ## check that the mode is not too close to other modes

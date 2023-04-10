@@ -6,7 +6,8 @@
 #'
 #' @param BayesMix An object of class `BayesMixture`
 #' @param rd Rounding parameter
-#' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10 where data is an element of BayesMix.
+#' @param tol_x Tolerance parameter for convergence of the algorithm; default is 1e-8.
+#' @param tol_conv Tolerance parameter for distance in-between modes; default is sd(data)/10 where data is an element of BayesMix.
 #' If two modes are closer than tol_x, only the first estimated mode is kept.
 #' Not needed for mixtures of discrete distributions.
 #' @param show_plot Show density with estimated mode as vertical bars ?
@@ -76,7 +77,7 @@
 #'
 #' @export
 
-bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot = FALSE, nb_iter = NULL) {
+bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8, show_plot = FALSE, nb_iter = NULL) {
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   assert_that(is.scalar(rd) & rd >= 0, msg = "rd should be greater or equal than zero")
   assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
@@ -113,11 +114,11 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, show_plot
     if (dist == "normal") {
       # fixed point
       modes = t(apply(mcmc, 1, fixed_point, data = data, pars_names = pars_names,
-                      tol_x = tol_x, show_plot = show_plot))
+                      tol_x = tol_x, tol_conv = tol_conv, show_plot = show_plot))
     } else {
       # MEM algorithm
       modes = t(apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, 
-                      pdf_func = pdf_func, tol_x = tol_x, show_plot = show_plot))
+                      pdf_func = pdf_func, tol_x = tol_x, tol_conv = tol_conv, show_plot = show_plot))
     }
     
     ### Posterior probability of being a mode for each location

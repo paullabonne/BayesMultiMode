@@ -4,7 +4,14 @@
 \alias{fixed_point}
 \title{Modal fixed-point algorithm}
 \usage{
-fixed_point(mcmc, data, pars_names, tol_x = sd(data)/10, show_plot = F)
+fixed_point(
+  mcmc,
+  data,
+  pars_names,
+  tol_x = sd(data)/10,
+  tol_conv = 1e-08,
+  show_plot = F
+)
 }
 \arguments{
 \item{mcmc}{Vector of estimated mixture parameters}
@@ -15,7 +22,9 @@ fixed_point(mcmc, data, pars_names, tol_x = sd(data)/10, show_plot = F)
 correspond to the mixture proportions; second to the mean; third to the 
 standard deviation.}
 
-\item{tol_x}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.}
+\item{tol_x}{Tolerance parameter for convergence of the algorithm; default is 1e-8.}
+
+\item{tol_conv}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.}
 
 \item{show_plot}{If true show the data and estimated modes; default is false}
 }

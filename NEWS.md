@@ -1,3 +1,6 @@
+## Version 0.5.2
+* fixed typo on the tolerance arguments
+
 ## Version 0.5.1
 * improved robustness of the gibbs sampler when initial classification is bad
 

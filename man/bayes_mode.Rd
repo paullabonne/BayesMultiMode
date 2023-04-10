@@ -8,6 +8,7 @@ bayes_mode(
   BayesMix,
   rd = 1,
   tol_x = sd(BayesMix$data)/10,
+  tol_conv = 1e-08,
   show_plot = FALSE,
   nb_iter = NULL
 )
@@ -17,7 +18,9 @@ bayes_mode(
 
 \item{rd}{Rounding parameter}
 
-\item{tol_x}{Tolerance parameter for distance in-between modes; default is sd(data)/10 where data is an element of BayesMix.
+\item{tol_x}{Tolerance parameter for convergence of the algorithm; default is 1e-8.}
+
+\item{tol_conv}{Tolerance parameter for distance in-between modes; default is sd(data)/10 where data is an element of BayesMix.
 If two modes are closer than tol_x, only the first estimated mode is kept.
 Not needed for mixtures of discrete distributions.}
 

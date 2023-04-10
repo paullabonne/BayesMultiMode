@@ -12,7 +12,8 @@
 #' Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided
 #' @param pdf_func Pdf of the mixture components associated with the mcmc draws
 #' (if mcmc estimation has not been carried out with BayesMultiMode); default is null
-#' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.
+#' @param tol_x Tolerance parameter for convergence of the algorithm; default is 1e-8.
+#' @param tol_conv Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.
 #' @param show_plot If true show the data and estimated modes; default is false
 #' 
 #' @return Vector of estimated modes
@@ -64,7 +65,7 @@
 #' 
 #' @export
 
-MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd(data)/10, show_plot = FALSE) {
+MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd(data)/10, tol_conv = 1e-8, show_plot = FALSE) {
   ## input checks
   fail = "inputs to the Mode-finding EM algorithm are corrupted"
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
