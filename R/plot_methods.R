@@ -191,24 +191,29 @@ plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
   plot_list = list()
   i = 0
   
+  widths_p = rep(NA, length(graphs))
+  
   if("p1" %in% graphs) {
     i = i + 1
     plot_list[[i]] <- g0
+    widths_p[i] = 0.7
   }
   
   if("number" %in% graphs) {
     i = i + 1
     plot_list[[i]] <- g2
+    widths_p[i] = 1
   }
   
   if("loc" %in% graphs) {
     i = i + 1
     plot_list[[i]] <- g1
+    widths_p[i] = 1
   }
   
   if (i > 1) {
     g <- ggarrange(plotlist = plot_list,
-                   ncol = 3, nrow = 1, widths = c(0.7,1, 1))  
+                   ncol = length(graphs), nrow = 1, widths = widths_p)  
   } else {
     g <- plot_list[[i]] 
   }

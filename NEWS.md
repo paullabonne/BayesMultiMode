@@ -1,8 +1,9 @@
 ## Version 0.5.2
-* fixed typo on the tolerance arguments
+* Fixed typo on the tolerance arguments
+* Added details to a mode and mixture estimation functions
 
 ## Version 0.5.1
-* improved robustness of the gibbs sampler when initial classification is bad
+* Improved robustness of the gibbs sampler when initial classification is bad
 
 ## Version 0.5.0 
 * Restructured the code to make use of S3 generic functions plot() and summary()
