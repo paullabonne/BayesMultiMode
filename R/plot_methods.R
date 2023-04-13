@@ -116,7 +116,7 @@ plot.BayesMixture <- function(x, max_size = 250,
     g = ggplot(df_y, aes(x=x)) + 
       theme_gg +
       theme(legend.position="none") +
-      xlab("") + ylab("Density") +
+      xlab("") + ylab("Probability") +
       geom_col(data = filter(df_y,component=="1"),aes(y=density,fill="grey33"),colour="white",alpha=1) +
       geom_line(aes(y=value,colour=component),alpha= transparency) +
       scale_colour_manual(values=rep("#FF6347",length(unique(df_y$component)))) +
