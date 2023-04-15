@@ -146,7 +146,7 @@ plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
   stopifnot(inherits(x, "BayesMode"))
   assert_that(is.vector(graphs) & is.character(graphs),
               msg = "graphs should be a character vector")
-  assert_that((graphs %in% c("p1", "number", "loc"))>=1,
+  assert_that(sum(graphs %in% c("p1", "number", "loc"))>=1,
               msg = "graphs should include at least p1, number or loc")
   
   modes = x$modes
