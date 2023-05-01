@@ -16,6 +16,6 @@ summary.BayesMode <- function(object, ...) {
   colnames(tb_nb_modes) = c("Number of modes", "Posterior probabilty")
   tb_nb_modes = tb_nb_modes[order(tb_nb_modes[, 1]), ]
 
-  cat("\n\nThe number of estimated modes and their posterior probabilities is:\n")
+  cat("\n\n Number of estimated modes and their posterior probabilities:\n")
   tb_nb_modes
 }
