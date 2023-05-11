@@ -94,6 +94,36 @@
 #'
 #' # summary 
 #' # summary(bayesmode)
+#' 
+#' # Example with a Student t ================================================
+#' mu = c(0.5,6)
+#' sigma = c(1,2)
+#' nu = c(5,5)
+#' p = c(0.8,0.2)
+#' params = c(eta = p, mu = mu, sigma = sigma, nu = nu)
+#' pars_names = c("eta", "mu", "sigma", "nu")
+#' dist_type = "continuous"
+#'
+#' data = c(sn::rst(p[1]*1000, mu[1], sigma[1], nu = nu[1]),
+#'          sn::rst(p[2]*1000, mu[2], sigma[2], nu = nu[2]))
+#'
+#' fit = c(eta = p, mu = mu, sigma = sigma, nu = nu)
+#' fit = rbind(fit, fit)
+#' 
+#' pdf_func = function(x, pars) {
+#'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
+#' }
+#' 
+#' bayesmix = new_BayesMixture(fit, data, K = 2, burnin = 1,
+#' pars_names = pars_names, pdf_func = pdf_func, dist_type = dist_type)
+#' 
+#' bayesmode = bayes_mode(bayesmix)
+#' 
+#' # plot 
+#' # plot(bayesmode, max_size = 200)
+#'
+#' # summary 
+#' # summary(bayesmode)
 #'
 #' @export
 
@@ -119,7 +149,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
   assert_that(dist_type %in% c("continuous", "discrete"),
               msg = "dist_type should be either continuous or discrete")
   assert_that(dist %in% c("normal", "poisson",
-                          "shifted_poisson", "skew_normal") & is.character(dist),
+                          "shifted_poisson", "skew_normal", "NA") & is.character(dist),
               msg = "Unsupported distribution. 
               dist should be either normal, skew_normal, poisson,
               shifted_poisson, or NA")

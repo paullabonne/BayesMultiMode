@@ -1,4 +1,5 @@
 ## Version 0.5.2
+* Added examples to new_BayesMixture() and bayes_mode()
 * Fixed typo on the tolerance arguments
 * Added details to a mode and mixture estimation functions
 
