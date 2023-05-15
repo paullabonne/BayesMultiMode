@@ -129,6 +129,25 @@ bayesmix = bayes_estimation(data = y,
 # plot estimated mixture
 # plot(bayesmix, max_size = 200)
 
+# Changing priors ================================================
+set.seed(123) 
+
+# retrieve galaxy data
+y = galaxy
+
+# estimation
+K = 5
+bayesmix = bayes_estimation(data = y,
+                           K = K, #not many to run the example rapidly
+                           dist = "normal",
+                           priors = list(a0 = 10,
+                                         A0 = 10*K),
+                           nb_iter = 500, #not many to run the example rapidly
+                           burnin = 100)
+                           
+# plot estimated mixture
+# plot(bayesmix, max_size = 200)
+
 # Example with DNA data =====================================================
 \donttest{
 set.seed(123) 

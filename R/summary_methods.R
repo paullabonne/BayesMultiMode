@@ -10,7 +10,7 @@ summary.BayesMode <- function(object, ...) {
   modes = object$modes
   
   p1 = object$p1
-  cat("The posterior probability of the data being multimodal is", 1-p1, ".")
+  cat("The posterior probability of the data being multimodal is", 1-p1)
   
   tb_nb_modes = t(object$tb_nb_modes)
   colnames(tb_nb_modes) = c("Number of modes", "Posterior probabilty")
