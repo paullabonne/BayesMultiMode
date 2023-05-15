@@ -43,8 +43,7 @@ plot.BayesMixture <- function(x, max_size = 250,
       xlab("") + ylab("Density") +
       geom_histogram(aes(y = after_stat(density)),
                      fill="grey33",
-                     colour = "white",
-                     bins = 70)
+                     colour = "white")
     
     ## plot the mixture for each draw
     for (i in sample(nrow(mcmc),min(nrow(mcmc), max_size))) {
@@ -55,7 +54,8 @@ plot.BayesMixture <- function(x, max_size = 250,
       }
       
       colnames(pars) <- pars_names
-      
+      pars = na.omit(pars)
+     
       g = g +
         geom_function(fun = dist_mixture,
                       args = list(dist = dist,
