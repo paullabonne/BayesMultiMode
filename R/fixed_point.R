@@ -126,8 +126,13 @@ fixed_point <- function(mcmc, data, pars_names, tol_x = sd(data)/10, tol_conv = 
 f_fp <- function(x, p, mu, sigma) {
   pmx = dnorm(x, mu, sigma) * p
   pmx = pmx/sum(pmx)
+  
+  if (any(is.na(pmx))) {
+    # x yields a density of zero
+    pmx = 1/length(pmx)
+  }
 
   f = 1/sum(pmx/sigma^2) * sum(pmx/sigma^2*mu)
-
+  
   return(f)
 }

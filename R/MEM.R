@@ -190,7 +190,7 @@ Q_func = function(x, dist, post_prob, pars, pdf_func){
     pdf[i] = dist_pdf(x, dist, pars[i,], pdf_func = pdf_func)
   } 
   
-  pdf[pdf==0] = 1e-10 #otherwise the log operation below through infs
+  pdf[pdf==0] = 1e-10 #otherwise the log operation below can return infs
   
   Q = sum(post_prob * log(pdf))
   
