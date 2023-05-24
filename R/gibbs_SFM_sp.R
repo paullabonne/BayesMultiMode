@@ -45,6 +45,9 @@ gibbs_SFM_sp <- function(y,
     stop("data 'y' should be a vector")
   }
   
+  assert_that(min(y) > -1, msg = "y should not include negative values")
+  
+  
   n_obs <- length(y)
   
   # Initial conditions
