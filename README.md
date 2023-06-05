@@ -41,9 +41,10 @@ library(BayesMultiMode)
 ### Using BayesMultiMode for both MCMC estimation and mode inference
 
 `BayesMultiMode` provides a very flexible and efficient MCMC estimation
-approach : it handles mixtures with unknown number of components and
-supports a comprehensive range of mixture distributions, both continuous
-and discrete.
+approach : it handles mixtures with unknown number of components through
+the sparse finite mixture approach of Malsiner-Walli,
+Fruhwirth-Schnatter, and Grun (2016) and supports a comprehensive range
+of mixture distributions, both continuous and discrete.
 
 #### Estimation
 
@@ -114,7 +115,7 @@ summary(bayesmode)
 software. The function `new_BayesMixture()` creates an object of class
 `BayesMixture` which can then be used as input in the mode inference
 function `bayes_mode()`. Here is an example using cyclone intensity data
-and the `BNPmix` package for estimation.
+(Knapp et al. 2018) and the `BNPmix` package for estimation.
 
 ``` r
 library(BNPmix)
@@ -145,18 +146,18 @@ PY_result = PYdensity(y,
                       output = list(out_param = TRUE))
 ```
 
-    ## Completed:   200/2000 - in 0.047663 sec
-    ## Completed:   400/2000 - in 0.100796 sec
-    ## Completed:   600/2000 - in 0.163855 sec
-    ## Completed:   800/2000 - in 0.220484 sec
-    ## Completed:   1000/2000 - in 0.273274 sec
-    ## Completed:   1200/2000 - in 0.337831 sec
-    ## Completed:   1400/2000 - in 0.404198 sec
-    ## Completed:   1600/2000 - in 0.468684 sec
-    ## Completed:   1800/2000 - in 0.534694 sec
-    ## Completed:   2000/2000 - in 0.596494 sec
+    ## Completed:   200/2000 - in 0.047373 sec
+    ## Completed:   400/2000 - in 0.101338 sec
+    ## Completed:   600/2000 - in 0.168337 sec
+    ## Completed:   800/2000 - in 0.225257 sec
+    ## Completed:   1000/2000 - in 0.280383 sec
+    ## Completed:   1200/2000 - in 0.338147 sec
+    ## Completed:   1400/2000 - in 0.404223 sec
+    ## Completed:   1600/2000 - in 0.462967 sec
+    ## Completed:   1800/2000 - in 0.525428 sec
+    ## Completed:   2000/2000 - in 0.588772 sec
     ## 
-    ## Estimation done in 0.596514 seconds
+    ## Estimation done in 0.588788 seconds
 
 #### Transforming the output into a mcmc matrix with one column per variable
 
@@ -208,7 +209,7 @@ plot(py_BayesMix)
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](man/figures/README-unnamed-chunk-10-1.png)<!-- -->
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="70%" style="display: block; margin: auto;" />
 
 #### Mode inference
 
@@ -239,24 +240,21 @@ summary(bayesmode)
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
+<div id="ref-knapp_international_2018" class="csl-entry">
+
+Knapp, Kenneth R., Howard J. Diamond, Kossin J. P., Michael C. Kruk, and
+C. J. Schreck. 2018. “International Best Track Archive for Climate
+Stewardship (IBTrACS) Project, Version 4.” *NOAA National Centers for
+Environmental Information*. <https://doi.org/10.1175/2009BAMS2755.1>.
+
+</div>
+
 <div id="ref-malsiner-walli_model-based_2016" class="csl-entry">
 
 Malsiner-Walli, Gertraud, Sylvia Fruhwirth-Schnatter, and Bettina Grun.
 2016. “Model-Based Clustering Based on Sparse Finite Gaussian Mixtures.”
 *Statistics and Computing* 26 (1): 303–24.
 <https://doi.org/10.1007/s11222-014-9500-2>.
-
-</div>
-
-<div id="ref-schaap_genome-wide_2013" class="csl-entry">
-
-Schaap, Mireille, Richard JLF Lemmers, Roel Maassen, Patrick J. van der
-Vliet, Lennart F. Hoogerheide, Herman K. van Dijk, Nalan Basturk, Peter
-de Knijff, and Silvère M. van der Maarel. 2013. “Genome-Wide Analysis of
-Macrosatellite Repeat Copy Number Variation in Worldwide Populations:
-Evidence for Differences and Commonalities in Size Distributions and
-Size Restrictions.” *BMC Genomics* 14 (1): 143.
-<https://doi.org/10.1186/1471-2164-14-143>.
 
 </div>
 

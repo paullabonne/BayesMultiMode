@@ -35,7 +35,7 @@ library(BayesMultiMode)
 ```
 
 ### Using BayesMultiMode for both MCMC estimation and mode inference
-`BayesMultiMode` provides a very flexible and efficient MCMC estimation approach : it handles mixtures with unknown number of components and supports a comprehensive range of mixture distributions, both continuous and discrete.
+`BayesMultiMode` provides a very flexible and efficient MCMC estimation approach : it handles mixtures with unknown number of components through the sparse finite mixture approach of @malsiner-walli_model-based_2016 and supports a comprehensive range of mixture distributions, both continuous and discrete.
 
 #### Estimation
 ```{r, out.width = '70%', fig.align = "center"}
@@ -68,7 +68,7 @@ summary(bayesmode)
 ```
 
 ### Using BayesMultiMode for mode inference with external MCMC output
-`BayesMultiMode` also works on MCMC output generated using external software. The function `new_BayesMixture()` creates an object of class `BayesMixture` which can then be used as input in the mode inference function `bayes_mode()`. Here is an example using cyclone intensity data and the `BNPmix` package for estimation.
+`BayesMultiMode` also works on MCMC output generated using external software. The function `new_BayesMixture()` creates an object of class `BayesMixture` which can then be used as input in the mode inference function `bayes_mode()`. Here is an example using cyclone intensity data [@knapp_international_2018] and the `BNPmix` package for estimation.
 ```{r, out.width = '70%', fig.align = "center"}
 library(BNPmix)
 library(dplyr)
@@ -126,7 +126,7 @@ py_BayesMix = new_BayesMixture(mcmc = mcmc_py,
 ```
 
 #### Plotting the mixture
-```{r}
+```{r, out.width = '70%', fig.align = "center"}
 plot(py_BayesMix)
 ```
 
@@ -144,5 +144,3 @@ summary(bayesmode)
 
 
 ### References
-[@malsiner-walli_model-based_2016]
-[@schaap_genome-wide_2013]
