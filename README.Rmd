@@ -68,7 +68,7 @@ summary(bayesmode)
 ```
 
 ### Using BayesMultiMode for mode inference with external MCMC output
-`BayesMultiMode` also works on MCMC output generated using external software. The function `new_BayesMixture()` creates an object of class `BayesMixture` which can then be used as input in the mode inference function `bayes_mode()`. Here is an example where the `BNPmix` package is used for MCMC estimation.
+`BayesMultiMode` also works on MCMC output generated using external software. The function `new_BayesMixture()` creates an object of class `BayesMixture` which can then be used as input in the mode inference function `bayes_mode()`. Here is an example using cyclone intensity data and the `BNPmix` package for estimation.
 ```{r, out.width = '70%', fig.align = "center"}
 library(BNPmix)
 library(dplyr)
@@ -83,8 +83,6 @@ y = cyclone %>%
 PY_result = PYdensity(y,
                       mcmc = list(niter = 2000, nburn = 1000),
                       output = list(out_param = TRUE))
-
-plot(PY_result)
 ```
 
 #### Transforming the output into a mcmc matrix with one column per variable
@@ -125,6 +123,11 @@ py_BayesMix = new_BayesMixture(mcmc = mcmc_py,
                                dist = "normal",
                                pars_names = pars_names,
                                dist_type = "continuous")
+```
+
+#### Plotting the mixture
+```{r}
+plot(py_BayesMix)
 ```
 
 #### Mode inference

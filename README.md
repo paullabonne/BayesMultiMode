@@ -77,6 +77,8 @@ bayesmix = bayes_estimation(data = y,
 plot(bayesmix, max_size = 200)
 ```
 
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" />
 
 #### Mode inference
@@ -96,9 +98,9 @@ plot(bayesmode, max_size = 200)
 summary(bayesmode)
 ```
 
-    ## The posterior probability of the data being multimodal is 0.993 .
+    ## The posterior probability of the data being multimodal is 0.993
     ## 
-    ## The number of estimated modes and their posterior probabilities is:
+    ##  Number of estimated modes and their posterior probabilities:
 
     ##      Number of modes Posterior probabilty
     ## [1,]               1                0.007
@@ -111,8 +113,8 @@ summary(bayesmode)
 `BayesMultiMode` also works on MCMC output generated using external
 software. The function `new_BayesMixture()` creates an object of class
 `BayesMixture` which can then be used as input in the mode inference
-function `bayes_mode()`. Here is an example where the `BNPmix` package
-is used for MCMC estimation.
+function `bayes_mode()`. Here is an example using cyclone intensity data
+and the `BNPmix` package for estimation.
 
 ``` r
 library(BNPmix)
@@ -143,24 +145,18 @@ PY_result = PYdensity(y,
                       output = list(out_param = TRUE))
 ```
 
-    ## Completed:   200/2000 - in 0.044338 sec
-    ## Completed:   400/2000 - in 0.091791 sec
-    ## Completed:   600/2000 - in 0.148233 sec
-    ## Completed:   800/2000 - in 0.200009 sec
-    ## Completed:   1000/2000 - in 0.248294 sec
-    ## Completed:   1200/2000 - in 0.297524 sec
-    ## Completed:   1400/2000 - in 0.349355 sec
-    ## Completed:   1600/2000 - in 0.402126 sec
-    ## Completed:   1800/2000 - in 0.457695 sec
-    ## Completed:   2000/2000 - in 0.512106 sec
+    ## Completed:   200/2000 - in 0.047663 sec
+    ## Completed:   400/2000 - in 0.100796 sec
+    ## Completed:   600/2000 - in 0.163855 sec
+    ## Completed:   800/2000 - in 0.220484 sec
+    ## Completed:   1000/2000 - in 0.273274 sec
+    ## Completed:   1200/2000 - in 0.337831 sec
+    ## Completed:   1400/2000 - in 0.404198 sec
+    ## Completed:   1600/2000 - in 0.468684 sec
+    ## Completed:   1800/2000 - in 0.534694 sec
+    ## Completed:   2000/2000 - in 0.596494 sec
     ## 
-    ## Estimation done in 0.512113 seconds
-
-``` r
-plot(PY_result)
-```
-
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="70%" style="display: block; margin: auto;" />
+    ## Estimation done in 0.596514 seconds
 
 #### Transforming the output into a mcmc matrix with one column per variable
 
@@ -204,6 +200,16 @@ py_BayesMix = new_BayesMixture(mcmc = mcmc_py,
                                dist_type = "continuous")
 ```
 
+#### Plotting the mixture
+
+``` r
+plot(py_BayesMix)
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+![](man/figures/README-unnamed-chunk-10-1.png)<!-- -->
+
 #### Mode inference
 
 ``` r
@@ -214,25 +220,22 @@ bayesmode = bayes_mode(py_BayesMix)
 plot(bayesmode, max_size = 200)
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-11-1.png" width="70%" style="display: block; margin: auto;" />
 
 ``` r
 # Summary 
 summary(bayesmode)
 ```
 
-    ## The posterior probability of the data being multimodal is 1 .
+    ## The posterior probability of the data being multimodal is 1
     ## 
-    ## The number of estimated modes and their posterior probabilities is:
+    ##  Number of estimated modes and their posterior probabilities:
 
     ##      Number of modes Posterior probabilty
     ## [1,]               2                0.897
     ## [2,]               3                0.103
 
 ### References
-
-(Malsiner-Walli, Fruhwirth-Schnatter, and Grun 2016) (Schaap et al.
-2013)
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
