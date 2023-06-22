@@ -78,8 +78,6 @@ bayesmix = bayes_estimation(data = y,
 plot(bayesmix, max_size = 200)
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" />
 
 #### Mode inference
@@ -120,20 +118,7 @@ function `bayes_mode()`. Here is an example using cyclone intensity data
 ``` r
 library(BNPmix)
 library(dplyr)
-```
 
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
 y = cyclone %>%
   filter(BASIN == "SI",
          SEASON > "1981") %>%
@@ -146,18 +131,18 @@ PY_result = PYdensity(y,
                       output = list(out_param = TRUE))
 ```
 
-    ## Completed:   200/2000 - in 0.047373 sec
-    ## Completed:   400/2000 - in 0.101338 sec
-    ## Completed:   600/2000 - in 0.168337 sec
-    ## Completed:   800/2000 - in 0.225257 sec
-    ## Completed:   1000/2000 - in 0.280383 sec
-    ## Completed:   1200/2000 - in 0.338147 sec
-    ## Completed:   1400/2000 - in 0.404223 sec
-    ## Completed:   1600/2000 - in 0.462967 sec
-    ## Completed:   1800/2000 - in 0.525428 sec
-    ## Completed:   2000/2000 - in 0.588772 sec
+    ## Completed:   200/2000 - in 0.048643 sec
+    ## Completed:   400/2000 - in 0.102024 sec
+    ## Completed:   600/2000 - in 0.161901 sec
+    ## Completed:   800/2000 - in 0.215023 sec
+    ## Completed:   1000/2000 - in 0.26685 sec
+    ## Completed:   1200/2000 - in 0.320333 sec
+    ## Completed:   1400/2000 - in 0.374344 sec
+    ## Completed:   1600/2000 - in 0.429188 sec
+    ## Completed:   1800/2000 - in 0.487123 sec
+    ## Completed:   2000/2000 - in 0.54376 sec
     ## 
-    ## Estimation done in 0.588788 seconds
+    ## Estimation done in 0.543765 seconds
 
 #### Transforming the output into a mcmc matrix with one column per variable
 
