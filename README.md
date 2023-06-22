@@ -13,7 +13,7 @@ stages. First, a mixture distribution is fitted on the data using a
 sparse finite mixture Markov chain Monte Carlo (SFM MCMC) algorithm. The
 number of mixture components does not have to be known; the size of the
 mixture is estimated endogenously through the SFM approach. Second, the
-modes of the estimated mixture at each MCMC are retrieved using
+modes of the estimated mixture in each MCMC draw are retrieved using
 algorithms specifically tailored for mode detection. These estimates are
 then used to construct posterior probabilities for the number of modes,
 their locations and uncertainties, providing a powerful tool for mode
@@ -131,18 +131,18 @@ PY_result = PYdensity(y,
                       output = list(out_param = TRUE))
 ```
 
-    ## Completed:   200/2000 - in 0.048643 sec
-    ## Completed:   400/2000 - in 0.102024 sec
-    ## Completed:   600/2000 - in 0.161901 sec
-    ## Completed:   800/2000 - in 0.215023 sec
-    ## Completed:   1000/2000 - in 0.26685 sec
-    ## Completed:   1200/2000 - in 0.320333 sec
-    ## Completed:   1400/2000 - in 0.374344 sec
-    ## Completed:   1600/2000 - in 0.429188 sec
-    ## Completed:   1800/2000 - in 0.487123 sec
-    ## Completed:   2000/2000 - in 0.54376 sec
+    ## Completed:   200/2000 - in 0.056981 sec
+    ## Completed:   400/2000 - in 0.121544 sec
+    ## Completed:   600/2000 - in 0.189576 sec
+    ## Completed:   800/2000 - in 0.266234 sec
+    ## Completed:   1000/2000 - in 0.3344 sec
+    ## Completed:   1200/2000 - in 0.419017 sec
+    ## Completed:   1400/2000 - in 0.508803 sec
+    ## Completed:   1600/2000 - in 0.591452 sec
+    ## Completed:   1800/2000 - in 0.659035 sec
+    ## Completed:   2000/2000 - in 0.722886 sec
     ## 
-    ## Estimation done in 0.543765 seconds
+    ## Estimation done in 0.723067 seconds
 
 #### Transforming the output into a mcmc matrix with one column per variable
 
