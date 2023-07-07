@@ -74,7 +74,7 @@
 #' \deqn{(\xi_k, \psi_k)' \sim \text{Normal}(\text{b}_0, \text{B}_0),}
 #' \deqn{\sigma^{-2}_k \sim \text{Gamma}(\text{c}_0, \text{C}_0),}
 #' \deqn{\text{C}_0 \sim \text{Gamma}( \text{g}_0, \text{G}_0).}
-#' We set \deqn{\text{b}_0 = (\text{median}(y), 0)'} and \deqn{\text{B}_0 = \text{diag}(2)}.
+#' We set \deqn{\text{b}_0 = (\text{median}(y), 0)'} and \deqn{\text{B}_0 = \text{diag}(\text{D}\_\text{xi}, \text{D}\_\text{psi})} with D_xi = D_xi = 1.
 #' 
 #' \strong{Mixture of Poisson distributions}
 #' Poisson components take the form:
