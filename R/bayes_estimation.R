@@ -36,7 +36,7 @@
 #' The exact number of components does not have to be known a priori
 #' when using the SFM MCMC approach. Rather, an upper bound is specified for the
 #' number of components and the weights of superfluous components are shrunk
-#' towards zero during the estimation. following Malsiner-Walli et al. (2016)
+#' towards zero during the estimation. Following Malsiner-Walli et al. (2016)
 #' a symmetric Dirichlet prior is used for the mixture weights:
 #' \deqn{\pi_k \sim \text{Dirichlet}(e_0,\dots,e_0)}
 #' where a Gamma hyperprior is used on the concentration parameter \eqn{e_0}:\cr\cr
@@ -74,9 +74,7 @@
 #' \deqn{(\xi_k, \psi_k)' \sim \text{Normal}(\text{b}_0, \text{B}_0),}
 #' \deqn{\sigma^{-2}_k \sim \text{Gamma}(\text{c}_0, \text{C}_0),}
 #' \deqn{\text{C}_0 \sim \text{Gamma}( \text{g}_0, \text{G}_0).}
-#' Note that Fruhwirth-schnatter et al. (2010) use a conditional conjugate prior instead. 
-#' We refer to section 6.2  of Fruhwirth-Schnatter (2006) for a discussion of independent and
-#' conditional conjugate priors.
+#' We set \deqn{\text{b}_0 = (\text{median}(y), 0)'} and \deqn{\text{B}_0 = \text{diag}(2)}.
 #' 
 #' \strong{Mixture of Poisson distributions}
 #' Poisson components take the form:
