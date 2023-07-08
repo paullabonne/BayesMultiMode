@@ -49,7 +49,7 @@ This algorithm returns the local maxima of the mixture
 where \eqn{p_k} is a density function.
 Following Li and Lindsay (2007), a mode \eqn{x} is found by iterating the two steps:
 \deqn{(i) \quad p(k|x^{(n)}) = \frac{\pi_k p_k(x^{(n)})}{p(x^{(n)})},}
-\deqn{(ii) \quad x^{(n+1)} = \argmax_x  \sum_k p(k|x) \text{log} p_k(x^{(n)}),}
+\deqn{(ii) \quad x^{(n+1)} = \text{Max}_x  \sum_k p(k|x) \text{log} p_k(x^{(n)}),}
 until convergence, that is, until \eqn{abs(x^{(n+1)}-x^{(n)})< \text{tol}_\text{conv}},
 where \eqn{\text{tol}_\text{conv}} is an argument with default value \eqn{1e-8}.
 The algorithm is started at each component location.
