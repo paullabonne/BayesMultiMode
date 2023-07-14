@@ -1,17 +1,17 @@
 #' Modal fixed-point algorithm
 #' 
-#' Algorithm for estimating modes in mixture of Normal distributions.
+#' Algorithm for estimating modes in mixture of Normal distributions from Carreira-Perpinan (2000).
 #' 
-#' @param mcmc Vector of estimated mixture parameters
-#' @param data Vector of observations used for estimating the mixture
+#' @param mcmc Vector of estimated mixture parameters.
+#' @param data Vector of observations used for estimating the mixture.
 #' @param pars_names Names of the mixture parameters; first element should 
 #' correspond to the mixture proportions; second to the mean; third to the 
 #' standard deviation.
-#' @param tol_x Tolerance parameter for convergence of the algorithm; default is 1e-8.
-#' @param tol_conv Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.
-#' @param show_plot If true show the data and estimated modes; default is false
+#' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.
+#' @param tol_conv Tolerance parameter for convergence of the algorithm; default is 1e-8.
+#' @param show_plot If true show the data and estimated modes; default is false.
 #' 
-#' @return Vector of estimated modes 
+#' @return Vector of estimated modes.
 #' 
 #' @details
 #' 
@@ -29,7 +29,7 @@
 #' Separately, it is necessary to identify identical modes which diverge only up to
 #' a small value. By default modes which are closer
 #' than \eqn{sd(y)/10} are merged; this tolerance value can be controlled with the argument
-#' tol_x.
+#' \code{tol_x}.
 #' 
 #' @references
 #' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}

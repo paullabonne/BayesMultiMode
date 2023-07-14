@@ -15,30 +15,30 @@ discrete_MF(
 )
 }
 \arguments{
-\item{mcmc}{Vector of estimated mixture parameters}
+\item{mcmc}{Vector of estimated mixture parameters.}
 
-\item{data}{Vector of observations used for estimating the mixture}
+\item{data}{Vector of observations used for estimating the mixture.}
 
 \item{pars_names}{Names of the mixture parameters; first element should 
 correspond to the mixture proportions.}
 
-\item{dist}{String indicating the distribution of the mixture components
+\item{dist}{String indicating the distribution of the mixture components.
 Currently supports "poisson" and "shifted_poisson"; default is "NA"; only
 use this argument if you have used Poisson and shifted Poisson distributions
 identical to the one used in the package.}
 
-\item{pmf_func}{Pmf of the mixture components associated with the mcmc draws
-(if mcmc estimation has not been carried out with BayesMultiMode); default is null}
+\item{pmf_func}{Pmf of the mixture components associated with the mcmc draws.
+(if mcmc estimation has not been carried out with \pkg{BayesMultiMode}); default is null.}
 
-\item{type}{Type of modes, either unique or all (the latter includes flat modes); default is "all"}
+\item{type}{Type of modes, either unique or all (the latter includes flat modes); default is "all".}
 
-\item{show_plot}{If true show the data and estimated modes; default is false}
+\item{show_plot}{If true show the data and estimated modes; default is false.}
 }
 \value{
-Vector of estimated modes
+Vector of estimated modes.
 }
 \description{
-Mode-finding algorithm for mixture of discrete distributions
+Function to estimate modes in mixtures of discrete distributions following; see Cross et al. (2023).
 }
 \details{
 This algorithm returns the local maxima of the mixture
@@ -81,5 +81,7 @@ modes = discrete_MF(params, data = data, pars_names = pars_names, pmf_func = pmf
 
 }
 \references{
+\insertRef{cross_2023}{BayesMultiMode}
+
 \insertRef{schaap_genome-wide_2013}{BayesMultiMode}
 }

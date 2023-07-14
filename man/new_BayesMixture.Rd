@@ -2,7 +2,7 @@
 % Please edit documentation in R/new_BayesMixture.R
 \name{new_BayesMixture}
 \alias{new_BayesMixture}
-\title{Creating a S3 object of class `BayesMixture`}
+\title{Creating a S3 object of class \code{BayesMixture}}
 \usage{
 new_BayesMixture(
   mcmc,
@@ -16,16 +16,16 @@ new_BayesMixture(
 )
 }
 \arguments{
-\item{mcmc}{A matrix of MCMC draws}
+\item{mcmc}{A matrix of MCMC draws.}
 
-\item{data}{A vector containing the data used for estimating the model and generating the MCMC draws}
+\item{data}{A vector containing the data used for estimating the model and generating the MCMC draws.}
 
-\item{K}{Number of mixture components}
+\item{K}{Number of mixture components.}
 
-\item{burnin}{Number of draws to discard as burnin}
+\item{burnin}{Number of draws to discard as burnin.}
 
 \item{dist}{Distribution family of the mixture components supported by
-the package (e.g. "normal", "student", "skew_normal" or "shifted_poisson")}
+the package (e.g. "normal", "student", "skew_normal" or "shifted_poisson").}
 
 \item{pars_names}{Names of the mixture parameters; first element should 
 correspond to the mixture proportions.}
@@ -33,20 +33,20 @@ correspond to the mixture proportions.}
 \item{pdf_func}{Pdf or pmf of the mixture components;
 this input is used only if dist_name is invalid or NULL.}
 
-\item{dist_type}{Either "continuous" or "discrete"}
+\item{dist_type}{Either "continuous" or "discrete".}
 }
 \value{
-A list of class `BayesMixture` containing :
+A list of class \code{BayesMixture} containing:
 \itemize{
- \item{data}{ - Same as argument}
- \item{dist_type}{ - Same as argument}
- \item{pars_names}{ - Same as argument}
- \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded}
- \item{mcmc_all}{ - Original matrix of MCMC draws}
+ \item{data}{ - Same as argument.}
+ \item{dist_type}{ - Same as argument.}
+ \item{pars_names}{ - Same as argument.}
+ \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded.}
+ \item{mcmc_all}{ - Original matrix of MCMC draws.}
 }
 }
 \description{
-Function for creating an object of class `bayes_estimation()` which can subsequently be used as argument in `bayes_mode()`.
+Function for creating an object of class \code{BayesMixture} which can subsequently be used as argument in [bayes_mode()].
 This function is useful for users who want to use the mode inference functions of the package with MCMC output generated using 
 other software packages.
 }

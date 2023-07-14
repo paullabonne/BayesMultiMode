@@ -2,12 +2,12 @@
 % Please edit documentation in R/plot_methods.R
 \name{plot.BayesMixture}
 \alias{plot.BayesMixture}
-\title{Plot an estimated mixture for a given number of draws with an histogram of the data.}
+\title{Plot method for \code{BayesMixture} objects}
 \usage{
 \method{plot}{BayesMixture}(x, max_size = 250, transparency = 0.1, ...)
 }
 \arguments{
-\item{x}{An object of class BayesMixture.}
+\item{x}{An object of class \code{BayesMixture}.}
 
 \item{max_size}{The number of MCMC draws to plot.}
 
@@ -16,5 +16,5 @@
 \item{...}{Not used.}
 }
 \description{
-Plot an estimated mixture for a given number of draws with an histogram of the data.
+Plot an estimated mixture for a given number of draws with a frequency distribution of the data.
 }

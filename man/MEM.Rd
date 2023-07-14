@@ -16,29 +16,29 @@ MEM(
 )
 }
 \arguments{
-\item{mcmc}{Vector of estimated mixture parameters}
+\item{mcmc}{Vector of estimated mixture parameters.}
 
-\item{data}{Vector of observations used for estimating the mixture}
+\item{data}{Vector of observations used for estimating the mixture.}
 
 \item{pars_names}{Names of the mixture parameters; the first element of 
 this vector should be the name of the mixture proportions. If you have used 
 the skew normal of Azzalini, then the second element should correspond to the location,
 the third to the scale and the fourth to the shape.}
 
-\item{dist}{String indicating the distribution of the mixture components; default is "NA"
-Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided}
+\item{dist}{String indicating the distribution of the mixture components; default is "NA".
+Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided.}
 
 \item{pdf_func}{Pdf of the mixture components associated with the mcmc draws
-(if mcmc estimation has not been carried out with BayesMultiMode); default is null}
+(if mcmc estimation has not been carried out with BayesMultiMode); default is null.}
 
-\item{tol_x}{Tolerance parameter for convergence of the algorithm; default is 1e-8.}
+\item{tol_x}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
 
-\item{tol_conv}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.}
+\item{tol_conv}{Tolerance parameter for convergence of the algorithm; default is 1e-8.}
 
 \item{show_plot}{If true show the data and estimated modes; default is false}
 }
 \value{
-Vector of estimated modes
+Vector of estimated modes.
 }
 \description{
 Algorithm from Li and Lindsay (2007) to find modes in mixture of continuous distributions.
@@ -49,14 +49,14 @@ This algorithm returns the local maxima of the mixture
 where \eqn{p_k} is a density function.
 Following Li and Lindsay (2007), a mode \eqn{x} is found by iterating the two steps:
 \deqn{(i) \quad p(k|x^{(n)}) = \frac{\pi_k p_k(x^{(n)})}{p(x^{(n)})},}
-\deqn{(ii) \quad x^{(n+1)} = \text{Max}_x  \sum_k p(k|x) \text{log} p_k(x^{(n)}),}
+\deqn{(ii) \quad x^{(n+1)} = \text{argmax}_x  \sum_k p(k|x) \text{log} p_k(x^{(n)}),}
 until convergence, that is, until \eqn{abs(x^{(n+1)}-x^{(n)})< \text{tol}_\text{conv}},
 where \eqn{\text{tol}_\text{conv}} is an argument with default value \eqn{1e-8}.
 The algorithm is started at each component location.
 Separately, it is necessary to identify identical modes which diverge only up to
 a small value. By default modes which are closer
 than \eqn{sd(y)/10} are merged; this tolerance value can be controlled with the argument
-tol_x.
+\code{tol_x}.
 
 While it is also possible to use the MEM algorithm for Normal mixtures, 
 this is not recommended because the algorithm is less efficient than the

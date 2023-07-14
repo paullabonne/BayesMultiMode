@@ -15,34 +15,34 @@ bayes_estimation(
 )
 }
 \arguments{
-\item{data}{Vector of observations}
+\item{data}{Vector of observations.}
 
-\item{K}{Maximum number of mixture components}
+\item{K}{Maximum number of mixture components.}
 
-\item{dist}{String indicating the distribution of the mixture components
-Currently supports "normal", "skew_normal", "poisson" and "shifted_poisson"}
+\item{dist}{String indicating the distribution of the mixture components;
+Currently supports "normal", "skew_normal", "poisson" and "shifted_poisson".}
 
-\item{priors}{List of priors; default is an empty list which implies the following priors :\cr
+\item{priors}{List of priors; default is an empty list which implies the following priors:\cr
 a0 = 1,\cr A0 = 200,\cr b0 = median(y),\cr B0 = (max(y) - min(y))^2 (normal),\cr
 D_xi = 1,\cr D_psi =1, (skew normal: B0 = diag(D_xi,D_psi)), \cr c0 = 2.5,\cr
 l0 = 1.1 (poisson),\cr l0 = 5 (shifted poisson),\cr L0 = 1.1/median(y),\cr L0 = l0 - 1 (shifted poisson),\cr
 g0 = 0.5,\cr G0 = 100*g0/c0/B0 (normal),\cr 
-G0 = g0/(0.5*var(y)) (skew normal)}
+G0 = g0/(0.5*var(y)) (skew normal).}
 
-\item{nb_iter}{Number of MCMC iterations; default is 2000}
+\item{nb_iter}{Number of MCMC iterations; default is 2000.}
 
-\item{burnin}{Number of MCMC iterations used as burnin; default is nb_iter/2}
+\item{burnin}{Number of MCMC iterations used as burnin; default is nb_iter/2.}
 
 \item{printing}{Showing MCMC progression ?}
 }
 \value{
-A list of class `BayesMixture` containing
+A list of class \code{BayesMixture} containing
 \itemize{
- \item{data}{ - Same as argument}
- \item{dist_type}{ - Type of the distribution (continuous or discrete)}
- \item{pars_names}{ - Names of the mixture components' parameters}
- \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded}
- \item{mcmc_all}{ - Original matrix of MCMC draws}
+ \item{data}{ - Same as argument.}
+ \item{dist_type}{ - Type of the distribution (continuous or discrete).}
+ \item{pars_names}{ - Names of the mixture components' parameters.}
+ \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded.}
+ \item{mcmc_all}{ - Original matrix of MCMC draws.}
 }
 }
 \description{
@@ -64,6 +64,7 @@ a symmetric Dirichlet prior is used for the mixture weights:
 where a Gamma hyperprior is used on the concentration parameter \eqn{e_0}:\cr\cr
 \deqn{e_0 \sim \text{Gamma}\left(a_0, A_0\right)}
 
+
 \strong{Mixture of Normal distributions}
 
 Normal components take the form:
@@ -72,12 +73,13 @@ Normal components take the form:
       \mu_k}{\sigma_k} \right)^2     \right)}
 
 Independent conjugate priors are used for \eqn{\mu_k} and \eqn{\sigma^2_k}
-(see for instance Malsiner-Walli et al(2016)) :
+(see for instance Malsiner-Walli et al. 2016) :
 \deqn{\mu_k \sim \text{Normal}( \text{b}_0, \text{B}_0),}
 \deqn{\sigma^{-2}_k \sim \text{Gamma}( \text{c}_0, \text{C}_0),}
 \deqn{C_0 \sim \text{Gamma}( \text{g}_0, \text{G}_0).}
 
-\strong{Mixture of skew Normal distributions}
+
+\strong{Mixture of skew-Normal distributions}
 
 We use the skew-Normal of Azzalini (1985) which takes the form:
 \deqn{p(y_i| \xi_k,\omega_k,\alpha_k) = \frac{1}{\omega_k\sqrt{2\pi}} \ \exp\left( - \,
@@ -96,16 +98,20 @@ the Normal mixture model:
 \deqn{(\xi_k, \psi_k)' \sim \text{Normal}(\text{b}_0, \text{B}_0),}
 \deqn{\sigma^{-2}_k \sim \text{Gamma}(\text{c}_0, \text{C}_0),}
 \deqn{\text{C}_0 \sim \text{Gamma}( \text{g}_0, \text{G}_0).}
-We set \deqn{\text{b}_0 = (\text{median}(y), 0)'} and \deqn{\text{B}_0 = \text{diag}(\text{D}\_\text{xi}, \text{D}\_\text{psi})} with D_xi = D_xi = 1.
+We set \deqn{\text{b}_0 = (\text{median}(y), 0)'} and \deqn{\text{B}_0 = \text{diag}(\text{D}\_\text{xi}, \text{D}\_\text{psi})} with D_xi = D_psi = 1.
+
 
 \strong{Mixture of Poisson distributions}
+
 Poisson components take the form:
 \deqn{p(y_i|\lambda_k) = \frac{1}{y_i!} \, \lambda^{y_i}_k \,\exp(-\lambda_k).}
 The prior for \eqn{\lambda_k} follows from Viallefont et al. (2002):
 \deqn{\lambda_k \sim \text{Gamma}(\text{l}_0,\text{L}_0).}
 
-\strong{Mixture of Shifted Poisson distributions}
-Shifted Poisson components take the form
+
+\strong{Mixture of shifted-Poisson distributions}
+
+Shifted-Poisson components take the form
 \deqn{p(y_i |\lambda_k, \kappa_k) = \frac{1}{(y_i - \kappa_k)!} \,
 \lambda^{(y_i - \kappa_k)!}_k \,\exp(-\lambda_k)}
 where \eqn{\kappa_k} is a location or shift parameter with uniform prior.

@@ -1,19 +1,24 @@
 #' Mode-finding algorithm for mixture of discrete distributions
 #' 
-#' @param mcmc Vector of estimated mixture parameters
-#' @param data Vector of observations used for estimating the mixture
+#' Function to estimate modes in mixtures of discrete distributions following; see Cross et al. (2023).
+#' 
+#' @param mcmc Vector of estimated mixture parameters.
+#' @param data Vector of observations used for estimating the mixture.
 #' @param pars_names Names of the mixture parameters; first element should 
 #' correspond to the mixture proportions. 
-#' @param dist String indicating the distribution of the mixture components
+#' @param dist String indicating the distribution of the mixture components.
 #' Currently supports "poisson" and "shifted_poisson"; default is "NA"; only
 #' use this argument if you have used Poisson and shifted Poisson distributions
 #' identical to the one used in the package.
-#' @param pmf_func Pmf of the mixture components associated with the mcmc draws
-#' (if mcmc estimation has not been carried out with BayesMultiMode); default is null
-#' @param type Type of modes, either unique or all (the latter includes flat modes); default is "all"
-#' @param show_plot If true show the data and estimated modes; default is false
+#' @param pmf_func Pmf of the mixture components associated with the mcmc draws.
+#' (if mcmc estimation has not been carried out with \pkg{BayesMultiMode}); default is null.
+#' @param type Type of modes, either unique or all (the latter includes flat modes); default is "all".
+#' @param show_plot If true show the data and estimated modes; default is false.
 #' 
-#' @return Vector of estimated modes
+#' @return Vector of estimated modes.
+#' 
+#' @references
+#' \insertRef{cross_2023}{BayesMultiMode}
 #' 
 #' @details
 #' 

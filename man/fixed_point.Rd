@@ -14,25 +14,25 @@ fixed_point(
 )
 }
 \arguments{
-\item{mcmc}{Vector of estimated mixture parameters}
+\item{mcmc}{Vector of estimated mixture parameters.}
 
-\item{data}{Vector of observations used for estimating the mixture}
+\item{data}{Vector of observations used for estimating the mixture.}
 
 \item{pars_names}{Names of the mixture parameters; first element should 
 correspond to the mixture proportions; second to the mean; third to the 
 standard deviation.}
 
-\item{tol_x}{Tolerance parameter for convergence of the algorithm; default is 1e-8.}
+\item{tol_x}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
 
-\item{tol_conv}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than tol_x, only the first estimated mode is kept.}
+\item{tol_conv}{Tolerance parameter for convergence of the algorithm; default is 1e-8.}
 
-\item{show_plot}{If true show the data and estimated modes; default is false}
+\item{show_plot}{If true show the data and estimated modes; default is false.}
 }
 \value{
-Vector of estimated modes
+Vector of estimated modes.
 }
 \description{
-Algorithm for estimating modes in mixture of Normal distributions.
+Algorithm for estimating modes in mixture of Normal distributions from Carreira-Perpinan (2000).
 }
 \details{
 This algorithm returns the local maxima of the mixture
@@ -49,7 +49,7 @@ Following Carreira-perpinan (2000), the algorithm is started at each component l
 Separately, it is necessary to identify identical modes which diverge only up to
 a small value. By default modes which are closer
 than \eqn{sd(y)/10} are merged; this tolerance value can be controlled with the argument
-tol_x.
+\code{tol_x}.
 }
 \examples{
 mu = c(0,5)

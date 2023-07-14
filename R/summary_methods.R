@@ -1,6 +1,6 @@
-#' Summary of Bayesian mode estimates.
+#' Summary method for for \code{BayesMode} objects
 #' 
-#' @param object An object of class BayesMode.
+#' @param object An object of class \code{BayesMode}.
 #' @param ... Not used.
 #' 
 #' @export

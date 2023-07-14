@@ -1,52 +1,53 @@
 #' Bayesian mode inference
 #' 
-#' Estimates modes for each mcmc draws which are then used to compute posterior
-#' probabilities for the number of modes and their locations.
-#' The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures;
-#' the Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures;
-#' and a basic algorithm is used for discrete mixtures.
+#' This function estimates modes for each mcmc draw and uses these estimates to compute posterior
+#' probabilities for the number of modes and their locations (following the approach of Cross et al. 2023).
+#' The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures.
+#' The Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
+#' A basic algorithm is used for discrete mixtures (see Cross et al. 2023).
 #'
-#' @param BayesMix An object of class `BayesMixture`
-#' @param rd Rounding parameter
-#' @param tol_x Tolerance parameter for convergence of the algorithm; default is 1e-8.
-#' @param tol_conv Tolerance parameter for distance in-between modes; default is sd(data)/10 where data is an element of BayesMix.
-#' If two modes are closer than tol_x, only the first estimated mode is kept.
+#' @param BayesMix An object of class \code{BayesMixture}.
+#' @param rd Rounding parameter.
+#' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10 where data is an element of argument \code{BayesMix}.
+#' If two modes are closer than \code{tol_x}, only the first estimated mode is kept.
+#' @param tol_conv Tolerance parameter for convergence of the algorithm; default is 1e-8.
 #' Not needed for mixtures of discrete distributions.
 #' @param show_plot Show density with estimated mode as vertical bars ?
 #' @param nb_iter Number of draws on which the mode-finding algorithm is run; default is NULL which means the algorithm is run on all draws.
-#' @return A list of class `BayesMode` containing
+#' @return A list of class \code{BayesMode} containing
 #' \itemize{
-#'  \item{data}{ - from BayesMix argument}
-#'  \item{dist}{ - from BayesMix argument}
-#'  \item{dist_type}{ - from BayesMix argument}
-#'  \item{pars_names}{ - from BayesMix argument}
-#'  \item{modes}{ - Matrix with a row for each draw and columns showing modes}
-#'  \item{p1}{ - Posterior probability of unimodality}
-#'  \item{tb_nb_modes}{ - Matrix showing posterior probabilities for the number of modes}
-#'  \item{table_location}{ - Matrix showing the posterior probabilities for location points being modes}
+#'  \item{data}{ - from \code{BayesMix}.}
+#'  \item{dist}{ - from \code{BayesMix}.}
+#'  \item{dist_type}{ - from \code{BayesMix}.}
+#'  \item{pars_names}{ - from \code{BayesMix}.}
+#'  \item{modes}{ - Matrix with a row for each draw and columns showing modes.}
+#'  \item{p1}{ - Posterior probability of unimodality.}
+#'  \item{tb_nb_modes}{ - Matrix showing posterior probabilities for the number of modes.}
+#'  \item{table_location}{ - Matrix showing the posterior probabilities for location points being modes.}
 #' }
 #' 
 #' @details
-#' Each draw, \eqn{\theta^{(d)}}, from the MCMC output leads to a posterior predictive probability
+#' Each draw from the MCMC output after burnin, \eqn{\theta^{(d)}, \quad d = 1,...,D}, leads to a posterior predictive probability
 #' density/mass function: 
 #' \deqn{p(y | \theta^{(d)}) =\sum_{k=1}^{K} \pi_k^{(d)} p(y | \theta_k^{(d)}).}
-#' Using this posterior function, the modes \eqn{y_{m}^{(d)}}, \eqn{m = 1,..., M^{(d)}},
+#' Using this function, the mode in draw \eqn{d} \eqn{y_{m}^{(d)}}, \eqn{m = 1,..., M^{(d)}},
 #' where \eqn{M^{(d)}} is the number of modes, are estimated using the algorithm mentioned
 #' in the description above.
 #' 
 #' After running this procedure across all retained posterior draws, 
-#' posterior probabilities for the number of modes are given by the usual Bayes estimate:
+#' we compute the posterior probability for the number of modes being \eqn{M} as:
 #' \deqn{P(\#\text{modes}=M)=\frac{1}{D}\sum_{d=1}^{D}1(M^{(d)} = M).}
-#' Similarly, posterior probabilities for locations of the modes are given by 
-#' \deqn{P(y=\text{mode})=\frac{1}{M}\sum_{m=1}^{M^{(d)}} 1(y = y_m^{(d)}).}
-#' for each observation in the data range \eqn{[\min(y),\max(y)]}. Obviously,
+#' Similarly, posterior probabilities for locations of the modes are given by:
+#' \deqn{P(y=\text{mode})=\frac{1}{D}\sum_{d=1}^{D} \sum_{m=1}^{M^{(d)}} 1(y = y_m^{(d)}),}
+#' for each location \eqn{y} in the range \eqn{[\min(y),\max(y)]}. Obviously,
 #' continuous data are not defined on a discrete support;
-#' it is therefore necessary to choose a rounding decimal to discretise their support.
+#' it is therefore necessary to choose a rounding decimal to discretize their support (with the \code{rd} argument).
 #' 
 #' @references
+#' \insertRef{cross_2023}{BayesMultiMode}
 #' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
 #' \insertRef{li_nonparametric_2007}{BayesMultiMode}
-#' 
+#
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.scalar
 #' 

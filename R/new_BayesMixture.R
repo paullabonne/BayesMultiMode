@@ -1,29 +1,29 @@
-#' Creating a S3 object of class `BayesMixture`
+#' Creating a S3 object of class \code{BayesMixture}
 #' 
-#' Function for creating an object of class `bayes_estimation()` which can subsequently be used as argument in `bayes_mode()`.
+#' Function for creating an object of class \code{BayesMixture} which can subsequently be used as argument in [bayes_mode()].
 #' This function is useful for users who want to use the mode inference functions of the package with MCMC output generated using 
 #' other software packages.
 #' 
-#' @param mcmc A matrix of MCMC draws
-#' @param data A vector containing the data used for estimating the model and generating the MCMC draws
-#' @param K Number of mixture components
-#' @param burnin Number of draws to discard as burnin
+#' @param mcmc A matrix of MCMC draws.
+#' @param data A vector containing the data used for estimating the model and generating the MCMC draws.
+#' @param K Number of mixture components.
+#' @param burnin Number of draws to discard as burnin.
 #' @param dist Distribution family of the mixture components supported by
-#' the package (e.g. "normal", "student", "skew_normal" or "shifted_poisson")
+#' the package (e.g. "normal", "student", "skew_normal" or "shifted_poisson").
 #' @param pars_names Names of the mixture parameters; first element should 
 #' correspond to the mixture proportions.
 #' @param pdf_func Pdf or pmf of the mixture components;
 #' this input is used only if dist_name is invalid or NULL.
-#' @param dist_type Either "continuous" or "discrete"
+#' @param dist_type Either "continuous" or "discrete".
 #' 
 #' @returns
-#' A list of class `BayesMixture` containing :
+#' A list of class \code{BayesMixture} containing:
 #' \itemize{
-#'  \item{data}{ - Same as argument}
-#'  \item{dist_type}{ - Same as argument}
-#'  \item{pars_names}{ - Same as argument}
-#'  \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded}
-#'  \item{mcmc_all}{ - Original matrix of MCMC draws}
+#'  \item{data}{ - Same as argument.}
+#'  \item{dist_type}{ - Same as argument.}
+#'  \item{pars_names}{ - Same as argument.}
+#'  \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded.}
+#'  \item{mcmc_all}{ - Original matrix of MCMC draws.}
 #' }
 #' 
 #' @importFrom posterior as_draws_matrix

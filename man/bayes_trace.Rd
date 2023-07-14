@@ -7,19 +7,19 @@
 bayes_trace(BayesMix, mcmc_vars = NULL, with_burnin = FALSE, ...)
 }
 \arguments{
-\item{BayesMix}{An object of class BayesMixture}
+\item{BayesMix}{An object of class \code{BayesMixture}.}
 
-\item{mcmc_vars}{Variables to plot; default is all the variable in the MCMC output}
+\item{mcmc_vars}{Variables to plot; default is all the variable in the MCMC output.}
 
 \item{with_burnin}{Plot all draws ?}
 
-\item{...}{Additional arguments passed to function `mcmc_trace()` from the package bayesplot.}
+\item{...}{Additional arguments passed to function [bayesplot::mcmc_trace()].}
 }
 \value{
 A trace plot.
 }
 \description{
-This is wrapper around the `mcmc_trace()` function from package bayesplot.
+This is wrapper around the [bayesplot::mcmc_trace()] function from package \pkg{bayesplot}.
 }
 \examples{
 # Example with galaxy data ================================================

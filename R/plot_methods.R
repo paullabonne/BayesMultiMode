@@ -1,6 +1,8 @@
-#' Plot an estimated mixture for a given number of draws with an histogram of the data.
+#' Plot method for \code{BayesMixture} objects
 #' 
-#' @param x An object of class BayesMixture.
+#' Plot an estimated mixture for a given number of draws with a frequency distribution of the data.
+#' 
+#' @param x An object of class \code{BayesMixture}.
 #' @param max_size The number of MCMC draws to plot.
 #' @param transparency transparency of the density lines. Default is 0.1. Should be greater than 0 and below or equal to 1.
 #' @param ... Not used.
@@ -130,8 +132,9 @@ plot.BayesMixture <- function(x, max_size = 250,
 }
 
 
-#' Plot Bayesian mode estimates.
-#' @param x An object of class BayesMode.
+#' Plot method for \code{BayesMode} objects
+#' 
+#' @param x An object of class \code{BayesMode}.
 #' @param graphs which plot to show ? Default is all three c("p1", "number", "loc").
 #' @param ... Not used.
 #' 

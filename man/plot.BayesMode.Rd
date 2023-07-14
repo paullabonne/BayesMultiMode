@@ -2,17 +2,17 @@
 % Please edit documentation in R/plot_methods.R
 \name{plot.BayesMode}
 \alias{plot.BayesMode}
-\title{Plot Bayesian mode estimates.}
+\title{Plot method for \code{BayesMode} objects}
 \usage{
 \method{plot}{BayesMode}(x, graphs = c("p1", "number", "loc"), ...)
 }
 \arguments{
-\item{x}{An object of class BayesMode.}
+\item{x}{An object of class \code{BayesMode}.}
 
 \item{graphs}{which plot to show ? Default is all three c("p1", "number", "loc").}
 
 \item{...}{Not used.}
 }
 \description{
-Plot Bayesian mode estimates.
+Plot method for \code{BayesMode} objects
 }
