@@ -1,7 +1,8 @@
-## Version 0.5.2
+## Version 0.6.0
 * Added examples to new_BayesMixture() and bayes_mode()
 * Fixed typo on the tolerance arguments
-* Added details to a mode and mixture estimation functions
+* Added details to mode and mixture estimation functions
+* Improved the documentation
 
 ## Version 0.5.1
 * Improved robustness of the gibbs sampler when initial classification is bad
