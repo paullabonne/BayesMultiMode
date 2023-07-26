@@ -17,7 +17,8 @@ modes of the estimated mixture in each MCMC draw are retrieved using
 algorithms specifically tailored for mode detection. These estimates are
 then used to construct posterior probabilities for the number of modes,
 their locations and uncertainties, providing a powerful tool for mode
-inference.
+inference. See Basturk et al. (2023) and Cross et al. (2023) for more
+details.
 
 ### Installing BayesMultiMode from CRAN
 
@@ -131,18 +132,18 @@ PY_result = PYdensity(y,
                       output = list(out_param = TRUE))
 ```
 
-    ## Completed:   200/2000 - in 0.056981 sec
-    ## Completed:   400/2000 - in 0.121544 sec
-    ## Completed:   600/2000 - in 0.189576 sec
-    ## Completed:   800/2000 - in 0.266234 sec
-    ## Completed:   1000/2000 - in 0.3344 sec
-    ## Completed:   1200/2000 - in 0.419017 sec
-    ## Completed:   1400/2000 - in 0.508803 sec
-    ## Completed:   1600/2000 - in 0.591452 sec
-    ## Completed:   1800/2000 - in 0.659035 sec
-    ## Completed:   2000/2000 - in 0.722886 sec
+    ## Completed:   200/2000 - in 0.044977 sec
+    ## Completed:   400/2000 - in 0.095208 sec
+    ## Completed:   600/2000 - in 0.156805 sec
+    ## Completed:   800/2000 - in 0.210785 sec
+    ## Completed:   1000/2000 - in 0.262655 sec
+    ## Completed:   1200/2000 - in 0.316738 sec
+    ## Completed:   1400/2000 - in 0.372312 sec
+    ## Completed:   1600/2000 - in 0.427642 sec
+    ## Completed:   1800/2000 - in 0.485542 sec
+    ## Completed:   2000/2000 - in 0.542392 sec
     ## 
-    ## Estimation done in 0.723067 seconds
+    ## Estimation done in 0.542409 seconds
 
 #### Transforming the output into a mcmc matrix with one column per variable
 
@@ -224,6 +225,24 @@ summary(bayesmode)
 ### References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-basturk_2023" class="csl-entry">
+
+Basturk, Nalan, Jamie L. Cross, Peter de Knijff, Lennart Hoogerheide,
+Paul Labonne, and Herman K. van Dijk. 2023. “BayesMultiMode: Bayesian
+Mode Inference in r.” *Tinbergen Institute Discussion Paper TI
+2023-041/III*.
+
+</div>
+
+<div id="ref-cross_2023" class="csl-entry">
+
+Cross, Jamie L., Lennart Hoogerheide, Paul Labonne, and Herman K. van
+Dijk. 2023. “Credible Mode Determination in Multimodal Economic and
+Financial Data Distributions.” *Tinbergen Institute Discussion Paper TI
+2023-038/III*.
+
+</div>
 
 <div id="ref-knapp_international_2018" class="csl-entry">
 
