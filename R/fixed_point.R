@@ -55,13 +55,13 @@ fixed_point <- function(mcmc, data, pars_names, tol_x = sd(data)/10, tol_conv = 
   
   ## input checks
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
-              msg = "mcmc should be a vector of length >= 3; ")
+              msg = "mcmc should be a vector of length >= 3")
   assert_that(is.vector(data) & length(data) > 0,
-              msg = "data should be a vector of length > 0; ")
-  assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
+              msg = "data should be a vector of length > 0")
+  assert_that(length(tol_x)==1 & tol_x > 0, msg = "tol_x should be a positive scalar")
   assert_that(is.logical(show_plot), msg = "show_plot should be TRUE or FALSE")
-  assert_that(is.vector(pars_names) & is.character(pars_names),
-              msg = "pars_names should be a character vector")
+  assert_that(is.vector(pars_names) & is.character(pars_names) & length(pars_names)==3,
+              msg = "pars_names should be a character vector of length 3")
   
   names_mcmc = str_to_lower(names(mcmc))
   names_mcmc = str_extract(names_mcmc, "[a-z]+")
@@ -71,18 +71,18 @@ fixed_point <- function(mcmc, data, pars_names, tol_x = sd(data)/10, tol_conv = 
               msg = "missing parameter in mcmc; variables should be theta, mu and sigma")
   ##
   
-  modes = rep(NA,length(mcmc)/3)
+  modes = rep(NA_real_,length(mcmc)/3)
   mcmc = mcmc[!is.na(mcmc)]
   p = mcmc[grep(pars_names[1], names(mcmc))]
   mu = mcmc[grep(pars_names[2], names(mcmc))]
   sigma = mcmc[grep(pars_names[3], names(mcmc))]
 
-  assert_that(length(p) == length(mu) & length(sigma) == length(mu),
+  assert_that(length(p) == length(mu) & length(mu) == length(sigma),
               msg = "p, mu and sigma should have the same lengths")
   
   iter = 0
-  
-  
+  max_data = max(data)
+  min_data = min(data)
   
   for (i in 1:length(mu)) {
     
@@ -107,7 +107,7 @@ fixed_point <- function(mcmc, data, pars_names, tol_x = sd(data)/10, tol_conv = 
       }
     }
     
-    if (x <= max(data) & x >= min(data) & not_duplicate){
+    if (x <= max_data & x >= min_data & not_duplicate){
       modes[i] = x 
     }
   }
