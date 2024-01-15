@@ -145,7 +145,7 @@ discrete_MF <- function(mcmc, data, pars_names, dist = "NA",
   loc_modes = x[which(py %in% pdf_modes)]
   
   if (length(loc_modes) != length(x_decrease)) {
-    cat("Warning : Some of these modes are flat.")
+    warning("Some of these modes are flat.")
   }
   
   if (show_plot) {
