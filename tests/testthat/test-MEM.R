@@ -9,7 +9,7 @@ test_that("MEM function returns expected results with dist = skew_normal", {
   dist = "skew_normal"
   
   modes = MEM(params, pars_names = pars_names, dist = dist)
-  expect_equal(abs(sum(modes-xi))<1,  TRUE)
+  expect_equal(abs(sum(modes$mode_estimates-xi))<1,  TRUE)
   # the two densities are far appart so the modes should coincide with the location parameters
 })
 
@@ -30,6 +30,6 @@ test_that("MEM function returns expected results with an arbitrary function", {
   }
   
   modes = MEM(params, pars_names = pars_names, pdf_func = pdf_func)
-  expect_equal(abs(sum(modes-xi))<1,  TRUE)
+  expect_equal(abs(sum(modes$mode_estimates-xi))<1,  TRUE)
   # the two densities are far appart so the modes should coincide with the location parameters
 })

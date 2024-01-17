@@ -87,11 +87,15 @@ fixed_point <- function(mcmc, pars_names, tol_x = 1e-6, tol_conv = 1e-8) {
       delta = abs(x - x1)
       x = x1
     }
-    
+
     ## check that the mode is not too close to other modes
-    diff = abs(x-modes)
-    diff = diff[!is.na(diff)]
-    if (!any(diff<tol_x)) {
+    if(any(!is.na(modes))){
+      diff = abs(x-modes)
+      diff = diff[!is.na(diff)]
+      if (!any(diff<tol_x)) {
+        modes[i] = x 
+      } 
+    } else {
       modes[i] = x 
     }
   }

@@ -162,14 +162,14 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
   if (dist_type == "continuous") {
     if (dist == "normal") {
       # fixed point
-      modes = t(apply(mcmc, 1, fixed_point, pars_names = pars_names,
+      modes = t(apply(mcmc, 1, fixed_point_estimates, pars_names = pars_names,
                       tol_x = tol_x, tol_conv = tol_conv))
     } else {
       # MEM algorithm
-      modes = t(apply(mcmc, 1, MEM, dist = dist, pars_names = pars_names, 
+      modes = t(apply(mcmc, 1, MEM_estimates, dist = dist, pars_names = pars_names, 
                       pdf_func = pdf_func, tol_x = tol_x, tol_conv = tol_conv))
     }
-    
+
     ### Posterior probability of being a mode for each location
     m_range = seq(from = min(round(data,rd)), to = max(round(data,rd)), by = 1/(10^rd)) # range of potential values for the modes
     modes_disc = round(modes, rd)
@@ -273,5 +273,5 @@ fixed_point_estimates <- function(mcmc, pars_names, tol_x = 1e-6, tol_conv = 1e-
 
 #' @keywords internal
 MEM_estimates <- function(mcmc, pars_names, dist = "NA", pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
-  MEM_estimation(mcmc, pars_names, dist, pdf_func, tol_x, tol_conv)$mode_estimates
+  MEM(mcmc, pars_names, dist, pdf_func, tol_x, tol_conv)$mode_estimates
 }

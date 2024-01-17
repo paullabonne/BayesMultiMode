@@ -26,4 +26,5 @@ devtools::submit_cran()
 #### Loading all functions for testing before installing
 ```{r, eval = FALSE}
 devtools::load_all()
+devtools::test()
 ```

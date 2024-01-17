@@ -9,5 +9,5 @@ test_that("fixed_point function returns expected results", {
   pars_names = c("eta", "mu", "sigma")
   
   modes = fixed_point(params, pars_names)
-  expect_equal(round(modes),  mu)
+  expect_equal(round(modes$mode_estimates),  mu)
 })
