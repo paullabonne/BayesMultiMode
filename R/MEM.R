@@ -3,7 +3,6 @@
 #' Algorithm from Li and Lindsay (2007) to find modes in mixture of continuous distributions.
 #' 
 #' @param mcmc Vector of estimated mixture parameters.
-#' @param data Vector of observations used for estimating the mixture.
 #' @param pars_names Names of the mixture parameters; the first element of 
 #' this vector should be the name of the mixture proportions. If you have used 
 #' the skew normal of Azzalini, then the second element should correspond to the location,
@@ -12,9 +11,8 @@
 #' Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided.
 #' @param pdf_func Pdf of the mixture components associated with the mcmc draws
 #' (if mcmc estimation has not been carried out with BayesMultiMode); default is null.
-#' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.
+#' @param tol_x Tolerance parameter for distance in-between modes; default is 1e-6; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.
 #' @param tol_conv Tolerance parameter for convergence of the algorithm; default is 1e-8.
-#' @param show_plot If true show the data and estimated modes; default is false
 #' 
 #' @return Vector of estimated modes.
 #' 
@@ -58,10 +56,8 @@
 #' pars_names = c("eta", "xi", "omega", "alpha")
 #' dist = "skew_normal"
 #' 
-#' data = c(sn::rsn(p[1]*100, xi[1], omega[1], alpha[1]),
-#'          sn::rsn(p[2]*100, xi[2], omega[2], alpha[2]))
 #' 
-#' modes = MEM(params, data = data, pars_names = pars_names, dist = dist)
+#' modes = MEM(params, pars_names = pars_names, dist = dist)
 #' 
 #' # Example with an arbitrary distribution ===================================
 #' xi = c(0,6)
@@ -76,22 +72,18 @@
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
 #' 
-#' data = c(sn::rst(p[1]*100, xi[1], omega[1], alpha = alpha[1], nu = nu[1]),
-#'          sn::rst(p[2]*100, xi[2], omega[2], alpha = alpha[2], nu = nu[2]))
 #' 
-#' modes = MEM(params, pars_names = pars_names, data = data, pdf_func = pdf_func)
+#' modes = MEM(params, pars_names = pars_names, pdf_func = pdf_func)
 #' 
 #' @export
 
-MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd(data)/10, tol_conv = 1e-8, show_plot = FALSE) {
+MEM <- function(mcmc, pars_names, dist = "NA", pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
   ## input checks
   fail = "inputs to the Mode-finding EM algorithm are corrupted"
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
               msg = "mcmc should be a vector of length >= 3")
   assert_that(is.string(dist),
               msg = "dist should be a string")
-  assert_that(is.vector(data) & length(data) > 0,
-              msg = "data should be a vector of length > 0")
   assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
   assert_that(is.logical(show_plot), msg = "show_plot should be TRUE or FALSE")
   assert_that(is.vector(pars_names) & is.character(pars_names),
@@ -156,29 +148,30 @@ MEM <- function(mcmc, data, pars_names, dist = "NA", pdf_func = NULL, tol_x = sd
     }
  
     ## check that the mode is not too close to other modes
-    not_duplicate = TRUE
-    
-    if (any(is.finite(est_mode))) {
-      diff = abs(x-est_mode)
-      diff = diff[!is.na(diff)]
-      if (any(diff<tol_x)) {
-        not_duplicate = FALSE
-      }
-    }
-    
-    if (x <= max(data) & x >= min(data) & not_duplicate){
-      est_mode[j] = x
+    ## check that the mode is not too close to other modes
+    diff = abs(x-est_mode)
+    diff = diff[!is.na(diff)]
+    if (!any(diff<tol_x)) {
+      est_mode[i] = x 
     }
   }
   
-  if (show_plot) {
-    curve(dist_mixture(x, dist, pars, pdf_func), from = min(data), to =  max(data))
-    for (x in est_mode) {
-      abline(v = x) 
-    } 
-  }
+  # if (show_plot) {
+  #   curve(dist_mixture(x, dist, pars, pdf_func), from = min(data), to =  max(data))
+  #   for (x in est_mode) {
+  #     abline(v = x) 
+  #   } 
+  # }
   
-  return(est_mode)
+  mode = list()
+  mode$mode_estimates = est_mode
+  mode$dist = dist
+  mode$parameters = mcmc
+  mode$dist = pdf_func
+  
+  class(mode) = "Mode"
+  
+  return(mode)
 }
 
 #' @keywords internal
