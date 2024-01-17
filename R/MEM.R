@@ -85,7 +85,6 @@ MEM <- function(mcmc, pars_names, dist = "NA", pdf_func = NULL, tol_x = 1e-6, to
   assert_that(is.string(dist),
               msg = "dist should be a string")
   assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
-  assert_that(is.logical(show_plot), msg = "show_plot should be TRUE or FALSE")
   assert_that(is.vector(pars_names) & is.character(pars_names),
               msg = "pars_names should be a character vector")
   ##

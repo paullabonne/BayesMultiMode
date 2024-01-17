@@ -54,7 +54,6 @@ fixed_point <- function(mcmc, pars_names, tol_x = 1e-6, tol_conv = 1e-8) {
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
               msg = "mcmc should be a vector of length >= 3")
   assert_that(length(tol_x)==1 & tol_x > 0, msg = "tol_x should be a positive scalar")
-  assert_that(is.logical(show_plot), msg = "show_plot should be TRUE or FALSE")
   assert_that(is.vector(pars_names) & is.character(pars_names) & length(pars_names)==3,
               msg = "pars_names should be a character vector of length 3")
   
