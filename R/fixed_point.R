@@ -3,13 +3,11 @@
 #' Algorithm for estimating modes in mixture of Normal distributions from Carreira-Perpinan (2000).
 #' 
 #' @param mcmc Vector of estimated mixture parameters.
-#' @param data Vector of observations used for estimating the mixture.
 #' @param pars_names Names of the mixture parameters; first element should 
 #' correspond to the mixture proportions; second to the mean; third to the 
 #' standard deviation.
-#' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.
+#' @param tol_x Tolerance parameter for distance in-between modes; default is 1e-6; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.
 #' @param tol_conv Tolerance parameter for convergence of the algorithm; default is 1e-8.
-#' @param show_plot If true show the data and estimated modes; default is false.
 #' 
 #' @return Vector of estimated modes.
 #' 
@@ -51,13 +49,11 @@
 #' 
 #' @export
 
-fixed_point <- function(mcmc, data, pars_names, tol_x = sd(data)/10, tol_conv = 1e-8, show_plot = F) {
+fixed_point <- function(mcmc, pars_names, tol_x = 1e-6, tol_conv = 1e-8) {
   
   ## input checks
   assert_that(is.vector(mcmc) & length(mcmc) >= 3,
               msg = "mcmc should be a vector of length >= 3")
-  assert_that(is.vector(data) & length(data) > 0,
-              msg = "data should be a vector of length > 0")
   assert_that(length(tol_x)==1 & tol_x > 0, msg = "tol_x should be a positive scalar")
   assert_that(is.logical(show_plot), msg = "show_plot should be TRUE or FALSE")
   assert_that(is.vector(pars_names) & is.character(pars_names) & length(pars_names)==3,
@@ -76,13 +72,11 @@ fixed_point <- function(mcmc, data, pars_names, tol_x = sd(data)/10, tol_conv = 
   p = mcmc[grep(pars_names[1], names(mcmc))]
   mu = mcmc[grep(pars_names[2], names(mcmc))]
   sigma = mcmc[grep(pars_names[3], names(mcmc))]
-
+  
   assert_that(length(p) == length(mu) & length(mu) == length(sigma),
               msg = "p, mu and sigma should have the same lengths")
   
   iter = 0
-  max_data = max(data)
-  min_data = min(data)
   
   for (i in 1:length(mu)) {
     
@@ -97,29 +91,27 @@ fixed_point <- function(mcmc, data, pars_names, tol_x = sd(data)/10, tol_conv = 
     }
     
     ## check that the mode is not too close to other modes
-    not_duplicate = TRUE
-    
-    if (any(is.finite(modes))) {
-      diff = abs(x-modes)
-      diff = diff[!is.na(diff)]
-      if (any(diff<tol_x)) {
-        not_duplicate = FALSE
-      }
-    }
-    
-    if (x <= max_data & x >= min_data & not_duplicate){
+    diff = abs(x-modes)
+    diff = diff[!is.na(diff)]
+    if (!any(diff<tol_x)) {
       modes[i] = x 
     }
   }
   
-  if (show_plot) {
-    curve(normal_mix(x, p, mu, sigma), from = min(data), to =  max(data), xlab = "", ylab = "")
-    for (x in modes) {
-      abline(v = x) 
-    } 
-  }
+  # if (show_plot) {
+  #   curve(normal_mix(x, p, mu, sigma), from = min(data), to =  max(data), xlab = "", ylab = "")
+  #   for (x in modes) {
+  #     abline(v = x) 
+  #   } 
+  # }
   
-  return(modes)
+  mode = list()
+  mode$mode_estimates = modes
+  mode$dist = "Gaussian"
+  mode$parameters = mcmc
+  
+  class(mode) = "Mode"
+  return(mode)
 }
 
 #' @keywords internal
@@ -131,7 +123,7 @@ f_fp <- function(x, p, mu, sigma) {
     # x yields a density of zero
     pmx = 1/length(pmx)
   }
-
+  
   f = 1/sum(pmx/sigma^2) * sum(pmx/sigma^2*mu)
   
   return(f)
