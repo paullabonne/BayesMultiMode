@@ -12,7 +12,6 @@
 #' If two modes are closer than \code{tol_x}, only the first estimated mode is kept.
 #' @param tol_conv Tolerance parameter for convergence of the algorithm; default is 1e-8.
 #' Not needed for mixtures of discrete distributions.
-#' @param show_plot Show density with estimated mode as vertical bars ?
 #' @param nb_iter Number of draws on which the mode-finding algorithm is run; default is NULL which means the algorithm is run on all draws.
 #' @return A list of class \code{BayesMode} containing
 #' \itemize{
@@ -128,12 +127,11 @@
 #'
 #' @export
 
-bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8, show_plot = FALSE, nb_iter = NULL) {
+bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8, nb_iter = NULL) {
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   assert_that(is.scalar(rd) & rd >= 0, msg = "rd should be greater or equal than zero")
   assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
-  assert_that(is.logical(show_plot), msg = "show_plot should be either TRUE or FALSE")
-  
+
   if (!is.null(nb_iter)) {
     assert_that(is.scalar(nb_iter) & nb_iter > 0, msg = "nb_iter should be a positive integer") 
   }
@@ -164,12 +162,12 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
   if (dist_type == "continuous") {
     if (dist == "normal") {
       # fixed point
-      modes = t(apply(mcmc, 1, fixed_point, data = data, pars_names = pars_names,
-                      tol_x = tol_x, tol_conv = tol_conv, show_plot = show_plot))
+      modes = t(apply(mcmc, 1, fixed_point, pars_names = pars_names,
+                      tol_x = tol_x, tol_conv = tol_conv))
     } else {
       # MEM algorithm
-      modes = t(apply(mcmc, 1, MEM, dist = dist, data = data, pars_names = pars_names, 
-                      pdf_func = pdf_func, tol_x = tol_x, tol_conv = tol_conv, show_plot = show_plot))
+      modes = t(apply(mcmc, 1, MEM, dist = dist, pars_names = pars_names, 
+                      pdf_func = pdf_func, tol_x = tol_x, tol_conv = tol_conv))
     }
     
     ### Posterior probability of being a mode for each location
@@ -196,7 +194,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
     # Posterior probability of being a mode for each location
     modes <- t(apply(mcmc,1,FUN = discrete_MF, data = data,
                      pars_names = pars_names, dist = dist,
-                     pmf_func = pdf_func, show_plot = show_plot))
+                     pmf_func = pdf_func, show_plot = F))
     
     modes_xid = matrix(0, nrow(modes), ncol(modes))
     x = min(data):max(data)
@@ -221,7 +219,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
     # unique modes to calculate post probs of number of modes
     modes <-  t(apply(mcmc,1,FUN = discrete_MF, data = data, type = "unique",
                       pars_names = pars_names, dist = dist,
-                      pmf_func = pdf_func, show_plot = show_plot))
+                      pmf_func = pdf_func, show_plot = F))
     
     n_modes = apply(!is.na(modes),1,sum)
   }
@@ -266,4 +264,14 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
     output <- (abs(b-x) <= eps) | output
   }
   output
+}
+
+#' @keywords internal
+fixed_point_estimates <- function(mcmc, pars_names, tol_x = 1e-6, tol_conv = 1e-8) {
+  fixed_point(mcmc, pars_names, tol_x, tol_conv)$mode_estimates
+}
+
+#' @keywords internal
+MEM_estimates <- function(mcmc, pars_names, dist = "NA", pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
+  MEM_estimation(mcmc, pars_names, dist, pdf_func, tol_x, tol_conv)$mode_estimates
 }
