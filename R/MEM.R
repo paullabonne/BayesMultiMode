@@ -2,15 +2,7 @@
 #' 
 #' Algorithm from Li and Lindsay (2007) to find modes in mixture of continuous distributions.
 #' 
-#' @param mcmc Vector of estimated mixture parameters.
-#' @param pars_names Names of the mixture parameters; the first element of 
-#' this vector should be the name of the mixture proportions. If you have used 
-#' the skew normal of Azzalini, then the second element should correspond to the location,
-#' the third to the scale and the fourth to the shape.
-#' @param dist String indicating the distribution of the mixture components; default is "NA".
-#' Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided.
-#' @param pdf_func Pdf of the mixture components associated with the mcmc draws
-#' (if mcmc estimation has not been carried out with BayesMultiMode); default is null.
+#' @param mixture An object of class Mixture.
 #' @param tol_x Tolerance parameter for distance in-between modes; default is 1e-6; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.
 #' @param tol_conv Tolerance parameter for convergence of the algorithm; default is 1e-8.
 #' 
@@ -56,7 +48,7 @@
 #' pars_names = c("eta", "xi", "omega", "alpha")
 #' dist = "skew_normal"
 #' 
-#' 
+#' mix = new_Mixture(params, pars_names = pars_names, dist = dist)
 #' modes = MEM(params, pars_names = pars_names, dist = dist)
 #' 
 #' # Example with an arbitrary distribution ===================================
@@ -72,16 +64,22 @@
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
 #' 
-#' 
-#' modes = MEM(params, pars_names = pars_names, pdf_func = pdf_func)
+#' mix = new_Mixture(params, pars_names = pars_names, pdf_func = pdf_func)
+#' modes = MEM(mix)
 #' 
 #' @export
 
-MEM <- function(mcmc, pars_names, dist = "NA", pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
+MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
+  assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
+  pars_mix = mixture$pars
+  pars_names = mixture$pars_names
+  dist = mixture$dist
+  pdf_func = mixture$pdf_func
+  
   ## input checks
   fail = "inputs to the Mode-finding EM algorithm are corrupted"
-  assert_that(is.vector(mcmc) & length(mcmc) >= 3,
-              msg = "mcmc should be a vector of length >= 3")
+  assert_that(is.vector(pars_mix) & length(pars_mix) >= 3,
+              msg = "pars_mix should be a vector of length >= 3")
   assert_that(is.string(dist),
               msg = "dist should be a string")
   assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
@@ -90,12 +88,12 @@ MEM <- function(mcmc, pars_names, dist = "NA", pdf_func = NULL, tol_x = 1e-6, to
   ##
   
   ##
-  names_mcmc = str_to_lower(names(mcmc))
-  names_mcmc = str_extract(names_mcmc, "[a-z]+")
-  names_mcmc = unique(names_mcmc)
+  names_pars_mix = str_to_lower(names(pars_mix))
+  names_pars_mix = str_extract(names_pars_mix, "[a-z]+")
+  names_pars_mix = unique(names_pars_mix)
   
-  assert_that(sum(pars_names %in% names_mcmc)==length(pars_names),
-              msg = "the name of the parameters provided by pars_names and those of the mcmc vector do not match")
+  assert_that(sum(pars_names %in% names_pars_mix)==length(pars_names),
+              msg = "the name of the parameters provided by pars_names and those of the pars vector do not match")
   
   if (dist %in% c("skew_normal")) {
     assert_that(length(pars_names) == 4,
@@ -105,7 +103,7 @@ MEM <- function(mcmc, pars_names, dist = "NA", pdf_func = NULL, tol_x = 1e-6, to
   
   pars = c()
   for (i in 1:length(pars_names)) {
-    pars = cbind(pars, mcmc[grep(pars_names[i], names(mcmc))])
+    pars = cbind(pars, pars_mix[grep(pars_names[i], names(pars_mix))])
   }
   
   colnames(pars) <- pars_names
@@ -169,7 +167,7 @@ MEM <- function(mcmc, pars_names, dist = "NA", pdf_func = NULL, tol_x = 1e-6, to
   mode = list()
   mode$mode_estimates = est_mode
   mode$dist = dist
-  mode$parameters = mcmc
+  mode$parameters = pars_mix
   mode$dist = pdf_func
   
   class(mode) = "Mode"

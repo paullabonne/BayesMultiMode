@@ -8,7 +8,8 @@ test_that("MEM function returns expected results with dist = skew_normal", {
   pars_names = c("eta", "xi", "omega", "alpha")
   dist = "skew_normal"
   
-  modes = MEM(params, pars_names = pars_names, dist = dist)
+  mix = new_Mixture(params, pars_names = pars_names, dist = dist)
+  modes = MEM(mix)
   expect_equal(abs(sum(modes$mode_estimates-xi))<1,  TRUE)
   # the two densities are far appart so the modes should coincide with the location parameters
 })
@@ -29,7 +30,8 @@ test_that("MEM function returns expected results with an arbitrary function", {
     sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
   }
   
-  modes = MEM(params, pars_names = pars_names, pdf_func = pdf_func)
+  mix = new_Mixture(params, pars_names = pars_names, pdf_func = pdf_func)
+  modes = MEM(mix)
   expect_equal(abs(sum(modes$mode_estimates-xi))<1,  TRUE)
   # the two densities are far appart so the modes should coincide with the location parameters
 })

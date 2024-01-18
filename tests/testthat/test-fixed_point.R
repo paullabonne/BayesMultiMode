@@ -8,6 +8,7 @@ test_that("fixed_point function returns expected results", {
   params = c(eta = p, mu = mu, sigma = sigma)
   pars_names = c("eta", "mu", "sigma")
   
-  modes = fixed_point(params, pars_names)
+  mix = new_Mixture(params, pars_names = pars_names)
+  modes = fixed_point(mix)
   expect_equal(round(modes$mode_estimates),  mu)
 })

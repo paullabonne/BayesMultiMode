@@ -2,10 +2,7 @@
 #' 
 #' Algorithm for estimating modes in mixture of Normal distributions from Carreira-Perpinan (2000).
 #' 
-#' @param mcmc Vector of estimated mixture parameters.
-#' @param pars_names Names of the mixture parameters; first element should 
-#' correspond to the mixture proportions; second to the mean; third to the 
-#' standard deviation.
+#' @param mixture An object of class Mixture.
 #' @param tol_x Tolerance parameter for distance in-between modes; default is 1e-6; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.
 #' @param tol_conv Tolerance parameter for convergence of the algorithm; default is 1e-8.
 #' 
@@ -44,32 +41,36 @@
 #'
 #' params = c(eta = p, mu = mu, sigma = sigma)
 #' pars_names = c("eta", "mu", "sigma")
-#' modes = fixed_point(params, pars_names)
+#' mix = new_Mixture(params, pars_names = pars_names)
+#' modes = fixed_point(mix)
 #' 
 #' @export
 
-fixed_point <- function(mcmc, pars_names, tol_x = 1e-6, tol_conv = 1e-8) {
-  
+fixed_point <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
+  assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
+  pars = mixture$pars
+  pars_names = mixture$pars_names
+
   ## input checks
-  assert_that(is.vector(mcmc) & length(mcmc) >= 3,
-              msg = "mcmc should be a vector of length >= 3")
+  assert_that(is.vector(pars) & length(pars) >= 3,
+              msg = "pars should be a vector of length >= 3")
   assert_that(length(tol_x)==1 & tol_x > 0, msg = "tol_x should be a positive scalar")
   assert_that(is.vector(pars_names) & is.character(pars_names) & length(pars_names)==3,
               msg = "pars_names should be a character vector of length 3")
   
-  names_mcmc = str_to_lower(names(mcmc))
-  names_mcmc = str_extract(names_mcmc, "[a-z]+")
-  names_mcmc = unique(names_mcmc)
+  names_pars = str_to_lower(names(pars))
+  names_pars = str_extract(names_pars, "[a-z]+")
+  names_pars = unique(names_pars)
   
-  assert_that(sum(c("eta", "mu", "sigma") %in% names_mcmc)==3,
-              msg = "missing parameter in mcmc; variables should be theta, mu and sigma")
+  assert_that(sum(c("eta", "mu", "sigma") %in% names_pars)==3,
+              msg = "missing parameter in pars; variables should be theta, mu and sigma")
   ##
   
-  modes = rep(NA_real_,length(mcmc)/3)
-  mcmc = mcmc[!is.na(mcmc)]
-  p = mcmc[grep(pars_names[1], names(mcmc))]
-  mu = mcmc[grep(pars_names[2], names(mcmc))]
-  sigma = mcmc[grep(pars_names[3], names(mcmc))]
+  modes = rep(NA_real_,length(pars)/3)
+  pars = pars[!is.na(pars)]
+  p = pars[grep(pars_names[1], names(pars))]
+  mu = pars[grep(pars_names[2], names(pars))]
+  sigma = pars[grep(pars_names[3], names(pars))]
   
   assert_that(length(p) == length(mu) & length(mu) == length(sigma),
               msg = "p, mu and sigma should have the same lengths")
@@ -110,7 +111,7 @@ fixed_point <- function(mcmc, pars_names, tol_x = 1e-6, tol_conv = 1e-8) {
   mode = list()
   mode$mode_estimates = modes
   mode$dist = "Gaussian"
-  mode$parameters = mcmc
+  mode$parameters = pars
   
   class(mode) = "Mode"
   return(mode)
