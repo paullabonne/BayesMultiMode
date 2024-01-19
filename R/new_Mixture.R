@@ -7,6 +7,7 @@
 #' Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided.
 #' @param pdf_func Pdf of the mixture components; default is null.
 #' @param dist_type Either "continuous" or "discrete".
+#' @param data (optional) Data used for estimation; default is NULL.
 #' 
 #' @returns
 #' A list of class \code{Mixture} containing:

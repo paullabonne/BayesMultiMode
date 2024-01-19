@@ -10,18 +10,17 @@
 #' @param burnin Number of draws to discard as burnin.
 #' @param dist Distribution family of the mixture components supported by
 #' the package (e.g. "normal", "student", "skew_normal" or "shifted_poisson").
-#' @param pars_names Names of the mixture parameters; first element should 
-#' correspond to the mixture proportions.
 #' @param pdf_func Pdf or pmf of the mixture components;
 #' this input is used only if dist_name is invalid or NULL.
 #' @param dist_type Either "continuous" or "discrete".
+#' @param loglik Vector showing the log likelihood at each MCMC draw.
 #' 
 #' @returns
 #' A list of class \code{BayesMixture} containing:
 #' \itemize{
 #'  \item{data}{ - Same as argument.}
 #'  \item{dist_type}{ - Same as argument.}
-#'  \item{pars_names}{ - Same as argument.}
+#'  \item{pars_names}{ - Names of distribution parameters.}
 #'  \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded.}
 #'  \item{mcmc_all}{ - Original matrix of MCMC draws.}
 #' }
