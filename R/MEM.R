@@ -79,13 +79,8 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   assert_that(is.vector(pars_names) & is.character(pars_names),
               msg = "MEM() failed; pars_names should be a character vector")
   ##
-  
-  pars_mat = c()
-  for (i in 1:length(pars_names)) {
-    pars_mat = cbind(pars_mat, pars[grep(pars_names[i], names(pars))])
-  }
 
-  colnames(pars_mat) <- pars_names
+  pars_mat <- vec_to_mat(pars, pars_names)
 
   est_mode = rep(NA, nrow(pars_mat))
 
@@ -103,7 +98,7 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
     while (delta > 1e-8) {
       # E-step
       f_mix = dist_mixture(x, dist, pars_mat, pdf_func)
-      
+   
       for (k in 1:nK){ 
         post_prob[k] = pars_mat[k, 1] * dist_pdf(x, dist, pars_mat[k, -1], pdf_func)/f_mix 
       }
@@ -168,8 +163,19 @@ Q_func = function(x, dist, post_prob, pars, pdf_func){
   Q = sum(post_prob * log(pdf))
   
   if(is.na(Q)|!is.finite(Q)){
-    Q = -1e6
+    stop("Q function is not finite")
   }
   
   return(Q)
+}
+
+#' @keywords internal
+vec_to_mat <- function(pars, pars_names) {
+  pars_mat = c()
+  for (i in 1:length(pars_names)) {
+    pars_mat = cbind(pars_mat, pars[grep(pars_names[i], names(pars))])
+  }
+  colnames(pars_mat) <- pars_names
+  
+  return(pars_mat)
 }

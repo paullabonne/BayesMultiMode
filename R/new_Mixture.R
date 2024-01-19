@@ -88,6 +88,12 @@ new_Mixture <- function(pars,
                 msg = "new_Mixture failed; variables should be theta, lambda and kappa when using dist = shifted_poisson")
   }
   
+  # that pdf_func can be computed when provided
+  if(!is.null(pdf_func)) {
+    assert_that(!is.null(pdf_func), !is.na(pdf_func(1, vec_to_mat(pars, pars_names)[1,-1])),
+                msg = "new_Mixture failed; running pdf_func with pars provided returns NA") 
+  }
+  
   Mixture = list(pars = pars,
                  pars_names = pars_names,
                  dist_type = dist_type,

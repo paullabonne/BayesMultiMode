@@ -4,13 +4,12 @@ test_that("bayes_mode works with external MCMC output", {
   sigma = c(1,2)
   nu = c(5,5)
   p = c(0.8,0.2)
-  params = c(eta = p, mu = mu, sigma = sigma, nu = nu)
   dist_type = "continuous"
   
   data = c(sn::rst(p[1]*1000, mu[1], sigma[1], nu = nu[1]),
            sn::rst(p[2]*1000, mu[2], sigma[2], nu = nu[2]))
   
-  fit = c(eta = p, mu = mu, sigma = sigma, nu = nu)
+  fit = c(eta = p, mu = mu, sigma = sigma, xi = c(0,0), nu = nu)
   fit = rbind(fit, fit)
   
   pdf_func = function(x, pars) {

@@ -67,72 +67,89 @@ new_BayesMixture <- function(mcmc,
                              loglik = NULL) {
   ## input checks
   assert_that(is.string(dist),
-              msg = "dist should be a string")
+              msg = "new_BayesMixture failed; dist should be a string")
   assert_that(is.string(dist_type),
-              msg = "dist_type should be a string")
+              msg = "new_BayesMixture failed; dist_type should be a string")
   assert_that(is.vector(data) & length(data) > 0,
-              msg = "data should be a vector of length > 0")
-  assert_that(is.scalar(K) & K > 0, msg = "K should be a positive integer")
-  assert_that(is.scalar(burnin), msg = "nb_iter should be an integer positive or zero")
+              msg = "new_BayesMixture failed; data should be a vector of length > 0")
+  assert_that(is.scalar(K) & K > 0, msg = "new_BayesMixture failed; K should be a positive integer")
+  assert_that(is.scalar(burnin), msg = "new_BayesMixture failed; nb_iter should be an integer positive or zero")
   assert_that(burnin < nrow(mcmc),
-              msg = "burnin parameter should be less than the number of mcmc draws")
+              msg = "new_BayesMixture failed; burnin parameter should be less than the number of mcmc draws")
   ##
+  # mcmc = as_draws_matrix(mcmc)
   
-  BayesMix = list(data = data,
-                  dist_type = dist_type,
-                  loglik = loglik)
+  # extract parameter names
+  p_names = str_extract(str_to_lower(colnames(mcmc)), "[a-z]+")
+  pars_names = unique(p_names)
   
-  mcmc = as_draws_matrix(mcmc)
+  # count number of components
+  match = T
+  K_from_names = rep(NA_real_, length(pars_names))
+  for (i in 1:length(pars_names)) {
+    K_from_names[i] = sum(p_names==pars_names[i])
+  }
 
-  # check that pars_names and mcmc match
-  pars_names = unique(str_extract(str_to_lower(colnames(mcmc)), "[a-z]+"))
+  assert_that(sum(K_from_names !=2 ) == 0,
+              msg = "new_BayesMixture failed; There is a least one variable in mcmc that has not K components")
 
   if (dist == "poisson"){
     assert_that(sum(pars_names %in% c("eta", "lambda"))==2,
-                msg = "variable names in mcmc output should be eta and lambda when dist = poisson")
+                msg = "new_BayesMixture failed; variable names in mcmc output should be eta and lambda when dist = poisson")
   }
   
   if (dist == "shifted_poisson"){
     assert_that(sum(pars_names %in% c("eta", "kappa", "lambda"))==3,
-                msg = "variable names in mcmc output should be eta and lambda when dist = shifted_poisson")
+                msg = "new_BayesMixture failed; variable names in mcmc output should be eta and lambda when dist = shifted_poisson")
   }
   
   if (dist == "normal"){
     assert_that(sum(pars_names %in% c("eta", "mu", "sigma"))==3,
-                msg = "variable names in mcmc output should be eta, mu and sigma when dist = normal")
+                msg = "new_BayesMixture failed; variable names in mcmc output should be eta, mu and sigma when dist = normal")
   }
   
   if (dist == "skew_normal"){
     assert_that(sum(pars_names %in% c("eta", "xi", "omega", "alpha"))==4,
-                msg = "variable names in mcmc output should be eta, xi, omega and alpha when dist = skew_normal")
+                msg = "new_BayesMixture failed; variable names in mcmc output should be eta, xi, omega and alpha when dist = skew_normal")
+  }
+  
+  # check that pdf_func can be computed when provided
+  if(!is.null(pdf_func)) {
+    assert_that(!is.null(pdf_func), !is.na(pdf_func(1, vec_to_mat(mcmc[1,], pars_names)[1,-1])),
+                msg = "new_BayesMixture failed; running pdf_func with pars provided returns NA")
   }
   
   ### arrange the mcmc matrix by variable type (mu1,mu2,...,muN,sigma...)
   # and select only the variables of interest
-  mcmc_new = matrix(NA, nrow = nrow(mcmc), ncol = length(pars_names)*K)
-  colnames(mcmc_new) = 1:ncol(mcmc_new)
-  k_end = K
-  k_start = 1
-  for (par in pars_names) {
-    
-    #reorder
-    cols_par = str_locate(colnames(mcmc), par)[,1]
-    cols_par = which(!is.na(cols_par))
-    mcmc_new[,k_start:k_end] = mcmc[, cols_par]
-    
-    #rename
-    numb = gregexpr('[0-9]+', colnames(mcmc)[cols_par])
-    numb = unlist(regmatches(colnames(mcmc)[cols_par],numb))
-    
-    colnames(mcmc_new)[k_start:k_end] = paste0(par, numb)
-    
-    k_start = k_end + 1
-    k_end = k_start + K - 1
-  }
+  # mcmc_new = matrix(NA, nrow = nrow(mcmc), ncol = length(pars_names)*K)
+  # colnames(mcmc_new) = 1:ncol(mcmc_new)
+  # k_end = K
+  # k_start = 1
+  # for (par in pars_names) {
+  #   
+  #   #reorder
+  #   cols_par = str_locate(colnames(mcmc), par)[,1]
+  #   cols_par = which(!is.na(cols_par))
+  #   mcmc_new[,k_start:k_end] = mcmc[, cols_par]
+  #   
+  #   #rename
+  #   numb = gregexpr('[0-9]+', colnames(mcmc)[cols_par])
+  #   numb = unlist(regmatches(colnames(mcmc)[cols_par],numb))
+  #   
+  #   colnames(mcmc_new)[k_start:k_end] = paste0(par, numb)
+  #   
+  #   k_start = k_end + 1
+  #   k_end = k_start + K - 1
+  # }
+  # browser()
   
-  mcmc_all = mcmc_new
+  mcmc_all = mcmc
   mcmc = mcmc_all[(burnin+1):nrow(mcmc_all), ,drop = FALSE]
   
+  
+  BayesMix = list(data = data,
+                  dist_type = dist_type,
+                  loglik = loglik)
   
   if (dist %in% c("normal", "skew_normal",
                   "poisson", "shifted_poisson") & is.null(pdf_func)) {

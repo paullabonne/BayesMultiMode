@@ -83,12 +83,7 @@ discrete_MF <- function(mixture, type = "all"){
   x = min(data):max(data)
   ##
   
-  pars_mat = c()
-  for (i in 1:length(pars_names)) {
-    pars_mat = cbind(pars_mat, pars[grep(pars_names[i], names(pars))])
-  }
-  
-  colnames(pars_mat) <- pars_names
+  pars_mat <- vec_to_mat(pars, pars_names)
   ##
   
   Khat = nrow(pars_mat)
