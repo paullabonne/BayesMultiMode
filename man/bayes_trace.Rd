@@ -36,6 +36,6 @@ bayesmix = bayes_estimation(data = y,
                            burnin = 100)
 
 # trace plot
-bayes_trace(bayesmix)
+# bayes_trace(bayesmix)
 
 }
