@@ -45,11 +45,10 @@
 #' alpha = c(0,0)
 #' p = c(0.8,0.2)
 #' params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
-#' pars_names = c("eta", "xi", "omega", "alpha")
 #' dist = "skew_normal"
 #' 
-#' mix = new_Mixture(params, pars_names = pars_names, dist = dist)
-#' modes = MEM(params, pars_names = pars_names, dist = dist)
+#' mix = new_Mixture(params, dist = dist)
+#' modes = MEM(mix)
 #' 
 #' # Example with an arbitrary distribution ===================================
 #' xi = c(0,6)
@@ -58,82 +57,62 @@
 #' nu = c(3,100)
 #' p = c(0.8,0.2)
 #' params = c(eta = p, mu = xi, sigma = omega, xi = alpha, nu = nu)
-#' pars_names = c("eta", "mu", "sigma", "xi", "nu")
 #' 
 #' pdf_func <- function(x, pars) {
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
 #' 
-#' mix = new_Mixture(params, pars_names = pars_names, pdf_func = pdf_func)
+#' mix = new_Mixture(params, pdf_func = pdf_func)
 #' modes = MEM(mix)
 #' 
 #' @export
 
 MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
-  pars_mix = mixture$pars
+  pars = mixture$pars
   pars_names = mixture$pars_names
   dist = mixture$dist
   pdf_func = mixture$pdf_func
   
   ## input checks
-  fail = "inputs to the Mode-finding EM algorithm are corrupted"
-  assert_that(is.vector(pars_mix) & length(pars_mix) >= 3,
-              msg = "pars_mix should be a vector of length >= 3")
-  assert_that(is.string(dist),
-              msg = "dist should be a string")
-  assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
+  assert_that(is.vector(tol_x) & tol_x > 0, msg = "MEM() failed; tol_x should be a positive scalar")
   assert_that(is.vector(pars_names) & is.character(pars_names),
-              msg = "pars_names should be a character vector")
+              msg = "MEM() failed; pars_names should be a character vector")
   ##
   
-  ##
-  names_pars_mix = str_to_lower(names(pars_mix))
-  names_pars_mix = str_extract(names_pars_mix, "[a-z]+")
-  names_pars_mix = unique(names_pars_mix)
-  
-  assert_that(sum(pars_names %in% names_pars_mix)==length(pars_names),
-              msg = "the name of the parameters provided by pars_names and those of the pars vector do not match")
-  
-  if (dist %in% c("skew_normal")) {
-    assert_that(length(pars_names) == 4,
-                msg = "the number of elements in pars_names does not match with dist") 
-  }
-  ##
-  
-  pars = c()
+  pars_mat = c()
   for (i in 1:length(pars_names)) {
-    pars = cbind(pars, pars_mix[grep(pars_names[i], names(pars_mix))])
+    pars_mat = cbind(pars_mat, pars[grep(pars_names[i], names(pars))])
   }
-  
-  colnames(pars) <- pars_names
 
-  est_mode = rep(NA, nrow(pars))
+  colnames(pars_mat) <- pars_names
 
-  nK = nrow(pars)
+  est_mode = rep(NA, nrow(pars_mat))
+
+  nK = nrow(pars_mat)
   post_prob = rep(NA, nK)
 
   # remove empty components (a feature of some MCMC methods)
-  pars = na.omit(pars)
+  pars_mat = na.omit(pars_mat)
   
   for (j in 1:nK) {
-    x = pars[j,2]
+    x = pars_mat[j,2]
     
     delta = 1
     
     while (delta > 1e-8) {
       # E-step
-      f_mix = dist_mixture(x, dist, pars, pdf_func)
+      f_mix = dist_mixture(x, dist, pars_mat, pdf_func)
       
       for (k in 1:nK){ 
-        post_prob[k] = pars[k, 1] * dist_pdf(x, dist, pars[k, -1], pdf_func)/f_mix 
+        post_prob[k] = pars_mat[k, 1] * dist_pdf(x, dist, pars_mat[k, -1], pdf_func)/f_mix 
       }
      
       # M-step
       Min = optim(par = x, Q_func, method = "L-BFGS-B",
                   dist = dist, 
                   post_prob = post_prob,
-                  pars = pars[, -1],
+                  pars = pars_mat[, -1],
                   pdf_func = pdf_func,
                   control = list(fnscale = -1))
       
@@ -167,8 +146,8 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   mode = list()
   mode$mode_estimates = est_mode
   mode$dist = dist
-  mode$parameters = pars_mix
-  mode$dist = pdf_func
+  mode$parameters = pars
+  mode$pdf_func = pdf_func
   
   class(mode) = "Mode"
   

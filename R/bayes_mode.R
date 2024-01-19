@@ -268,12 +268,12 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
 
 #' @keywords internal
 fixed_point_estimates <- function(mcmc, pars_names, tol_x = 1e-6, tol_conv = 1e-8) {
-  mix = new_Mixture(mcmc, pars_names = pars_names)
+  mix = new_Mixture(mcmc)
   fixed_point(mix, tol_x, tol_conv)$mode_estimates
 }
 
 #' @keywords internal
 MEM_estimates <- function(mcmc, pars_names, dist = "NA", pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
-  mix = new_Mixture(mcmc, pars_names = pars_names, dist = dist, pdf_func = pdf_func)
+  mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func)
   MEM(mix, tol_x, tol_conv)$mode_estimates
 }

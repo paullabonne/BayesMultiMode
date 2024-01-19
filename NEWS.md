@@ -1,3 +1,8 @@
+## Version 0.7.0
+* Removed the data argument in functions for mode estimation
+* Added a class for the output of the mode estimation functions
+* Removed the plotting option inside the mode estimation functions
+
 ## Version 0.6.0
 * Added examples to new_BayesMixture() and bayes_mode()
 * Fixed typo on the tolerance arguments

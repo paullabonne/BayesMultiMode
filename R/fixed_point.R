@@ -52,31 +52,17 @@ fixed_point <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   pars_names = mixture$pars_names
 
   ## input checks
-  assert_that(is.vector(pars) & length(pars) >= 3,
-              msg = "pars should be a vector of length >= 3")
   assert_that(length(tol_x)==1 & tol_x > 0, msg = "tol_x should be a positive scalar")
-  assert_that(is.vector(pars_names) & is.character(pars_names) & length(pars_names)==3,
-              msg = "pars_names should be a character vector of length 3")
-  
-  names_pars = str_to_lower(names(pars))
-  names_pars = str_extract(names_pars, "[a-z]+")
-  names_pars = unique(names_pars)
-  
-  assert_that(sum(c("eta", "mu", "sigma") %in% names_pars)==3,
-              msg = "missing parameter in pars; variables should be theta, mu and sigma")
   ##
   
   modes = rep(NA_real_,length(pars)/3)
   pars = pars[!is.na(pars)]
-  p = pars[grep(pars_names[1], names(pars))]
-  mu = pars[grep(pars_names[2], names(pars))]
-  sigma = pars[grep(pars_names[3], names(pars))]
-  
-  assert_that(length(p) == length(mu) & length(mu) == length(sigma),
-              msg = "p, mu and sigma should have the same lengths")
+  p = pars[grep("eta", names(pars))]
+  mu = pars[grep("mu", names(pars))]
+  sigma = pars[grep("sigma", names(pars))]
   
   iter = 0
-  
+
   for (i in 1:length(mu)) {
     
     x = mu[i]
@@ -110,7 +96,7 @@ fixed_point <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   
   mode = list()
   mode$mode_estimates = modes
-  mode$dist = "Gaussian"
+  mode$dist = mixture$dist
   mode$parameters = pars
   
   class(mode) = "Mode"
