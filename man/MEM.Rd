@@ -4,41 +4,17 @@
 \alias{MEM}
 \title{Modal EM algorithm (MEM)}
 \usage{
-MEM(
-  mcmc,
-  data,
-  pars_names,
-  dist = "NA",
-  pdf_func = NULL,
-  tol_x = sd(data)/10,
-  tol_conv = 1e-08,
-  show_plot = FALSE
-)
+MEM(mixture, tol_x = 1e-06, tol_conv = 1e-08)
 }
 \arguments{
-\item{mcmc}{Vector of estimated mixture parameters.}
+\item{mixture}{An object of class Mixture.}
 
-\item{data}{Vector of observations used for estimating the mixture.}
-
-\item{pars_names}{Names of the mixture parameters; the first element of 
-this vector should be the name of the mixture proportions. If you have used 
-the skew normal of Azzalini, then the second element should correspond to the location,
-the third to the scale and the fourth to the shape.}
-
-\item{dist}{String indicating the distribution of the mixture components; default is "NA".
-Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided.}
-
-\item{pdf_func}{Pdf of the mixture components associated with the mcmc draws
-(if mcmc estimation has not been carried out with BayesMultiMode); default is null.}
-
-\item{tol_x}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
+\item{tol_x}{Tolerance parameter for distance in-between modes; default is 1e-6; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
 
 \item{tol_conv}{Tolerance parameter for convergence of the algorithm; default is 1e-8.}
-
-\item{show_plot}{If true show the data and estimated modes; default is false}
 }
 \value{
-Vector of estimated modes.
+An object of class Mode.
 }
 \description{
 Algorithm from Li and Lindsay (2007) to find modes in mixture of continuous distributions.
@@ -70,13 +46,10 @@ omega = c(1,2)
 alpha = c(0,0)
 p = c(0.8,0.2)
 params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
-pars_names = c("eta", "xi", "omega", "alpha")
 dist = "skew_normal"
 
-data = c(sn::rsn(p[1]*100, xi[1], omega[1], alpha[1]),
-         sn::rsn(p[2]*100, xi[2], omega[2], alpha[2]))
-
-modes = MEM(params, data = data, pars_names = pars_names, dist = dist)
+mix = new_Mixture(params, dist = dist)
+modes = MEM(mix)
 
 # Example with an arbitrary distribution ===================================
 xi = c(0,6)
@@ -85,16 +58,13 @@ alpha = c(0,0)
 nu = c(3,100)
 p = c(0.8,0.2)
 params = c(eta = p, mu = xi, sigma = omega, xi = alpha, nu = nu)
-pars_names = c("eta", "mu", "sigma", "xi", "nu")
 
 pdf_func <- function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 }
 
-data = c(sn::rst(p[1]*100, xi[1], omega[1], alpha = alpha[1], nu = nu[1]),
-         sn::rst(p[2]*100, xi[2], omega[2], alpha = alpha[2], nu = nu[2]))
-
-modes = MEM(params, pars_names = pars_names, data = data, pdf_func = pdf_func)
+mix = new_Mixture(params, pdf_func = pdf_func)
+modes = MEM(mix)
 
 }
 \references{

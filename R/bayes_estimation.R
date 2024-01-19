@@ -195,7 +195,6 @@ bayes_estimation <- function(data,
                             nb_iter = nb_iter,
                             priors = priors[priors_labels],
                             printing = printing)
-    pars_names = c("eta", "mu", "sigma")
     dist_type = "continuous"
     
   } else if (dist == "skew_normal") {
@@ -206,7 +205,6 @@ bayes_estimation <- function(data,
                              nb_iter = nb_iter,
                              priors = priors[priors_labels],
                              printing = printing)
-    pars_names = c("eta", "xi", "omega", "alpha")
     dist_type = "continuous"
     
   } else if (dist == "poisson") {
@@ -217,7 +215,6 @@ bayes_estimation <- function(data,
                               nb_iter = nb_iter,
                               priors = priors[priors_labels],
                               printing = printing)
-    pars_names = c("eta", "lambda")
     dist_type = "discrete"
     
   } else if (dist == "shifted_poisson") {
@@ -228,7 +225,6 @@ bayes_estimation <- function(data,
                          nb_iter = nb_iter,
                          priors = priors[priors_labels],
                          printing = printing)
-    pars_names = c("eta", "kappa", "lambda")
     dist_type = "discrete"
     
   } else {
@@ -236,10 +232,11 @@ bayes_estimation <- function(data,
   }
   
   BayesMixture = new_BayesMixture(mcmc = mcmc,
-                                  data = data, K = K,
-                                  burnin = burnin, dist = dist,
-                                  dist_type = dist_type,
-                                  pars_names = pars_names)
+                                  data = data,
+                                  K = K,
+                                  burnin = burnin,
+                                  dist = dist,
+                                  dist_type = dist_type)
   
   return(BayesMixture)
 }

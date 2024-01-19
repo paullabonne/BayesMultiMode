@@ -64,7 +64,6 @@ new_BayesMixture <- function(mcmc,
                              K,
                              burnin,
                              dist = "NA",
-                             pars_names,
                              pdf_func = NULL,
                              dist_type) {
   ## input checks
@@ -78,8 +77,6 @@ new_BayesMixture <- function(mcmc,
   assert_that(is.scalar(burnin), msg = "nb_iter should be an integer positive or zero")
   assert_that(burnin < nrow(mcmc),
               msg = "burnin parameter should be less than the number of mcmc draws")
-  assert_that(is.vector(pars_names) & is.character(pars_names),
-              msg = "pars_names should be a character vector")
   ##
   
   BayesMix = list(data = data,
@@ -88,36 +85,26 @@ new_BayesMixture <- function(mcmc,
   mcmc = as_draws_matrix(mcmc)
 
   # check that pars_names and mcmc match
-  names_mcmc = str_to_lower(colnames(mcmc))
-  names_mcmc = str_extract(names_mcmc, "[a-z]+")
-
-  if (dist == "NA") {
-    
-    assert_that(sum(pars_names %in% names_mcmc)==length(pars_names),
-                msg = "the name of the parameters provided by pars_names and those of the mcmc object do not match")
-    
-  } else {
-    
-    if (dist == "poisson" & sum(c("eta", "lambda") %in% names_mcmc) < 2){
-      assert_that(sum(pars_names %in% c("eta", "lambda"))==2,
-                  msg = "the name of the parameters provided by pars_names should be eta and lambda")
-      assert_that(sum(pars_names %in% names_mcmc)==2,
-                  msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
-    }
-    
-    if (dist == "normal" & sum(c("eta", "mu", "sigma") %in% names_mcmc)<3){
-      assert_that(sum(pars_names %in% c("eta", "mu", "sigma"))==3,
-                  msg = "the name of the parameters provided by pars_names should be eta, mu and sigma")
-      assert_that(sum(pars_names %in% names_mcmc)==3,
-                  msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
-    }
-    
-    if (dist == "skew_normal" & sum(c("eta", "xi", "omega", "alpha") %in% names_mcmc)<4){
-      assert_that(sum(pars_names %in% c("eta", "mu", "sigma", "xi"))==4,
-                  msg = "the name of the parameters provided by pars_names should be eta, mu, sigma and xi")
-      assert_that(sum(pars_names %in% names_mcmc)==4,
-                  msg = "the name of the parameters provided by pars_names do match with the mcmc parameters") 
-    }
+  pars_names = unique(str_extract(str_to_lower(colnames(mcmc)), "[a-z]+"))
+  
+  if (dist == "poisson"){
+    assert_that(sum(pars_names %in% c("eta", "lambda"))==2,
+                msg = "variable names in mcmc output should be eta and lambda when dist = poisson")
+  }
+  
+  if (dist == "shifted_poisson"){
+    assert_that(sum(pars_names %in% c("eta", "lambda"))==3,
+                msg = "variable names in mcmc output should be eta and lambda when dist = poisson")
+  }
+  
+  if (dist == "normal"){
+    assert_that(sum(pars_names %in% c("eta", "mu", "sigma"))==3,
+                msg = "variable names in mcmc output should be eta, mu and sigma when dist = normal")
+  }
+  
+  if (dist == "skew_normal"){
+    assert_that(sum(pars_names %in% c("eta", "xi", "omega", "alpha"))==4,
+                msg = "variable names in mcmc output should be eta, xi, omega and alpha when dist = skew_normal")
   }
   
   ### arrange the mcmc matrix by variable type (mu1,mu2,...,muN,sigma...)
@@ -127,7 +114,7 @@ new_BayesMixture <- function(mcmc,
   k_end = K
   k_start = 1
   for (par in pars_names) {
-
+    
     #reorder
     cols_par = str_locate(colnames(mcmc), par)[,1]
     cols_par = which(!is.na(cols_par))
@@ -142,7 +129,7 @@ new_BayesMixture <- function(mcmc,
     k_start = k_end + 1
     k_end = k_start + K - 1
   }
-
+  
   mcmc_all = mcmc_new
   mcmc = mcmc_all[(burnin+1):nrow(mcmc_all), ,drop = FALSE]
   

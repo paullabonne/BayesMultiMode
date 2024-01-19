@@ -51,7 +51,8 @@
 new_Mixture <- function(pars,
                         dist = "NA",
                         pdf_func = NULL,
-                        dist_type = "NA") {
+                        dist_type = "NA",
+                        data = NULL) {
   ## input checks
   assert_that(is.string(dist),
               msg = "dist should be a string")
@@ -74,11 +75,22 @@ new_Mixture <- function(pars,
                 msg = "new_Mixture failed; variables should be theta, xi, omega and alpha when using dist = skew_normal") 
   }
   
+  if (dist == "poisson"){
+    assert_that(sum(c("eta", "lambda") %in% pars_names)==2,
+                msg = "new_Mixture failed; variables should be theta and lambda when using dist = poisson")
+  }
+  
+  if (dist == "shifted_poisson"){
+    assert_that(sum(c("eta", "lambda", "kappa") %in% pars_names)==3,
+                msg = "new_Mixture failed; variables should be theta, lambda and kappa when using dist = shifted_poisson")
+  }
+  
   Mixture = list(pars = pars,
                  pars_names = pars_names,
                  dist_type = dist_type,
                  dist = dist,
-                 pdf_func = pdf_func)
+                 pdf_func = pdf_func,
+                 data = data)
   
   class(Mixture) <- "Mixture"
   

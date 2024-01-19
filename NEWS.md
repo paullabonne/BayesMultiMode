@@ -1,6 +1,7 @@
 ## Version 0.7.0
 * Removed the data argument in functions for mode estimation
 * Added a class for the output of the mode estimation functions
+* Added a class for mixtures which can be used as input to mode estimation functions
 * Removed the plotting option inside the mode estimation functions
 
 ## Version 0.6.0

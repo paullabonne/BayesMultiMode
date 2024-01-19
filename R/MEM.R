@@ -6,7 +6,7 @@
 #' @param tol_x Tolerance parameter for distance in-between modes; default is 1e-6; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.
 #' @param tol_conv Tolerance parameter for convergence of the algorithm; default is 1e-8.
 #' 
-#' @return Vector of estimated modes.
+#' @return An object of class Mode.
 #' 
 #' @details
 #' This algorithm returns the local maxima of the mixture

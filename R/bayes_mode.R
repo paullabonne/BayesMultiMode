@@ -101,7 +101,6 @@
 #' nu = c(5,5)
 #' p = c(0.8,0.2)
 #' params = c(eta = p, mu = mu, sigma = sigma, nu = nu)
-#' pars_names = c("eta", "mu", "sigma", "nu")
 #' dist_type = "continuous"
 #'
 #' data = c(sn::rst(p[1]*1000, mu[1], sigma[1], nu = nu[1]),
@@ -114,8 +113,7 @@
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
 #' 
-#' bayesmix = new_BayesMixture(fit, data, K = 2, burnin = 1,
-#' pars_names = pars_names, pdf_func = pdf_func, dist_type = dist_type)
+#' bayesmix = new_BayesMixture(fit, data, K = 2, burnin = 1, pdf_func = pdf_func, dist_type = dist_type)
 #' 
 #' bayesmode = bayes_mode(bayesmix)
 #' 
@@ -162,11 +160,11 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
   if (dist_type == "continuous") {
     if (dist == "normal") {
       # fixed point
-      modes = t(apply(mcmc, 1, fixed_point_estimates, pars_names = pars_names,
+      modes = t(apply(mcmc, 1, fixed_point_estimates, 
                       tol_x = tol_x, tol_conv = tol_conv))
     } else {
       # MEM algorithm
-      modes = t(apply(mcmc, 1, MEM_estimates, dist = dist, pars_names = pars_names, 
+      modes = t(apply(mcmc, 1, MEM_estimates, dist = dist, 
                       pdf_func = pdf_func, tol_x = tol_x, tol_conv = tol_conv))
     }
 
@@ -192,9 +190,10 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
   if (dist_type == "discrete") {
 
     # Posterior probability of being a mode for each location
-    modes <- t(apply(mcmc,1,FUN = discrete_MF, data = data,
-                     pars_names = pars_names, dist = dist,
-                     pmf_func = pdf_func, show_plot = F))
+    modes <- t(apply(mcmc,1,FUN = discrete_MF,
+                     data = data,
+                     dist = dist,
+                     pmf_func = pdf_func))
     
     modes_xid = matrix(0, nrow(modes), ncol(modes))
     x = min(data):max(data)
@@ -217,9 +216,11 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
     table_location = rbind(location_at_modes, probs_modes)
     
     # unique modes to calculate post probs of number of modes
-    modes <-  t(apply(mcmc,1,FUN = discrete_MF, data = data, type = "unique",
-                      pars_names = pars_names, dist = dist,
-                      pmf_func = pdf_func, show_plot = F))
+    modes <-  t(apply(mcmc,1,FUN = discrete_MF,
+                      data = data,
+                      type = "unique",
+                      dist = dist,
+                      pmf_func = pdf_func))
     
     n_modes = apply(!is.na(modes),1,sum)
   }
@@ -267,13 +268,19 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
 }
 
 #' @keywords internal
-fixed_point_estimates <- function(mcmc, pars_names, tol_x = 1e-6, tol_conv = 1e-8) {
+fixed_point_estimates <- function(mcmc, tol_x = 1e-6, tol_conv = 1e-8) {
   mix = new_Mixture(mcmc)
   fixed_point(mix, tol_x, tol_conv)$mode_estimates
 }
 
 #' @keywords internal
-MEM_estimates <- function(mcmc, pars_names, dist = "NA", pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
+MEM_estimates <- function(mcmc, dist = "NA", pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
   mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func)
   MEM(mix, tol_x, tol_conv)$mode_estimates
+}
+
+#' @keywords internal
+discrete_MF_estimates <- function(mcmc, dist = "NA", pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
+  mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func)
+  discrete_MF(mix, type = type)$mode_estimates
 }

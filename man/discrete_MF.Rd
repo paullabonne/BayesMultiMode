@@ -4,38 +4,15 @@
 \alias{discrete_MF}
 \title{Mode-finding algorithm for mixture of discrete distributions}
 \usage{
-discrete_MF(
-  mcmc,
-  data,
-  pars_names,
-  dist = "NA",
-  pmf_func = NULL,
-  type = "all",
-  show_plot = FALSE
-)
+discrete_MF(mixture, type = "all")
 }
 \arguments{
-\item{mcmc}{Vector of estimated mixture parameters.}
-
-\item{data}{Vector of observations used for estimating the mixture.}
-
-\item{pars_names}{Names of the mixture parameters; first element should 
-correspond to the mixture proportions.}
-
-\item{dist}{String indicating the distribution of the mixture components.
-Currently supports "poisson" and "shifted_poisson"; default is "NA"; only
-use this argument if you have used Poisson and shifted Poisson distributions
-identical to the one used in the package.}
-
-\item{pmf_func}{Pmf of the mixture components associated with the mcmc draws.
-(if mcmc estimation has not been carried out with \pkg{BayesMultiMode}); default is null.}
+\item{mixture}{An object of class Mixture.}
 
 \item{type}{Type of modes, either unique or all (the latter includes flat modes); default is "all".}
-
-\item{show_plot}{If true show the data and estimated modes; default is false.}
 }
 \value{
-Vector of estimated modes.
+An object of class Mode.
 }
 \description{
 Function to estimate modes in mixtures of discrete distributions following; see Cross et al. (2023).
@@ -55,20 +32,19 @@ This algorithm returns the local maxima of the mixture
 lambda = c(0.1,10)
 p = c(0.5,0.5)
 params = c(eta = p, lambda = lambda)
-pars_names = c("eta", "lambda")
 dist = "poisson"
 
 data = c(rpois(p[1]*1e3, lambda[1]),
          rpois(p[2]*1e3, lambda[2]))
 
-modes = discrete_MF(params, data = data, pars_names = pars_names, dist = dist)
+mix = new_Mixture(params, data = data, dist = dist)
+modes = discrete_MF(mix)
 
 # Example with an arbitrary distribution ===================================
 mu = c(20,5)
 size = c(20,0.5)
 p = c(0.5,0.5)
 params = c(eta = p, mu = mu, size = size)
-pars_names = c("eta", "mu", "size")
 
 data = c(rnbinom(p[1]*1e3, mu = mu[1], size = size[1]),
          rnbinom(p[2]*1e3, mu = mu[2], size = size[2]))
@@ -77,7 +53,8 @@ pmf_func <- function(x, pars) {
   dnbinom(x, mu = pars["mu"], size = pars["size"])
 }
 
-modes = discrete_MF(params, data = data, pars_names = pars_names, pmf_func = pmf_func)
+mix = new_Mixture(params, data = data, pdf_func = pmf_func)
+modes = discrete_MF(mix)
 
 }
 \references{

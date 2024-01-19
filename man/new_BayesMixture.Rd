@@ -10,7 +10,6 @@ new_BayesMixture(
   K,
   burnin,
   dist = "NA",
-  pars_names,
   pdf_func = NULL,
   dist_type
 )
@@ -27,13 +26,13 @@ new_BayesMixture(
 \item{dist}{Distribution family of the mixture components supported by
 the package (e.g. "normal", "student", "skew_normal" or "shifted_poisson").}
 
-\item{pars_names}{Names of the mixture parameters; first element should 
-correspond to the mixture proportions.}
-
 \item{pdf_func}{Pdf or pmf of the mixture components;
 this input is used only if dist_name is invalid or NULL.}
 
 \item{dist_type}{Either "continuous" or "discrete".}
+
+\item{pars_names}{Names of the mixture parameters; first element should 
+correspond to the mixture proportions.}
 }
 \value{
 A list of class \code{BayesMixture} containing:

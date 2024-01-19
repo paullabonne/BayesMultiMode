@@ -4,32 +4,17 @@
 \alias{fixed_point}
 \title{Modal fixed-point algorithm}
 \usage{
-fixed_point(
-  mcmc,
-  data,
-  pars_names,
-  tol_x = sd(data)/10,
-  tol_conv = 1e-08,
-  show_plot = F
-)
+fixed_point(mixture, tol_x = 1e-06, tol_conv = 1e-08)
 }
 \arguments{
-\item{mcmc}{Vector of estimated mixture parameters.}
+\item{mixture}{An object of class Mixture.}
 
-\item{data}{Vector of observations used for estimating the mixture.}
-
-\item{pars_names}{Names of the mixture parameters; first element should 
-correspond to the mixture proportions; second to the mean; third to the 
-standard deviation.}
-
-\item{tol_x}{Tolerance parameter for distance in-between modes; default is sd(data)/10; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
+\item{tol_x}{Tolerance parameter for distance in-between modes; default is 1e-6; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
 
 \item{tol_conv}{Tolerance parameter for convergence of the algorithm; default is 1e-8.}
-
-\item{show_plot}{If true show the data and estimated modes; default is false.}
 }
 \value{
-Vector of estimated modes.
+An object of class Mode.
 }
 \description{
 Algorithm for estimating modes in mixture of Normal distributions from Carreira-Perpinan (2000).
@@ -56,10 +41,10 @@ mu = c(0,5)
 sigma = c(1,2)
 p = c(0.5,0.5)
 
-data = c(rnorm(p[1]*100, mu[1], sigma[1]), rnorm(p[2]*100, mu[2], sigma[2]))
 params = c(eta = p, mu = mu, sigma = sigma)
 pars_names = c("eta", "mu", "sigma")
-modes = fixed_point(params, data, pars_names)
+mix = new_Mixture(params, pars_names = pars_names)
+modes = fixed_point(mix)
 
 }
 \references{

@@ -9,7 +9,6 @@ bayes_mode(
   rd = 1,
   tol_x = sd(BayesMix$data)/10,
   tol_conv = 1e-08,
-  show_plot = FALSE,
   nb_iter = NULL
 )
 }
@@ -23,8 +22,6 @@ If two modes are closer than \code{tol_x}, only the first estimated mode is kept
 
 \item{tol_conv}{Tolerance parameter for convergence of the algorithm; default is 1e-8.
 Not needed for mixtures of discrete distributions.}
-
-\item{show_plot}{Show density with estimated mode as vertical bars ?}
 
 \item{nb_iter}{Number of draws on which the mode-finding algorithm is run; default is NULL which means the algorithm is run on all draws.}
 }
@@ -116,7 +113,6 @@ sigma = c(1,2)
 nu = c(5,5)
 p = c(0.8,0.2)
 params = c(eta = p, mu = mu, sigma = sigma, nu = nu)
-pars_names = c("eta", "mu", "sigma", "nu")
 dist_type = "continuous"
 
 data = c(sn::rst(p[1]*1000, mu[1], sigma[1], nu = nu[1]),
@@ -129,8 +125,7 @@ pdf_func = function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 }
 
-bayesmix = new_BayesMixture(fit, data, K = 2, burnin = 1,
-pars_names = pars_names, pdf_func = pdf_func, dist_type = dist_type)
+bayesmix = new_BayesMixture(fit, data, K = 2, burnin = 1, pdf_func = pdf_func, dist_type = dist_type)
 
 bayesmode = bayes_mode(bayesmix)
 
