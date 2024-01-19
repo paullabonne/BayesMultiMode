@@ -231,12 +231,18 @@ bayes_estimation <- function(data,
     stop("mixture distribution not supported")
   }
   
+  # extract loglik from mcmc
+  ll_id = which(colnames(mcmc) == "loglik")
+  loglik = mcmc[,ll_id]
+  mcmc = mcmc[,-ll_id]
+  
   BayesMixture = new_BayesMixture(mcmc = mcmc,
                                   data = data,
                                   K = K,
                                   burnin = burnin,
                                   dist = dist,
-                                  dist_type = dist_type)
+                                  dist_type = dist_type,
+                                  loglik = loglik)
   
   return(BayesMixture)
 }

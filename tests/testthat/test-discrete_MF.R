@@ -10,7 +10,7 @@ test_that("discrete_MF function returns expected results with dist = shifted_poi
            rpois(p[2]*1e3, lambda[2]) + kappa[2])
   
   mix = new_Mixture(params, data = data, dist = dist)
-  modes = discrete_MF(mix)
+  modes = discrete_MF(mix)$mode_estimates
   
   expect_equal(modes[1] == 0,  TRUE)
   expect_equal(modes[2] == 1,  TRUE)
@@ -28,7 +28,7 @@ test_that("discrete_MF function returns expected results with dist = poisson", {
            rpois(p[2]*1e3, lambda[2]))
   
   mix = new_Mixture(params, data = data, dist = dist)
-  modes = discrete_MF(mix)
+  modes = discrete_MF(mix)$mode_estimates
   expect_equal(modes[1] == 0,  TRUE)
   expect_equal(modes[2] == 9,  TRUE)
 })
@@ -48,7 +48,7 @@ test_that("discrete_MF function returns expected results with arbitrary function
   }
   
   mix = new_Mixture(params, data = data, pdf_func = pmf_func)
-  modes = discrete_MF(mix)
+  modes = discrete_MF(mix)$mode_estimates
   
   expect_equal(modes[1] == 0,  TRUE)
   expect_equal(modes[2] == 18,  TRUE)

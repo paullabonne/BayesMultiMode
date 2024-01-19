@@ -76,7 +76,7 @@
 #' # Example with DNA data ================================================
 #' set.seed(123) 
 #' 
-#' # retrieve galaxy data
+#' # retrieve DNA data
 #' y = d4z4
 #'
 #' # estimation
@@ -160,7 +160,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
   if (dist_type == "continuous") {
     if (dist == "normal") {
       # fixed point
-      modes = t(apply(mcmc, 1, fixed_point_estimates, 
+      modes = t(apply(mcmc, 1, fixed_point_estimates,  dist = dist,
                       tol_x = tol_x, tol_conv = tol_conv))
     } else {
       # MEM algorithm
@@ -190,7 +190,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
   if (dist_type == "discrete") {
 
     # Posterior probability of being a mode for each location
-    modes <- t(apply(mcmc,1,FUN = discrete_MF,
+    modes <- t(apply(mcmc,1,FUN = discrete_MF_estimates,
                      data = data,
                      dist = dist,
                      pmf_func = pdf_func))
@@ -216,7 +216,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
     table_location = rbind(location_at_modes, probs_modes)
     
     # unique modes to calculate post probs of number of modes
-    modes <-  t(apply(mcmc,1,FUN = discrete_MF,
+    modes <-  t(apply(mcmc,1,FUN = discrete_MF_estimates,
                       data = data,
                       type = "unique",
                       dist = dist,
@@ -268,8 +268,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
 }
 
 #' @keywords internal
-fixed_point_estimates <- function(mcmc, tol_x = 1e-6, tol_conv = 1e-8) {
-  mix = new_Mixture(mcmc)
+fixed_point_estimates <- function(mcmc, dist = dist, tol_x = 1e-6, tol_conv = 1e-8) {
+  mix = new_Mixture(mcmc, dist = dist)
   fixed_point(mix, tol_x, tol_conv)$mode_estimates
 }
 
@@ -280,7 +280,7 @@ MEM_estimates <- function(mcmc, dist = "NA", pdf_func = NULL, tol_x = 1e-6, tol_
 }
 
 #' @keywords internal
-discrete_MF_estimates <- function(mcmc, dist = "NA", pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
-  mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func)
+discrete_MF_estimates <- function(mcmc, dist = dist, pmf_func = pmf_func, type = "all", data = data) {
+  mix = new_Mixture(mcmc, dist = dist, pdf_func = pmf_func, data = data)
   discrete_MF(mix, type = type)$mode_estimates
 }

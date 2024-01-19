@@ -148,5 +148,5 @@ discrete_MF <- function(mixture, type = "all"){
   
   class(mode) = "Mode"
 
-  return(output)
+  return(mode)
 }

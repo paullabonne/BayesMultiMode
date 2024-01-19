@@ -88,7 +88,7 @@ bayesmode = bayes_mode(bayesmix)
 # Example with DNA data ================================================
 set.seed(123) 
 
-# retrieve galaxy data
+# retrieve DNA data
 y = d4z4
 
 # estimation

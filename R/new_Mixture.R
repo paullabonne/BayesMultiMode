@@ -62,6 +62,8 @@ new_Mixture <- function(pars,
               msg = "pars should be a vector")
   assert_that(!is.null(names(pars)),
               msg = "element of the pars should have names")
+  assert_that(!(dist == "NA" & is.null(pdf_func)),
+              msg = "you have to specify either dist or pdf_func")
   
   pars_names = unique(str_extract(names(pars), "[a-z]+"))
   

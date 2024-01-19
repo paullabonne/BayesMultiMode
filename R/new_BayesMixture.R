@@ -54,8 +54,7 @@
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
 #' 
-#' BM = new_BayesMixture(fit, data, K = 2, burnin = 1,
-#' pars_names = pars_names, pdf_func = pdf_func, dist_type = dist_type)
+#' BM = new_BayesMixture(fit, data, K = 2, burnin = 1, pdf_func = pdf_func, dist_type = dist_type)
 #' 
 #' @export
 
@@ -65,7 +64,8 @@ new_BayesMixture <- function(mcmc,
                              burnin,
                              dist = "NA",
                              pdf_func = NULL,
-                             dist_type) {
+                             dist_type,
+                             loglik = NULL) {
   ## input checks
   assert_that(is.string(dist),
               msg = "dist should be a string")
@@ -80,21 +80,22 @@ new_BayesMixture <- function(mcmc,
   ##
   
   BayesMix = list(data = data,
-                  dist_type = dist_type)
+                  dist_type = dist_type,
+                  loglik = loglik)
   
   mcmc = as_draws_matrix(mcmc)
 
   # check that pars_names and mcmc match
   pars_names = unique(str_extract(str_to_lower(colnames(mcmc)), "[a-z]+"))
-  
+
   if (dist == "poisson"){
     assert_that(sum(pars_names %in% c("eta", "lambda"))==2,
                 msg = "variable names in mcmc output should be eta and lambda when dist = poisson")
   }
   
   if (dist == "shifted_poisson"){
-    assert_that(sum(pars_names %in% c("eta", "lambda"))==3,
-                msg = "variable names in mcmc output should be eta and lambda when dist = poisson")
+    assert_that(sum(pars_names %in% c("eta", "kappa", "lambda"))==3,
+                msg = "variable names in mcmc output should be eta and lambda when dist = shifted_poisson")
   }
   
   if (dist == "normal"){

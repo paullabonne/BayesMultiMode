@@ -40,8 +40,7 @@
 #' p = c(0.5,0.5)
 #'
 #' params = c(eta = p, mu = mu, sigma = sigma)
-#' pars_names = c("eta", "mu", "sigma")
-#' mix = new_Mixture(params, pars_names = pars_names)
+#' mix = new_Mixture(params, dist = "normal)
 #' modes = fixed_point(mix)
 #' 
 #' @export
@@ -52,6 +51,7 @@ fixed_point <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   pars_names = mixture$pars_names
 
   ## input checks
+  assert_that(mixture$dist == "normal", msg = "fixed_point only works for normal mixtures (dist = normal).")
   assert_that(length(tol_x)==1 & tol_x > 0, msg = "tol_x should be a positive scalar")
   ##
   
