@@ -46,7 +46,7 @@
 #' data = c(sn::rst(p[1]*1000, mu[1], sigma[1], nu = nu[1]),
 #'          sn::rst(p[2]*1000, mu[2], sigma[2], nu = nu[2]))
 #'
-#' fit = c(eta = p, mu = mu, sigma = sigma, nu = nu)
+#' fit = c(eta = p, mu = mu, sigma = sigma, nu = nu, xi = c(0,0))
 #' fit = rbind(fit, fit)
 #' 
 #' pdf_func = function(x, pars) {
@@ -76,6 +76,8 @@ new_BayesMixture <- function(mcmc,
   assert_that(is.scalar(burnin), msg = "new_BayesMixture failed; nb_iter should be an integer positive or zero")
   assert_that(burnin < nrow(mcmc),
               msg = "new_BayesMixture failed; burnin parameter should be less than the number of mcmc draws")
+  assert_that(!(dist == "NA" & is.null(pdf_func)),
+              msg = "you have to specify either dist or pdf_func")
   ##
   # mcmc = as_draws_matrix(mcmc)
   
@@ -90,7 +92,7 @@ new_BayesMixture <- function(mcmc,
     K_from_names[i] = sum(p_names==pars_names[i])
   }
 
-  assert_that(sum(K_from_names !=2 ) == 0,
+  assert_that(sum(K_from_names != K) == 0,
               msg = "new_BayesMixture failed; There is a least one variable in mcmc that has not K components")
 
   if (dist == "poisson"){

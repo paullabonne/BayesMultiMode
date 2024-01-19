@@ -40,7 +40,7 @@
 #' p = c(0.5,0.5)
 #'
 #' params = c(eta = p, mu = mu, sigma = sigma)
-#' mix = new_Mixture(params, dist = "normal)
+#' mix = new_Mixture(params, dist = "normal")
 #' modes = fixed_point(mix)
 #' 
 #' @export

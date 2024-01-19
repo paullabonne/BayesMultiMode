@@ -15,6 +15,8 @@ Currently supports "normal" and "skew_normal"; not needed if pdf_func is provide
 \item{pdf_func}{Pdf of the mixture components; default is null.}
 
 \item{dist_type}{Either "continuous" or "discrete".}
+
+\item{data}{(optional) Data used for estimation; default is NULL.}
 }
 \value{
 A list of class \code{Mixture} containing:
@@ -41,6 +43,12 @@ dist = "skew_normal"
 mix = new_Mixture(params, dist = dist)
 
 # Example with an arbitrary distribution ===================================
+mu = c(0,6)
+omega = c(1,2)
+xi = c(0,0)
+nu = c(3,100)
+p = c(0.8,0.2)
+params = c(eta = p, mu = mu, sigma = omega, xi = xi, nu = nu)
 
 pdf_func <- function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])

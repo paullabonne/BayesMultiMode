@@ -36,6 +36,16 @@ a small value. By default modes which are closer
 than \eqn{sd(y)/10} are merged; this tolerance value can be controlled with the argument
 \code{tol_x}.
 }
+\examples{
+mu = c(0,5)
+sigma = c(1,2)
+p = c(0.5,0.5)
+
+params = c(eta = p, mu = mu, sigma = sigma)
+mix = new_Mixture(params, dist = "normal")
+modes = fixed_point(mix)
+
+}
 \references{
 \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}
 }

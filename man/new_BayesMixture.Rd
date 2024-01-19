@@ -32,15 +32,14 @@ this input is used only if dist_name is invalid or NULL.}
 
 \item{dist_type}{Either "continuous" or "discrete".}
 
-\item{pars_names}{Names of the mixture parameters; first element should 
-correspond to the mixture proportions.}
+\item{loglik}{Vector showing the log likelihood at each MCMC draw.}
 }
 \value{
 A list of class \code{BayesMixture} containing:
 \itemize{
  \item{data}{ - Same as argument.}
  \item{dist_type}{ - Same as argument.}
- \item{pars_names}{ - Same as argument.}
+ \item{pars_names}{ - Names of distribution parameters.}
  \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded.}
  \item{mcmc_all}{ - Original matrix of MCMC draws.}
 }
@@ -64,7 +63,7 @@ dist_type = "continuous"
 data = c(sn::rst(p[1]*1000, mu[1], sigma[1], nu = nu[1]),
          sn::rst(p[2]*1000, mu[2], sigma[2], nu = nu[2]))
 
-fit = c(eta = p, mu = mu, sigma = sigma, nu = nu)
+fit = c(eta = p, mu = mu, sigma = sigma, nu = nu, xi = c(0,0))
 fit = rbind(fit, fit)
 
 pdf_func = function(x, pars) {
