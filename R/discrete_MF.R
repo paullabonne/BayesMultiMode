@@ -134,6 +134,8 @@ discrete_MF <- function(mixture, type = "all"){
   mode$parameters = pars
   mode$pdf_func = pmf_func
   mode$data = data
+  mode$dist_type = "discrete"
+  mode$py = py
   
   class(mode) = "Mode"
 

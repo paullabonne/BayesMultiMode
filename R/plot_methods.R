@@ -36,7 +36,7 @@ plot.BayesMixture <- function(x, max_size = 250,
   dist = x$dist
   y = x$data
   pars_names = x$pars_names
-
+  
   if (x$dist_type == "continuous") {
     ## plot the data
     g = ggplot(data.frame(y = y), aes(y)) +
@@ -228,7 +228,6 @@ plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
 #' 
 #' @export
 plot.Mode <- function(modes, ...) {
-  dist = modes$dist
   pars = modes$parameters
   mode_est = modes$mode_estimates
   pdf_func = modes$pdf_func
@@ -251,17 +250,26 @@ plot.Mode <- function(modes, ...) {
     curve(dist_mixture(x, dist, pars, pdf_func), from = min_x,
           to = max_x, xlab = "", ylab = "")
     for (m in mode_est) {
-      abline(v = m)
+      abline(v = m, col = "red")
     }
+  } else if (modes$dist_type == "continuous") {
     
-  }
-  
-  if (modes$type  == "discrete") {
+    min_x = min(mode_est) - 4
+    max_x = max(mode_est) + 4
+    
+    par_names = str_extract(names(pars), "[a-z]+")
+    pars = vec_to_mat(pars, par_names)
+    curve(dist_mixture(x, dist, pars, pdf_func), from = min_x,
+          to = max_x, xlab = "", ylab = "")
+    for (m in mode_est) {
+      abline(v = m, col = "red")
+    }
+  } else if (modes$dist_type  == "discrete") {
+    data = modes$data
     x_axis = min(data):max(data)
-      plot(x_axis, py, type = "l", xlab = "", ylab = "")
-      for (m in mode_est) {
-        abline(v = m)
-      }
-    
+    plot(x_axis, modes$py, type = "h", xlab = "", ylab = "", lwd = 4)
+    for (m in mode_est) {
+      abline(v = m, col = "red")
+    }
   }
 }

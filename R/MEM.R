@@ -136,6 +136,7 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   mode$dist = dist
   mode$parameters = pars
   mode$pdf_func = pdf_func
+  mode$dist_type = "continuous"
   
   class(mode) = "Mode"
   
