@@ -14,7 +14,9 @@
 #' this input is used only if dist_name is invalid or NULL.
 #' @param dist_type Either "continuous" or "discrete".
 #' @param loglik Vector showing the log likelihood at each MCMC draw.
-#' 
+#' @param vars_to_keep (optional) Character vector containing the names
+#' of the variables to keep in mcmc.
+
 #' @returns
 #' A list of class \code{BayesMixture} containing:
 #' \itemize{
@@ -64,7 +66,8 @@ new_BayesMixture <- function(mcmc,
                              dist = "NA",
                              pdf_func = NULL,
                              dist_type,
-                             loglik = NULL) {
+                             loglik = NULL,
+                             vars_to_keep = NA_character_) {
   ## input checks
   assert_that(is.string(dist),
               msg = "new_BayesMixture failed; dist should be a string")
@@ -78,18 +81,29 @@ new_BayesMixture <- function(mcmc,
               msg = "new_BayesMixture failed; burnin parameter should be less than the number of mcmc draws")
   assert_that(!(dist == "NA" & is.null(pdf_func)),
               msg = "you have to specify either dist or pdf_func")
+  ## input checks
+  assert_that(is.character(vars_to_keep))
+  
   ##
   # mcmc = as_draws_matrix(mcmc)
+  mcmc_all = mcmc
+  mcmc = mcmc_all[(burnin+1):nrow(mcmc_all), ,drop = FALSE]
   
   # extract parameter names
-  p_names = str_extract(str_to_lower(colnames(mcmc)), "[a-z]+")
-  pars_names = unique(p_names)
+  col_names = str_extract(colnames(mcmc), "[a-z]+")
+  pars_names = unique(col_names)
+  
+  # keep only variables specify
+  if (sum(!is.na(vars_to_keep))>0) {
+    pars_names = pars_names[pars_names %in% vars_to_keep]
+  }
+  mcmc = mcmc[ , col_names %in% pars_names]
   
   # count number of components
   match = T
   K_from_names = rep(NA_real_, length(pars_names))
   for (i in 1:length(pars_names)) {
-    K_from_names[i] = sum(p_names==pars_names[i])
+    K_from_names[i] = sum(col_names==pars_names[i])
   }
 
   assert_that(sum(K_from_names != K) == 0,
@@ -120,35 +134,7 @@ new_BayesMixture <- function(mcmc,
     assert_that(!is.null(pdf_func), !is.na(pdf_func(1, vec_to_mat(mcmc[1,], pars_names)[1,-1])),
                 msg = "new_BayesMixture failed; running pdf_func with pars provided returns NA")
   }
-  
-  ### arrange the mcmc matrix by variable type (mu1,mu2,...,muN,sigma...)
-  # and select only the variables of interest
-  # mcmc_new = matrix(NA, nrow = nrow(mcmc), ncol = length(pars_names)*K)
-  # colnames(mcmc_new) = 1:ncol(mcmc_new)
-  # k_end = K
-  # k_start = 1
-  # for (par in pars_names) {
-  #   
-  #   #reorder
-  #   cols_par = str_locate(colnames(mcmc), par)[,1]
-  #   cols_par = which(!is.na(cols_par))
-  #   mcmc_new[,k_start:k_end] = mcmc[, cols_par]
-  #   
-  #   #rename
-  #   numb = gregexpr('[0-9]+', colnames(mcmc)[cols_par])
-  #   numb = unlist(regmatches(colnames(mcmc)[cols_par],numb))
-  #   
-  #   colnames(mcmc_new)[k_start:k_end] = paste0(par, numb)
-  #   
-  #   k_start = k_end + 1
-  #   k_end = k_start + K - 1
-  # }
-  # browser()
-  
-  mcmc_all = mcmc
-  mcmc = mcmc_all[(burnin+1):nrow(mcmc_all), ,drop = FALSE]
-  
-  
+ 
   BayesMix = list(data = data,
                   dist_type = dist_type,
                   loglik = loglik)
