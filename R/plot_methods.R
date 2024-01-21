@@ -222,17 +222,17 @@ plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
 
 #' Plot method for \code{Mode} objects
 #' 
-#' @param modes An object of class \code{Mode}.
+#' @param x An object of class \code{Mode}.
 #' @param ... Not used.
 #' 
 #' 
 #' @export
-plot.Mode <- function(modes, ...) {
-  pars = modes$parameters
-  mode_est = modes$mode_estimates
-  pdf_func = modes$pdf_func
+plot.Mode <- function(x, ...) {
+  pars = x$parameters
+  mode_est = x$mode_estimates
+  pdf_func = x$pdf_func
   
-  if (modes$dist %in% c("normal", "skew_normal")) {
+  if (x$dist %in% c("normal", "skew_normal")) {
     par_names = str_extract(names(pars), "[a-z]+")
     mu = pars[par_names %in% c("mu", "xi")]
     sigma = pars[par_names %in% c("sigma", "omega")]
@@ -252,7 +252,7 @@ plot.Mode <- function(modes, ...) {
     for (m in mode_est) {
       abline(v = m, col = "red")
     }
-  } else if (modes$dist_type == "continuous") {
+  } else if (x$dist_type == "continuous") {
     
     min_x = min(mode_est) - 4
     max_x = max(mode_est) + 4
@@ -264,10 +264,10 @@ plot.Mode <- function(modes, ...) {
     for (m in mode_est) {
       abline(v = m, col = "red")
     }
-  } else if (modes$dist_type  == "discrete") {
-    data = modes$data
+  } else if (x$dist_type  == "discrete") {
+    data = x$data
     x_axis = min(data):max(data)
-    plot(x_axis, modes$py, type = "h", xlab = "", ylab = "", lwd = 4)
+    plot(x_axis, x$py, type = "h", xlab = "", ylab = "", lwd = 4)
     for (m in mode_est) {
       abline(v = m, col = "red")
     }
