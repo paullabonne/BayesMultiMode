@@ -225,3 +225,38 @@ plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
   
   g
 }
+
+#' Plot method for \code{Mode} objects
+#' 
+#' @param modes An object of class \code{Mode}.
+#' @param ... Not used.
+#' 
+#' 
+#' @export
+plot.Mode <- function(modes, ...) {
+  dist = "normal"
+  pars = modes$parameters
+  mode_est = modes$mode_estimates
+  
+  if (modes$dist == "normal") {
+    
+    p = pars[grep("eta", names(pars))]
+    mu = pars[grep("mu", names(pars))]
+    sigma = pars[grep("sigma", names(pars))]
+    
+    # calculate min and max for x axis
+    min_mu = min(mu)
+    min_sigma = sigma[mu == min_mu]
+    max_mu = max(mu)
+    max_sigma = sigma[mu == max_mu]
+    
+    min_x = min_mu - 4*min_sigma
+    max_x = max_mu + 4*max_sigma
+    
+    curve(normal_mix(x, p, mu, sigma), from = min_x,
+          to = max_x, xlab = "", ylab = "")
+    for (m in mode_est) {
+      abline(v = m)
+    }
+  }
+}

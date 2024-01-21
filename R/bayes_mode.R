@@ -125,7 +125,6 @@
 #' # summary(bayesmode)
 #'
 #' @export
-
 bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8, nb_iter = NULL) {
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   assert_that(is.scalar(rd) & rd >= 0, msg = "rd should be greater or equal than zero")
