@@ -69,6 +69,8 @@ new_BayesMixture <- function(mcmc,
                              loglik = NULL,
                              vars_to_keep = NA_character_) {
   ## input checks
+  assert_that(is.matrix(mcmc),
+              msg = "new_BayesMixture failed; mcmc should be a matrix")
   assert_that(is.string(dist),
               msg = "new_BayesMixture failed; dist should be a string")
   assert_that(is.string(dist_type),
@@ -85,7 +87,6 @@ new_BayesMixture <- function(mcmc,
   assert_that(is.character(vars_to_keep))
   
   ##
-  # mcmc = as_draws_matrix(mcmc)
   mcmc_all = mcmc
   mcmc = mcmc_all[(burnin+1):nrow(mcmc_all), ,drop = FALSE]
   

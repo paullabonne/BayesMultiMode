@@ -107,7 +107,7 @@ for (i in 1:length(PY_result$p)) {
   mcmc_py[[i]] = draw
 }
 
-mcmc_py = bind_rows(mcmc_py)
+mcmc_py = as.matrix(bind_rows(mcmc_py))
 ```
 
 #### Creating an object of class `BayesMixture`
