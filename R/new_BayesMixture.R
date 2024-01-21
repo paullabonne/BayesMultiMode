@@ -63,9 +63,9 @@ new_BayesMixture <- function(mcmc,
                              data,
                              K,
                              burnin,
-                             dist = "NA",
+                             dist = NA_character_,
                              pdf_func = NULL,
-                             dist_type,
+                             dist_type = NA_character_,
                              loglik = NULL,
                              vars_to_keep = NA_character_) {
   ## input checks
@@ -75,13 +75,17 @@ new_BayesMixture <- function(mcmc,
               msg = "new_BayesMixture failed; dist should be a string")
   assert_that(is.string(dist_type),
               msg = "new_BayesMixture failed; dist_type should be a string")
+  if(!is.na(dist_type)) {
+    assert_that(dist_type %in% c("continuous", "discrete"),
+                msg = "dist_type should be either continuous or discrete")
+  }
   assert_that(is.vector(data) & length(data) > 0,
               msg = "new_BayesMixture failed; data should be a vector of length > 0")
   assert_that(is.scalar(K) & K > 0, msg = "new_BayesMixture failed; K should be a positive integer")
   assert_that(is.scalar(burnin), msg = "new_BayesMixture failed; nb_iter should be an integer positive or zero")
   assert_that(burnin < nrow(mcmc),
               msg = "new_BayesMixture failed; burnin parameter should be less than the number of mcmc draws")
-  assert_that(!(dist == "NA" & is.null(pdf_func)),
+  assert_that(!(is.na(dist) & is.null(pdf_func)),
               msg = "you have to specify either dist or pdf_func")
   ## input checks
   assert_that(is.character(vars_to_keep))
@@ -106,53 +110,56 @@ new_BayesMixture <- function(mcmc,
   for (i in 1:length(pars_names)) {
     K_from_names[i] = sum(col_names==pars_names[i])
   }
-
+  
   assert_that(sum(K_from_names != K) == 0,
               msg = "new_BayesMixture failed; There is a least one variable in mcmc that has not K components")
-
-  if (dist == "poisson"){
-    assert_that(sum(pars_names %in% c("eta", "lambda"))==2,
-                msg = "new_BayesMixture failed; variable names in mcmc output should be eta and lambda when dist = poisson")
+  
+  if (!is.na(dist)) {
+    if (dist == "poisson"){
+      assert_that(sum(pars_names %in% c("eta", "lambda"))==2,
+                  msg = "new_BayesMixture failed; variable names in mcmc output should be eta and lambda when dist = poisson")
+    }
+    
+    if (dist == "shifted_poisson"){
+      assert_that(sum(pars_names %in% c("eta", "kappa", "lambda"))==3,
+                  msg = "new_BayesMixture failed; variable names in mcmc output should be eta and lambda when dist = shifted_poisson")
+    }
+    
+    if (dist == "normal"){
+      assert_that(sum(pars_names %in% c("eta", "mu", "sigma"))==3,
+                  msg = "new_BayesMixture failed; variable names in mcmc output should be eta, mu and sigma when dist = normal")
+    }
+    
+    if (dist == "skew_normal"){
+      assert_that(sum(pars_names %in% c("eta", "xi", "omega", "alpha"))==4,
+                  msg = "new_BayesMixture failed; variable names in mcmc output should be eta, xi, omega and alpha when dist = skew_normal")
+    }
+    
+    if (dist %in% c("normal", "skew_normal")) {
+      dist_type = "continuous"
+    } else if (dist %in% c("poisson", "shifted_poisson")) {
+      dist_type = "discrete"
+    } else {
+      stop("Unsupported distribution; dist should be either normal, skew_normal, poisson or shifted_poisson")
+    } 
   }
   
-  if (dist == "shifted_poisson"){
-    assert_that(sum(pars_names %in% c("eta", "kappa", "lambda"))==3,
-                msg = "new_BayesMixture failed; variable names in mcmc output should be eta and lambda when dist = shifted_poisson")
+  # that pdf_func can be computed when provided
+  if (!is.null(pdf_func)) {
+    assert_that(!is.na(pdf_func(1, vec_to_mat(mcmc[1, ], pars_names)[1,-1])),
+                msg = "new_BayesMixture failed; running pdf_func with pars provided returns NA") 
+    assert_that(!is.na(dist_type),
+                msg = "new_BayesMixture failed; dist_type must be provided when argument pdf_func is used") 
   }
   
-  if (dist == "normal"){
-    assert_that(sum(pars_names %in% c("eta", "mu", "sigma"))==3,
-                msg = "new_BayesMixture failed; variable names in mcmc output should be eta, mu and sigma when dist = normal")
-  }
-  
-  if (dist == "skew_normal"){
-    assert_that(sum(pars_names %in% c("eta", "xi", "omega", "alpha"))==4,
-                msg = "new_BayesMixture failed; variable names in mcmc output should be eta, xi, omega and alpha when dist = skew_normal")
-  }
-  
-  # check that pdf_func can be computed when provided
-  if(!is.null(pdf_func)) {
-    assert_that(!is.null(pdf_func), !is.na(pdf_func(1, vec_to_mat(mcmc[1,], pars_names)[1,-1])),
-                msg = "new_BayesMixture failed; running pdf_func with pars provided returns NA")
-  }
- 
-  BayesMix = list(data = data,
+  BayesMix = list(mcmc = mcmc,
+                  data = data,
+                  mcmc_all = mcmc_all,
                   dist_type = dist_type,
-                  loglik = loglik)
-  
-  if (dist %in% c("normal", "skew_normal",
-                  "poisson", "shifted_poisson") & is.null(pdf_func)) {
-    BayesMix$dist = dist
-  } else {
-    BayesMix$dist = "NA"
-    BayesMix$pdf_func = pdf_func
-    assert_that(!is.null(pdf_func),
-                msg = "pdf_func is missing")
-  }
-  
-  BayesMix$pars_names = pars_names
-  BayesMix$mcmc = mcmc
-  BayesMix$mcmc_all = mcmc_all
+                  loglik = loglik,
+                  dist = dist,
+                  pdf_func = pdf_func,
+                  pars_names = pars_names)
   
   class(BayesMix) <- "BayesMixture"
   

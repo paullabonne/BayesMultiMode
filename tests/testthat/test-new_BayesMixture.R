@@ -1,4 +1,4 @@
-test_that("New_BayesMixture works returns expected results for the normal distribution", {
+test_that("New_BayesMixture returns expected results for the normal distribution", {
   set.seed(1)
   mu = c(0,5)
   sigma = c(1,2)
@@ -13,7 +13,7 @@ test_that("New_BayesMixture works returns expected results for the normal distri
   expect_s3_class(BM, "BayesMixture")
 })
 
-test_that("New_BayesMixture works returns expected results for the student distribution", {
+test_that("New_BayesMixture returns expected results for the student distribution", {
   set.seed(1)
   mu = c(0.5,6)
   sigma = c(1,2)
@@ -31,7 +31,7 @@ test_that("New_BayesMixture works returns expected results for the student distr
   pdf_func = function(x, pars) {
     sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
   }
-  
+
   BM = new_BayesMixture(fit, data, K = 2, burnin = 1, pdf_func = pdf_func, dist_type = dist_type)
   expect_s3_class(BM, "BayesMixture")
 })

@@ -9,9 +9,9 @@ new_BayesMixture(
   data,
   K,
   burnin,
-  dist = "NA",
+  dist = NA_character_,
   pdf_func = NULL,
-  dist_type,
+  dist_type = NA_character_,
   loglik = NULL,
   vars_to_keep = NA_character_
 )

@@ -141,26 +141,15 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
   pdf_func = BayesMix$pdf_func
   pars_names = BayesMix$pars_names
   
-  assert_that(is.vector(data) & length(data) > 0,
-              msg = "data should be a vector of length > 0")
-  assert_that(dist_type %in% c("continuous", "discrete"),
-              msg = "dist_type should be either continuous or discrete")
-  assert_that(dist %in% c("normal", "poisson",
-                          "shifted_poisson", "skew_normal", "NA") & is.character(dist),
-              msg = "Unsupported distribution. 
-              dist should be either normal, skew_normal, poisson,
-              shifted_poisson, or NA")
-  
-  
   # if nb_iter is specified (find the mode on a limited number of iterations):
   if (!is.null(nb_iter)) {
     mcmc = mcmc[sample(1:nrow(mcmc), nb_iter), , drop = FALSE]
   }
-  
+
   if (dist_type == "continuous") {
-    if (dist == "normal") {
+    if (!is.na(dist) & dist == "normal") {
       # fixed point
-      modes = t(apply(mcmc, 1, fixed_point_estimates,  dist = dist,
+      modes = t(apply(mcmc, 1, fixed_point_estimates,
                       tol_x = tol_x, tol_conv = tol_conv))
     } else {
       # MEM algorithm
@@ -268,13 +257,13 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
 }
 
 #' @keywords internal
-fixed_point_estimates <- function(mcmc, dist = dist, tol_x = 1e-6, tol_conv = 1e-8) {
-  mix = new_Mixture(mcmc, dist = dist)
+fixed_point_estimates <- function(mcmc, tol_x = 1e-6, tol_conv = 1e-8) {
+  mix = new_Mixture(mcmc, dist = "normal")
   fixed_point(mix, tol_x, tol_conv)$mode_estimates
 }
 
 #' @keywords internal
-MEM_estimates <- function(mcmc, dist = "NA", pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
+MEM_estimates <- function(mcmc, dist = NA_character_, pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
   mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func, dist_type = "continuous")
   MEM(mix, tol_x, tol_conv)$mode_estimates
 }

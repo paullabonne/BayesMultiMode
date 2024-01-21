@@ -187,7 +187,7 @@ bayes_estimation <- function(data,
   nb_iter = round(nb_iter)
   burnin = round(burnin)
   
-  if (dist %in% c("normal")) {
+  if (dist == "normal") {
     priors_labels = c("a0", "A0", "e0", "b0", "B0", "c0", "g0", "G0")
     
     mcmc = gibbs_SFM_normal(y = data,
