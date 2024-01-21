@@ -228,15 +228,15 @@ plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
 #' 
 #' @export
 plot.Mode <- function(modes, ...) {
-  dist = "normal"
+  dist = modes$dist
   pars = modes$parameters
   mode_est = modes$mode_estimates
+  pdf_func = modes$pdf_func
   
-  if (modes$dist == "normal") {
-    
-    p = pars[grep("eta", names(pars))]
-    mu = pars[grep("mu", names(pars))]
-    sigma = pars[grep("sigma", names(pars))]
+  if (modes$dist %in% c("normal", "skew_normal")) {
+    par_names = str_extract(names(pars), "[a-z]+")
+    mu = pars[par_names %in% c("mu", "xi")]
+    sigma = pars[par_names %in% c("sigma", "omega")]
     
     # calculate min and max for x axis
     min_mu = min(mu)
@@ -247,7 +247,8 @@ plot.Mode <- function(modes, ...) {
     min_x = min_mu - 4*min_sigma
     max_x = max_mu + 4*max_sigma
     
-    curve(normal_mix(x, p, mu, sigma), from = min_x,
+    pars = vec_to_mat(pars, par_names)
+    curve(dist_mixture(x, dist, pars, pdf_func), from = min_x,
           to = max_x, xlab = "", ylab = "")
     for (m in mode_est) {
       abline(v = m)

@@ -131,13 +131,6 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
     }
   }
   
-  # if (show_plot) {
-  #   curve(dist_mixture(x, dist, pars, pdf_func), from = min(data), to =  max(data))
-  #   for (x in est_mode) {
-  #     abline(v = x) 
-  #   } 
-  # }
-  
   mode = list()
   mode$mode_estimates = est_mode
   mode$dist = dist
