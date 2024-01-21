@@ -49,15 +49,9 @@ plot.BayesMixture <- function(x, max_size = 250,
     
     ## plot the mixture for each draw
     for (i in sample(nrow(mcmc),min(nrow(mcmc), max_size))) {
-      mcmc_i = mcmc[i, ]
-      pars = c()
-      for (j in 1:length(pars_names)) {
-        pars = cbind(pars, mcmc_i[grep(pars_names[j], names(mcmc_i))])
-      }
-      
-      colnames(pars) <- pars_names
+      pars = vec_to_mat(mcmc[i, ], pars_names)
       pars = na.omit(pars)
-     
+      
       g = g +
         geom_function(fun = dist_mixture,
                       args = list(dist = dist,
@@ -258,5 +252,15 @@ plot.Mode <- function(modes, ...) {
     for (m in mode_est) {
       abline(v = m)
     }
+    
+  }
+  
+  if (modes$type  == "discrete") {
+    x_axis = min(data):max(data)
+      plot(x_axis, py, type = "l", xlab = "", ylab = "")
+      for (m in mode_est) {
+        abline(v = m)
+      }
+    
   }
 }

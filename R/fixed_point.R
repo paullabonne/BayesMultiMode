@@ -87,13 +87,6 @@ fixed_point <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
     }
   }
   
-  # if (show_plot) {
-  #   curve(normal_mix(x, p, mu, sigma), from = min(data), to =  max(data), xlab = "", ylab = "")
-  #   for (x in modes) {
-  #     abline(v = x) 
-  #   } 
-  # }
-  
   mode = list()
   mode$mode_estimates = modes
   mode$dist = mixture$dist

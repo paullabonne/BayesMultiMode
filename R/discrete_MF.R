@@ -118,13 +118,6 @@ discrete_MF <- function(mixture, type = "all"){
     warning("Some of these modes are flat.")
   }
   
-  # if (show_plot) {
-  #   plot(x, py, type = "l", xlab = "", ylab = "")
-  #   for (mode_i in loc_modes) {
-  #     abline(v = mode_i)
-  #   }
-  # }
-  
   output = rep(NA_real_, length(x))
   
   if (type == "unique") {
@@ -140,6 +133,7 @@ discrete_MF <- function(mixture, type = "all"){
   mode$dist = dist
   mode$parameters = pars
   mode$pdf_func = pmf_func
+  mode$data = data
   
   class(mode) = "Mode"
 

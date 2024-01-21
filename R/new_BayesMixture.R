@@ -97,8 +97,8 @@ new_BayesMixture <- function(mcmc,
   # keep only variables specify
   if (sum(!is.na(vars_to_keep))>0) {
     pars_names = pars_names[pars_names %in% vars_to_keep]
+    mcmc = mcmc[ , col_names %in% pars_names, drop = F]
   }
-  mcmc = mcmc[ , col_names %in% pars_names]
   
   # count number of components
   match = T
