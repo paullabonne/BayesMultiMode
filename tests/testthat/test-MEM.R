@@ -28,7 +28,7 @@ test_that("MEM function returns expected results with an arbitrary function", {
     sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
   }
   
-  mix = new_Mixture(params, pdf_func = pdf_func)
+  mix = new_Mixture(params, pdf_func = pdf_func, dist_type = "continuous")
   modes = MEM(mix)
   expect_equal(abs(sum(modes$mode_estimates-xi))<1,  TRUE)
   # the two densities are far apart so the modes should coincide with the location parameters

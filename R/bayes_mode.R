@@ -275,12 +275,12 @@ fixed_point_estimates <- function(mcmc, dist = dist, tol_x = 1e-6, tol_conv = 1e
 
 #' @keywords internal
 MEM_estimates <- function(mcmc, dist = "NA", pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
-  mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func)
+  mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func, dist_type = "continuous")
   MEM(mix, tol_x, tol_conv)$mode_estimates
 }
 
 #' @keywords internal
 discrete_MF_estimates <- function(mcmc, dist = dist, pmf_func = pmf_func, type = "all", data = data) {
-  mix = new_Mixture(mcmc, dist = dist, pdf_func = pmf_func, data = data)
+  mix = new_Mixture(mcmc, dist = dist, pdf_func = pmf_func, data = data, dist_type = "discrete")
   discrete_MF(mix, type = type)$mode_estimates
 }

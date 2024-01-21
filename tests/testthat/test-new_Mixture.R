@@ -15,7 +15,7 @@ test_that("new_mixture returns expected error when dist and parameters do not ma
              omega = c(1,2),
              alpha = c(0.5,0.1))
   
-  expect_error(new_Mixture(params, dist = "skew_normal"),
+  expect_error(new_Mixture(params, dist = "skew_normal", dist_type = "continuous"),
                "new_Mixture failed; variables should be theta, xi, omega and alpha when using dist = skew_normal")
 })
 
@@ -33,7 +33,7 @@ test_that("new_mixture returns expected error when pdf_func and mcmc parameters 
     sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
   }
   
-  expect_error(new_Mixture(fit, pdf_func = pdf_func),
+  expect_error(new_Mixture(fit, pdf_func = pdf_func, dist_type = "continuous"),
                "new_Mixture failed; running pdf_func with pars provided returns NA")
 
 })

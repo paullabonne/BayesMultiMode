@@ -12,7 +12,8 @@ new_BayesMixture(
   dist = "NA",
   pdf_func = NULL,
   dist_type,
-  loglik = NULL
+  loglik = NULL,
+  vars_to_keep = NA_character_
 )
 }
 \arguments{
@@ -33,6 +34,9 @@ this input is used only if dist_name is invalid or NULL.}
 \item{dist_type}{Either "continuous" or "discrete".}
 
 \item{loglik}{Vector showing the log likelihood at each MCMC draw.}
+
+\item{vars_to_keep}{(optional) Character vector containing the names
+of the variables to keep in mcmc.}
 }
 \value{
 A list of class \code{BayesMixture} containing:

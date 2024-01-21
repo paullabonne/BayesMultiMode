@@ -47,7 +47,8 @@ test_that("discrete_MF function returns expected results with arbitrary function
     dnbinom(x, mu = pars["mu"], size = pars["size"])
   }
   
-  mix = new_Mixture(params, data = data, pdf_func = pmf_func)
+  mix = new_Mixture(params, data = data, pdf_func = pmf_func,
+                    dist_type = "discrete")
   modes = discrete_MF(mix)$mode_estimates
   
   expect_equal(modes[1] == 0,  TRUE)

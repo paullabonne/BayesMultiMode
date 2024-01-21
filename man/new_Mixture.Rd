@@ -4,7 +4,13 @@
 \alias{new_Mixture}
 \title{Creating a S3 object of class \code{Mixture}}
 \usage{
-new_Mixture(pars, dist = "NA", pdf_func = NULL, dist_type = "NA", data = NULL)
+new_Mixture(
+  pars,
+  dist = NA_character_,
+  pdf_func = NULL,
+  dist_type = NA_character_,
+  data = NULL
+)
 }
 \arguments{
 \item{pars}{Named vector of mixture parameters.}
@@ -55,6 +61,6 @@ pdf_func <- function(x, pars) {
 }
 
 
-mix = new_Mixture(params, pdf_func = pdf_func)
+mix = new_Mixture(params, pdf_func = pdf_func, dist_type = "continuous")
 
 }
