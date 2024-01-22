@@ -43,6 +43,26 @@ summary.Mode <- function(object, ...) {
   } else {
     m = "Modes"
   }
-  cat("\n", Nb_m, m, "of a", d,"distribution with", K, "components.")
+  cat("\n", Nb_m, m, "of a", d,"mixutre distribution with", K, "components.")
   cat("\n Mode estimation using the", algo,"algorithm.")
+}
+
+
+#' Summary method for \code{Mixture} objects
+#' 
+#' @param object An object of class \code{Mode}.
+#' @param ... Not used.
+#' 
+#' @export
+summary.Mixture <- function(object, ...) {
+  stopifnot(inherits(object, "Mode"))
+  
+  d = object$dist
+  K = object$K
+  
+  if (is.na(d)) {
+    d = object$dist_type
+  }
+
+  cat("\n", d,"mixture distribution with", K, "components.")
 }
