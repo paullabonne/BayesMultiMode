@@ -88,6 +88,7 @@ new_BayesMixture <- function(mcmc,
   assert_that(is.character(vars_to_keep))
   
   ##
+  rownames(mcmc) = NULL
   mcmc_all = mcmc
   mcmc = mcmc_all[(burnin+1):nrow(mcmc_all), ,drop = FALSE]
   
