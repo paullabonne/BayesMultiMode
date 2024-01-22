@@ -20,6 +20,8 @@ devtools::check()
 
 devtools::check_rhub()
 
+devtools::test_coverage()
+
 devtools::submit_cran()
 ```
 

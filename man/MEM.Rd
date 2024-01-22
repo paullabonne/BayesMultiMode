@@ -2,7 +2,7 @@
 % Please edit documentation in R/MEM.R
 \name{MEM}
 \alias{MEM}
-\title{Modal EM algorithm (MEM)}
+\title{Modal Expectation-Maximization algorithm (MEM)}
 \usage{
 MEM(mixture, tol_x = 1e-06, tol_conv = 1e-08)
 }

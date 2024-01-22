@@ -78,5 +78,5 @@ summary.BayesMixture <- function(object, ...) {
   
   cat("\n", d,"mixture distribution estimated with a Bayesian MCMC method.")
   cat("\n", "The distibution has", K, "components and each component has", object$nb_var, "parameters.")
-  
+
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary_methods.R
 \name{summary.BayesMode}
 \alias{summary.BayesMode}
-\title{Summary method for for \code{BayesMode} objects}
+\title{Summary method for \code{BayesMode} objects}
 \usage{
 \method{summary}{BayesMode}(object, ...)
 }
@@ -12,5 +12,5 @@
 \item{...}{Not used.}
 }
 \description{
-Summary method for for \code{BayesMode} objects
+Summary method for \code{BayesMode} objects
 }
