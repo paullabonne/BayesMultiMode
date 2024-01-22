@@ -223,11 +223,16 @@ plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
 #' Plot method for \code{Mixture} objects
 #' 
 #' @param x An object of class \code{Mixture}.
+#' @param from the lower limit of the range over which the function will be plotted.
+#' @param to the upper limit of the range over which the function will be plotted.
 #' @param ... Not used.
 #' 
-#' 
 #' @export
-plot.Mixture <- function(x, ...) {
+plot.Mixture <- function(x, from = NULL, to = NULL, ...) {
+  assert_that(is.null(from)|(is.numeric(from) && is.finite(to)),
+              is.null(to)|(is.numeric(to) && is.finite(to)),
+              msg = "arguments from and to must be numeric and finite")
+
   pars = x$pars
   mode_est = x$mode_estimates
   pdf_func = x$pdf_func
@@ -239,30 +244,47 @@ plot.Mixture <- function(x, ...) {
     sigma = pars[par_names %in% c("sigma", "omega")]
     
     # calculate min and max for x axis
-    min_mu = min(mu)
-    min_sigma = sigma[mu == min_mu]
-    max_mu = max(mu)
-    max_sigma = sigma[mu == max_mu]
+    if (is.null(from)) {
+      min_mu = min(mu)
+      min_sigma = sigma[mu == min_mu]
+      min_x = min_mu - 4*min_sigma
+    } else {
+      min_x = from
+    }
     
-    min_x = min_mu - 4*min_sigma
-    max_x = max_mu + 4*max_sigma
-    
+    if (is.null(to)) {
+      max_mu = max(mu)
+      max_sigma = sigma[mu == max_mu]
+      max_x = max_mu + 4*max_sigma
+    } else {
+      max_x = to
+    }
+
     pars = vec_to_mat(pars, par_names)
     curve(dist_mixture(x, dist, pars, pdf_func), from = min_x,
           to = max_x, xlab = "", ylab = "")
-  } else if (x$dist_type == "continuous") {
     
-    assert_that(is.vector(x$data))
-    min_x = min(x$data)
-    max_x = max(x$data)
+  } else if (x$dist_type == "continuous") {
+    assert_that(!is.null(from) & !is.null(to),
+                msg = "arguments from and to must be provided when plotting
+                a continuous distribution other than the normal and skew
+                normal provided by BayesMultiMode.")
+    
+    assert_that(is.finite(from) && is.finite(to),
+                msg = "from and to must be finite")
     
     par_names = str_extract(names(pars), "[a-z]+")
     pars = vec_to_mat(pars, par_names)
-    curve(dist_mixture(x, dist, pars, pdf_func), from = min_x,
-          to = max_x, xlab = "", ylab = "")
+    curve(dist_mixture(x, dist, pars, pdf_func), from = from,
+          to = to, xlab = "", ylab = "")
+    
   } else if (x$dist_type  == "discrete") {
-    assert_that(is.vector(x$data))
-    xx = min(x$data):max(x$data)
+    assert_that(!is.null(from) & !is.null(to),
+                msg = "arguments from and to must be provided when plotting
+                a discrete mixture.")
+    assert_that(is.finite(from) && is.finite(to),
+                msg = "from and to must be finite")
+    xx = round(from):round(to)
     par_names = str_extract(names(pars), "[a-z]+")
     pars_mat = vec_to_mat(pars, par_names)
     pdf_k = matrix(0, nrow=length(xx), ncol=nrow(pars_mat)) 
@@ -273,24 +295,27 @@ plot.Mixture <- function(x, ...) {
     ### summing up to get the mixture
     py <- rowSums(pdf_k, na.rm = T)
   
-    plot(xx, py, type = "h", xlab = "", ylab = "", lwd = 4)
+    plot(xx, py, type = "h", xlab = "", ylab = "", lwd = 4,
+         xlim = c(from, to))
   }
 }
 
 #' Plot method for \code{Mode} objects
 #' 
 #' @param x An object of class \code{Mode}.
+#' @param from the lower limit of the range over which the function will be plotted.
+#' @param to the upper limit of the range over which the function will be plotted.
 #' @param ... Not used.
 #' 
 #' 
 #' @export
-plot.Mode <- function(x, ...) {
+plot.Mode <- function(x, from = NULL, to = NULL, ...) {
   mix = new_Mixture(x$pars, dist = x$dist,
                     pdf_func = x$pdf_func,
                     dist_type = x$dist_type,
                     data = x$data)
   
-  plot(mix)
+  plot(mix, from = from, to = to)
   for (m in x$mode_estimates) {
     abline(v = m, col = "red")
   }
