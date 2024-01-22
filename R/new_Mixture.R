@@ -90,7 +90,7 @@ new_Mixture <- function(pars,
     }
     
     if (dist %in% c("normal", "skew_normal")) {
-      dist_type = "continous"
+      dist_type = "continuous"
     } else if (dist %in% c("poisson", "shifted_poisson")) {
       dist_type = "discrete"
     } else {

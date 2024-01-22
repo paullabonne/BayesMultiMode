@@ -34,13 +34,16 @@ summary.Mode <- function(object, ...) {
   if (is.na(d)) {
     d = object$dist_type
   }
+  
   if (Nb_m == 1) {
     m = "Mode"
   } else {
     m = "Modes"
   }
-  cat("\n", Nb_m, m, "of a", d,"mixutre distribution with", K, "components.")
-  cat("\n Mode estimation using the", algo,"algorithm.")
+  
+  cat("\n",m, "of a", d, "mixture with", K, "components.")
+  cat("\n Number of modes found:", Nb_m)
+  cat("\n Mode estimation technique:", object$algo, "algorithm")
 }
 
 
@@ -51,16 +54,14 @@ summary.Mode <- function(object, ...) {
 #' 
 #' @export
 summary.Mixture <- function(object, ...) {
-  d = object$dist
-  K = object$K
-  
-  if (is.na(d)) {
-    d = object$dist_type
-  }
-
-  cat("\n", d,"mixture distribution with", K, "components.")
-  cat("\n Each component has", object$nb_var, "parameters.")
+  cat("\n Estimated mixture distribution.")
+  cat("\n Number of components:", object$K)
+  cat("\n Number of component parameters:", object$nb_var)
+  cat("\n Mixture family:", object$dist)
+  cat("\n Mixture type:", object$dist_type)
 }
+
+
 
 #' Summary method for \code{BayesMixture} objects
 #' 
@@ -76,7 +77,9 @@ summary.BayesMixture <- function(object, ...) {
     d = object$dist_type
   }
   
-  cat("\n", d,"mixture distribution estimated with a Bayesian MCMC method.")
-  cat("\n", "The distibution has", K, "components and each component has", object$nb_var, "parameters.")
-
+  cat("\n Mixture estimated with a Bayesian MCMC method.")
+  cat("\n Number of components:", object$K)
+  cat("\n Number of component parameters:", object$nb_var)
+  cat("\n Mixture family:", object$dist)
+  cat("\n Mixture type:", object$dist_type)
 }

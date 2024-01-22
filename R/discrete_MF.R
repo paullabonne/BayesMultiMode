@@ -129,7 +129,7 @@ discrete_MF <- function(mixture, type = "all"){
   }
   
   mode = list()
-  mode$mode_estimates = output
+  mode$mode_estimates = output[!is.na(output)]
   mode$dist = dist
   mode$parameters = pars
   mode$pdf_func = pmf_func
