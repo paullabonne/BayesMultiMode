@@ -65,4 +65,26 @@ summary.Mixture <- function(object, ...) {
   }
 
   cat("\n", d,"mixture distribution with", K, "components.")
+  cat("\n Each component has", object$nb_var, "parameters.")
+}
+
+#' Summary method for \code{BayesMixture} objects
+#' 
+#' @param object An object of class \code{BayesMixture}.
+#' @param ... Not used.
+#' 
+#' @export
+summary.BayesMixture <- function(object, ...) {
+  stopifnot(inherits(object, "Mode"))
+  
+  d = object$dist
+  K = object$K
+  
+  if (is.na(d)) {
+    d = object$dist_type
+  }
+  
+  cat("\n", d,"mixture distribution estimated with a Bayesian MCMC method.")
+  cat("\n", "The distibution has", K, "components and each component has", object$nb_var, "parameters.")
+  
 }

@@ -159,7 +159,9 @@ new_BayesMixture <- function(mcmc,
                   loglik = loglik,
                   dist = dist,
                   pdf_func = pdf_func,
-                  pars_names = pars_names)
+                  pars_names = pars_names,
+                  nb_var = length(pars_names) - 1, #minus the shares
+                  K = ncol(mcmc)/length(pars_names))
   
   class(BayesMix) <- "BayesMixture"
   

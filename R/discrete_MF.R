@@ -138,6 +138,7 @@ discrete_MF <- function(mixture, type = "all"){
   mode$py = py
   mode$algo = "discrete"
   mode$K = mixture$K
+  mode$nb_var = mixture$nb_var
   
   class(mode) = "Mode"
 

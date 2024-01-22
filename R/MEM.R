@@ -139,6 +139,7 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   mode$dist_type = "continuous"
   mode$algo = "Modal Expectation-Maximization (MEM)"
   mode$K = mixture$K
+  mode$nb_var = mixture$nb_var
   
   class(mode) = "Mode"
   
