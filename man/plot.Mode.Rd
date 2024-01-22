@@ -4,10 +4,14 @@
 \alias{plot.Mode}
 \title{Plot method for \code{Mode} objects}
 \usage{
-\method{plot}{Mode}(x, ...)
+\method{plot}{Mode}(x, from = NULL, to = NULL, ...)
 }
 \arguments{
 \item{x}{An object of class \code{Mode}.}
+
+\item{from}{the lower limit of the range over which the function will be plotted.}
+
+\item{to}{the upper limit of the range over which the function will be plotted.}
 
 \item{...}{Not used.}
 }
