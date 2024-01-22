@@ -38,7 +38,11 @@
 #'          rpois(p[2]*1e3, lambda[2]))
 #' 
 #' mix = new_Mixture(params, data = data, dist = dist)
+#' 
 #' modes = discrete_MF(mix)
+#'
+#' # summary(modes)
+#' # plot(modes, from = 0, to = 20)
 #' 
 #' # Example with an arbitrary distribution ===================================
 #' mu = c(20,5)
@@ -55,6 +59,9 @@
 #' 
 #' mix = new_Mixture(params, data = data, pdf_func = pmf_func, dist_type = "discrete")
 #' modes = discrete_MF(mix)
+#' 
+#' # summary(modes)
+#' # plot(modes, from = 0, to = 50)
 #' 
 #' @export
 

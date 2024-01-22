@@ -43,6 +43,9 @@
 #' mix = new_Mixture(params, dist = "normal")
 #' modes = fixed_point(mix)
 #' 
+#' # summary(modes)
+#' # plot(modes)
+#' 
 #' @export
 
 fixed_point <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {

@@ -31,6 +31,9 @@
 #' 
 #' mix = new_Mixture(params, dist = dist)
 #' 
+#' # summary(mix)
+#' # plot(mix)
+#' 
 #' # Example with an arbitrary distribution ===================================
 #' mu = c(0,6)
 #' omega = c(1,2)
@@ -46,6 +49,9 @@
 #' 
 #' 
 #' mix = new_Mixture(params, pdf_func = pdf_func, dist_type = "continuous")
+#' 
+#' # summary(mix)
+#' # plot(mix, from = -4, to = 4)
 #' 
 #' @export
 
