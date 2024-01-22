@@ -220,19 +220,20 @@ plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
   g
 }
 
-#' Plot method for \code{Mode} objects
+#' Plot method for \code{Mixture} objects
 #' 
-#' @param x An object of class \code{Mode}.
+#' @param x An object of class \code{Mixture}.
 #' @param ... Not used.
 #' 
 #' 
 #' @export
-plot.Mode <- function(x, ...) {
-  pars = x$parameters
+plot.Mixture <- function(x, ...) {
+  pars = x$pars
   mode_est = x$mode_estimates
   pdf_func = x$pdf_func
+  dist = x$dist
   
-  if (x$dist %in% c("normal", "skew_normal")) {
+  if (dist %in% c("normal", "skew_normal")) {
     par_names = str_extract(names(pars), "[a-z]+")
     mu = pars[par_names %in% c("mu", "xi")]
     sigma = pars[par_names %in% c("sigma", "omega")]
@@ -249,27 +250,48 @@ plot.Mode <- function(x, ...) {
     pars = vec_to_mat(pars, par_names)
     curve(dist_mixture(x, dist, pars, pdf_func), from = min_x,
           to = max_x, xlab = "", ylab = "")
-    for (m in mode_est) {
-      abline(v = m, col = "red")
-    }
   } else if (x$dist_type == "continuous") {
     
-    min_x = min(mode_est) - 4
-    max_x = max(mode_est) + 4
+    assert_that(is.vector(x$data))
+    min_x = min(x$data)
+    max_x = max(x$data)
     
     par_names = str_extract(names(pars), "[a-z]+")
     pars = vec_to_mat(pars, par_names)
     curve(dist_mixture(x, dist, pars, pdf_func), from = min_x,
           to = max_x, xlab = "", ylab = "")
-    for (m in mode_est) {
-      abline(v = m, col = "red")
-    }
   } else if (x$dist_type  == "discrete") {
-    data = x$data
-    x_axis = min(data):max(data)
-    plot(x_axis, x$py, type = "h", xlab = "", ylab = "", lwd = 4)
-    for (m in mode_est) {
-      abline(v = m, col = "red")
+    assert_that(is.vector(x$data))
+    xx = min(x$data):max(x$data)
+    par_names = str_extract(names(pars), "[a-z]+")
+    pars_mat = vec_to_mat(pars, par_names)
+    pdf_k = matrix(0, nrow=length(xx), ncol=nrow(pars_mat)) 
+    for(k in 1:nrow(pars_mat)){
+      pdf_k[,k] = pars_mat[k,1] * dist_pdf(xx, dist, pars_mat[k, -1], pdf_func = pdf_func)
     }
+    
+    ### summing up to get the mixture
+    py <- rowSums(pdf_k, na.rm = T)
+  
+    plot(xx, py, type = "h", xlab = "", ylab = "", lwd = 4)
+  }
+}
+
+#' Plot method for \code{Mode} objects
+#' 
+#' @param x An object of class \code{Mode}.
+#' @param ... Not used.
+#' 
+#' 
+#' @export
+plot.Mode <- function(x, ...) {
+  mix = new_Mixture(x$pars, dist = x$dist,
+                    pdf_func = x$pdf_func,
+                    dist_type = x$dist_type,
+                    data = x$data)
+  
+  plot(mix)
+  for (m in x$mode_estimates) {
+    abline(v = m, col = "red")
   }
 }

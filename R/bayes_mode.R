@@ -179,17 +179,18 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
   }
   
   if (dist_type == "discrete") {
-
+    x = min(data):max(data)
+    
     # Posterior probability of being a mode for each location
     modes <- t(apply(mcmc,1,FUN = discrete_MF_estimates,
                      data = data,
                      dist = dist,
                      pmf_func = pdf_func))
     
-    modes_xid = matrix(0, nrow(modes), ncol(modes))
-    x = min(data):max(data)
+   
+    modes_xid = matrix(0, nrow(mcmc), length(x))
     for (i in 1:nrow(modes)) {
-      modes_xid[i, which(x %in% na.omit(modes[i,]))] = 1
+      modes_xid[i, modes[i,!is.na(modes[i, ])]] = 1
     }
  
     # number of modes
@@ -198,7 +199,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
     sum_modes = apply(modes_xid,2,sum)
     probs_modes = sum_modes/nrow(mcmc)
     probs_modes = probs_modes[probs_modes>0]
-    x = min(data):max(data)
+    
     location_at_modes = x[sum_modes>0]
     
     modes = as.matrix(modes[, 1:max(n_modes)], nrow = nrow(mcmc))
@@ -263,18 +264,30 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
 
 #' @keywords internal
 fixed_point_estimates <- function(mcmc, tol_x = 1e-6, tol_conv = 1e-8) {
+  output = rep(NA_real_, length(mcmc))
   mix = new_Mixture(mcmc, dist = "normal")
-  fixed_point(mix, tol_x, tol_conv)$mode_estimates
+  modes = fixed_point(mix, tol_x, tol_conv)$mode_estimates
+  output[1:length(modes)] = modes
+  
+  return(output)
 }
 
 #' @keywords internal
 MEM_estimates <- function(mcmc, dist = NA_character_, pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
+  output = rep(NA_real_, length(mcmc))
   mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func, dist_type = "continuous")
-  MEM(mix, tol_x, tol_conv)$mode_estimates
+  modes = MEM(mix, tol_x, tol_conv)$mode_estimates
+  output[1:length(modes)] = modes
+  
+  return(output)
 }
 
 #' @keywords internal
 discrete_MF_estimates <- function(mcmc, dist = dist, pmf_func = pmf_func, type = "all", data = data) {
+  output = rep(NA_real_, length(mcmc))
   mix = new_Mixture(mcmc, dist = dist, pdf_func = pmf_func, data = data, dist_type = "discrete")
-  discrete_MF(mix, type = type)$mode_estimates
+  modes = discrete_MF(mix, type = type)$mode_estimates
+  output[1:length(modes)] = modes
+  
+  return(output)
 }

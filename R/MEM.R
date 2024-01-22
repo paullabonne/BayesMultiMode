@@ -75,9 +75,9 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   pdf_func = mixture$pdf_func
   
   ## input checks
-  assert_that(is.vector(tol_x) & tol_x > 0, msg = "MEM() failed; tol_x should be a positive scalar")
+  assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
   assert_that(is.vector(pars_names) & is.character(pars_names),
-              msg = "MEM() failed; pars_names should be a character vector")
+              msg = "pars_names should be a character vector")
   ##
 
   pars_mat <- vec_to_mat(pars, pars_names)
@@ -132,9 +132,9 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   }
   
   mode = list()
-  mode$mode_estimates = est_mode
+  mode$mode_estimates = est_mode[!is.na(est_mode)]
   mode$dist = dist
-  mode$parameters = pars
+  mode$pars = pars
   mode$pdf_func = pdf_func
   mode$dist_type = "continuous"
   mode$algo = "Modal Expectation-Maximization (MEM)"

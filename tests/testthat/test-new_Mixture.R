@@ -5,7 +5,7 @@ test_that("new_mixture returns expected error when dist and pdf_func are not giv
              sigma = c(1,2))
   
   expect_error(new_Mixture(params),
-               "you have to specify either dist or pdf_func")
+               "one of dist or pdf_func must be specified")
 })
 
 test_that("new_mixture returns expected error when dist and parameters do not match (skew normal)", {
@@ -16,7 +16,7 @@ test_that("new_mixture returns expected error when dist and parameters do not ma
              alpha = c(0.5,0.1))
   
   expect_error(new_Mixture(params, dist = "skew_normal", dist_type = "continuous"),
-               "new_Mixture failed; variables should be theta, xi, omega and alpha when using dist = skew_normal")
+               "variables should be theta, xi, omega and alpha when using dist = skew_normal")
 })
 
 test_that("new_mixture returns expected error when pdf_func and mcmc parameters do not match", {
@@ -34,6 +34,6 @@ test_that("new_mixture returns expected error when pdf_func and mcmc parameters 
   }
   
   expect_error(new_Mixture(fit, pdf_func = pdf_func, dist_type = "continuous"),
-               "new_Mixture failed; running pdf_func with pars provided returns NA")
+               "running pdf_func with pars provided returns NA")
 
 })

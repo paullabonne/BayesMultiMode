@@ -69,24 +69,21 @@ new_BayesMixture <- function(mcmc,
                              loglik = NULL,
                              vars_to_keep = NA_character_) {
   ## input checks
-  assert_that(is.matrix(mcmc),
-              msg = "new_BayesMixture failed; mcmc should be a matrix")
-  assert_that(is.string(dist),
-              msg = "new_BayesMixture failed; dist should be a string")
-  assert_that(is.string(dist_type),
-              msg = "new_BayesMixture failed; dist_type should be a string")
+  assert_that(is.matrix(mcmc))
+  assert_that(is.string(dist))
+  assert_that(is.string(dist_type))
   if(!is.na(dist_type)) {
     assert_that(dist_type %in% c("continuous", "discrete"),
                 msg = "dist_type should be either continuous or discrete")
   }
   assert_that(is.vector(data) & length(data) > 0,
-              msg = "new_BayesMixture failed; data should be a vector of length > 0")
-  assert_that(is.scalar(K) & K > 0, msg = "new_BayesMixture failed; K should be a positive integer")
-  assert_that(is.scalar(burnin), msg = "new_BayesMixture failed; nb_iter should be an integer positive or zero")
+              msg = "data should be a vector of length > 0")
+  assert_that(is.scalar(K) & K > 0, msg = "K should be a positive integer")
+  assert_that(is.scalar(burnin) & burnin > 0, msg = "burnin should be an integer positive or zero")
   assert_that(burnin < nrow(mcmc),
-              msg = "new_BayesMixture failed; burnin parameter should be less than the number of mcmc draws")
+              msg = "burnin parameter should be less than the number of mcmc draws")
   assert_that(!(is.na(dist) & is.null(pdf_func)),
-              msg = "you have to specify either dist or pdf_func")
+              msg = "one of dist or pdf_func must be specified")
   ## input checks
   assert_that(is.character(vars_to_keep))
   
@@ -112,27 +109,27 @@ new_BayesMixture <- function(mcmc,
   }
   
   assert_that(sum(K_from_names != K) == 0,
-              msg = "new_BayesMixture failed; There is a least one variable in mcmc that has not K components")
+              msg = "There is a least one variable in mcmc that has not K components")
   
   if (!is.na(dist)) {
     if (dist == "poisson"){
       assert_that(sum(pars_names %in% c("eta", "lambda"))==2,
-                  msg = "new_BayesMixture failed; variable names in mcmc output should be eta and lambda when dist = poisson")
+                  msg = "variable names in mcmc output should be eta and lambda when dist = poisson")
     }
     
     if (dist == "shifted_poisson"){
       assert_that(sum(pars_names %in% c("eta", "kappa", "lambda"))==3,
-                  msg = "new_BayesMixture failed; variable names in mcmc output should be eta and lambda when dist = shifted_poisson")
+                  msg = "variable names in mcmc output should be eta and lambda when dist = shifted_poisson")
     }
     
     if (dist == "normal"){
       assert_that(sum(pars_names %in% c("eta", "mu", "sigma"))==3,
-                  msg = "new_BayesMixture failed; variable names in mcmc output should be eta, mu and sigma when dist = normal")
+                  msg = "variable names in mcmc output should be eta, mu and sigma when dist = normal")
     }
     
     if (dist == "skew_normal"){
       assert_that(sum(pars_names %in% c("eta", "xi", "omega", "alpha"))==4,
-                  msg = "new_BayesMixture failed; variable names in mcmc output should be eta, xi, omega and alpha when dist = skew_normal")
+                  msg = "variable names in mcmc output should be eta, xi, omega and alpha when dist = skew_normal")
     }
     
     if (dist %in% c("normal", "skew_normal")) {
@@ -147,9 +144,9 @@ new_BayesMixture <- function(mcmc,
   # that pdf_func can be computed when provided
   if (!is.null(pdf_func)) {
     assert_that(!is.na(pdf_func(1, vec_to_mat(mcmc[1, ], pars_names)[1,-1])),
-                msg = "new_BayesMixture failed; running pdf_func with pars provided returns NA") 
+                msg = "running pdf_func with pars provided returns NA") 
     assert_that(!is.na(dist_type),
-                msg = "new_BayesMixture failed; dist_type must be provided when argument pdf_func is used") 
+                msg = "dist_type must be provided when argument pdf_func is used") 
   }
   
   BayesMix = list(mcmc = mcmc,

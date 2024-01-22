@@ -2,6 +2,7 @@
 
 S3method(plot,BayesMixture)
 S3method(plot,BayesMode)
+S3method(plot,Mixture)
 S3method(plot,Mode)
 S3method(summary,BayesMixture)
 S3method(summary,BayesMode)

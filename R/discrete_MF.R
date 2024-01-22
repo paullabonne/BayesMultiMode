@@ -67,16 +67,12 @@ discrete_MF <- function(mixture, type = "all"){
   data = mixture$data
   
   ## input checks
-  assert_that(is.vector(pars),
-              msg = "pars should be a vector")
-  assert_that(is.string(dist),
-              msg = "dist should be a string")
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
   assert_that(!any(is.na(data)) & !any(is.infinite(data)),
-              msg = "y should not include missing or infinite values")
+              msg = "data should not include missing or infinite values")
   assert_that(type %in% c("unique", "all"),
-              msg = "type should be either 'unique' or 'all' ")
+              msg = "type must be either 'unique' or 'all' ")
   ##
   
   ##
@@ -115,7 +111,7 @@ discrete_MF <- function(mixture, type = "all"){
   loc_modes = x[which(py %in% pdf_modes)]
   
   if (length(loc_modes) != length(x_decrease)) {
-    warning("Some of these modes are flat.")
+    warning("Some modes are flat.")
   }
   
   output = rep(NA_real_, length(x))
@@ -131,7 +127,7 @@ discrete_MF <- function(mixture, type = "all"){
   mode = list()
   mode$mode_estimates = output[!is.na(output)]
   mode$dist = dist
-  mode$parameters = pars
+  mode$pars = pars
   mode$pdf_func = pmf_func
   mode$data = data
   mode$dist_type = "discrete"

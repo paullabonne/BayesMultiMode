@@ -24,6 +24,76 @@ test_that("bayes_mode works with external MCMC output", {
                               dist_type = dist_type)
   
   bayesmode = bayes_mode(bayesmix)
+  m = apply(bayesmode$modes,2,mean)
+  m = m[order(m)]
+  m = m[!is.na(m)]
   
-  expect_equal(abs(sum(bayesmode$modes-mu))<0.1,  TRUE)
+  expect_equal(sum(abs(m-mu)<0.1),  2)
+})
+
+test_that("bayes_mode works with normal mixture", {
+  set.seed(123)
+
+  mu = c(-5,5)
+  # retrieve galaxy data
+  y = rnorm(200, mu)
+
+  # estimation
+  bayesmix = bayes_estimation(data = y,
+                             K = 2, #not many to run the example rapidly
+                             dist = "normal",
+                             nb_iter = 500, #not many to run the example rapidly
+                             burnin = 100)
+
+  # mode estimation
+  bayesmode = bayes_mode(bayesmix)
+  m = apply(bayesmode$modes,2,mean)
+  m = m[order(m)]
+  m = m[!is.na(m)]
+  expect_equal(sum(abs(m-mu)<0.1),  2)
+})
+
+test_that("bayes_mode works with skew_normal mixture", {
+  set.seed(123)
+  
+  mu = c(-5,5)
+  # retrieve galaxy data
+  y = rnorm(200, mu)
+  
+  # estimation
+  bayesmix = bayes_estimation(data = y,
+                              K = 2, #not many to run the example rapidly
+                              dist = "skew_normal",
+                              nb_iter = 500, #not many to run the example rapidly
+                              burnin = 100)
+  
+  # mode estimation
+  bayesmode = bayes_mode(bayesmix)
+  m = apply(bayesmode$modes,2,mean, na.omit = T)
+  m = m[order(m)]
+  m = m[!is.na(m)]
+  expect_equal(sum(abs(m-mu)<0.5),  2)
+})
+
+test_that("bayes_mode works with shifted poisson mixture", {
+  set.seed(123)
+  
+  mu = c(0,5)
+  # retrieve galaxy data
+  y = c(rpois(100, 1) + mu[1],
+        rpois(100, 1) + mu[2])
+  
+  # estimation
+  bayesmix = bayes_estimation(data = y,
+                              K = 2, #not many to run the example rapidly
+                              dist = "shifted_poisson",
+                              nb_iter = 500, #not many to run the example rapidly
+                              burnin = 100)
+  
+  # mode estimation
+  bayesmode = bayes_mode(bayesmix)
+  m = apply(bayesmode$modes,2,median, na.rm=T)
+  m = m[order(m)]
+  m = m[!is.na(m)]
+  expect_equal(sum(abs(m-mu)<0.5),  2)
 })

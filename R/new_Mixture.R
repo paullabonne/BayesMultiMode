@@ -55,38 +55,35 @@ new_Mixture <- function(pars,
                         dist_type = NA_character_,
                         data = NULL) {
   ## input checks
-  assert_that(is.string(dist),
-              msg = "dist should be a string")
-  assert_that(is.string(dist_type),
-              msg = "dist_type should be a string")
-  assert_that(is.vector(pars),
-              msg = "pars should be a vector")
+  assert_that(is.string(dist))
+  assert_that(is.string(dist_type))
+  assert_that(is.vector(pars))
   assert_that(!is.null(names(pars)),
-              msg = "element of the pars should have names")
+              msg = "element of pars should have names")
   assert_that(!(is.na(dist) & is.null(pdf_func)),
-              msg = "you have to specify either dist or pdf_func")
+              msg = "one of dist or pdf_func must be specified")
   
   pars_names = unique(str_extract(names(pars), "[a-z]+"))
 
   if (!is.na(dist)) {
     if (dist == "normal") {
       assert_that(sum(c("eta", "mu", "sigma") %in% pars_names)==3,
-                  msg = "new_Mixture failed; missing parameter in pars; variables should be theta, mu and sigma when using dist = normal")
+                  msg = "missing parameter in pars; variables should be theta, mu and sigma when using dist = normal")
     }
     
     if (dist == "skew_normal") {
       assert_that(sum(c("eta", "xi", "omega", "alpha") %in% pars_names)==4,
-                  msg = "new_Mixture failed; variables should be theta, xi, omega and alpha when using dist = skew_normal") 
+                  msg = "variables should be theta, xi, omega and alpha when using dist = skew_normal") 
     }
     
     if (dist == "poisson"){
       assert_that(sum(c("eta", "lambda") %in% pars_names)==2,
-                  msg = "new_Mixture failed; variables should be theta and lambda when using dist = poisson")
+                  msg = "variables should be theta and lambda when using dist = poisson")
     }
     
     if (dist == "shifted_poisson"){
       assert_that(sum(c("eta", "lambda", "kappa") %in% pars_names)==3,
-                  msg = "new_Mixture failed; variables should be theta, lambda and kappa when using dist = shifted_poisson")
+                  msg = "variables should be theta, lambda and kappa when using dist = shifted_poisson")
     }
     
     if (dist %in% c("normal", "skew_normal")) {
@@ -101,9 +98,9 @@ new_Mixture <- function(pars,
   # that pdf_func can be computed when provided
   if(!is.null(pdf_func)) {
     assert_that(!is.na(pdf_func(1, vec_to_mat(pars, pars_names)[1,-1])),
-                msg = "new_Mixture failed; running pdf_func with pars provided returns NA") 
+                msg = "running pdf_func with pars provided returns NA") 
     assert_that(!is.na(dist_type),
-                msg = "new_Mixture failed; dist_type must be provided when argument pdf_func is used") 
+                msg = "dist_type must be provided when argument pdf_func is used") 
   }
   
   Mixture = list(pars = pars,
