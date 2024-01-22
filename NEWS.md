@@ -2,6 +2,7 @@
 * Added a class "Mixture" representing estimated mixtures which is used as input to mode estimation functions
 * Added a class "Mode" for the output of the mode estimation functions
 * Removed the plotting option inside the mode estimation functions
+* Added new plot and summary methods
 
 ## Version 0.6.0
 * Added examples to new_BayesMixture() and bayes_mode()
