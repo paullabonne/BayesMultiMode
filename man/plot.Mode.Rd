@@ -4,10 +4,10 @@
 \alias{plot.Mode}
 \title{Plot method for \code{Mode} objects}
 \usage{
-\method{plot}{Mode}(modes, ...)
+\method{plot}{Mode}(x, ...)
 }
 \arguments{
-\item{modes}{An object of class \code{Mode}.}
+\item{x}{An object of class \code{Mode}.}
 
 \item{...}{Not used.}
 }
