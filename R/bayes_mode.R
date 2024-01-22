@@ -151,10 +151,12 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
       # fixed point
       modes = t(apply(mcmc, 1, fixed_point_estimates,
                       tol_x = tol_x, tol_conv = tol_conv))
+      algo = "fixed-point"
     } else {
       # MEM algorithm
       modes = t(apply(mcmc, 1, MEM_estimates, dist = dist, 
                       pdf_func = pdf_func, tol_x = tol_x, tol_conv = tol_conv))
+      algo = "Modal Expectation-Maximization (MEM)"
     }
 
     ### Posterior probability of being a mode for each location
@@ -212,6 +214,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
                       pmf_func = pdf_func))
     
     n_modes = apply(!is.na(modes),1,sum)
+    
+    algo = "discrete"
   }
   
   ##### testing unimodality
@@ -238,6 +242,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
   BayesMode$p1 = p1
   BayesMode$tb_nb_modes = tb_nb_modes
   BayesMode$table_location = table_location
+  BayesMode$algo = algo
   
   class(BayesMode) <- "BayesMode"
   

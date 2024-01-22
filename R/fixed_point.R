@@ -92,6 +92,8 @@ fixed_point <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   mode$dist = mixture$dist
   mode$parameters = pars
   mode$dist_type = "continuous"
+  mode$algo = "fixed-point"
+  mode$K = mixture$K
   
   class(mode) = "Mode"
   return(mode)

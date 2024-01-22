@@ -111,7 +111,9 @@ new_Mixture <- function(pars,
                  dist_type = dist_type,
                  dist = dist,
                  pdf_func = pdf_func,
-                 data = data)
+                 data = data,
+                 K = length(pars_names) - 1 #minus the shares
+                 )
   
   class(Mixture) <- "Mixture"
   

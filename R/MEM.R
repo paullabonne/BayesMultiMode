@@ -1,4 +1,4 @@
-#' Modal EM algorithm (MEM)
+#' Modal Expectation-Maximization algorithm (MEM)
 #' 
 #' Algorithm from Li and Lindsay (2007) to find modes in mixture of continuous distributions.
 #' 
@@ -137,6 +137,8 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   mode$parameters = pars
   mode$pdf_func = pdf_func
   mode$dist_type = "continuous"
+  mode$algo = "Modal Expectation-Maximization (MEM)"
+  mode$K = mixture$K
   
   class(mode) = "Mode"
   
