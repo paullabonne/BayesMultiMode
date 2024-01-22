@@ -5,8 +5,6 @@
 #' 
 #' @export
 summary.BayesMode <- function(object, ...) {
-  stopifnot(inherits(object, "BayesMode"))
-  
   modes = object$modes
   
   p1 = object$p1
@@ -28,8 +26,6 @@ summary.BayesMode <- function(object, ...) {
 #' 
 #' @export
 summary.Mode <- function(object, ...) {
-  stopifnot(inherits(object, "Mode"))
-  
   Nb_m = length(object$mode_estimates)
   algo = object$algo
   d = object$dist
@@ -55,8 +51,6 @@ summary.Mode <- function(object, ...) {
 #' 
 #' @export
 summary.Mixture <- function(object, ...) {
-  stopifnot(inherits(object, "Mode"))
-  
   d = object$dist
   K = object$K
   
@@ -75,8 +69,6 @@ summary.Mixture <- function(object, ...) {
 #' 
 #' @export
 summary.BayesMixture <- function(object, ...) {
-  stopifnot(inherits(object, "Mode"))
-  
   d = object$dist
   K = object$K
   
