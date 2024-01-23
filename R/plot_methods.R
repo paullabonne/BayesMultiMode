@@ -3,7 +3,7 @@
 #' Plot an estimated mixture for a given number of draws with a frequency distribution of the data.
 #' 
 #' @param x An object of class \code{BayesMixture}.
-#' @param max_size The number of MCMC draws to plot.
+#' @param draws The number of MCMC draws to plot.
 #' @param transparency transparency of the density lines. Default is 0.1. Should be greater than 0 and below or equal to 1.
 #' @param ... Not used.
 #' 
@@ -24,7 +24,7 @@
 #' 
 #' @export
 
-plot.BayesMixture <- function(x, max_size = 250, 
+plot.BayesMixture <- function(x, draws = 250, 
                               transparency = 0.1, ...) {
   density <- component <- value <- NULL
   
@@ -48,7 +48,7 @@ plot.BayesMixture <- function(x, max_size = 250,
                      colour = "white")
     
     ## plot the mixture for each draw
-    for (i in sample(nrow(mcmc),min(nrow(mcmc), max_size))) {
+    for (i in sample(nrow(mcmc),min(nrow(mcmc), draws))) {
       pars = vec_to_mat(mcmc[i, ], pars_names)
       pars = na.omit(pars)
       
@@ -85,7 +85,7 @@ plot.BayesMixture <- function(x, max_size = 250,
         kappa = matrix(0,nrow(lambda), ncol(lambda))
       }
       
-      for (draw in sample(1:(min(nrow(mcmc), max_size)))) {
+      for (draw in sample(1:(min(nrow(mcmc), draws)))) {
         ##
         
         pdf = matrix(0, nrow=length(x_all),ncol=ncol(eta))

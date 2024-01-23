@@ -52,7 +52,7 @@ bayesmix = bayes_estimation(data = y,
                             burnin = 1000)
 
 # plot estimated mixture
-plot(bayesmix, max_size = 200)
+plot(bayesmix, draws = 200)
 ```
 
 #### Mode inference
@@ -61,7 +61,7 @@ plot(bayesmix, max_size = 200)
 bayesmode = bayes_mode(bayesmix)
 
 # plot 
-plot(bayesmode, max_size = 200)
+plot(bayesmode)
 
 # Summary 
 summary(bayesmode)
@@ -131,8 +131,8 @@ plot(py_BayesMix)
 # mode estimation
 bayesmode = bayes_mode(py_BayesMix)
 
-# plot ¨
-plot(bayesmode, max_size = 200)
+# plot
+plot(bayesmode)
 
 # Summary 
 summary(bayesmode)
