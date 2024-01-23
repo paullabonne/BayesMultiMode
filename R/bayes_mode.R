@@ -266,7 +266,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
 fixed_point_estimates <- function(mcmc, tol_x = 1e-6, tol_conv = 1e-8) {
   output = rep(NA_real_, length(mcmc))
   mix = new_Mixture(mcmc, dist = "normal")
-  modes = fixed_point(mix, tol_x, tol_conv)$mode_estimates
+  modes = mix_mode(mix, tol_x, tol_conv)$mode_estimates
   output[1:length(modes)] = modes
   
   return(output)
@@ -276,7 +276,7 @@ fixed_point_estimates <- function(mcmc, tol_x = 1e-6, tol_conv = 1e-8) {
 MEM_estimates <- function(mcmc, dist = NA_character_, pdf_func = NULL, tol_x = 1e-6, tol_conv = 1e-8) {
   output = rep(NA_real_, length(mcmc))
   mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func, dist_type = "continuous")
-  modes = MEM(mix, tol_x, tol_conv)$mode_estimates
+  modes = mix_mode(mix, tol_x, tol_conv)$mode_estimates
   output[1:length(modes)] = modes
   
   return(output)
@@ -286,7 +286,7 @@ MEM_estimates <- function(mcmc, dist = NA_character_, pdf_func = NULL, tol_x = 1
 discrete_MF_estimates <- function(mcmc, dist = dist, pmf_func = pmf_func, type = "all", data = data) {
   output = rep(NA_real_, length(mcmc))
   mix = new_Mixture(mcmc, dist = dist, pdf_func = pmf_func, data = data, dist_type = "discrete")
-  modes = discrete_MF(mix, type = type)$mode_estimates
+  modes = mix_mode(mix, type = type)$mode_estimates
   output[1:length(modes)] = modes
   
   return(output)

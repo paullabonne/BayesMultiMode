@@ -4,6 +4,7 @@
 #' 
 
 # Mixture of pdf_func
+#' @keywords internal
 pdf_func_mix <- function(x, pars, pdf_func) {
   pdf_func = match.fun(pdf_func) #solves NOTE "pdf_func is undefined"
   
@@ -14,6 +15,7 @@ pdf_func_mix <- function(x, pars, pdf_func) {
   return(mixture)
 }
 
+#' @keywords internal
 test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, par_type) {
   
   list_func = list()
@@ -66,4 +68,15 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, par_type) 
   list_func$pdf_func = pdf_func
   
   return(list_func)
+}
+
+#' @keywords internal
+vec_to_mat <- function(pars, pars_names) {
+  pars_mat = c()
+  for (i in 1:length(pars_names)) {
+    pars_mat = cbind(pars_mat, pars[grep(pars_names[i], names(pars))])
+  }
+  colnames(pars_mat) <- pars_names
+  
+  return(pars_mat)
 }

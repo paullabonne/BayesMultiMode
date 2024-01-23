@@ -12,7 +12,7 @@ devtools::test()
 
 devtools::run_examples()
 
- devtools::install()
+devtools::install()
 
 devtools::build_manual()
 
