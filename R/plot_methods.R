@@ -54,7 +54,7 @@ plot.BayesMixture <- function(x, draws = 250,
       
       g = g +
         geom_function(fun = pdf_func_mix,
-                      args = list(dist = pdf_func,
+                      args = list(pdf_func = pdf_func,
                                   pars = pars),
                       alpha = transparency,
                       colour = "#FF6347")
@@ -76,12 +76,12 @@ plot.BayesMixture <- function(x, draws = 250,
     mixture_uncertainty = matrix(NA, length(x_all), nrow(mcmc))
     
     for (i in sample(nrow(mcmc),min(nrow(mcmc), draws))) {
-        ##
-        pars = vec_to_mat(mcmc[i, ], pars_names)
-        pars = na.omit(pars)
-        
-        mixture_uncertainty[,draw] = pdf_func_mix(x_all, pars, pdf_func)
-      }
+      ##
+      pars = vec_to_mat(mcmc[i, ], pars_names)
+      pars = na.omit(pars)
+      
+      mixture_uncertainty[,i] = pdf_func_mix(x_all, pars, pdf_func)
+    }
     
     # 
     df_y = tibble(x = seq(min(y),max(y),1)) %>%
@@ -215,7 +215,7 @@ plot.Mixture <- function(x, from = NULL, to = NULL, ...) {
   assert_that(is.null(from)|(is.numeric(from) && is.finite(to)),
               is.null(to)|(is.numeric(to) && is.finite(to)),
               msg = "arguments from and to must be numeric and finite")
-
+  
   pars = x$pars
   mode_est = x$mode_estimates
   pdf_func = x$pdf_func
@@ -242,7 +242,7 @@ plot.Mixture <- function(x, from = NULL, to = NULL, ...) {
     } else {
       max_x = to
     }
-
+    
     pars = vec_to_mat(pars, par_names)
     curve(pdf_func_mix(x, pars, pdf_func), from = min_x,
           to = max_x, xlab = "", ylab = "")
@@ -271,7 +271,7 @@ plot.Mixture <- function(x, from = NULL, to = NULL, ...) {
     par_names = str_extract(names(pars), "[a-z]+")
     pars_mat = vec_to_mat(pars, par_names)
     py = pdf_func_mix(xx, pars_mat, pdf_func)
-  
+    
     plot(xx, py, type = "h", xlab = "", ylab = "", lwd = 4,
          xlim = c(from, to))
   }

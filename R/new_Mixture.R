@@ -71,53 +71,13 @@ new_Mixture <- function(pars,
   
   pars_names = unique(str_extract(names(pars), "[a-z]+"))
 
-  # that pdf_func can be computed when provided
-  if(!is.null(pdf_func)) {
-    assert_that(!is.na(pdf_func(1, vec_to_mat(pars, pars_names)[1,-1])),
-                msg = "running pdf_func with pars provided returns NA") 
-    assert_that(!is.na(dist_type),
-                msg = "dist_type must be provided when argument pdf_func is used") 
-  }
-  
-  if (!is.na(dist)) {
-    if (dist == "poisson"){
-      assert_that(sum(pars_names %in% c("eta", "lambda"))==2,
-                  msg = "variable names in pars should be eta and lambda when dist = poisson")
-      pdf_func <- function(x, pars) dpois(x, pars["lambda"])
-    }
-    
-    if (dist == "shifted_poisson"){
-      assert_that(sum(pars_names %in% c("eta", "kappa", "lambda"))==3,
-                  msg = "variable names in pars should be eta and lambda when dist = shifted_poisson")
-      pdf_func <- function(x, pars) dpois(x - pars["kappa"], pars["lambda"])
-    }
-    
-    if (dist == "normal"){
-      assert_that(sum(pars_names %in% c("eta", "mu", "sigma"))==3,
-                  msg = "variable names in pars should be eta, mu and sigma when dist = normal")
-      pdf_func <- function(x, pars) dnorm(x, pars["mu"], pars["sigma"])
-    }
-    
-    if (dist == "skew_normal"){
-      assert_that(sum(pars_names %in% c("eta", "xi", "omega", "alpha"))==4,
-                  msg = "variable names in pars should be eta, xi, omega and alpha when dist = skew_normal")
-      pdf_func <- function(x, pars) dsn(x, pars["xi"], pars["omega"], pars["alpha"])
-    }
-    
-    if (dist %in% c("normal", "skew_normal")) {
-      dist_type = "continuous"
-    } else if (dist %in% c("poisson", "shifted_poisson")) {
-      dist_type = "discrete"
-    } else {
-      stop("dist must be one of the following : normal, skew_normal, poisson or shifted_poisson")
-    }
-  }
+  list_func = test_and_export(pars, pdf_func, dist, pars_names, dist_type, par_type = "pars")
   
   Mixture = list(pars = pars,
                  pars_names = pars_names,
-                 dist_type = dist_type,
+                 dist_type = list_func$dist_type,
                  dist = dist,
-                 pdf_func = pdf_func,
+                 pdf_func = list_func$pdf_func,
                  data = data,
                  nb_var = length(pars_names) - 1, #minus the shares
                  K = length(pars)/length(pars_names))

@@ -3,51 +3,6 @@
 #' @importFrom stats dnorm
 #' 
 
-# # Mixture of normals
-# normal_mix <- function(x, p, mu, sigma) {
-#   mixture = 0
-#   
-#   for (i in 1:length(p)) {
-#     mixture = mixture + p[i] * dnorm(x,
-#                                      mean = mu[i],
-#                                      sd = sigma[i])
-#   }
-#   
-#   return(mixture)
-# }
-# 
-# # Mixture of skew normals
-# skew_norm_mix <- function(x, p, xi, omega, alpha) {
-#   mixture = 0
-#   
-#   for (i in 1:length(p)) {
-#     mixture = mixture + p[i] * dsn(x,
-#                                    xi[i],
-#                                    omega[i],
-#                                    alpha[i])
-#   }
-#   
-#   return(mixture)
-# }
-# 
-# # Mixture of Poisson
-# pois_mix <- function(x, p, lambda, kappa) {
-#   mixture = 0
-#   for (i in 1:length(kappa)) {
-#     mixture = mixture + p[i] * dpois(x, lambda[i], log = FALSE)
-#   }
-#   return(mixture)
-# }
-# 
-# # Mixture of shifted Poisson
-# shift_pois_mix <- function(x, p, lambda, kappa) {
-#   mixture = 0
-#   for (i in 1:length(kappa)) {
-#     mixture = mixture + p[i] * dpois(x - kappa[i], lambda[i], log = FALSE)
-#   }
-#   return(mixture)
-# }
-
 # Mixture of pdf_func
 pdf_func_mix <- function(x, pars, pdf_func) {
   pdf_func = match.fun(pdf_func) #solves NOTE "pdf_func is undefined"
@@ -59,49 +14,56 @@ pdf_func_mix <- function(x, pars, pdf_func) {
   return(mixture)
 }
 
-# # wrapper
-# dist_mixture <- function(x, dist, pars, pdf_func = NULL) {
-#   if (!is.null(pdf_func)) {
-#     output = pdf_func_mix(x, pars, pdf_func)
-#     
-#   } else {
-#     if (dist == "normal") {
-#       output = normal_mix(x, pars[, "eta"], pars[, "mu"], pars[, "sigma"])
-#     }
-#     
-#     if (dist == "skew_normal") {
-#       output = skew_norm_mix(x, pars[, "eta"], pars[, "xi"], pars[, "omega"], pars[, "alpha"])
-#     }
-#   }
-#   
-#   return(output)
-#   
-# }
-
-# wrapper
-# dist_pdf <- function(x, dist, pars, pdf_func = NULL) {
-#   
-#   if (!is.null(pdf_func)) {
-#     pdf_func = match.fun(pdf_func) #solves NOTE "pdf_func is undefined"
-#     output = pdf_func(x, pars)
-#   } else {
-#     if (dist == "normal") {
-#       output = dnorm(x, pars["mu"], pars["sigma"])
-#     }
-#     
-#     if (dist == "skew_normal") {
-#       output = dsn(x, pars["xi"], pars["omega"], pars["alpha"])
-#     }
-#     
-#     if (dist == "shifted_poisson") {
-#       output = dpois(x - pars["kappa"], pars["lambda"])
-#     }
-#     
-#     if (dist == "poisson") {
-#       output = dpois(x, pars)
-#     }
-#   }
-#   
-#   return(output)
-#   
-# }
+test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, par_type) {
+  
+  list_func = list()
+  
+  # that pdf_func can be computed when provided
+  if (!is.null(pdf_func)) {
+    assert_that(!is.na(pdf_func(1, vec_to_mat(p, pars_names)[1,-1])),
+                msg = "running pdf_func with pars provided returns NA") 
+    assert_that(!is.na(dist_type),
+                msg = "dist_type must be provided when argument pdf_func is used") 
+  }
+  
+  msg_0 = paste0("variable names in ", par_type, " should be ")
+  
+  if (!is.na(dist)) {
+    if (dist == "poisson"){
+      assert_that(sum(pars_names %in% c("eta", "lambda"))==2,
+                  msg = paste0(msg_0, "eta and lambda when dist = poisson"))
+      pdf_func <- function(x, pars) dpois(x, pars["lambda"])
+    }
+    
+    if (dist == "shifted_poisson"){
+      assert_that(sum(pars_names %in% c("eta", "kappa", "lambda"))==3,
+                  msg = paste0(msg_0, "eta and lambda when dist = shifted_poisson"))
+      pdf_func <- function(x, pars) dpois(x - pars["kappa"], pars["lambda"])
+    }
+    
+    if (dist == "normal"){
+      assert_that(sum(pars_names %in% c("eta", "mu", "sigma"))==3,
+                  msg = paste0(msg_0, "eta, mu and sigma when dist = normal"))
+      pdf_func <- function(x, pars) dnorm(x, pars["mu"], pars["sigma"])
+    }
+    
+    if (dist == "skew_normal"){
+      assert_that(sum(pars_names %in% c("eta", "xi", "omega", "alpha"))==4,
+                  msg = paste0(msg_0, "eta, xi, omega and alpha when dist = skew_normal"))
+      pdf_func <- function(x, pars) dsn(x, pars["xi"], pars["omega"], pars["alpha"])
+    }
+    
+    if (dist %in% c("normal", "skew_normal")) {
+      dist_type = "continuous"
+    } else if (dist %in% c("poisson", "shifted_poisson")) {
+      dist_type = "discrete"
+    } else {
+      stop("Unsupported distribution; dist should be either normal, skew_normal, poisson or shifted_poisson")
+    } 
+  }
+  
+  list_func$dist_type = dist_type
+  list_func$pdf_func = pdf_func
+  
+  return(list_func)
+}
