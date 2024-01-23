@@ -1,6 +1,7 @@
 ## Version 0.7.0
 * Added a class "Mixture" representing estimated mixtures which is used as input to mode estimation functions
 * Added a class "Mode" for the output of the mode estimation functions
+* Created mix_mode() which calls the mode finding algorithms; discrete_MF, fixed_point and MEM have been removed
 * Removed the plotting option inside the mode estimation functions
 * Added new plot and summary methods
 
