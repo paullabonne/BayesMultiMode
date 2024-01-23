@@ -41,15 +41,8 @@ fixed-point method in this particular case.
 \examples{
 
 # Example with the skew normal =============================================
-xi = c(0,6)
-omega = c(1,2)
-alpha = c(0,0)
-p = c(0.8,0.2)
-params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
-dist = "skew_normal"
-
-mix = new_Mixture(params, dist = dist)
-modes = MEM(mix)
+# summary(modes)
+# plot(modes)
 
 # Example with an arbitrary distribution ===================================
 xi = c(0,6)
@@ -65,6 +58,9 @@ pdf_func <- function(x, pars) {
 
 mix = new_Mixture(params, pdf_func = pdf_func, dist_type = "continuous")
 modes = MEM(mix)
+
+# summary(modes)
+# plot(modes, from = -4, to = 4)
 
 }
 \references{

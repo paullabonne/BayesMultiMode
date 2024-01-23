@@ -28,6 +28,8 @@ test_that("bayes_mode works with external MCMC output", {
   m = m[order(m)]
   m = m[!is.na(m)]
   
+  expect_snapshot(summary(bayesmix))
+  expect_snapshot(summary(bayesmode))
   expect_equal(sum(abs(m-mu)<0.1),  2)
 })
 
@@ -50,6 +52,9 @@ test_that("bayes_mode works with normal mixture", {
   m = apply(bayesmode$modes,2,mean)
   m = m[order(m)]
   m = m[!is.na(m)]
+  
+  expect_snapshot(summary(bayesmix))
+  expect_snapshot(summary(bayesmode))
   expect_equal(sum(abs(m-mu)<0.1),  2)
 })
 
@@ -72,6 +77,9 @@ test_that("bayes_mode works with skew_normal mixture", {
   m = apply(bayesmode$modes,2,mean, na.omit = T)
   m = m[order(m)]
   m = m[!is.na(m)]
+  
+  expect_snapshot(summary(bayesmix))
+  expect_snapshot(summary(bayesmode))
   expect_equal(sum(abs(m-mu)<0.5),  2)
 })
 
@@ -92,8 +100,16 @@ test_that("bayes_mode works with shifted poisson mixture", {
   
   # mode estimation
   bayesmode = bayes_mode(bayesmix)
+  
+  # check the plots and summary
+  # plot(bayesmix)
+  
+  # check the modes
   m = apply(bayesmode$modes,2,median, na.rm=T)
   m = m[order(m)]
   m = m[!is.na(m)]
+  
+  expect_snapshot(summary(bayesmix))
+  expect_snapshot(summary(bayesmode))
   expect_equal(sum(abs(m-mu)<0.5),  2)
 })

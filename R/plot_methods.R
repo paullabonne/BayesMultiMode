@@ -33,7 +33,7 @@ plot.BayesMixture <- function(x, draws = 250,
               msg = "transparency should be a scalar between zero and one")
   
   mcmc = x$mcmc
-  dist = x$dist
+  pdf_func = x$pdf_func
   y = x$data
   pars_names = x$pars_names
   
@@ -53,8 +53,8 @@ plot.BayesMixture <- function(x, draws = 250,
       pars = na.omit(pars)
       
       g = g +
-        geom_function(fun = dist_mixture,
-                      args = list(dist = dist,
+        geom_function(fun = pdf_func_mix,
+                      args = list(dist = pdf_func,
                                   pars = pars),
                       alpha = transparency,
                       colour = "#FF6347")
@@ -75,30 +75,13 @@ plot.BayesMixture <- function(x, draws = 250,
     
     mixture_uncertainty = matrix(NA, length(x_all), nrow(mcmc))
     
-    if(x$dist %in% c("poisson", "shifted_poisson")){
-      eta = mcmc[, grep("eta", colnames(mcmc))]
-      lambda = mcmc[, grep("lambda", colnames(mcmc))]
-      
-      if (x$dist == "shifted_poisson") {
-        kappa = mcmc[, grep("kappa", colnames(mcmc))]
-      } else {
-        kappa = matrix(0,nrow(lambda), ncol(lambda))
-      }
-      
-      for (draw in sample(1:(min(nrow(mcmc), draws)))) {
+    for (i in sample(nrow(mcmc),min(nrow(mcmc), draws))) {
         ##
+        pars = vec_to_mat(mcmc[i, ], pars_names)
+        pars = na.omit(pars)
         
-        pdf = matrix(0, nrow=length(x_all),ncol=ncol(eta))
-        for(j in 1:ncol(eta)){
-          if(!is.na(eta[draw,j])){
-            pdf[,j] = dpois((x_all-kappa[draw, j, drop = T]), lambda[draw, j, drop = T]) * eta[draw, j, drop = T]
-          }
-        } 
-        
-        # summing up to get the mixture
-        mixture_uncertainty[,draw] <- rowSums(pdf)
+        mixture_uncertainty[,draw] = pdf_func_mix(x_all, pars, pdf_func)
       }
-    }
     
     # 
     df_y = tibble(x = seq(min(y),max(y),1)) %>%
@@ -261,7 +244,7 @@ plot.Mixture <- function(x, from = NULL, to = NULL, ...) {
     }
 
     pars = vec_to_mat(pars, par_names)
-    curve(dist_mixture(x, dist, pars, pdf_func), from = min_x,
+    curve(pdf_func_mix(x, pars, pdf_func), from = min_x,
           to = max_x, xlab = "", ylab = "")
     
   } else if (x$dist_type == "continuous") {
@@ -275,7 +258,7 @@ plot.Mixture <- function(x, from = NULL, to = NULL, ...) {
     
     par_names = str_extract(names(pars), "[a-z]+")
     pars = vec_to_mat(pars, par_names)
-    curve(dist_mixture(x, dist, pars, pdf_func), from = from,
+    curve(pdf_func_mix(x, pars, pdf_func), from = from,
           to = to, xlab = "", ylab = "")
     
   } else if (x$dist_type  == "discrete") {
@@ -287,13 +270,7 @@ plot.Mixture <- function(x, from = NULL, to = NULL, ...) {
     xx = round(from):round(to)
     par_names = str_extract(names(pars), "[a-z]+")
     pars_mat = vec_to_mat(pars, par_names)
-    pdf_k = matrix(0, nrow=length(xx), ncol=nrow(pars_mat)) 
-    for(k in 1:nrow(pars_mat)){
-      pdf_k[,k] = pars_mat[k,1] * dist_pdf(xx, dist, pars_mat[k, -1], pdf_func = pdf_func)
-    }
-    
-    ### summing up to get the mixture
-    py <- rowSums(pdf_k, na.rm = T)
+    py = pdf_func_mix(xx, pars_mat, pdf_func)
   
     plot(xx, py, type = "h", xlab = "", ylab = "", lwd = 4,
          xlim = c(from, to))

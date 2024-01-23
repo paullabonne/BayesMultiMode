@@ -77,7 +77,6 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
   pars = mixture$pars
   pars_names = mixture$pars_names
-  dist = mixture$dist
   pdf_func = mixture$pdf_func
   
   ## input checks
@@ -103,15 +102,14 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
     
     while (delta > 1e-8) {
       # E-step
-      f_mix = dist_mixture(x, dist, pars_mat, pdf_func)
+      f_mix = pdf_func_mix(x, pars_mat, pdf_func)
    
       for (k in 1:nK){ 
-        post_prob[k] = pars_mat[k, 1] * dist_pdf(x, dist, pars_mat[k, -1], pdf_func)/f_mix 
+        post_prob[k] = pars_mat[k, 1] * pdf_func(x, pars_mat[k, -1])/f_mix 
       }
      
       # M-step
       Min = optim(par = x, Q_func, method = "L-BFGS-B",
-                  dist = dist, 
                   post_prob = post_prob,
                   pars = pars_mat[, -1],
                   pdf_func = pdf_func,
@@ -139,7 +137,7 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   
   mode = list()
   mode$mode_estimates = est_mode[!is.na(est_mode)]
-  mode$dist = dist
+  mode$dist = mixture$dist
   mode$pars = pars
   mode$pdf_func = pdf_func
   mode$dist_type = "continuous"
@@ -153,12 +151,12 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
 }
 
 #' @keywords internal
-Q_func = function(x, dist, post_prob, pars, pdf_func){
+Q_func = function(x, post_prob, pars, pdf_func){
   
   pdf = rep(NA, nrow(pars))
   
   for (i in 1:nrow(pars)) {
-    pdf[i] = dist_pdf(x, dist, pars[i,], pdf_func = pdf_func)
+    pdf[i] = pdf_func(x, pars[i,])
   } 
   
   pdf[pdf==0] = 1e-10 #otherwise the log operation below can return infs

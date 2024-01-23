@@ -12,6 +12,10 @@ test_that("discrete_MF function returns expected results with dist = shifted_poi
   mix = new_Mixture(params, data = data, dist = dist)
   modes = discrete_MF(mix)
   
+  # summary
+  expect_snapshot(summary(mix))
+  expect_snapshot(summary(modes))
+  
   expect_equal(modes$mode_estimates[1] == 0,  TRUE)
   expect_equal(modes$mode_estimates[2] == 1,  TRUE)
   expect_equal(modes$mode_estimates[3] == 10,  TRUE)
@@ -50,6 +54,14 @@ test_that("discrete_MF function returns expected results with arbitrary function
   mix = new_Mixture(params, data = data, pdf_func = pmf_func,
                     dist_type = "discrete")
   modes = discrete_MF(mix)
+  
+  # plot
+  # expect_snapshot(plot(mix, from = 0, to = 50))
+  # expect_snapshot(plot(modes, from = 0, to = 50))
+  
+  # summary
+  expect_snapshot(summary(mix))
+  expect_snapshot(summary(modes))
   
   expect_equal(modes$mode_estimates[1] == 0,  TRUE)
   expect_equal(modes$mode_estimates[2] == 18,  TRUE)

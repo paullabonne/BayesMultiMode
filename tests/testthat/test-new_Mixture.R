@@ -16,7 +16,7 @@ test_that("new_mixture returns expected error when dist and parameters do not ma
              alpha = c(0.5,0.1))
   
   expect_error(new_Mixture(params, dist = "skew_normal", dist_type = "continuous"),
-               "variables should be theta, xi, omega and alpha when using dist = skew_normal")
+               "variable names in pars should be eta, xi, omega and alpha when dist = skew_normal")
 })
 
 test_that("new_mixture returns expected error when pdf_func and mcmc parameters do not match", {

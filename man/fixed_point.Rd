@@ -45,6 +45,9 @@ params = c(eta = p, mu = mu, sigma = sigma)
 mix = new_Mixture(params, dist = "normal")
 modes = fixed_point(mix)
 
+# summary(modes)
+# plot(modes)
+
 }
 \references{
 \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}

@@ -70,7 +70,7 @@ discrete_MF <- function(mixture, type = "all"){
   pars = mixture$pars
   pars_names = mixture$pars_names
   dist = mixture$dist
-  pmf_func = mixture$pdf_func
+  pdf_func = mixture$pdf_func
   data = mixture$data
   
   ## input checks
@@ -91,15 +91,8 @@ discrete_MF <- function(mixture, type = "all"){
   
   Khat = nrow(pars_mat)
   
-  ### Getting individual component densities
-  
-  pdf_k = matrix(0, nrow=length(x), ncol=Khat) 
-  for(k in 1:nrow(pars_mat)){
-    pdf_k[,k] = pars_mat[k,1] * dist_pdf(x, dist, pars_mat[k, -1], pmf_func)
-  }
-
-  ### summing up to get the mixture
-  py <- rowSums(pdf_k, na.rm = T)
+  ### Getting denisty
+  py = pdf_func_mix(x, pars_mat, pdf_func)
 
   # change in the pdf
   d_py = diff(py)
@@ -135,7 +128,7 @@ discrete_MF <- function(mixture, type = "all"){
   mode$mode_estimates = output[!is.na(output)]
   mode$dist = dist
   mode$pars = pars
-  mode$pdf_func = pmf_func
+  mode$pdf_func = pdf_func
   mode$data = data
   mode$dist_type = "discrete"
   mode$py = py

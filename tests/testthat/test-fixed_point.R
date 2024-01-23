@@ -10,4 +10,6 @@ test_that("fixed_point function returns expected results", {
   mix = new_Mixture(params, dist = "normal")
   modes = fixed_point(mix)
   expect_equal(round(modes$mode_estimates),  mu)
+  expect_snapshot(summary(mix))
+  expect_snapshot(summary(modes))
 })

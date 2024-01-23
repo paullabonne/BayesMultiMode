@@ -112,25 +112,37 @@ new_BayesMixture <- function(mcmc,
   assert_that(sum(K_from_names != K) == 0,
               msg = "There is a least one variable in mcmc that has not K components")
   
+  # that pdf_func can be computed when provided
+  if (!is.null(pdf_func)) {
+    assert_that(!is.na(pdf_func(1, vec_to_mat(mcmc[1, ], pars_names)[1,-1])),
+                msg = "running pdf_func with pars provided returns NA") 
+    assert_that(!is.na(dist_type),
+                msg = "dist_type must be provided when argument pdf_func is used") 
+  }
+  
   if (!is.na(dist)) {
     if (dist == "poisson"){
       assert_that(sum(pars_names %in% c("eta", "lambda"))==2,
                   msg = "variable names in mcmc output should be eta and lambda when dist = poisson")
+      pdf_func <- function(x, pars) dpois(x, pars["lambda"])
     }
     
     if (dist == "shifted_poisson"){
       assert_that(sum(pars_names %in% c("eta", "kappa", "lambda"))==3,
                   msg = "variable names in mcmc output should be eta and lambda when dist = shifted_poisson")
+      pdf_func <- function(x, pars) dpois(x - pars["kappa"], pars["lambda"])
     }
     
     if (dist == "normal"){
       assert_that(sum(pars_names %in% c("eta", "mu", "sigma"))==3,
                   msg = "variable names in mcmc output should be eta, mu and sigma when dist = normal")
+      pdf_func <- function(x, pars) dnorm(x, pars["mu"], pars["sigma"])
     }
     
     if (dist == "skew_normal"){
       assert_that(sum(pars_names %in% c("eta", "xi", "omega", "alpha"))==4,
                   msg = "variable names in mcmc output should be eta, xi, omega and alpha when dist = skew_normal")
+      pdf_func <- function(x, pars) dsn(x, pars["xi"], pars["omega"], pars["alpha"])
     }
     
     if (dist %in% c("normal", "skew_normal")) {
@@ -140,14 +152,6 @@ new_BayesMixture <- function(mcmc,
     } else {
       stop("Unsupported distribution; dist should be either normal, skew_normal, poisson or shifted_poisson")
     } 
-  }
-  
-  # that pdf_func can be computed when provided
-  if (!is.null(pdf_func)) {
-    assert_that(!is.na(pdf_func(1, vec_to_mat(mcmc[1, ], pars_names)[1,-1])),
-                msg = "running pdf_func with pars provided returns NA") 
-    assert_that(!is.na(dist_type),
-                msg = "dist_type must be provided when argument pdf_func is used") 
   }
   
   BayesMix = list(mcmc = mcmc,
