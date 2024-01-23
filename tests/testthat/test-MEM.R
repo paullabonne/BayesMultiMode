@@ -12,6 +12,8 @@ test_that("MEM function returns expected results with dist = skew_normal", {
   
   expect_snapshot(summary(mix))
   expect_snapshot(summary(modes))
+  expect_snapshot(modes$mode_estimates)
+  
   expect_equal(abs(sum(modes$mode_estimates-xi))<1,  TRUE)
   # the two densities are far apart so the modes should coincide with the location parameters
 })
@@ -36,6 +38,8 @@ test_that("MEM function returns expected results with an arbitrary function", {
   
   expect_snapshot(summary(mix))
   expect_snapshot(summary(modes))
+  expect_snapshot(modes$mode_estimates)
+  
   expect_equal(abs(sum(modes$mode_estimates-xi))<1,  TRUE)
   # the two densities are far apart so the modes should coincide with the location parameters
 })

@@ -21,6 +21,13 @@
            Number of modes Posterior probabilty 
                          2                    1 
 
+---
+
+    Code
+      modes$mode_estimates
+    Output
+      [1]  0  1 10
+
 # bayes_mode works with normal mixture
 
     Code
@@ -43,6 +50,20 @@
        Number of estimated modes and their posterior probabilities:
            Number of modes Posterior probabilty 
                          2                    1 
+
+---
+
+    Code
+      modes$mode_estimates
+    Output
+      [1]  0  1 10
+
+---
+
+    Code
+      sum(bayesmix$loglik)
+    Output
+      [1] 14921.57
 
 # bayes_mode works with skew_normal mixture
 
@@ -67,6 +88,20 @@
            Number of modes Posterior probabilty 
                          2                    1 
 
+---
+
+    Code
+      modes$mode_estimates
+    Output
+      [1]  0  1 10
+
+---
+
+    Code
+      sum(bayesmix$loglik)
+    Output
+      [1] 14952.2
+
 # bayes_mode works with shifted poisson mixture
 
     Code
@@ -90,4 +125,18 @@
            Number of modes Posterior probabilty
       [1,]               1               0.0025
       [2,]               2               0.9975
+
+---
+
+    Code
+      modes$mode_estimates
+    Output
+      [1]  0  1 10
+
+---
+
+    Code
+      sum(bayesmix$loglik)
+    Output
+      [1] 12556.12
 

@@ -20,3 +20,10 @@
        Number of modes found: 2
        Mode estimation technique: fixed-point algorithm
 
+---
+
+    Code
+      modes$mode_estimates
+    Output
+      [1] 0.02829676 4.99985083
+

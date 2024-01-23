@@ -20,6 +20,13 @@
        Number of modes found: 2
        Mode estimation technique: Modal Expectation-Maximization (MEM) algorithm
 
+---
+
+    Code
+      modes$mode_estimates
+    Output
+      [1] 0.002088749 5.999997076
+
 # MEM function returns expected results with an arbitrary function
 
     Code
@@ -41,4 +48,11 @@
        Modes of a continuous mixture with 2 components.
        Number of modes found: 2
        Mode estimation technique: Modal Expectation-Maximization (MEM) algorithm
+
+---
+
+    Code
+      modes$mode_estimates
+    Output
+      [1] 0.00182144 5.88332478
 

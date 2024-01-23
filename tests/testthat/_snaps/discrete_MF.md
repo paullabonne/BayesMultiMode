@@ -20,6 +20,42 @@
        Number of modes found: 3
        Mode estimation technique: discrete algorithm
 
+---
+
+    Code
+      modes$mode_estimates
+    Output
+      [1]  0  1 10
+
+# discrete_MF function returns expected results with dist = poisson
+
+    Code
+      summary(mix)
+    Output
+      
+       Estimated mixture distribution.
+       Number of components: 2
+       Number of component parameters: 1
+       Mixture family: poisson
+       Mixture type: discrete
+
+---
+
+    Code
+      summary(modes)
+    Output
+      
+       Modes of a poisson mixture with 2 components.
+       Number of modes found: 2
+       Mode estimation technique: discrete algorithm
+
+---
+
+    Code
+      modes$mode_estimates
+    Output
+      [1] 0 9
+
 # discrete_MF function returns expected results with arbitrary function
 
     Code
@@ -41,4 +77,11 @@
        Modes of a discrete mixture with 2 components.
        Number of modes found: 2
        Mode estimation technique: discrete algorithm
+
+---
+
+    Code
+      modes$mode_estimates
+    Output
+      [1]  0 18
 

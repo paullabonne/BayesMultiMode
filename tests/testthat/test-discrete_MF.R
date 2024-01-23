@@ -15,6 +15,7 @@ test_that("discrete_MF function returns expected results with dist = shifted_poi
   # summary
   expect_snapshot(summary(mix))
   expect_snapshot(summary(modes))
+  expect_snapshot(modes$mode_estimates)
   
   expect_equal(modes$mode_estimates[1] == 0,  TRUE)
   expect_equal(modes$mode_estimates[2] == 1,  TRUE)
@@ -33,6 +34,11 @@ test_that("discrete_MF function returns expected results with dist = poisson", {
   
   mix = new_Mixture(params, data = data, dist = dist)
   modes = discrete_MF(mix)
+  
+  expect_snapshot(summary(mix))
+  expect_snapshot(summary(modes))
+  expect_snapshot(modes$mode_estimates)
+  
   expect_equal(modes$mode_estimates[1] == 0,  TRUE)
   expect_equal(modes$mode_estimates[2] == 9,  TRUE)
 })
@@ -62,6 +68,7 @@ test_that("discrete_MF function returns expected results with arbitrary function
   # summary
   expect_snapshot(summary(mix))
   expect_snapshot(summary(modes))
+  expect_snapshot(modes$mode_estimates)
   
   expect_equal(modes$mode_estimates[1] == 0,  TRUE)
   expect_equal(modes$mode_estimates[2] == 18,  TRUE)
