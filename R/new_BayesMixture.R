@@ -96,6 +96,10 @@ new_BayesMixture <- function(mcmc,
   col_names = str_extract(colnames(mcmc), "[a-z]+")
   pars_names = unique(col_names)
   
+  # check that eta is included
+  assert_that("eta" %in% pars_names,
+              msg = "mcmc should includ a parameter named eta representing mixture proportions.")
+  
   # keep only variables specify
   if (sum(!is.na(vars_to_keep))>0) {
     pars_names = pars_names[pars_names %in% vars_to_keep]

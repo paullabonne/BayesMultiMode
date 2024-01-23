@@ -71,6 +71,9 @@ new_Mixture <- function(pars,
   
   pars_names = unique(str_extract(names(pars), "[a-z]+"))
 
+  assert_that("eta" %in% pars_names,
+              msg = "pars should includ a parameter named eta representing mixture proportions.")
+  
   list_func = test_and_export(pars, pdf_func, dist, pars_names, dist_type, par_type = "pars")
   
   Mixture = list(pars = pars,
