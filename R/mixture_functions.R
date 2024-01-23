@@ -20,7 +20,7 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, par_type) 
   
   # that pdf_func can be computed when provided
   if (!is.null(pdf_func)) {
-    assert_that(!is.na(pdf_func(1, vec_to_mat(p, pars_names)[1,-1])),
+    assert_that(!is.na(pdf_func(1, vec_to_mat(p, pars_names)[1,])),
                 msg = "running pdf_func with pars provided returns NA") 
     assert_that(!is.na(dist_type),
                 msg = "dist_type must be provided when argument pdf_func is used") 

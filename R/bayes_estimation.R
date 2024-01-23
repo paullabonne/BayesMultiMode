@@ -235,7 +235,7 @@ bayes_estimation <- function(data,
   ll_id = which(colnames(mcmc) == "loglik")
   loglik = mcmc[,ll_id]
   mcmc = mcmc[,-ll_id]
- 
+
   BayesMixture = new_BayesMixture(mcmc = mcmc,
                                   data = data,
                                   K = K,

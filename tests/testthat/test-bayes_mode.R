@@ -30,8 +30,8 @@ test_that("bayes_mode works with external MCMC output", {
   
   expect_snapshot(summary(bayesmix))
   expect_snapshot(summary(bayesmode))
-  expect_snapshot(modes$mode_estimates)
-
+  expect_snapshot(sum(bayesmode$modes,na.rm=T))
+  
   expect_equal(sum(abs(m-mu)<0.1),  2)
 })
 
@@ -57,7 +57,7 @@ test_that("bayes_mode works with normal mixture", {
   
   expect_snapshot(summary(bayesmix))
   expect_snapshot(summary(bayesmode))
-  expect_snapshot(modes$mode_estimates)
+  expect_snapshot(sum(bayesmode$modes,na.rm=T))
   expect_snapshot(sum(bayesmix$loglik))
   
   expect_equal(sum(abs(m-mu)<0.1),  2)
@@ -85,7 +85,7 @@ test_that("bayes_mode works with skew_normal mixture", {
 
   expect_snapshot(summary(bayesmix))
   expect_snapshot(summary(bayesmode))
-  expect_snapshot(modes$mode_estimates)
+  expect_snapshot(sum(bayesmode$modes,na.rm=T))
   expect_snapshot(sum(bayesmix$loglik))
   
   expect_equal(sum(abs(m-mu)<0.5),  2)
@@ -119,8 +119,41 @@ test_that("bayes_mode works with shifted poisson mixture", {
 
   expect_snapshot(summary(bayesmix))
   expect_snapshot(summary(bayesmode))
-  expect_snapshot(modes$mode_estimates)
+  expect_snapshot(sum(bayesmode$modes,na.rm=T))
   expect_snapshot(sum(bayesmix$loglik))
   
   expect_equal(sum(abs(m-mu)<0.5),  2)
+})
+
+test_that("bayes_mode works with poisson mixture", {
+  set.seed(123)
+  
+  # retrieve galaxy data
+  y = c(rpois(100, 0.5),
+        rpois(100, 10))
+  
+  # estimation
+  bayesmix = bayes_estimation(data = y,
+                              K = 2, #not many to run the example rapidly
+                              dist = "poisson",
+                              nb_iter = 500, #not many to run the example rapidly
+                              burnin = 100)
+  
+  # mode estimation
+  bayesmode = bayes_mode(bayesmix)
+  
+  # check the plots and summary
+  # plot(bayesmix)
+  
+  # check the modes
+  m = apply(bayesmode$modes,2,median, na.rm=T)
+  m = m[order(m)]
+  m = m[!is.na(m)]
+  
+  expect_snapshot(summary(bayesmix))
+  expect_snapshot(summary(bayesmode))
+  expect_snapshot(sum(bayesmode$modes,na.rm=T))
+  expect_snapshot(sum(bayesmix$loglik))
+  
+  expect_equal(sum(abs(m-c(0,10))<2),  2)
 })

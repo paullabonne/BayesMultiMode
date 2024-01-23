@@ -24,9 +24,9 @@
 ---
 
     Code
-      modes$mode_estimates
+      sum(bayesmode$modes, na.rm = T)
     Output
-      [1]  0  1 10
+      [1] 6.426819
 
 # bayes_mode works with normal mixture
 
@@ -54,9 +54,9 @@
 ---
 
     Code
-      modes$mode_estimates
+      sum(bayesmode$modes, na.rm = T)
     Output
-      [1]  0  1 10
+      [1] -6.701141
 
 ---
 
@@ -91,9 +91,9 @@
 ---
 
     Code
-      modes$mode_estimates
+      sum(bayesmode$modes, na.rm = T)
     Output
-      [1]  0  1 10
+      [1] -91.98267
 
 ---
 
@@ -129,9 +129,9 @@
 ---
 
     Code
-      modes$mode_estimates
+      sum(bayesmode$modes, na.rm = T)
     Output
-      [1]  0  1 10
+      [1] 2016
 
 ---
 
@@ -139,4 +139,41 @@
       sum(bayesmix$loglik)
     Output
       [1] 12556.12
+
+# bayes_mode works with poisson mixture
+
+    Code
+      summary(bayesmix)
+    Output
+      
+       Mixture estimated with a Bayesian MCMC method.
+       Number of components: 2
+       Number of component parameters: 1
+       Mixture family: poisson
+       Mixture type: discrete
+
+---
+
+    Code
+      summary(bayesmode)
+    Output
+      The posterior probability of the data being multimodal is 1
+      
+       Number of estimated modes and their posterior probabilities:
+           Number of modes Posterior probabilty 
+                         2                    1 
+
+---
+
+    Code
+      sum(bayesmode$modes, na.rm = T)
+    Output
+      [1] 3855
+
+---
+
+    Code
+      sum(bayesmix$loglik)
+    Output
+      [1] 14159.67
 
