@@ -56,7 +56,7 @@
 #' }
 #' 
 #' BM = new_BayesMixture(fit, data, K = 2, burnin = 1, pdf_func = pdf_func, dist_type = dist_type)
-#' 
+#' # plot(BM, alpha = 1)
 #' @export
 
 new_BayesMixture <- function(mcmc,

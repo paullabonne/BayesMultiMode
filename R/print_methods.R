@@ -63,8 +63,8 @@ print_list <- function(x, max_length = 5, max_width = 5) {
 }
 
 head_print <- function(x, max_length = 5, max_width = 5) {
-  n = max_length
-  m = max_width
+  n = as.integer(max_length)
+  m = as.integer(max_width)
   
   if (is.vector(x)) {
     
@@ -85,7 +85,7 @@ head_print <- function(x, max_length = 5, max_width = 5) {
     if (nrow(x) <= n & ncol(x) <= m) {
       print(x)
     } else {
-      print(head(x[, 1:cols_to_print], rows_to_print))
+      print(head(x, c(rows_to_print, cols_to_print)))
       if (nrow(x) > n & ncol(x) > m) {
         cat(sprintf("... (%d more rows and %d more columns)\n", nrow(x) - n, ncol(x) - m))  
       }

@@ -75,5 +75,5 @@ pdf_func = function(x, pars) {
 }
 
 BM = new_BayesMixture(fit, data, K = 2, burnin = 1, pdf_func = pdf_func, dist_type = dist_type)
-
+# plot(BM, alpha = 1)
 }
