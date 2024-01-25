@@ -341,7 +341,6 @@ gibbs_SFM_skew_n <- function(y,
       alpha[m, k] = beta[k, 2]/sqrt(sigma2[k])
       probs[, k] = eta[m, k] * dsn(y, xi[m, k], omega[m, k], alpha[m, k])
     }
-    # browser()
     
     # classification
     pnorm = probs/rowSums(probs)

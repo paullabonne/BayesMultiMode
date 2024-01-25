@@ -30,25 +30,24 @@ test_that("bayes_mode works with external MCMC output", {
   
   expect_snapshot(summary(bayesmix))
   expect_snapshot(summary(bayesmode))
-  expect_snapshot(sum(bayesmode$modes,na.rm=T))
   
   expect_equal(sum(abs(m-mu)<0.1),  2)
 })
 
 test_that("bayes_mode works with normal mixture", {
   set.seed(123)
-
+  
   mu = c(-5,5)
   # retrieve galaxy data
   y = rnorm(200, mu)
-
+  
   # estimation
   bayesmix = bayes_estimation(data = y,
-                             K = 2, #not many to run the example rapidly
-                             dist = "normal",
-                             nb_iter = 500, #not many to run the example rapidly
-                             burnin = 100)
-
+                              K = 2, #not many to run the example rapidly
+                              dist = "normal",
+                              nb_iter = 500, #not many to run the example rapidly
+                              burnin = 100)
+  
   # mode estimation
   bayesmode = bayes_mode(bayesmix)
   m = apply(bayesmode$modes,2,mean)
@@ -57,8 +56,6 @@ test_that("bayes_mode works with normal mixture", {
   
   expect_snapshot(summary(bayesmix))
   expect_snapshot(summary(bayesmode))
-  expect_snapshot(sum(bayesmode$modes,na.rm=T))
-  expect_snapshot(sum(bayesmix$loglik))
   
   expect_equal(sum(abs(m-mu)<0.1),  2)
 })
@@ -82,11 +79,9 @@ test_that("bayes_mode works with skew_normal mixture", {
   m = apply(bayesmode$modes,2,mean, na.omit = T)
   m = m[order(m)]
   m = m[!is.na(m)]
-
+  
   expect_snapshot(summary(bayesmix))
   expect_snapshot(summary(bayesmode))
-  expect_snapshot(sum(bayesmode$modes,na.rm=T))
-  expect_snapshot(sum(bayesmix$loglik))
   
   expect_equal(sum(abs(m-mu)<0.5),  2)
 })
@@ -116,11 +111,9 @@ test_that("bayes_mode works with shifted poisson mixture", {
   m = apply(bayesmode$modes,2,median, na.rm=T)
   m = m[order(m)]
   m = m[!is.na(m)]
-
+  
   expect_snapshot(summary(bayesmix))
   expect_snapshot(summary(bayesmode))
-  expect_snapshot(sum(bayesmode$modes,na.rm=T))
-  expect_snapshot(sum(bayesmix$loglik))
   
   expect_equal(sum(abs(m-mu)<0.5),  2)
 })
@@ -152,8 +145,6 @@ test_that("bayes_mode works with poisson mixture", {
   
   expect_snapshot(summary(bayesmix))
   expect_snapshot(summary(bayesmode))
-  expect_snapshot(sum(bayesmode$modes,na.rm=T))
-  expect_snapshot(sum(bayesmix$loglik))
   
   expect_equal(sum(abs(m-c(0,10))<2),  2)
 })

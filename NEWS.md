@@ -3,7 +3,7 @@
 * Added a class "Mode" for the output of the mode estimation functions
 * Created mix_mode() which calls the mode finding algorithms; discrete_MF, fixed_point and MEM have been removed
 * Removed the plotting option inside the mode estimation functions
-* Added new plot and summary methods
+* Added print, plot and summary methods for all classes.
 
 ## Version 0.6.0
 * Added examples to new_BayesMixture() and bayes_mode()
