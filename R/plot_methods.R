@@ -74,14 +74,15 @@ plot.BayesMixture <- function(x, draws = 250,
     
     x_all = seq(min(y),max(y),1)
     
-    mixture_uncertainty = matrix(NA, length(x_all), nrow(mcmc))
-    
+    mixture_uncertainty = matrix(NA, length(x_all), draws)
+    j = 1
     for (i in sample(nrow(mcmc),min(nrow(mcmc), draws))) {
       ##
       pars = vec_to_mat(mcmc[i, ], pars_names)
       pars = na.omit(pars)
       
-      mixture_uncertainty[,i] = pdf_func_mix(x_all, pars, pdf_func)
+      mixture_uncertainty[,j] = pdf_func_mix(x_all, pars, pdf_func)
+      j = j+1
     }
     
     # 
@@ -89,7 +90,7 @@ plot.BayesMixture <- function(x, draws = 250,
       left_join(df_y_temp, by=c("x"="x")) %>%
       mutate(density = ifelse(is.na(density),NA,density)) %>%
       cbind(mixture_uncertainty)
-    
+
     df_y %<>%
       gather(-x,-density,key="component",value="value")
     
