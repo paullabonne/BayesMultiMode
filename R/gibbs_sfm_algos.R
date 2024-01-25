@@ -28,9 +28,9 @@ gibbs_SFM_normal <- function(y,
   assert_that(is.scalar(B0) & B0 > 0, msg = "B0 should be a positive integer")
   
   #empty objects to store parameters
-  mu = matrix(NA, nb_iter, K)
-  sigma2 = matrix(NA, nb_iter, K)
-  eta = matrix(NA, nb_iter, K)
+  mu = matrix(NA_real_, nb_iter, K)
+  sigma2 = matrix(NA_real_, nb_iter, K)
+  eta = matrix(NA_real_, nb_iter, K)
   lp = matrix(0, nb_iter, 1)
   
   # initialisation

@@ -271,10 +271,10 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
   
   pars_mat <- vec_to_mat(pars, pars_names)
   
-  est_mode = rep(NA, nrow(pars_mat))
+  est_mode = rep(NA_real_, nrow(pars_mat))
   
   nK = nrow(pars_mat)
-  post_prob = rep(NA, nK)
+  post_prob = rep(NA_real_, nK)
   
   # remove empty components (a feature of some MCMC methods)
   pars_mat = na.omit(pars_mat)

@@ -227,7 +227,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
   
   # Test for number of modes : number of modes and their posterior probability
   unique_modes = unique(n_modes) #possible number of modes
-  prob_nb_modes = rep(NA,length(unique_modes))
+  prob_nb_modes = rep(NA_real_,length(unique_modes))
   for (i in 1:length(unique_modes)){
     prob_nb_modes[i] = length(n_modes[n_modes==unique_modes[i]])/nrow(modes)
   }
