@@ -5,8 +5,10 @@
 #' @param max_width maximum number of columns to show (for matrices).
 #' @param ... Not used.
 #' 
+#' @importFrom utils head
+#' 
 #' @export
-print.BayesMode <- function(x, max_length = 5, max_width = 5) {
+print.BayesMode <- function(x, max_length = 5, max_width = 5, ...) {
   print_list(x, max_length, max_width)
 }
 
@@ -19,7 +21,7 @@ print.BayesMode <- function(x, max_length = 5, max_width = 5) {
 #' @param ... Not used.
 #' 
 #' @export
-print.Mode <- function(x, max_length = 5, max_width = 5) {
+print.Mode <- function(x, max_length = 5, max_width = 5, ...) {
   print_list(x, max_length, max_width)
 }
 
@@ -32,7 +34,7 @@ print.Mode <- function(x, max_length = 5, max_width = 5) {
 #' @param ... Not used.
 #' 
 #' @export
-print.BayesMixture <- function(x, max_length = 5, max_width = 5) {
+print.BayesMixture <- function(x, max_length = 5, max_width = 5, ...) {
   print_list(x, max_length, max_width)
 }
 
@@ -44,7 +46,7 @@ print.BayesMixture <- function(x, max_length = 5, max_width = 5) {
 #' @param ... Not used.
 #' 
 #' @export
-print.Mixture <- function(x, max_length = 5, max_width = 5) {
+print.Mixture <- function(x, max_length = 5, max_width = 5, ...) {
   print_list(x, max_length, max_width)
 }
 
@@ -100,8 +102,8 @@ head_print <- function(x, max_length = 5, max_width = 5) {
     cat(" (NULL)\n")
     
   } else if (is.function(x)) {
-    cat(":\n", head(args(bayesmix$pdf_func))[1])
-    print(body(bayesmix$pdf_func))
+    cat(":\n", head(args(x))[1])
+    print(body(x))
   } else {
     # Fallback for other types
     print(x)

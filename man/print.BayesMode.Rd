@@ -4,7 +4,7 @@
 \alias{print.BayesMode}
 \title{Print method for \code{BayesMode} objects}
 \usage{
-\method{print}{BayesMode}(x, max_length = 5, max_width = 5)
+\method{print}{BayesMode}(x, max_length = 5, max_width = 5, ...)
 }
 \arguments{
 \item{x}{An object of class \code{BayesMode}.}

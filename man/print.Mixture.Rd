@@ -4,7 +4,7 @@
 \alias{print.Mixture}
 \title{Print method for \code{Mixture} objects}
 \usage{
-\method{print}{Mixture}(x, max_length = 5, max_width = 5)
+\method{print}{Mixture}(x, max_length = 5, max_width = 5, ...)
 }
 \arguments{
 \item{x}{An object of class \code{Mixture}.}

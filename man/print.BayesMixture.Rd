@@ -4,7 +4,7 @@
 \alias{print.BayesMixture}
 \title{Print method for \code{BayesMixture} objects}
 \usage{
-\method{print}{BayesMixture}(x, max_length = 5, max_width = 5)
+\method{print}{BayesMixture}(x, max_length = 5, max_width = 5, ...)
 }
 \arguments{
 \item{x}{An object of class \code{BayesMixture}.}
