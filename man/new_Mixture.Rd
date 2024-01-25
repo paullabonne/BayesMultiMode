@@ -9,7 +9,8 @@ new_Mixture(
   dist = NA_character_,
   pdf_func = NULL,
   dist_type = NA_character_,
-  data = NULL
+  data = NULL,
+  loc = NA_character_
 )
 }
 \arguments{
@@ -64,7 +65,8 @@ pdf_func <- function(x, pars) {
 }
 
 
-mix = new_Mixture(params, pdf_func = pdf_func, dist_type = "continuous")
+mix = new_Mixture(params, pdf_func = pdf_func,
+dist_type = "continuous", loc = "mu")
 
 # summary(mix)
 # plot(mix, from = -4, to = 4)

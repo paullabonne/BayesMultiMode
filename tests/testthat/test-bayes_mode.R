@@ -21,7 +21,8 @@ test_that("bayes_mode works with external MCMC output", {
                               K = 2,
                               burnin = 1,
                               pdf_func = pdf_func,
-                              dist_type = dist_type)
+                              dist_type = dist_type,
+                              loc = "mu")
   
   bayesmode = bayes_mode(bayesmix)
   m = apply(bayesmode$modes,2,mean)
@@ -90,7 +91,7 @@ test_that("bayes_mode works with shifted poisson mixture", {
   set.seed(123)
   
   mu = c(0,5)
-  # retrieve galaxy data
+  # data
   y = c(rpois(100, 1) + mu[1],
         rpois(100, 1) + mu[2])
   

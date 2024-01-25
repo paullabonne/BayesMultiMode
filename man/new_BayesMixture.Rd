@@ -13,7 +13,8 @@ new_BayesMixture(
   pdf_func = NULL,
   dist_type = NA_character_,
   loglik = NULL,
-  vars_to_keep = NA_character_
+  vars_to_keep = NA_character_,
+  loc = NA_character_
 )
 }
 \arguments{
@@ -87,6 +88,7 @@ pdf_func = function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 }
 
-BM = new_BayesMixture(fit, data, K = 2, burnin = 50, pdf_func = pdf_func, dist_type = dist_type)
+BM = new_BayesMixture(fit, data, K = 2, burnin = 50,
+pdf_func = pdf_func, dist_type = dist_type, loc = "xi")
 # plot(BM)
 }

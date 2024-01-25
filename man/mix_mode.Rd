@@ -4,7 +4,13 @@
 \alias{mix_mode}
 \title{Find modes of mixtures}
 \usage{
-mix_mode(mixture, tol_x = 1e-06, tol_conv = 1e-08, type = "all")
+mix_mode(
+  mixture,
+  tol_mixp = 1e-06,
+  tol_x = 1e-06,
+  tol_conv = 1e-08,
+  type = "all"
+)
 }
 \arguments{
 \item{mixture}{An object of class \code{Mixture} generated with \code{new_Mixture()}.}
@@ -104,7 +110,8 @@ pdf_func <- function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 }
 
-mix = new_Mixture(params, pdf_func = pdf_func, dist_type = "continuous")
+mix = new_Mixture(params, pdf_func = pdf_func,
+dist_type = "continuous", loc = "mu")
 modes = mix_mode(mix)
 
 # summary(modes)

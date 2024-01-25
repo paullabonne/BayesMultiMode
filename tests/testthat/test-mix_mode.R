@@ -33,7 +33,7 @@ test_that("discrete_MF function returns expected results with dist = poisson", {
            rpois(p[2]*1e3, lambda[2]))
   
   mix = new_Mixture(params, data = data, dist = dist)
-  modes = discrete_MF(mix)
+  modes = mix_mode(mix)
   
   expect_snapshot(summary(mix))
   expect_snapshot(summary(modes))
@@ -110,7 +110,9 @@ test_that("mix_mode() function returns expected results with an arbitrary functi
     sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
   }
   
-  mix = new_Mixture(params, pdf_func = pdf_func, dist_type = "continuous")
+  mix = new_Mixture(params, pdf_func = pdf_func,
+                    dist_type = "continuous",
+                    loc = "mu")
   modes = mix_mode(mix)
   
   expect_snapshot(summary(mix))

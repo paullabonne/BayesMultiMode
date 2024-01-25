@@ -110,7 +110,8 @@
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
 #' 
-#' mix = new_Mixture(params, pdf_func = pdf_func, dist_type = "continuous")
+#' mix = new_Mixture(params, pdf_func = pdf_func,
+#' dist_type = "continuous", loc = "mu")
 #' modes = mix_mode(mix)
 #' 
 #' # summary(modes)
@@ -154,11 +155,12 @@
 #' 
 #' @export
 
-mix_mode <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8, type = "all") {
+mix_mode <- function(mixture, tol_mixp = 1e-6, tol_x = 1e-6, tol_conv = 1e-8, type = "all") {
   assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
   assert_that(all(c("pars", "pars_names", "dist_type",
-                "dist", "pdf_func", "data", "nb_var", "K") %in% names(mixture)),
+                    "dist", "pdf_func", "data", "nb_var", "K") %in% names(mixture)),
               msg = "mixture object is missing arguments.") 
+  assert_that(length(tol_mixp)==1 & tol_mixp > 0, msg = "tol_mixp should be a positive scalar")
   assert_that(length(tol_x)==1 & tol_x > 0, msg = "tol_x should be a positive scalar")
   assert_that(length(tol_conv)==1 & tol_conv > 0, msg = "tol_conv should be a positive scalar")
   
@@ -166,44 +168,55 @@ mix_mode <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8, type = "all") {
   pars_names = mixture$pars_names
   dist = mixture$dist
   dist_type = mixture$dist_type
-  ## input checks
-  assert_that(length(tol_x)==1 & tol_x > 0, msg = "tol_x should be a positive scalar")
-  ##
+  pdf_func = mixture$pdf_func
   
+  mode = list()
+  mode$dist = dist
+  mode$pars = pars
+  mode$pdf_func = pdf_func
+  mode$K = mixture$K
+  mode$nb_var = mixture$nb_var
+  
+  pars_mat <- vec_to_mat(pars, pars_names)
+  pars_mat[, "eta"][pars_mat[, "eta"] < tol_mixp] = NA
+  pars_mat = na.omit(pars_mat) # remove empty components (a feature of some MCMC methods)
   if (dist_type == "continuous") {
+    mode$dist_type = "continuous"
+    
     if (!is.na(dist) && dist == "normal") {
-      modes = fixed_point(mixture, tol_x, tol_conv)
+      mode_estimates = fixed_point(pars_mat, tol_x, tol_conv)
+      mode$algo = "fixed-point"
     } else {
-      modes = MEM(mixture, tol_x, tol_conv)
+      loc = mixture$loc
+      mode_estimates = MEM(pars_mat, pdf_func, loc, tol_x, tol_conv)
+      mode$algo = "Modal Expectation-Maximization (MEM)"
     }
   }
   
   if (dist_type == "discrete") {
-      modes = discrete_MF(mixture)
+    data = mixture$data
+    mode_estimates = discrete_MF(pars_mat, pdf_func, data, type)
+    mode$algo = "discrete"
+    mode$dist_type = "discrete"
   }
   
-  return(modes)
+  mode$mode_estimates = mode_estimates
+  class(mode) = "Mode"
+  
+  return(mode)
 }
 
 ### internal functions
 #' @keywords internal
-fixed_point <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
-  assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
-  pars = mixture$pars
-  pars_names = mixture$pars_names
+fixed_point <- function(pars, tol_x = 1e-6, tol_conv = 1e-8) {
   
-  ## input checks
-  assert_that(mixture$dist == "normal", msg = "fixed_point only works for normal mixtures (dist = normal).")
-  ##
-  
-  modes = rep(NA_real_,length(pars)/3)
-  pars = pars[!is.na(pars)]
-  p = pars[grep("eta", names(pars))]
-  mu = pars[grep("mu", names(pars))]
-  sigma = pars[grep("sigma", names(pars))]
+  modes = rep(NA_real_, nrow(pars))
+  p = pars[ ,"eta"]
+  mu = pars[, "mu"]
+  sigma = pars[, "sigma"]
   
   iter = 0
-  
+
   for (i in 1:length(mu)) {
     
     x = mu[i]
@@ -228,17 +241,9 @@ fixed_point <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
     }
   }
   
-  mode = list()
-  mode$mode_estimates = modes[!is.na(modes)]
-  mode$dist = mixture$dist
-  mode$pars = pars
-  mode$dist_type = "continuous"
-  mode$algo = "fixed-point"
-  mode$K = mixture$K
-  mode$nb_var = mixture$nb_var
+  modes = modes[!is.na(modes)]
   
-  class(mode) = "Mode"
-  return(mode)
+  return(modes)
 }
 
 #' @keywords internal
@@ -257,45 +262,30 @@ f_fp <- function(x, p, mu, sigma) {
 }
 
 #' @keywords internal
-MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
-  assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
-  pars = mixture$pars
-  pars_names = mixture$pars_names
-  pdf_func = mixture$pdf_func
+MEM <- function(pars, pdf_func, loc, tol_x = 1e-6, tol_conv = 1e-8) {
+
+  modes = rep(NA_real_, nrow(pars))
   
-  ## input checks
-  assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
-  assert_that(is.vector(pars_names) & is.character(pars_names),
-              msg = "pars_names should be a character vector")
-  ##
-  
-  pars_mat <- vec_to_mat(pars, pars_names)
-  
-  est_mode = rep(NA_real_, nrow(pars_mat))
-  
-  nK = nrow(pars_mat)
+  nK = nrow(pars)
   post_prob = rep(NA_real_, nK)
   
-  # remove empty components (a feature of some MCMC methods)
-  pars_mat = na.omit(pars_mat)
-  
   for (j in 1:nK) {
-    x = pars_mat[j,2]
+    x = pars[j,loc]
     
     delta = 1
     
     while (delta > 1e-8) {
       # E-step
-      f_mix = pdf_func_mix(x, pars_mat, pdf_func)
+      f_mix = pdf_func_mix(x, pars, pdf_func)
       
       for (k in 1:nK){ 
-        post_prob[k] = pars_mat[k, 1] * pdf_func(x, pars_mat[k, -1])/f_mix 
+        post_prob[k] = pars[k, "eta"] * pdf_func(x, pars[k, ])/f_mix 
       }
       
       # M-step
       Min = optim(par = x, Q_func, method = "L-BFGS-B",
                   post_prob = post_prob,
-                  pars = pars_mat[, -1],
+                  pars = pars,
                   pdf_func = pdf_func,
                   control = list(fnscale = -1))
       
@@ -308,30 +298,20 @@ MEM <- function(mixture, tol_x = 1e-6, tol_conv = 1e-8) {
     
     ## check that the mode is not too close to other modes
     ## check that the mode is not too close to other modes
-    if(any(!is.na(est_mode))){
-      diff = abs(x-est_mode)
+    if(any(!is.na(modes))){
+      diff = abs(x-modes)
       diff = diff[!is.na(diff)]
       if (!any(diff<tol_x)) {
-        est_mode[j] = x 
+        modes[j] = x 
       } 
     } else {
-      est_mode[j] = x 
+      modes[j] = x 
     }
   }
   
-  mode = list()
-  mode$mode_estimates = est_mode[!is.na(est_mode)]
-  mode$dist = mixture$dist
-  mode$pars = pars
-  mode$pdf_func = pdf_func
-  mode$dist_type = "continuous"
-  mode$algo = "Modal Expectation-Maximization (MEM)"
-  mode$K = mixture$K
-  mode$nb_var = mixture$nb_var
+  modes = modes[!is.na(modes)]
   
-  class(mode) = "Mode"
-  
-  return(mode)
+  return(modes)
 }
 
 #' @keywords internal
@@ -355,19 +335,8 @@ Q_func = function(x, post_prob, pars, pdf_func){
 }
 
 #' @keywords internal
-discrete_MF <- function(mixture, type = "all"){
-  assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
-  pars = mixture$pars
-  pars_names = mixture$pars_names
-  dist = mixture$dist
-  pdf_func = mixture$pdf_func
-  data = mixture$data
-  
+discrete_MF <- function(pars, pdf_func, data, type = "all"){
   ## input checks
-  assert_that(is.vector(data) & length(data) > 0,
-              msg = "data should be a vector of length > 0")
-  assert_that(!any(is.na(data)) & !any(is.infinite(data)),
-              msg = "data should not include missing or infinite values")
   assert_that(type %in% c("unique", "all"),
               msg = "type must be either 'unique' or 'all' ")
   ##
@@ -376,13 +345,8 @@ discrete_MF <- function(mixture, type = "all"){
   x = min(data):max(data)
   ##
   
-  pars_mat <- vec_to_mat(pars, pars_names)
-  ##
-  
-  Khat = nrow(pars_mat)
-  
   ### Getting denisty
-  py = pdf_func_mix(x, pars_mat, pdf_func)
+  py = pdf_func_mix(x, pars, pdf_func)
   
   # change in the pdf
   d_py = diff(py)
@@ -404,29 +368,18 @@ discrete_MF <- function(mixture, type = "all"){
     warning("Some modes are flat.")
   }
   
-  output = rep(NA_real_, length(x))
+  modes = rep(NA_real_, length(x))
   
   if (type == "unique") {
-    output[1:length(loc_modes)] = x_decrease
+    modes[1:length(loc_modes)] = x_decrease
   }
   
   if (type == "all") {
-    output[1:length(loc_modes)] = loc_modes
+    modes[1:length(loc_modes)] = loc_modes
   }
   
-  mode = list()
-  mode$mode_estimates = output[!is.na(output)]
-  mode$dist = dist
-  mode$pars = pars
-  mode$pdf_func = pdf_func
-  mode$data = data
-  mode$dist_type = "discrete"
-  mode$py = py
-  mode$algo = "discrete"
-  mode$K = mixture$K
-  mode$nb_var = mixture$nb_var
+  modes = modes[!is.na(modes)]
   
-  class(mode) = "Mode"
   
-  return(mode)
+  return(modes)
 }

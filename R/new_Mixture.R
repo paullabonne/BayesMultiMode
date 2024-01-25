@@ -48,7 +48,8 @@
 #' }
 #' 
 #' 
-#' mix = new_Mixture(params, pdf_func = pdf_func, dist_type = "continuous")
+#' mix = new_Mixture(params, pdf_func = pdf_func,
+#' dist_type = "continuous", loc = "mu")
 #' 
 #' # summary(mix)
 #' # plot(mix, from = -4, to = 4)
@@ -59,7 +60,8 @@ new_Mixture <- function(pars,
                         dist = NA_character_,
                         pdf_func = NULL,
                         dist_type = NA_character_,
-                        data = NULL) {
+                        data = NULL,
+                        loc = NA_character_) {
   ## input checks
   assert_that(is.string(dist))
   assert_that(is.string(dist_type))
@@ -74,7 +76,16 @@ new_Mixture <- function(pars,
   assert_that("eta" %in% pars_names,
               msg = "pars should include a parameter named eta representing mixture proportions.")
   
-  list_func = test_and_export(pars, pdf_func, dist, pars_names, dist_type, par_type = "pars")
+  list_func = test_and_export(pars, pdf_func, dist, pars_names, dist_type, par_type = "pars", loc)
+  
+  if (list_func$dist_type == "discrete") {
+    assert_that(!is.null(data),
+                msg = "data argument must be filled when using a discrete distribution")
+    assert_that(is.vector(data) & length(data) > 0,
+                msg = "data should be a vector of length > 0")
+    assert_that(!any(is.na(data)) & !any(is.infinite(data)),
+                msg = "data should not include missing or infinite values")
+  }
   
   Mixture = list(pars = pars,
                  pars_names = pars_names,
@@ -82,6 +93,7 @@ new_Mixture <- function(pars,
                  dist = dist,
                  pdf_func = list_func$pdf_func,
                  data = data,
+                 loc = list_func$loc,
                  nb_var = length(pars_names) - 1, #minus the shares
                  K = length(pars)/length(pars_names))
   

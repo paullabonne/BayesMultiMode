@@ -114,7 +114,7 @@
 #' }
 #' 
 #' bayesmix = new_BayesMixture(fit, data, K = 2, burnin = 1, 
-#' pdf_func = pdf_func, dist_type = dist_type)
+#' pdf_func = pdf_func, dist_type = dist_type, loc = "mu")
 #' 
 #' bayesmode = bayes_mode(bayesmix)
 #' 
@@ -125,7 +125,7 @@
 #' # summary(bayesmode)
 #'
 #' @export
-bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8, nb_iter = NULL) {
+bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8, nb_iter = NULL) {
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   assert_that(is.scalar(rd) & rd >= 0, msg = "rd should be greater or equal than zero")
   assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
@@ -140,6 +140,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
   dist_type = BayesMix$dist_type
   pdf_func = BayesMix$pdf_func
   pars_names = BayesMix$pars_names
+  loc = BayesMix$loc
   
   # if nb_iter is specified (find the mode on a limited number of iterations):
   if (!is.null(nb_iter)) {
@@ -154,7 +155,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
     }
     modes = t(apply(mcmc, 1, mix_mode_estimates, dist = dist,
                     pdf_func = pdf_func, dist_type = dist_type,
-                    tol_x = tol_x, tol_conv = tol_conv))
+                    tol_mixp = tol_mixp, tol_x = tol_x, tol_conv = tol_conv,
+                    loc = loc))
     
     ### Posterior probability of being a mode for each location
     m_range = seq(from = min(round(data,rd)), to = max(round(data,rd)), by = 1/(10^rd)) # range of potential values for the modes
@@ -183,6 +185,9 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
                      data = data,
                      dist = dist,
                      dist_type = dist_type,
+                     tol_mixp = tol_mixp,
+                     tol_x = tol_x,
+                     tol_conv = tol_conv,
                      pdf_func = pdf_func))
     
    
@@ -204,13 +209,16 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
     colnames(modes) = paste('mode',1:max(n_modes))
     
     table_location = rbind(location_at_modes, probs_modes)
-    
+
     # unique modes to calculate post probs of number of modes
     modes <-  t(apply(mcmc,1,FUN = mix_mode_estimates,
                       data = data,
-                      type = "unique",
-                      dist_type = dist_type,
                       dist = dist,
+                      dist_type = dist_type,
+                      tol_mixp = tol_mixp,
+                      tol_x = tol_x,
+                      tol_conv = tol_conv,
+                      type = "unique",
                       pdf_func = pdf_func))
     
     n_modes = apply(!is.na(modes),1,sum)
@@ -263,11 +271,14 @@ bayes_mode <- function(BayesMix, rd = 1, tol_x = sd(BayesMix$data)/10, tol_conv 
 
 #' @keywords internal
 mix_mode_estimates <- function(mcmc, dist = NA_character_, dist_type = NA_character_,
-                               tol_x = 1e-6, tol_conv = 1e-8, pdf_func = NULL,
-                               type = "all", data = NULL) {
+                               tol_mixp, tol_x, tol_conv,
+                               pdf_func = NULL, type = "all", data = NULL,
+                               loc = NA_character_) {
   output = rep(NA_real_, length(mcmc))
-  mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func, dist_type = dist_type, data = data)
-  modes = mix_mode(mix, tol_x, tol_conv, type = type)$mode_estimates
+
+  mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func,
+                    dist_type = dist_type, data = data, loc = loc)
+  modes = mix_mode(mix, tol_mixp, tol_x, tol_conv, type = type)$mode_estimates
   output[1:length(modes)] = modes
   
   return(output)

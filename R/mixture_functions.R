@@ -16,7 +16,7 @@ pdf_func_mix <- function(x, pars, pdf_func) {
 }
 
 #' @keywords internal
-test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, par_type) {
+test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, par_type, loc) {
   
   list_func = list()
   
@@ -25,12 +25,15 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, par_type) 
     assert_that(!is.na(pdf_func(1, vec_to_mat(p, pars_names)[1,])),
                 msg = "running pdf_func with pars provided returns NA") 
     assert_that(!is.na(dist_type),
-                msg = "dist_type must be provided when argument pdf_func is used") 
+                msg = "dist_type must be provided when argument pdf_func is used")
+    assert_that(dist_type %in% c("continuous", "discrete"),
+                msg = "dist_type should be either discrete or continuous")
   }
   
   msg_0 = paste0("variable names in ", par_type, " should be ")
   
   if (!is.na(dist)) {
+    
     if (dist == "poisson"){
       assert_that(sum(pars_names %in% c("eta", "lambda"))==2,
                   msg = paste0(msg_0, "eta and lambda when dist = poisson"))
@@ -53,6 +56,7 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, par_type) 
       assert_that(sum(pars_names %in% c("eta", "xi", "omega", "alpha"))==4,
                   msg = paste0(msg_0, "eta, xi, omega and alpha when dist = skew_normal"))
       pdf_func <- function(x, pars) dsn(x, pars["xi"], pars["omega"], pars["alpha"])
+      loc = "xi"
     }
     
     if (dist %in% c("normal", "skew_normal")) {
@@ -64,8 +68,16 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, par_type) 
     } 
   }
   
+  if ((is.na(dist) | !(dist %in% c("normal", "skew_normal"))) & dist_type != "discrete") {
+    assert_that(!is.na(loc) & is.string(loc),
+                msg = "loc must be given when using a continuous distribution other than the normal distribution")
+    assert_that(loc %in% pars_names[pars_names!="eta"],
+                msg = paste0("loc must a parameter included in ", par_type, " other than eta"))
+  }
+  
   list_func$dist_type = dist_type
   list_func$pdf_func = pdf_func
+  list_func$loc = loc
   
   return(list_func)
 }

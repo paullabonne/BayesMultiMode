@@ -68,7 +68,8 @@
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
 #' 
-#' BM = new_BayesMixture(fit, data, K = 2, burnin = 50, pdf_func = pdf_func, dist_type = dist_type)
+#' BM = new_BayesMixture(fit, data, K = 2, burnin = 50,
+#' pdf_func = pdf_func, dist_type = dist_type, loc = "xi")
 #' # plot(BM)
 #' @export
 
@@ -80,7 +81,8 @@ new_BayesMixture <- function(mcmc,
                              pdf_func = NULL,
                              dist_type = NA_character_,
                              loglik = NULL,
-                             vars_to_keep = NA_character_) {
+                             vars_to_keep = NA_character_,
+                             loc = NA_character_) {
   ## input checks
   assert_that(is.matrix(mcmc))
   assert_that(is.string(dist))
@@ -92,7 +94,7 @@ new_BayesMixture <- function(mcmc,
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
   assert_that(is.scalar(K) & K > 0, msg = "K should be a positive integer")
-  assert_that(is.scalar(burnin) & burnin > 0, msg = "burnin should be an integer positive or zero")
+  assert_that(is.scalar(burnin) & burnin >= 0, msg = "burnin should be an integer positive or zero")
   assert_that(burnin < nrow(mcmc),
               msg = "burnin parameter should be less than the number of mcmc draws")
   assert_that(!(is.na(dist) & is.null(pdf_func)),
@@ -129,7 +131,7 @@ new_BayesMixture <- function(mcmc,
   assert_that(sum(K_from_names != K) == 0,
               msg = "There is a least one variable in mcmc that has not K components")
 
-  list_func = test_and_export(mcmc[1,], pdf_func, dist, pars_names, dist_type, par_type = "mcmc")
+  list_func = test_and_export(mcmc[1,], pdf_func, dist, pars_names, dist_type, par_type = "mcmc", loc)
 
   BayesMix = list(mcmc = mcmc,
                   data = data,
@@ -139,6 +141,7 @@ new_BayesMixture <- function(mcmc,
                   dist = dist,
                   pdf_func = list_func$pdf_func,
                   pars_names = pars_names,
+                  loc = list_func$loc,
                   nb_var = length(pars_names) - 1, #minus the shares
                   K = ncol(mcmc)/length(pars_names))
   

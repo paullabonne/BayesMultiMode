@@ -7,6 +7,7 @@
 bayes_mode(
   BayesMix,
   rd = 1,
+  tol_mixp = 0.01,
   tol_x = sd(BayesMix$data)/10,
   tol_conv = 1e-08,
   nb_iter = NULL
@@ -126,7 +127,7 @@ pdf_func = function(x, pars) {
 }
 
 bayesmix = new_BayesMixture(fit, data, K = 2, burnin = 1, 
-pdf_func = pdf_func, dist_type = dist_type)
+pdf_func = pdf_func, dist_type = dist_type, loc = "mu")
 
 bayesmode = bayes_mode(bayesmix)
 

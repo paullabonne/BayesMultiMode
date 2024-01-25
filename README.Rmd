@@ -49,10 +49,14 @@ bayesmix = bayes_estimation(data = y,
                             K = 10,
                             dist = "normal",
                             nb_iter = 2000,
-                            burnin = 1000)
+                            burnin = 1000,
+                            printing = F)
 
 # plot estimated mixture
 plot(bayesmix, draws = 200)
+
+# summary of estimated mixture
+summary(bayesmix)
 ```
 
 #### Mode inference
@@ -81,7 +85,9 @@ y = cyclone %>%
 
 ## estimation
 PY_result = PYdensity(y,
-                      mcmc = list(niter = 2000, nburn = 1000),
+                      mcmc = list(niter = 2000,
+                                  nburn = 1000,
+                                  print_message = FALSE),
                       output = list(out_param = TRUE))
 ```
 
@@ -119,6 +125,8 @@ py_BayesMix = new_BayesMixture(mcmc = mcmc_py,
                                dist = "normal",
                                dist_type = "continuous",
                                vars_to_keep = c("eta", "mu", "sigma"))
+
+summary(py_BayesMix)
 ```
 
 #### Plotting the mixture
