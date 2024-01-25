@@ -5,10 +5,11 @@
     Output
       
        Estimated mixture distribution.
-       Number of components: 2
-       Number of component parameters: 2
-       Mixture family: shifted_poisson
-       Mixture type: discrete
+      - Mixture type: discrete
+      - Number of components: 2
+      - Distribution family: shifted_poisson
+      - Number of distribution variables: 2
+      - Names of variables: lambda kappa
 
 ---
 
@@ -17,8 +18,8 @@
     Output
       
        Modes of a shifted_poisson mixture with 2 components.
-       Number of modes found: 3
-       Mode estimation technique: discrete algorithm
+      - Number of modes found: 3
+      - Mode estimation technique: discrete algorithm
 
 ---
 
@@ -34,10 +35,11 @@
     Output
       
        Estimated mixture distribution.
-       Number of components: 2
-       Number of component parameters: 1
-       Mixture family: poisson
-       Mixture type: discrete
+      - Mixture type: discrete
+      - Number of components: 2
+      - Distribution family: poisson
+      - Number of distribution variables: 1
+      - Names of variables: lambda
 
 ---
 
@@ -46,8 +48,8 @@
     Output
       
        Modes of a poisson mixture with 2 components.
-       Number of modes found: 2
-       Mode estimation technique: discrete algorithm
+      - Number of modes found: 2
+      - Mode estimation technique: discrete algorithm
 
 ---
 
@@ -63,10 +65,11 @@
     Output
       
        Estimated mixture distribution.
-       Number of components: 2
-       Number of component parameters: 2
-       Mixture family: NA
-       Mixture type: discrete
+      - Mixture type: discrete
+      - Number of components: 2
+      - Distribution family: NA
+      - Number of distribution variables: 2
+      - Names of variables: mu size
 
 ---
 
@@ -75,8 +78,8 @@
     Output
       
        Modes of a discrete mixture with 2 components.
-       Number of modes found: 2
-       Mode estimation technique: discrete algorithm
+      - Number of modes found: 2
+      - Mode estimation technique: discrete algorithm
 
 ---
 
@@ -92,10 +95,11 @@
     Output
       
        Estimated mixture distribution.
-       Number of components: 2
-       Number of component parameters: 3
-       Mixture family: skew_normal
-       Mixture type: continuous
+      - Mixture type: continuous
+      - Number of components: 2
+      - Distribution family: skew_normal
+      - Number of distribution variables: 3
+      - Names of variables: xi omega alpha
 
 ---
 
@@ -104,8 +108,8 @@
     Output
       
        Modes of a skew_normal mixture with 2 components.
-       Number of modes found: 2
-       Mode estimation technique: Modal Expectation-Maximization (MEM) algorithm
+      - Number of modes found: 2
+      - Mode estimation technique: Modal Expectation-Maximization (MEM) algorithm
 
 ---
 
@@ -121,10 +125,11 @@
     Output
       
        Estimated mixture distribution.
-       Number of components: 2
-       Number of component parameters: 4
-       Mixture family: NA
-       Mixture type: continuous
+      - Mixture type: continuous
+      - Number of components: 2
+      - Distribution family: NA
+      - Number of distribution variables: 4
+      - Names of variables: mu sigma xi nu
 
 ---
 
@@ -133,8 +138,8 @@
     Output
       
        Modes of a continuous mixture with 2 components.
-       Number of modes found: 2
-       Mode estimation technique: Modal Expectation-Maximization (MEM) algorithm
+      - Number of modes found: 2
+      - Mode estimation technique: Modal Expectation-Maximization (MEM) algorithm
 
 ---
 
@@ -150,10 +155,11 @@
     Output
       
        Estimated mixture distribution.
-       Number of components: 2
-       Number of component parameters: 2
-       Mixture family: normal
-       Mixture type: continuous
+      - Mixture type: continuous
+      - Number of components: 2
+      - Distribution family: normal
+      - Number of distribution variables: 2
+      - Names of variables: mu sigma
 
 ---
 
@@ -162,8 +168,8 @@
     Output
       
        Modes of a normal mixture with 2 components.
-       Number of modes found: 2
-       Mode estimation technique: fixed-point algorithm
+      - Number of modes found: 2
+      - Mode estimation technique: fixed-point algorithm
 
 ---
 

@@ -87,6 +87,6 @@ pdf_func = function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 }
 
-BM = new_BayesMixture(fit, data, K = 2, burnin = 1, pdf_func = pdf_func, dist_type = dist_type)
+BM = new_BayesMixture(fit, data, K = 2, burnin = 50, pdf_func = pdf_func, dist_type = dist_type)
 # plot(BM)
 }

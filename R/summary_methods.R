@@ -42,8 +42,8 @@ summary.Mode <- function(object, ...) {
   }
   
   cat("\n",m, "of a", d, "mixture with", K, "components.")
-  cat("\n Number of modes found:", Nb_m)
-  cat("\n Mode estimation technique:", object$algo, "algorithm")
+  cat("\n- Number of modes found:", Nb_m)
+  cat("\n- Mode estimation technique:", object$algo, "algorithm")
 }
 
 
@@ -55,18 +55,23 @@ summary.Mode <- function(object, ...) {
 #' @export
 summary.Mixture <- function(object, ...) {
   cat("\n Estimated mixture distribution.")
-  cat("\n Number of components:", object$K)
-  cat("\n Number of component parameters:", object$nb_var)
-  cat("\n Mixture family:", object$dist)
-  cat("\n Mixture type:", object$dist_type)
+  cat("\n- Mixture type:", object$dist_type)
+  cat("\n- Number of components:", object$K)
+  cat("\n- Distribution family:", object$dist)
+  cat("\n- Number of distribution variables:", object$nb_var)
+  cat("\n- Names of variables:",
+      object$pars_names[object$pars_names!="eta"])
 }
 
 
 
 #' Summary method for \code{BayesMixture} objects
-#' 
+#' The summary of MCMC draws is given by the function
+#' \code{summarise_draws} from package \pkg{posterior}.
 #' @param object An object of class \code{BayesMixture}.
 #' @param ... Not used.
+#' 
+#' @importFrom posterior summarise_draws
 #' 
 #' @export
 summary.BayesMixture <- function(object, ...) {
@@ -78,8 +83,13 @@ summary.BayesMixture <- function(object, ...) {
   }
   
   cat("\n Mixture estimated with a Bayesian MCMC method.")
-  cat("\n Number of components:", object$K)
-  cat("\n Number of component parameters:", object$nb_var)
-  cat("\n Mixture family:", object$dist)
-  cat("\n Mixture type:", object$dist_type)
+  cat("\n- Mixture type:", object$dist_type)
+  cat("\n- Number of components:", object$K)
+  cat("\n- Distribution family:", object$dist)
+  cat("\n- Number of distribution variables:", object$nb_var)
+  cat("\n- Names of variables:",
+      object$pars_names[object$pars_names!="eta"])
+  
+  cat("\n\nSummary of MCMC output after burnin:\n")
+  summarise_draws(object$mcmc)
 }

@@ -2,7 +2,9 @@
 % Please edit documentation in R/summary_methods.R
 \name{summary.BayesMixture}
 \alias{summary.BayesMixture}
-\title{Summary method for \code{BayesMixture} objects}
+\title{Summary method for \code{BayesMixture} objects
+The summary of MCMC draws is given by the function
+\code{summarise_draws} from package \pkg{posterior}.}
 \usage{
 \method{summary}{BayesMixture}(object, ...)
 }
@@ -13,4 +15,6 @@
 }
 \description{
 Summary method for \code{BayesMixture} objects
+The summary of MCMC draws is given by the function
+\code{summarise_draws} from package \pkg{posterior}.
 }
