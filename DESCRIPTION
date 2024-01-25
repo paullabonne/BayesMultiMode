@@ -32,8 +32,7 @@ Imports:
     sn,
     stringr,
     tidyr,
-    Rdpack,
-    scales
+    Rdpack
 Depends: 
     R (>= 3.4.0)
 Suggests: 

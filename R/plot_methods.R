@@ -4,12 +4,12 @@
 #' 
 #' @param x An object of class \code{BayesMixture}.
 #' @param draws The number of MCMC draws to plot.
-#' @param transparency transparency of the density lines. Default is 0.1. Should be greater than 0 and below or equal to 1.
+#' @param bins (for continuous mixtures) Number of bins for the histogram of
+#' the data. Passed to \code{geom_histogram()}.
+#' @param alpha transparency of the density lines. Default is 0.1. Should be greater than 0 and below or equal to 1.
 #' @param ... Not used.
 #' 
 #' @importFrom posterior as_draws_matrix
-#' @importFrom posterior as_draws_df
-#' @importFrom scales hue_pal
 #' @importFrom ggpubr ggarrange
 #' @importFrom assertthat assert_that
 #' @importFrom dplyr tibble
@@ -23,14 +23,14 @@
 #' @import ggplot2
 #' 
 #' @export
-
-plot.BayesMixture <- function(x, draws = 250, 
-                              transparency = 0.1, ...) {
+plot.BayesMixture <- function(x, draws = 250,
+                              bins = 30,
+                              alpha = 0.1, ...) {
   density <- component <- value <- NULL
   
   assert_that(inherits(x, "BayesMixture"), msg = "input should be an object of class BayesMixture")
-  assert_that(is.scalar(transparency) & transparency >= 0 & transparency <= 1,
-              msg = "transparency should be a scalar between zero and one")
+  assert_that(is.scalar(alpha) & alpha >= 0 & alpha <= 1,
+              msg = "alpha should be a scalar between zero and one")
   
   mcmc = x$mcmc
   pdf_func = x$pdf_func
@@ -45,7 +45,8 @@ plot.BayesMixture <- function(x, draws = 250,
       xlab("") + ylab("Density") +
       geom_histogram(aes(y = after_stat(density)),
                      fill="grey33",
-                     colour = "white")
+                     colour = "white",
+                     bins = bins)
     
     ## plot the mixture for each draw
     for (i in sample(nrow(mcmc),min(nrow(mcmc), draws))) {
@@ -56,7 +57,7 @@ plot.BayesMixture <- function(x, draws = 250,
         geom_function(fun = pdf_func_mix,
                       args = list(pdf_func = pdf_func,
                                   pars = pars),
-                      alpha = transparency,
+                      alpha = alpha,
                       colour = "#FF6347")
     } 
   }
@@ -97,7 +98,7 @@ plot.BayesMixture <- function(x, draws = 250,
       theme(legend.position="none") +
       xlab("") + ylab("Probability") +
       geom_col(data = filter(df_y,component=="1"),aes(y=density,fill="grey33"),colour="white",alpha=1) +
-      geom_line(aes(y=value,colour=component),alpha= transparency) +
+      geom_line(aes(y=value,colour=component),alpha= alpha) +
       scale_colour_manual(values=rep("#FF6347",length(unique(df_y$component)))) +
       scale_fill_manual(name = "",
                         values = c("grey33"), # Color specification

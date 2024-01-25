@@ -4,14 +4,17 @@
 \alias{plot.BayesMixture}
 \title{Plot method for \code{BayesMixture} objects}
 \usage{
-\method{plot}{BayesMixture}(x, draws = 250, transparency = 0.1, ...)
+\method{plot}{BayesMixture}(x, draws = 250, bins = 30, alpha = 0.1, ...)
 }
 \arguments{
 \item{x}{An object of class \code{BayesMixture}.}
 
 \item{draws}{The number of MCMC draws to plot.}
 
-\item{transparency}{transparency of the density lines. Default is 0.1. Should be greater than 0 and below or equal to 1.}
+\item{bins}{(for continuous mixtures) Number of bins for the histogram of
+the data. Passed to \code{geom_histogram()}.}
+
+\item{alpha}{transparency of the density lines. Default is 0.1. Should be greater than 0 and below or equal to 1.}
 
 \item{...}{Not used.}
 }
