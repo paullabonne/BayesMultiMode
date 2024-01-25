@@ -52,10 +52,8 @@ bayesmix = bayes_estimation(data = y,
                             burnin = 1000,
                             printing = F)
 
-# plot estimated mixture
 plot(bayesmix, draws = 200)
 
-# summary of estimated mixture
 summary(bayesmix)
 ```
 
@@ -64,10 +62,8 @@ summary(bayesmix)
 # mode estimation
 bayesmode = bayes_mode(bayesmix)
 
-# plot 
 plot(bayesmode)
 
-# Summary 
 summary(bayesmode)
 ```
 
