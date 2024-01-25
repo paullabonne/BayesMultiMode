@@ -57,23 +57,36 @@ other software packages.
 
 # Example with a Student t ================================================
 mu = c(0.5,6)
+mu_mat = matrix(rep(mu, 100) + rnorm(200, 0, 0.1),
+            ncol = 2, byrow = T)
+
 sigma = c(1,2)
+sigma_mat = matrix(rep(sigma, 100) + rnorm(200, 0, 0.1),
+            ncol = 2, byrow = T)
+
 nu = c(5,5)
-p = c(0.8,0.2)
-params = c(eta = p, mu = mu, sigma = sigma, nu = nu)
-pars_names = c("eta", "mu", "sigma", "nu")
+nu_mat = matrix(rep(nu, 100) + rnorm(200, 0, 0.1),
+            ncol = 2, byrow = T)
+
+eta = c(0.8,0.2)
+eta_mat = matrix(rep(eta[1], 100) + rnorm(100, 0, 0.05),
+            ncol = 1)
+eta_mat = cbind(eta_mat,1-eta_mat)
+
+xi_mat = matrix(0,100,2)
+
 dist_type = "continuous"
 
-data = c(sn::rst(p[1]*1000, mu[1], sigma[1], nu = nu[1]),
-         sn::rst(p[2]*1000, mu[2], sigma[2], nu = nu[2]))
+data = c(sn::rst(eta[1]*1000, mu[1], sigma[1], nu = nu[1]),
+        sn::rst(eta[2]*1000, mu[2], sigma[2], nu = nu[2]))
 
-fit = c(eta = p, mu = mu, sigma = sigma, nu = nu, xi = c(0,0))
-fit = rbind(fit, fit)
-
+fit = cbind(eta_mat, mu_mat, sigma_mat, nu_mat, xi_mat)
+colnames(fit) = c("eta1", "eta2", "mu1", "mu2",
+                  "sigma1", "sigma2", "nu1", "nu2", "xi1", "xi2")
 pdf_func = function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 }
 
 BM = new_BayesMixture(fit, data, K = 2, burnin = 1, pdf_func = pdf_func, dist_type = dist_type)
-# plot(BM, alpha = 1)
+# plot(BM)
 }
