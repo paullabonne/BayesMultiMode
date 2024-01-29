@@ -68,36 +68,6 @@ plot(bayesmix, draws = 200)
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" />
 
-``` r
-summary(bayesmix)
-```
-
-    ## 
-    ##  Mixture estimated with a Bayesian MCMC method.
-    ## - Mixture type: continuous
-    ## - Number of components: 10
-    ## - Distribution family: normal
-    ## - Number of distribution variables: 2
-    ## - Names of variables: mu sigma
-    ## 
-    ## Summary of MCMC output after burnin:
-
-    ## # A tibble: 30 × 10
-    ##    variable     mean   median      sd      mad        q5      q95  rhat ess_bulk
-    ##    <chr>       <num>    <num>   <num>    <num>     <num>    <num> <num>    <num>
-    ##  1 eta1     0.000214 2.50e-34 0.00224 3.71e-34 5.09e-272  6.32e-5 1.01     21.7 
-    ##  2 eta2     0.00589  2.28e-29 0.0183  3.39e-29 1.73e-302  4.21e-2 1.04     12.4 
-    ##  3 eta3     0.445    3.82e- 1 0.416   5.66e- 1 1.54e- 64  9.16e-1 2.12      1.31
-    ##  4 eta4     0.0864   8.27e- 2 0.0313  3.05e- 2 4.31e-  2  1.44e-1 0.999  1009.  
-    ##  5 eta5     0.000202 6.55e-34 0.00153 9.71e-34 7.96e-312  1.03e-4 1.02     18.6 
-    ##  6 eta6     0.000300 6.43e-36 0.00245 9.53e-36 8.04e-287  2.38e-4 1.03     19.3 
-    ##  7 eta7     0.436    5.08e- 1 0.424   6.18e- 1 1.68e-267  9.13e-1 2.15      1.30
-    ##  8 eta8     0.00932  1.25e-16 0.0203  1.85e-16 2.22e-109  5.64e-2 1.30      2.68
-    ##  9 eta9     0.00677  2.63e-25 0.0172  3.89e-25 1.07e-242  4.66e-2 1.05     15.6 
-    ## 10 eta10    0.00977  2.83e-19 0.0189  4.19e-19 1.57e-245  5.39e-2 1.30      2.76
-    ## # ℹ 20 more rows
-    ## # ℹ 1 more variable: ess_tail <num>
-
 #### Mode inference
 
 ``` r
@@ -180,40 +150,10 @@ mcmc_py = as.matrix(bind_rows(mcmc_py))
 ``` r
 py_BayesMix = new_BayesMixture(mcmc = mcmc_py,
                                data = y,
-                               K = (ncol(mcmc_py)-1)/3,
                                burnin = 0, # the burnin has already been discarded
                                dist = "normal",
-                               dist_type = "continuous",
                                vars_to_keep = c("eta", "mu", "sigma"))
-
-summary(py_BayesMix)
 ```
-
-    ## 
-    ##  Mixture estimated with a Bayesian MCMC method.
-    ## - Mixture type: continuous
-    ## - Number of components: 15
-    ## - Distribution family: normal
-    ## - Number of distribution variables: 2
-    ## - Names of variables: mu sigma
-    ## 
-    ## Summary of MCMC output after burnin:
-
-    ## # A tibble: 45 × 10
-    ##    variable    mean  median      sd     mad        q5    q95  rhat ess_bulk
-    ##    <chr>      <num>   <num>   <num>   <num>     <num>  <num> <num>    <num>
-    ##  1 eta1      0.292   0.299   0.0483  0.0405  0.197     0.357  1.05     20.3
-    ##  2 eta2      0.285   0.286   0.0546  0.0612  0.194     0.370  1.03     27.1
-    ##  3 eta3      0.368   0.367   0.0455  0.0488  0.298     0.443  1.09     29.7
-    ##  4 eta4      0.0412  0.0212  0.0488  0.0297  0.000423  0.138  1.03     17.1
-    ##  5 eta5     NA      NA      NA      NA      NA        NA     NA        NA  
-    ##  6 eta6     NA      NA      NA      NA      NA        NA     NA        NA  
-    ##  7 eta7     NA      NA      NA      NA      NA        NA     NA        NA  
-    ##  8 eta8     NA      NA      NA      NA      NA        NA     NA        NA  
-    ##  9 eta9     NA      NA      NA      NA      NA        NA     NA        NA  
-    ## 10 eta10    NA      NA      NA      NA      NA        NA     NA        NA  
-    ## # ℹ 35 more rows
-    ## # ℹ 1 more variable: ess_tail <num>
 
 #### Plotting the mixture
 

@@ -35,6 +35,9 @@ this input is used only if dist_name is invalid or NULL.}
 
 \item{vars_to_keep}{(optional) Character vector containing the names
 of the variables to keep in mcmc.}
+
+\item{loc}{(for continuous mixtures other than Normal mixtures) String indicating the location parameter
+of the distribution; the latter is used to initialise the MEM algorithm.}
 }
 \value{
 A list of class \code{BayesMixture} containing:
@@ -56,15 +59,15 @@ other software packages.
 # Example with a Student t ================================================
 mu = c(0.5,6)
 mu_mat = matrix(rep(mu, 100) + rnorm(200, 0, 0.1),
-            ncol = 2, byrow = T)
+            ncol = 2, byrow = TRUE)
 
 sigma = c(1,2)
 sigma_mat = matrix(rep(sigma, 100) + rnorm(200, 0, 0.1),
-            ncol = 2, byrow = T)
+            ncol = 2, byrow = TRUE)
 
 nu = c(5,5)
 nu_mat = matrix(rep(nu, 100) + rnorm(200, 0, 0.1),
-            ncol = 2, byrow = T)
+            ncol = 2, byrow = TRUE)
 
 eta = c(0.8,0.2)
 eta_mat = matrix(rep(eta[1], 100) + rnorm(100, 0, 0.05),

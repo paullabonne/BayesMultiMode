@@ -24,6 +24,9 @@ Currently supports "normal" and "skew_normal"; not needed if pdf_func is provide
 \item{dist_type}{Either "continuous" or "discrete".}
 
 \item{range}{(optional) range used for estimation; default is NULL.}
+
+\item{loc}{(for continuous mixtures other than Normal mixtures) String indicating the location parameter
+of the distribution; the latter is used to initialise the MEM algorithm.}
 }
 \value{
 A list of class \code{Mixture} containing:

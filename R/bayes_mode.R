@@ -8,6 +8,7 @@
 #'
 #' @param BayesMix An object of class \code{BayesMixture}.
 #' @param rd Rounding parameter.
+#' @param tol_mixp Components with a mixture proportion below tol_mixp are discarded when estimating modes; default is 1e-2.
 #' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10 where data is an element of argument \code{BayesMix}.
 #' If two modes are closer than \code{tol_x}, only the first estimated mode is kept.
 #' @param tol_conv Tolerance parameter for convergence of the algorithm; default is 1e-8.

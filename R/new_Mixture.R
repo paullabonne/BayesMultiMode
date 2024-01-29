@@ -8,6 +8,8 @@
 #' @param pdf_func Pdf of the mixture components; default is null.
 #' @param dist_type Either "continuous" or "discrete".
 #' @param range (optional) range used for estimation; default is NULL.
+#' @param loc (for continuous mixtures other than Normal mixtures) String indicating the location parameter
+#' of the distribution; the latter is used to initialise the MEM algorithm.
 #' 
 #' @returns
 #' A list of class \code{Mixture} containing:

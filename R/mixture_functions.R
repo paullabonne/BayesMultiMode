@@ -33,7 +33,7 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, loc) {
               msg = paste("there must be at least two components per variable in",
                            par_type))
   
-  assert_that(round(sum(pars_mat[, "eta"]),2)==1,
+  assert_that(round(sum(pars_mat[, "eta"], na.rm = T),2)==1,
               msg = "The mixture proportions, eta, should sum to one.")
   
 

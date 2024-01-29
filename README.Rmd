@@ -116,7 +116,6 @@ py_BayesMix = new_BayesMixture(mcmc = mcmc_py,
                                data = y,
                                burnin = 0, # the burnin has already been discarded
                                dist = "normal",
-                               dist_type = "continuous",
                                vars_to_keep = c("eta", "mu", "sigma"))
 ```
 

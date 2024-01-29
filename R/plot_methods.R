@@ -292,7 +292,7 @@ plot.Mode <- function(x, from = NULL, to = NULL, ...) {
   mix = new_Mixture(x$pars, dist = x$dist,
                     pdf_func = x$pdf_func,
                     dist_type = x$dist_type,
-                    data = x$data)
+                    range = x$range)
   
   plot(mix, from = from, to = to)
   for (m in x$mode_estimates) {
