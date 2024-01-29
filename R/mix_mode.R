@@ -361,6 +361,10 @@ discrete_MF <- function(pars, pdf_func, range, type = "all"){
   # where does the pdf decrease ?
   x_decrease = x[d_py<0]
   
+  if (length(x_decrease) == 0) {
+    stop("The mixture pmf does not peak in the range provided; no modes can be found.")
+  }
+  
   # Only keep the points where the pdf starts to decrease; these are modes
   d2_py = c(0, x_decrease[-1] - x_decrease[-length(x_decrease)])
   x_decrease = x_decrease[which(d2_py!=1)]
@@ -376,7 +380,7 @@ discrete_MF <- function(pars, pdf_func, range, type = "all"){
   }
   
   modes = rep(NA_real_, length(x))
- 
+
   if (type == "unique") {
     modes[1:length(loc_modes)] = x_decrease
   }

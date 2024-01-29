@@ -7,7 +7,7 @@
 #' Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided.
 #' @param pdf_func Pdf of the mixture components; default is null.
 #' @param dist_type Either "continuous" or "discrete".
-#' @param range (optional) range used for estimation; default is NULL.
+#' @param range (for discrete mixtures) upper and lower limit of the range where the mixture should be evaluated.
 #' @param loc (for continuous mixtures other than Normal mixtures) String indicating the location parameter
 #' of the distribution; the latter is used to initialise the MEM algorithm.
 #' 
@@ -82,8 +82,10 @@ new_Mixture <- function(pars,
                 msg = "range argument must be filled when using a discrete distribution")
     assert_that(is.vector(range) & length(range) == 2,
                 msg = "range should be a vector of length 2")
-    assert_that(!any(is.na(range)) & !any(is.infinite(range)),
-                msg = "range should not include missing or infinite values")
+    assert_that(all(is.finite(range)),
+                msg = "lower and upper limits of range should be finite")
+    assert_that(range[2] > range[1],
+                msg = "upper limit of range not greater than lower limit")
   }
   
   Mixture = list(pars = pars,
