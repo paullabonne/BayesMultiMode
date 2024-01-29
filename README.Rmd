@@ -114,7 +114,6 @@ mcmc_py = as.matrix(bind_rows(mcmc_py))
 ```{r}
 py_BayesMix = new_BayesMixture(mcmc = mcmc_py,
                                data = y,
-                               K = (ncol(mcmc_py)-1)/3,
                                burnin = 0, # the burnin has already been discarded
                                dist = "normal",
                                dist_type = "continuous",

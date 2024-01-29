@@ -113,7 +113,7 @@
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
 #' 
-#' bayesmix = new_BayesMixture(fit, data, K = 2, burnin = 1, 
+#' bayesmix = new_BayesMixture(fit, data, burnin = 1, 
 #' pdf_func = pdf_func, dist_type = dist_type, loc = "mu")
 #' 
 #' bayesmode = bayes_mode(bayesmix)
@@ -179,10 +179,10 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$da
   
   if (dist_type == "discrete") {
     x = min(data):max(data)
-    
+    range = c(min(data), max(data))
     # Posterior probability of being a mode for each location
     modes <- t(apply(mcmc,1,FUN = mix_mode_estimates,
-                     data = data,
+                     range = range,
                      dist = dist,
                      dist_type = dist_type,
                      tol_mixp = tol_mixp,
@@ -212,7 +212,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$da
 
     # unique modes to calculate post probs of number of modes
     modes <-  t(apply(mcmc,1,FUN = mix_mode_estimates,
-                      data = data,
+                      range = range,
                       dist = dist,
                       dist_type = dist_type,
                       tol_mixp = tol_mixp,
@@ -272,12 +272,12 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$da
 #' @keywords internal
 mix_mode_estimates <- function(mcmc, dist = NA_character_, dist_type = NA_character_,
                                tol_mixp, tol_x, tol_conv,
-                               pdf_func = NULL, type = "all", data = NULL,
+                               pdf_func = NULL, type = "all", range = NULL,
                                loc = NA_character_) {
   output = rep(NA_real_, length(mcmc))
 
   mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func,
-                    dist_type = dist_type, data = data, loc = loc)
+                    dist_type = dist_type, range = range, loc = loc)
   modes = mix_mode(mix, tol_mixp, tol_x, tol_conv, type = type)$mode_estimates
   output[1:length(modes)] = modes
   

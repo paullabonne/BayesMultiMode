@@ -28,7 +28,7 @@
     Output
       [1]  0  1 10
 
-# discrete_MF function returns expected results with dist = poisson
+# mix_mode function returns expected results with dist = poisson
 
     Code
       summary(mix)

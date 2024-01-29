@@ -9,7 +9,7 @@ new_Mixture(
   dist = NA_character_,
   pdf_func = NULL,
   dist_type = NA_character_,
-  data = NULL,
+  range = NULL,
   loc = NA_character_
 )
 }
@@ -23,7 +23,7 @@ Currently supports "normal" and "skew_normal"; not needed if pdf_func is provide
 
 \item{dist_type}{Either "continuous" or "discrete".}
 
-\item{data}{(optional) Data used for estimation; default is NULL.}
+\item{range}{(optional) range used for estimation; default is NULL.}
 }
 \value{
 A list of class \code{Mixture} containing:

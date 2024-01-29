@@ -7,7 +7,6 @@
 new_BayesMixture(
   mcmc,
   data,
-  K,
   burnin,
   dist = NA_character_,
   pdf_func = NULL,
@@ -21,8 +20,6 @@ new_BayesMixture(
 \item{mcmc}{A matrix of MCMC draws.}
 
 \item{data}{A vector containing the data used for estimating the model and generating the MCMC draws.}
-
-\item{K}{Number of mixture components.}
 
 \item{burnin}{Number of draws to discard as burnin.}
 
@@ -88,7 +85,7 @@ pdf_func = function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 }
 
-BM = new_BayesMixture(fit, data, K = 2, burnin = 50,
+BM = new_BayesMixture(fit, data, burnin = 50,
 pdf_func = pdf_func, dist_type = dist_type, loc = "xi")
 # plot(BM)
 }

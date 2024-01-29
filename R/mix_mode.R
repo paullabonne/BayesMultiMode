@@ -123,10 +123,8 @@
 #' params = c(eta = p, lambda = lambda)
 #' dist = "poisson"
 #' 
-#' data = c(rpois(p[1]*1e3, lambda[1]),
-#'          rpois(p[2]*1e3, lambda[2]))
 #' 
-#' mix = new_Mixture(params, data = data, dist = dist)
+#' mix = new_Mixture(params, range = c(0,50), dist = dist)
 #' 
 #' modes = mix_mode(mix)
 #'
@@ -139,14 +137,12 @@
 #' p = c(0.5,0.5)
 #' params = c(eta = p, mu = mu, size = size)
 #' 
-#' data = c(rnbinom(p[1]*1e3, mu = mu[1], size = size[1]),
-#'          rnbinom(p[2]*1e3, mu = mu[2], size = size[2]))
 #' 
 #' pmf_func <- function(x, pars) {
 #'   dnbinom(x, mu = pars["mu"], size = pars["size"])
 #' }
 #' 
-#' mix = new_Mixture(params, data = data,
+#' mix = new_Mixture(params, range = c(0, 50),
 #' pdf_func = pmf_func, dist_type = "discrete")
 #' modes = mix_mode(mix)
 #' 
@@ -158,7 +154,7 @@
 mix_mode <- function(mixture, tol_mixp = 1e-6, tol_x = 1e-6, tol_conv = 1e-8, type = "all") {
   assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
   assert_that(all(c("pars", "pars_names", "dist_type",
-                    "dist", "pdf_func", "data", "nb_var", "K") %in% names(mixture)),
+                    "dist", "pdf_func", "range", "nb_var", "K") %in% names(mixture)),
               msg = "mixture object is missing arguments.") 
   assert_that(length(tol_mixp)==1 & tol_mixp > 0, msg = "tol_mixp should be a positive scalar")
   assert_that(length(tol_x)==1 & tol_x > 0, msg = "tol_x should be a positive scalar")
@@ -194,8 +190,8 @@ mix_mode <- function(mixture, tol_mixp = 1e-6, tol_x = 1e-6, tol_conv = 1e-8, ty
   }
   
   if (dist_type == "discrete") {
-    data = mixture$data
-    mode_estimates = discrete_MF(pars_mat, pdf_func, data, type)
+    range = mixture$range
+    mode_estimates = discrete_MF(pars_mat, pdf_func, range, type)
     mode$algo = "discrete"
     mode$dist_type = "discrete"
   }
@@ -345,14 +341,14 @@ Q_func = function(x, post_prob, pars, pdf_func){
 }
 
 #' @keywords internal
-discrete_MF <- function(pars, pdf_func, data, type = "all"){
+discrete_MF <- function(pars, pdf_func, range, type = "all"){
   ## input checks
   assert_that(type %in% c("unique", "all"),
               msg = "type must be either 'unique' or 'all' ")
   ##
   
   ##
-  x = min(data):max(data)
+  x = range[1]:range[2]
   ##
   
   ### Getting denisty

@@ -7,7 +7,7 @@
 #' Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided.
 #' @param pdf_func Pdf of the mixture components; default is null.
 #' @param dist_type Either "continuous" or "discrete".
-#' @param data (optional) Data used for estimation; default is NULL.
+#' @param range (optional) range used for estimation; default is NULL.
 #' 
 #' @returns
 #' A list of class \code{Mixture} containing:
@@ -60,7 +60,7 @@ new_Mixture <- function(pars,
                         dist = NA_character_,
                         pdf_func = NULL,
                         dist_type = NA_character_,
-                        data = NULL,
+                        range = NULL,
                         loc = NA_character_) {
   ## input checks
   assert_that(is.string(dist))
@@ -76,12 +76,12 @@ new_Mixture <- function(pars,
   list_func = test_and_export(pars, pdf_func, dist, pars_names, dist_type, loc)
   
   if (list_func$dist_type == "discrete") {
-    assert_that(!is.null(data),
-                msg = "data argument must be filled when using a discrete distribution")
-    assert_that(is.vector(data) & length(data) > 0,
-                msg = "data should be a vector of length > 0")
-    assert_that(!any(is.na(data)) & !any(is.infinite(data)),
-                msg = "data should not include missing or infinite values")
+    assert_that(!is.null(range),
+                msg = "range argument must be filled when using a discrete distribution")
+    assert_that(is.vector(range) & length(range) == 2,
+                msg = "range should be a vector of length 2")
+    assert_that(!any(is.na(range)) & !any(is.infinite(range)),
+                msg = "range should not include missing or infinite values")
   }
   
   Mixture = list(pars = pars,
@@ -89,7 +89,7 @@ new_Mixture <- function(pars,
                  dist_type = list_func$dist_type,
                  dist = dist,
                  pdf_func = list_func$pdf_func,
-                 data = data,
+                 range = range,
                  loc = list_func$loc,
                  nb_var = length(pars_names) - 1, #minus the shares
                  K = list_func$K)

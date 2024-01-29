@@ -123,10 +123,8 @@ p = c(0.5,0.5)
 params = c(eta = p, lambda = lambda)
 dist = "poisson"
 
-data = c(rpois(p[1]*1e3, lambda[1]),
-         rpois(p[2]*1e3, lambda[2]))
 
-mix = new_Mixture(params, data = data, dist = dist)
+mix = new_Mixture(params, range = c(0,50), dist = dist)
 
 modes = mix_mode(mix)
 
@@ -139,14 +137,12 @@ size = c(20,0.5)
 p = c(0.5,0.5)
 params = c(eta = p, mu = mu, size = size)
 
-data = c(rnbinom(p[1]*1e3, mu = mu[1], size = size[1]),
-         rnbinom(p[2]*1e3, mu = mu[2], size = size[2]))
 
 pmf_func <- function(x, pars) {
   dnbinom(x, mu = pars["mu"], size = pars["size"])
 }
 
-mix = new_Mixture(params, data = data,
+mix = new_Mixture(params, range = c(0, 50),
 pdf_func = pmf_func, dist_type = "discrete")
 modes = mix_mode(mix)
 

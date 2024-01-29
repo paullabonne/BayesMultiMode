@@ -126,7 +126,7 @@ pdf_func = function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 }
 
-bayesmix = new_BayesMixture(fit, data, K = 2, burnin = 1, 
+bayesmix = new_BayesMixture(fit, data, burnin = 1, 
 pdf_func = pdf_func, dist_type = dist_type, loc = "mu")
 
 bayesmode = bayes_mode(bayesmix)
