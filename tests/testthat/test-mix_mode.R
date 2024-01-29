@@ -87,7 +87,7 @@ test_that("mix_mode() function returns expected results with dist = skew_normal"
   mix = new_Mixture(params, dist = dist)
   modes = mix_mode(mix)
   
-  expect_snapshot(a=summary(mix))
+  expect_snapshot(summary(mix))
   expect_snapshot(summary(modes))
   expect_snapshot(modes$mode_estimates)
   

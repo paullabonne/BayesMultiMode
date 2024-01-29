@@ -53,8 +53,6 @@ bayesmix = bayes_estimation(data = y,
                             printing = F)
 
 plot(bayesmix, draws = 200)
-
-summary(bayesmix)
 ```
 
 #### Mode inference
@@ -121,8 +119,6 @@ py_BayesMix = new_BayesMixture(mcmc = mcmc_py,
                                dist = "normal",
                                dist_type = "continuous",
                                vars_to_keep = c("eta", "mu", "sigma"))
-
-summary(py_BayesMix)
 ```
 
 #### Plotting the mixture
