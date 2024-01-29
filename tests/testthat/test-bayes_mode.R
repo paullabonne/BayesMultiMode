@@ -18,7 +18,6 @@ test_that("bayes_mode works with external MCMC output", {
   
   bayesmix = new_BayesMixture(fit,
                               data,
-                              K = 2,
                               burnin = 1,
                               pdf_func = pdf_func,
                               dist_type = dist_type,

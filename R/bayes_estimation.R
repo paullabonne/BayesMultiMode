@@ -238,7 +238,6 @@ bayes_estimation <- function(data,
 
   BayesMixture = new_BayesMixture(mcmc = mcmc,
                                   data = data,
-                                  K = K,
                                   burnin = burnin,
                                   dist = dist,
                                   dist_type = dist_type,

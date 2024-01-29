@@ -379,7 +379,7 @@ discrete_MF <- function(pars, pdf_func, data, type = "all"){
   }
   
   modes = rep(NA_real_, length(x))
-  
+ 
   if (type == "unique") {
     modes[1:length(loc_modes)] = x_decrease
   }

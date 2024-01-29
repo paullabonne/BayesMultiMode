@@ -6,7 +6,6 @@
 #' 
 #' @param mcmc A matrix of MCMC draws.
 #' @param data A vector containing the data used for estimating the model and generating the MCMC draws.
-#' @param K Number of mixture components.
 #' @param burnin Number of draws to discard as burnin.
 #' @param dist Distribution family of the mixture components supported by
 #' the package (e.g. "normal", "student", "skew_normal" or "shifted_poisson").
@@ -68,14 +67,13 @@
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
 #' 
-#' BM = new_BayesMixture(fit, data, K = 2, burnin = 50,
+#' BM = new_BayesMixture(fit, data, burnin = 50,
 #' pdf_func = pdf_func, dist_type = dist_type, loc = "xi")
 #' # plot(BM)
 #' @export
 
 new_BayesMixture <- function(mcmc,
                              data,
-                             K,
                              burnin,
                              dist = NA_character_,
                              pdf_func = NULL,
@@ -89,7 +87,6 @@ new_BayesMixture <- function(mcmc,
   assert_that(is.string(dist_type))
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
-  assert_that(is.scalar(K) & K > 0, msg = "K should be a positive integer")
   assert_that(is.scalar(burnin) & burnin >= 0, msg = "burnin should be an integer positive or zero")
   assert_that(burnin < nrow(mcmc),
               msg = "burnin parameter should be less than the number of mcmc draws")
@@ -123,7 +120,7 @@ new_BayesMixture <- function(mcmc,
                   pars_names = pars_names,
                   loc = list_func$loc,
                   nb_var = length(pars_names) - 1, #minus the shares
-                  K = ncol(mcmc)/length(pars_names))
+                  K = list_func$K)
   
   class(BayesMix) <- "BayesMixture"
   

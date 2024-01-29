@@ -9,7 +9,7 @@ test_that("New_BayesMixture returns expected results for the normal distribution
   fit = c(eta = p, mu = mu, sigma = sigma)
   fit = rbind(fit, fit)
 
-  BM = new_BayesMixture(fit, data, K = length(mu), burnin = 1, dist = "normal", pdf_func = NULL, dist_type = dist_type)
+  BM = new_BayesMixture(fit, data, burnin = 1, dist = "normal", pdf_func = NULL, dist_type = dist_type)
   expect_s3_class(BM, "BayesMixture")
 })
 
@@ -35,7 +35,6 @@ test_that("New_BayesMixture returns expected results for the student distributio
   BM = new_BayesMixture(
     fit,
     data,
-    K = 2,
     burnin = 1,
     pdf_func = pdf_func,
     dist_type = dist_type,
