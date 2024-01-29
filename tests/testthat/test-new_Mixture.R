@@ -10,7 +10,7 @@ test_that("new_mixture returns expected error when dist and pdf_func are not giv
 
 test_that("new_mixture returns expected error when dist and parameters do not match (skew normal)", {
   
-  params = c(eta = c(0.2,0.2),
+  params = c(eta = c(0.8,0.2),
              mu = c(0,5),
              omega = c(1,2),
              alpha = c(0.5,0.1))
@@ -33,7 +33,9 @@ test_that("new_mixture returns expected error when pdf_func and mcmc parameters 
     sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
   }
   
-  expect_error(new_Mixture(fit, pdf_func = pdf_func, dist_type = "continuous"),
-               "running pdf_func with pars provided returns NA")
+  expect_error(new_Mixture(fit, pdf_func = pdf_func,
+                           dist_type = "continuous",
+                           loc = "mu"),
+               "running pdf_func for the first component returns NA")
 
 })

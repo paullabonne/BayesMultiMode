@@ -127,7 +127,7 @@ test_that("mix_mode() function returns expected results", {
   set.seed(1)
   mu = c(0,5)
   sigma = c(1,2)
-  p = c(0.2,0.2)
+  p = c(0.8,0.2)
   
   params = c(eta = p, mu = mu, sigma = sigma)
   

@@ -186,7 +186,7 @@ mix_mode <- function(mixture, tol_mixp = 1e-6, tol_x = 1e-6, tol_conv = 1e-8, ty
     if (!is.na(dist) && dist == "normal") {
       mode_estimates = fixed_point(pars_mat, tol_x, tol_conv)
       mode$algo = "fixed-point"
-    } else {
+    } else { 
       loc = mixture$loc
       mode_estimates = MEM(pars_mat, pdf_func, loc, tol_x, tol_conv)
       mode$algo = "Modal Expectation-Maximization (MEM)"
@@ -225,6 +225,13 @@ fixed_point <- function(pars, tol_x = 1e-6, tol_conv = 1e-8) {
     while (delta > tol_conv) {
       iter = iter + 1
       x1 = f_fp(x, p, mu, sigma)
+      
+      if (!is.finite(x1)) {
+        stop(paste("Error in the fixed-point algorithm;\n",
+                   "The normal mixture evaluated at", x,
+         "does not have a finite likelihood.")) 
+      }
+      
       delta = abs(x - x1)
       x = x1
     }
@@ -268,7 +275,7 @@ MEM <- function(pars, pdf_func, loc, tol_x = 1e-6, tol_conv = 1e-8) {
   
   nK = nrow(pars)
   post_prob = rep(NA_real_, nK)
-  
+
   for (j in 1:nK) {
     x = pars[j,loc]
     
@@ -327,8 +334,11 @@ Q_func = function(x, post_prob, pars, pdf_func){
   
   Q = sum(post_prob * log(pdf))
   
-  if(is.na(Q)|!is.finite(Q)){
-    stop("Q function is not finite")
+  if(!is.finite(Q)){
+    # stop("Q function is not finite")
+    stop(paste("Error in the MEM algorithm;\n",
+               "The mixture of pdf_func evaluated at", x,
+               "does not have a finite likelihood.")) 
   }
   
   return(Q)

@@ -91,5 +91,6 @@ summary.BayesMixture <- function(object, ...) {
       object$pars_names[object$pars_names!="eta"])
   
   cat("\n\nSummary of MCMC output after burnin:\n")
-  summarise_draws(object$mcmc)
+  print(summarise_draws(object$mcmc))
+  cat(paste0("this table can be reproduced with: summarise_draws(",deparse(substitute(object)),"$mcmc)"))
 }

@@ -87,18 +87,12 @@ new_BayesMixture <- function(mcmc,
   assert_that(is.matrix(mcmc))
   assert_that(is.string(dist))
   assert_that(is.string(dist_type))
-  if(!is.na(dist_type)) {
-    assert_that(dist_type %in% c("continuous", "discrete"),
-                msg = "dist_type should be either continuous or discrete")
-  }
   assert_that(is.vector(data) & length(data) > 0,
               msg = "data should be a vector of length > 0")
   assert_that(is.scalar(K) & K > 0, msg = "K should be a positive integer")
   assert_that(is.scalar(burnin) & burnin >= 0, msg = "burnin should be an integer positive or zero")
   assert_that(burnin < nrow(mcmc),
               msg = "burnin parameter should be less than the number of mcmc draws")
-  assert_that(!(is.na(dist) & is.null(pdf_func)),
-              msg = "one of dist or pdf_func must be specified")
   ## input checks
   assert_that(is.character(vars_to_keep))
   
@@ -111,27 +105,13 @@ new_BayesMixture <- function(mcmc,
   col_names = str_extract(colnames(mcmc), "[a-z]+")
   pars_names = unique(col_names)
   
-  # check that eta is included
-  assert_that("eta" %in% pars_names,
-              msg = "mcmc should include a parameter named eta representing mixture proportions.")
-  
   # keep only variables specify
   if (sum(!is.na(vars_to_keep))>0) {
     pars_names = pars_names[pars_names %in% vars_to_keep]
     mcmc = mcmc[ , col_names %in% pars_names, drop = F]
   }
-  
-  # count number of components
-  match = T
-  K_from_names = rep(NA_real_, length(pars_names))
-  for (i in 1:length(pars_names)) {
-    K_from_names[i] = sum(col_names==pars_names[i])
-  }
-  
-  assert_that(sum(K_from_names != K) == 0,
-              msg = "There is a least one variable in mcmc that has not K components")
 
-  list_func = test_and_export(mcmc[1,], pdf_func, dist, pars_names, dist_type, par_type = "mcmc", loc)
+  list_func = test_and_export(mcmc[1,], pdf_func, dist, pars_names, dist_type, loc)
 
   BayesMix = list(mcmc = mcmc,
                   data = data,

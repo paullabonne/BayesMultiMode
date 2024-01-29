@@ -72,11 +72,8 @@ new_Mixture <- function(pars,
               msg = "one of dist or pdf_func must be specified")
   
   pars_names = unique(str_extract(names(pars), "[a-z]+"))
-
-  assert_that("eta" %in% pars_names,
-              msg = "pars should include a parameter named eta representing mixture proportions.")
   
-  list_func = test_and_export(pars, pdf_func, dist, pars_names, dist_type, par_type = "pars", loc)
+  list_func = test_and_export(pars, pdf_func, dist, pars_names, dist_type, loc)
   
   if (list_func$dist_type == "discrete") {
     assert_that(!is.null(data),
@@ -95,7 +92,7 @@ new_Mixture <- function(pars,
                  data = data,
                  loc = list_func$loc,
                  nb_var = length(pars_names) - 1, #minus the shares
-                 K = length(pars)/length(pars_names))
+                 K = list_func$K)
   
   class(Mixture) <- "Mixture"
   
