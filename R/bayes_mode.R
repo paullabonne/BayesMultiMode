@@ -7,13 +7,12 @@
 #' A basic algorithm is used for discrete mixtures (see Cross et al. 2023).
 #'
 #' @param BayesMix An object of class \code{BayesMixture}.
-#' @param rd Rounding parameter.
+#' @param rd Rounding parameter; integer indicating the number of decimal places.
 #' @param tol_mixp Components with a mixture proportion below tol_mixp are discarded when estimating modes; default is 1e-2.
 #' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10 where data is an element of argument \code{BayesMix}.
 #' If two modes are closer than \code{tol_x}, only the first estimated mode is kept.
 #' @param tol_conv Tolerance parameter for convergence of the algorithm; default is 1e-8.
 #' Not needed for mixtures of discrete distributions.
-#' @param nb_iter Number of draws on which the mode-finding algorithm is run; default is NULL which means the algorithm is run on all draws.
 #' @return A list of class \code{BayesMode} containing
 #' \itemize{
 #'  \item{data}{ - from \code{BayesMix}.}
@@ -24,6 +23,7 @@
 #'  \item{p1}{ - Posterior probability of unimodality.}
 #'  \item{tb_nb_modes}{ - Matrix showing posterior probabilities for the number of modes.}
 #'  \item{table_location}{ - Matrix showing the posterior probabilities for location points being modes.}
+#'  \item{algo}{ - Algorithm used for mode estimation.}
 #' }
 #' 
 #' @details
@@ -126,14 +126,18 @@
 #' # summary(bayesmode)
 #'
 #' @export
-bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8, nb_iter = NULL) {
+bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8) {
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
-  assert_that(is.scalar(rd) & rd >= 0, msg = "rd should be greater or equal than zero")
-  assert_that(is.vector(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
-
-  if (!is.null(nb_iter)) {
-    assert_that(is.scalar(nb_iter) & nb_iter > 0, msg = "nb_iter should be a positive integer") 
-  }
+  assert_that(all(c("data", "mcmc", "mcmc_all",
+                    "loglik", "K", "dist",
+                    "dist_type", "pdf_func", "pars_names",
+                    "loc", "nb_var") %in% names(BayesMix)),
+              msg = "BayesMix is not a proper BayesMixture object.") 
+  
+  assert_that(is.scalar(rd), rd >= 0, round(rd) == rd, msg = "rd should be an integer greater or equal than zero")
+  assert_that(is.scalar(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
+  assert_that(is.scalar(tol_mixp) & tol_mixp > 0, msg = "tol_mixp should be a positive scalar")
+  assert_that(is.scalar(tol_conv) & tol_conv > 0, msg = "tol_conv should be a positive scalar")
 
   dist = BayesMix$dist
   data = BayesMix$data
@@ -142,11 +146,6 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$da
   pdf_func = BayesMix$pdf_func
   pars_names = BayesMix$pars_names
   loc = BayesMix$loc
-  
-  # if nb_iter is specified (find the mode on a limited number of iterations):
-  if (!is.null(nb_iter)) {
-    mcmc = mcmc[sample(1:nrow(mcmc), nb_iter), , drop = FALSE]
-  }
 
   if (dist_type == "continuous") {
     if (!is.na(dist) & dist == "normal") {

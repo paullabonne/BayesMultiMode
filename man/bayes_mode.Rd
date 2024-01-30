@@ -9,14 +9,13 @@ bayes_mode(
   rd = 1,
   tol_mixp = 0.01,
   tol_x = sd(BayesMix$data)/10,
-  tol_conv = 1e-08,
-  nb_iter = NULL
+  tol_conv = 1e-08
 )
 }
 \arguments{
 \item{BayesMix}{An object of class \code{BayesMixture}.}
 
-\item{rd}{Rounding parameter.}
+\item{rd}{Rounding parameter; integer indicating the number of decimal places.}
 
 \item{tol_mixp}{Components with a mixture proportion below tol_mixp are discarded when estimating modes; default is 1e-2.}
 
@@ -25,8 +24,6 @@ If two modes are closer than \code{tol_x}, only the first estimated mode is kept
 
 \item{tol_conv}{Tolerance parameter for convergence of the algorithm; default is 1e-8.
 Not needed for mixtures of discrete distributions.}
-
-\item{nb_iter}{Number of draws on which the mode-finding algorithm is run; default is NULL which means the algorithm is run on all draws.}
 }
 \value{
 A list of class \code{BayesMode} containing
@@ -39,6 +36,7 @@ A list of class \code{BayesMode} containing
  \item{p1}{ - Posterior probability of unimodality.}
  \item{tb_nb_modes}{ - Matrix showing posterior probabilities for the number of modes.}
  \item{table_location}{ - Matrix showing the posterior probabilities for location points being modes.}
+ \item{algo}{ - Algorithm used for mode estimation.}
 }
 }
 \description{

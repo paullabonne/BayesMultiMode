@@ -40,13 +40,18 @@ of the variables to keep in mcmc.}
 of the distribution; the latter is used to initialise the MEM algorithm.}
 }
 \value{
-A list of class \code{BayesMixture} containing:
+A list of class \code{BayesMixture} containing
 \itemize{
- \item{data}{ - Same as argument.}
- \item{dist_type}{ - Same as argument.}
- \item{pars_names}{ - Names of distribution parameters.}
- \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded.}
- \item{mcmc_all}{ - Original matrix of MCMC draws.}
+ \item{data}{ - Same as argument;}
+ \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
+ \item{mcmc_all}{ - Matrix of MCMC draws;}
+ \item{loglik}{ - Log likelihood at each MCMC draw;}
+ \item{loglik}{ - Number of components;}
+ \item{dist}{ - Same as argument;}
+ \item{dist_type}{ - Type of the distribution, i.e. continuous or discrete;}
+ \item{pars_names}{ - Names of the mixture components' parameters;}
+ \item{loc}{ - name of the location parameter of the mixture components;}
+ \item{nb_var}{ - number of variables/parameters in the mixture distribution;}
 }
 }
 \description{

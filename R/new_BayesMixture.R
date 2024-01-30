@@ -18,14 +18,18 @@
 #' @param loc (for continuous mixtures other than Normal mixtures) String indicating the location parameter
 #' of the distribution; the latter is used to initialise the MEM algorithm.
 #' 
-#' @returns
-#' A list of class \code{BayesMixture} containing:
+#' @return A list of class \code{BayesMixture} containing
 #' \itemize{
-#'  \item{data}{ - Same as argument.}
-#'  \item{dist_type}{ - Same as argument.}
-#'  \item{pars_names}{ - Names of distribution parameters.}
-#'  \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded.}
-#'  \item{mcmc_all}{ - Original matrix of MCMC draws.}
+#'  \item{data}{ - Same as argument;}
+#'  \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
+#'  \item{mcmc_all}{ - Matrix of MCMC draws;}
+#'  \item{loglik}{ - Log likelihood at each MCMC draw;}
+#'  \item{loglik}{ - Number of components;}
+#'  \item{dist}{ - Same as argument;}
+#'  \item{dist_type}{ - Type of the distribution, i.e. continuous or discrete;}
+#'  \item{pars_names}{ - Names of the mixture components' parameters;}
+#'  \item{loc}{ - name of the location parameter of the mixture components;}
+#'  \item{nb_var}{ - number of variables/parameters in the mixture distribution;}
 #' }
 #' 
 #' @importFrom posterior as_draws_matrix
@@ -112,17 +116,17 @@ new_BayesMixture <- function(mcmc,
 
   list_func = test_and_export(mcmc[1,], pdf_func, dist, pars_names, dist_type, loc)
 
-  BayesMix = list(mcmc = mcmc,
-                  data = data,
+  BayesMix = list(data = data,
+                  mcmc = mcmc,
                   mcmc_all = mcmc_all,
-                  dist_type = list_func$dist_type,
                   loglik = loglik,
+                  K = list_func$K,
                   dist = dist,
+                  dist_type = list_func$dist_type,
                   pdf_func = list_func$pdf_func,
                   pars_names = pars_names,
                   loc = list_func$loc,
-                  nb_var = length(pars_names) - 1, #minus the shares
-                  K = list_func$K)
+                  nb_var = length(pars_names) - 1) #minus the shares
   
   class(BayesMix) <- "BayesMixture"
   

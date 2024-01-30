@@ -66,6 +66,7 @@
 #' 
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.string
+#' @importFrom assertthat is.scalar
 #' @importFrom stringr str_remove
 #' @importFrom sn dst
 #' @importFrom sn dsn
@@ -156,10 +157,10 @@ mix_mode <- function(mixture, tol_mixp = 1e-6, tol_x = 1e-6, tol_conv = 1e-8, ty
   assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
   assert_that(all(c("pars", "pars_names", "dist_type",
                     "dist", "pdf_func", "range", "nb_var", "K") %in% names(mixture)),
-              msg = "mixture object is missing arguments.") 
-  assert_that(length(tol_mixp)==1 & tol_mixp > 0, msg = "tol_mixp should be a positive scalar")
-  assert_that(length(tol_x)==1 & tol_x > 0, msg = "tol_x should be a positive scalar")
-  assert_that(length(tol_conv)==1 & tol_conv > 0, msg = "tol_conv should be a positive scalar")
+              msg = "mixture is not a proper Mixture object.") 
+  assert_that(is.scalar(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
+  assert_that(is.scalar(tol_mixp) & tol_mixp > 0, msg = "tol_mixp should be a positive scalar")
+  assert_that(is.scalar(tol_conv) & tol_conv > 0, msg = "tol_conv should be a positive scalar")
   
   pars = mixture$pars
   pars_names = mixture$pars_names
@@ -344,6 +345,8 @@ Q_func = function(x, post_prob, pars, pdf_func){
 #' @keywords internal
 discrete_MF <- function(pars, pdf_func, range, type = "all"){
   ## input checks
+  assert_that(is.string(type),
+              msg = "type must be a string")
   assert_that(type %in% c("unique", "all"),
               msg = "type must be either 'unique' or 'all' ")
   ##
