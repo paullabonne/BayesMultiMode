@@ -30,10 +30,10 @@ of the distribution; the latter is used to initialise the MEM algorithm.}
 }
 \value{
 A list of class \code{Mixture} containing:
-\item{pars}{Same as argument}
-\item{dist}{Same as argument}
-\item{pdf_func}{Same as argument}
-\item{dist_type}{Same as argument}
+\item{pars}{Same as argument.}
+\item{dist}{Same as argument.}
+\item{pdf_func}{Same as argument.}
+\item{dist_type}{Same as argument.}
 }
 \description{
 Function for creating an object of class \code{Mixture} which can subsequently be used as argument in \code{\link[=mix_mode]{mix_mode()}} to find its modes.

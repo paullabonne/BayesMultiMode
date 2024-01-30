@@ -68,7 +68,7 @@
 #' 
 #' @references
 #' \insertRef{li_nonparametric_2007}{BayesMultiMode}\cr\cr
-#' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}
+#' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
 #' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}
 #' 
 #' 

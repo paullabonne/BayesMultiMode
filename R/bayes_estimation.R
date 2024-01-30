@@ -17,16 +17,16 @@
 #' @param print Showing MCMC progression ? Default is `TRUE`.
 #' 
 #' @return A list of class \code{BayesMixture} containing
-#'  \item{data}{Same as argument}
+#'  \item{data}{Same as argument.}
 #'  \item{mcmc}{Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
-#'  \item{mcmc_all}{Matrix of MCMC draws}
-#'  \item{loglik}{Log likelihood at each MCMC draw}
-#'  \item{loglik}{Number of components}
-#'  \item{dist}{Same as argument}
-#'  \item{dist_type}{Type of the distribution, i.e. continuous or discrete}
-#'  \item{pars_names}{Names of the mixture components' parameters}
-#'  \item{loc}{name of the location parameter of the mixture components}
-#'  \item{nb_var}{number of variables/parameters in the mixture distribution}
+#'  \item{mcmc_all}{Matrix of MCMC draws.}
+#'  \item{loglik}{Log likelihood at each MCMC draw.}
+#'  \item{loglik}{Number of components.}
+#'  \item{dist}{Same as argument.}
+#'  \item{dist_type}{Type of the distribution, i.e. continuous or discrete.}
+#'  \item{pars_names}{Names of the mixture components' parameters.}
+#'  \item{loc}{Name of the location parameter of the mixture components.}
+#'  \item{nb_var}{Number of variables/parameters in the mixture distribution.}
 #' 
 #' @details
 #' 
@@ -45,8 +45,7 @@
 #' where a Gamma hyperprior is used on the concentration parameter \eqn{e_0}:\cr\cr
 #' \deqn{e_0 \sim \text{Gamma}\left(a_0, A_0\right)}
 #' 
-#' 
-#' \strong{Mixture of Normal distributions}
+#' **Mixture of Normal distributions**
 #' 
 #' Normal components take the form:
 #' \deqn{p(y_i|\mu_k,\sigma_k) = \frac{1}{\sqrt{2 \pi} \
@@ -60,7 +59,7 @@
 #' \deqn{C_0 \sim \text{Gamma}( \text{g}_0, \text{G}_0).}
 #' 
 #' 
-#' \strong{Mixture of skew-Normal distributions}
+#' **Mixture of skew-Normal distributions**
 #' 
 #' We use the skew-Normal of Azzalini (1985) which takes the form:
 #' \deqn{p(y_i| \xi_k,\omega_k,\alpha_k) = \frac{1}{\omega_k\sqrt{2\pi}} \ \exp\left( - \,
@@ -82,7 +81,7 @@
 #' We set \deqn{\text{b}_0 = (\text{median}(y), 0)'} and \deqn{\text{B}_0 = \text{diag}(\text{D}\_\text{xi}, \text{D}\_\text{psi})} with D_xi = D_psi = 1.
 #' 
 #' 
-#' \strong{Mixture of Poisson distributions}
+#' **Mixture of Poisson distributions**
 #' 
 #' Poisson components take the form:
 #' \deqn{p(y_i|\lambda_k) = \frac{1}{y_i!} \, \lambda^{y_i}_k \,\exp(-\lambda_k).}
@@ -90,7 +89,7 @@
 #' \deqn{\lambda_k \sim \text{Gamma}(\text{l}_0,\text{L}_0).}
 #' 
 #' 
-#' \strong{Mixture of shifted-Poisson distributions}
+#' **Mixture of shifted-Poisson distributions**
 #' 
 #' Shifted-Poisson components take the form
 #' \deqn{p(y_i |\lambda_k, \kappa_k) = \frac{1}{(y_i - \kappa_k)!} \,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/bayes_mode.R
 \name{bayes_mode}
 \alias{bayes_mode}
-\title{Bayesian mode inference}
+\title{Bayesian Mode Inference}
 \usage{
 bayes_mode(
   BayesMix,
@@ -27,10 +27,10 @@ Not needed for mixtures of discrete distributions.}
 }
 \value{
 A list of class \code{BayesMode} containing
-\item{data}{from \code{BayesMix}}
-\item{dist}{from \code{BayesMix}}
-\item{dist_type}{from \code{BayesMix}}
-\item{pars_names}{from \code{BayesMix}}
+\item{data}{From \code{BayesMix}.}
+\item{dist}{From \code{BayesMix}.}
+\item{dist_type}{From \code{BayesMix}.}
+\item{pars_names}{From \code{BayesMix}.}
 \item{modes}{Matrix with a row for each draw and columns showing modes.}
 \item{p1}{Posterior probability of unimodality.}
 \item{tb_nb_modes}{Matrix showing posterior probabilities for the number of modes.}
@@ -38,11 +38,9 @@ A list of class \code{BayesMode} containing
 \item{algo}{Algorithm used for mode estimation.}
 }
 \description{
-This function estimates modes for each mcmc draw and uses these estimates to compute posterior
-probabilities for the number of modes and their locations (following the approach of Cross et al. 2023).
-The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures.
-The Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
-A basic algorithm is used for discrete mixtures (see Cross et al. 2023).
+This function carries out a Bayesian inference on the number of modes
+and their locations in a mixture estimated with MCMC methods, see Cross et al. 2023.
+Under the hood it calls the function \code{\link[=mix_mode]{mix_mode()}} on the mixture estimate of each MCMC draw.
 }
 \details{
 Each draw from the MCMC output after burnin, \eqn{\theta^{(d)}, \quad d = 1,...,D}, leads to a posterior predictive probability
@@ -136,7 +134,5 @@ bayesmode = bayes_mode(bayesmix)
 
 }
 \references{
-\insertRef{cross_2023}{BayesMultiMode}
-\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
-\insertRef{li_nonparametric_2007}{BayesMultiMode}
+\insertRef{cross_2023}{BayesMultiMode}\cr\cr
 }

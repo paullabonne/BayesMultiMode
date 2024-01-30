@@ -13,10 +13,10 @@
 #' 
 #' @returns
 #' A list of class `Mixture` containing:
-#'  \item{pars}{Same as argument}
-#'  \item{dist}{Same as argument}
-#'  \item{pdf_func}{Same as argument}
-#'  \item{dist_type}{Same as argument}
+#'  \item{pars}{Same as argument.}
+#'  \item{dist}{Same as argument.}
+#'  \item{pdf_func}{Same as argument.}
+#'  \item{dist_type}{Same as argument.}
 #' 
 #' 
 #' @examples
