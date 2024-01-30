@@ -6,7 +6,7 @@
 \usage{
 mix_mode(
   mixture,
-  tol_mixp = 1e-06,
+  tol_mixp = 0.01,
   tol_x = 1e-06,
   tol_conv = 1e-08,
   type = "all"
