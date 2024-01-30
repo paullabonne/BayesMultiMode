@@ -11,7 +11,17 @@
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is 1e-8.
 #' @param type (for discrete mixtures) Type of modes, either unique or all (the latter includes flat modes); default is "all".
 #' 
-#' @return An object of class Mode.
+#' @return A list of class \code{Mode} containing
+#' \itemize{
+#'  \item{mode_estimates}{ - estimates of the mixture modes.}
+#'  \item{algo}{ - algorithm used for mode estimation;}
+#'  \item{dist}{ - from \code{mixture};}
+#'  \item{dist_type}{ - type of mixture distribution, i.e. continuous or discrete;}
+#'  \item{pars}{ - from \code{mixture};}
+#'  \item{pdf_func}{ - from \code{mixture};}
+#'  \item{K}{ - from \code{mixture};}
+#'  \item{nb_var}{ - from \code{mixture};}
+#' }
 #' 
 #' @references
 #' \insertRef{cross_2023}{BayesMultiMode}

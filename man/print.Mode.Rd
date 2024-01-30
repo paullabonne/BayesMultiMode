@@ -4,7 +4,7 @@
 \alias{print.Mode}
 \title{Print method for \code{Mode} objects}
 \usage{
-\method{print}{Mode}(x, max_length = 5, max_width = 5, ...)
+\method{print}{Mode}(x, max_length = 6L, max_width = 6L, print_all = F, ...)
 }
 \arguments{
 \item{x}{An object of class \code{Mode}.}
@@ -12,6 +12,8 @@
 \item{max_length}{maximum number of elements (for vector) or rows (for matrices) to show.}
 
 \item{max_width}{maximum number of columns to show (for matrices).}
+
+\item{print_all}{override max_length and max_width to print everything? Default is FALSE.}
 
 \item{...}{Not used.}
 }

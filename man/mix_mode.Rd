@@ -24,7 +24,17 @@ mix_mode(
 \item{type}{(for discrete mixtures) Type of modes, either unique or all (the latter includes flat modes); default is "all".}
 }
 \value{
-An object of class Mode.
+A list of class \code{Mode} containing
+\itemize{
+ \item{mode_estimates}{ - estimates of the mixture modes.}
+ \item{algo}{ - algorithm used for mode estimation;}
+ \item{dist}{ - from \code{mixture};}
+ \item{dist_type}{ - type of mixture distribution, i.e. continuous or discrete;}
+ \item{pars}{ - from \code{mixture};}
+ \item{pdf_func}{ - from \code{mixture};}
+ \item{K}{ - from \code{mixture};}
+ \item{nb_var}{ - from \code{mixture};}
+}
 }
 \description{
 This function estimate modes in univariate mixture distributions.
