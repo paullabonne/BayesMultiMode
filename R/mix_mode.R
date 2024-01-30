@@ -5,23 +5,21 @@
 #' The Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
 #' A basic algorithm is used for discrete mixtures (see Cross et al. 2023).
 #' 
-#' @param mixture An object of class \code{Mixture} generated with \code{new_Mixture()}.
-#' @param tol_mixp Components with a mixture proportion below tol_mixp are discarded when estimating modes; default is 1e-2.
-#' @param tol_x (for continuous mixtures) Tolerance parameter for distance in-between modes; default is 1e-6; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.
-#' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is 1e-8.
-#' @param type (for discrete mixtures) Type of modes, either unique or all (the latter includes flat modes); default is "all".
+#' @param mixture An object of class `Mixture` generated with [new_Mixture()].
+#' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes; default is `1e-2`.
+#' @param tol_x (for continuous mixtures) Tolerance parameter for distance in-between modes; default is `1e-6`; if two modes are closer than `tol_x`, only the first estimated mode is kept.
+#' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
+#' @param type (for discrete mixtures) Type of modes, either `"unique"` or `"all"` (the latter includes flat modes); default is `"all"`.
 #' 
 #' @return A list of class \code{Mode} containing
-#' \itemize{
-#'  \item{mode_estimates}{ - estimates of the mixture modes.}
-#'  \item{algo}{ - algorithm used for mode estimation;}
-#'  \item{dist}{ - from \code{mixture};}
-#'  \item{dist_type}{ - type of mixture distribution, i.e. continuous or discrete;}
-#'  \item{pars}{ - from \code{mixture};}
-#'  \item{pdf_func}{ - from \code{mixture};}
-#'  \item{K}{ - from \code{mixture};}
-#'  \item{nb_var}{ - from \code{mixture};}
-#' }
+#'  \item{mode_estimates}{estimates of the mixture modes}
+#'  \item{algo}{algorithm used for mode estimation}
+#'  \item{dist}{from `mixture`}
+#'  \item{dist_type}{type of mixture distribution, i.e. continuous or discrete}
+#'  \item{pars}{from `mixture`}
+#'  \item{pdf_func}{from `mixture`}
+#'  \item{K}{from `mixture`}
+#'  \item{nb_var}{from `mixture`}
 #' 
 #' @references
 #' \insertRef{cross_2023}{BayesMultiMode}

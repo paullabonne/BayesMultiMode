@@ -20,42 +20,40 @@ bayes_estimation(
 \item{K}{Maximum number of mixture components.}
 
 \item{dist}{String indicating the distribution of the mixture components;
-Currently supports "normal", "skew_normal", "poisson" and "shifted_poisson".}
+Currently supports \code{"normal"}, \code{"skew_normal"}, \code{"poisson"} and \code{"shifted_poisson"}.}
 
 \item{priors}{List of priors; default is an empty list which implies the following priors:\cr
-a0 = 1,\cr A0 = 200,\cr b0 = median(y),\cr B0 = (max(y) - min(y))^2 (normal),\cr
-D_xi = 1,\cr D_psi =1, (skew normal: B0 = diag(D_xi,D_psi)), \cr c0 = 2.5,\cr
-l0 = 1.1 (poisson),\cr l0 = 5 (shifted poisson),\cr L0 = 1.1/median(y),\cr L0 = l0 - 1 (shifted poisson),\cr
-g0 = 0.5,\cr G0 = 100*g0/c0/B0 (normal),\cr 
-G0 = g0/(0.5*var(y)) (skew normal).}
+\code{a0 = 1},\cr \code{A0 = 200},\cr \code{b0 = median(y)},\cr \code{B0 = (max(y) - min(y))^2} (normal),\cr
+\code{D_xi = 1},\cr \code{D_psi =1}, (skew normal: \code{B0 = diag(D_xi,D_psi)}), \cr \code{c0 = 2.5},\cr
+\code{l0 = 1.1} (poisson),\cr \code{l0 = 5} (shifted poisson),\cr \code{L0 = 1.1/median(y)},\cr \code{L0 = l0 - 1} (shifted poisson),\cr
+\code{g0 = 0.5},\cr \code{G0 = 100*g0/c0/B0} (normal),\cr
+\code{G0 = g0/(0.5*var(y))} (skew normal).}
 
-\item{nb_iter}{Number of MCMC iterations; default is 2000.}
+\item{nb_iter}{Number of MCMC iterations; default is \code{2000}.}
 
-\item{burnin}{Number of MCMC iterations used as burnin; default is nb_iter/2.}
+\item{burnin}{Number of MCMC iterations used as burnin; default is \code{nb_iter/2}.}
 
-\item{print}{Showing MCMC progression ?}
+\item{print}{Showing MCMC progression ? Default is \code{TRUE}.}
 }
 \value{
 A list of class \code{BayesMixture} containing
-\itemize{
- \item{data}{ - Same as argument;}
- \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
- \item{mcmc_all}{ - Matrix of MCMC draws;}
- \item{loglik}{ - Log likelihood at each MCMC draw;}
- \item{loglik}{ - Number of components;}
- \item{dist}{ - Same as argument;}
- \item{dist_type}{ - Type of the distribution, i.e. continuous or discrete;}
- \item{pars_names}{ - Names of the mixture components' parameters;}
- \item{loc}{ - name of the location parameter of the mixture components;}
- \item{nb_var}{ - number of variables/parameters in the mixture distribution;}
-}
+\item{data}{Same as argument}
+\item{mcmc}{Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
+\item{mcmc_all}{Matrix of MCMC draws}
+\item{loglik}{Log likelihood at each MCMC draw}
+\item{loglik}{Number of components}
+\item{dist}{Same as argument}
+\item{dist_type}{Type of the distribution, i.e. continuous or discrete}
+\item{pars_names}{Names of the mixture components' parameters}
+\item{loc}{name of the location parameter of the mixture components}
+\item{nb_var}{number of variables/parameters in the mixture distribution}
 }
 \description{
 Gibbs samplers for sparse finite mixture Markov chain Monte Carlo (SFM MCMC) estimation.
 }
 \details{
 Let \eqn{y_i}, \eqn{i=1,\dots,n} denote observations.
-A general mixture of \eqn{K} distributions from the same 
+A general mixture of \eqn{K} distributions from the same
 parametric family is given by:
 \deqn{y_i \sim \sum_{k=1}^{K}\pi_k p(\cdot|\theta_k)}
 with \eqn{\sum_{k=1}^{K}\pi_k=1} and \eqn{\pi_k\geq 0}, \eqn{k=1, ...,K}.
@@ -69,7 +67,6 @@ a symmetric Dirichlet prior is used for the mixture weights:
 where a Gamma hyperprior is used on the concentration parameter \eqn{e_0}:\cr\cr
 \deqn{e_0 \sim \text{Gamma}\left(a_0, A_0\right)}
 
-
 \strong{Mixture of Normal distributions}
 
 Normal components take the form:
@@ -82,7 +79,6 @@ Independent conjugate priors are used for \eqn{\mu_k} and \eqn{\sigma^2_k}
 \deqn{\mu_k \sim \text{Normal}( \text{b}_0, \text{B}_0),}
 \deqn{\sigma^{-2}_k \sim \text{Gamma}( \text{c}_0, \text{C}_0),}
 \deqn{C_0 \sim \text{Gamma}( \text{g}_0, \text{G}_0).}
-
 
 \strong{Mixture of skew-Normal distributions}
 
@@ -105,14 +101,12 @@ the Normal mixture model:
 \deqn{\text{C}_0 \sim \text{Gamma}( \text{g}_0, \text{G}_0).}
 We set \deqn{\text{b}_0 = (\text{median}(y), 0)'} and \deqn{\text{B}_0 = \text{diag}(\text{D}\_\text{xi}, \text{D}\_\text{psi})} with D_xi = D_psi = 1.
 
-
 \strong{Mixture of Poisson distributions}
 
 Poisson components take the form:
 \deqn{p(y_i|\lambda_k) = \frac{1}{y_i!} \, \lambda^{y_i}_k \,\exp(-\lambda_k).}
 The prior for \eqn{\lambda_k} follows from Viallefont et al. (2002):
 \deqn{\lambda_k \sim \text{Gamma}(\text{l}_0,\text{L}_0).}
-
 
 \strong{Mixture of shifted-Poisson distributions}
 

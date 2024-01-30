@@ -16,12 +16,12 @@ new_Mixture(
 \arguments{
 \item{pars}{Named vector of mixture parameters.}
 
-\item{dist}{String indicating the distribution of the mixture components; default is "NA".
-Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided.}
+\item{dist}{String indicating the distribution of the mixture components; default is \code{"NA"}.
+Currently supports \code{"normal"} and \code{"skew_normal"}; not needed if \code{pdf_func} is provided.}
 
-\item{pdf_func}{Pdf of the mixture components; default is null.}
+\item{pdf_func}{Pdf of the mixture components; default is \code{NULL}.}
 
-\item{dist_type}{Either "continuous" or "discrete".}
+\item{dist_type}{Either \code{"continuous"} or \code{"discrete"}.}
 
 \item{range}{(for discrete mixtures) upper and lower limit of the range where the mixture should be evaluated.}
 
@@ -30,15 +30,13 @@ of the distribution; the latter is used to initialise the MEM algorithm.}
 }
 \value{
 A list of class \code{Mixture} containing:
-\itemize{
- \item{pars}{ - Same as argument.}
- \item{dist}{ - Same as argument.}
- \item{pdf_func}{ - Same as argument.}
- \item{dist_type}{ - Same as argument.}
-}
+\item{pars}{Same as argument}
+\item{dist}{Same as argument}
+\item{pdf_func}{Same as argument}
+\item{dist_type}{Same as argument}
 }
 \description{
-Function for creating an object of class \code{Mixture} which can subsequently be used as argument in [MEM()] and [fixed_point()].
+Function for creating an object of class \code{Mixture} which can subsequently be used as argument in \code{\link[=mix_mode]{mix_mode()}} to find its modes.
 }
 \examples{
 

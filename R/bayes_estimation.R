@@ -5,30 +5,28 @@
 #' @param data Vector of observations.
 #' @param K Maximum number of mixture components.
 #' @param dist String indicating the distribution of the mixture components;
-#' Currently supports "normal", "skew_normal", "poisson" and "shifted_poisson".
+#' Currently supports `"normal"`, `"skew_normal"`, `"poisson"` and `"shifted_poisson"`.
 #' @param priors List of priors; default is an empty list which implies the following priors:\cr
-#' a0 = 1,\cr A0 = 200,\cr b0 = median(y),\cr B0 = (max(y) - min(y))^2 (normal),\cr
-#' D_xi = 1,\cr D_psi =1, (skew normal: B0 = diag(D_xi,D_psi)), \cr c0 = 2.5,\cr
-#' l0 = 1.1 (poisson),\cr l0 = 5 (shifted poisson),\cr L0 = 1.1/median(y),\cr L0 = l0 - 1 (shifted poisson),\cr
-#' g0 = 0.5,\cr G0 = 100*g0/c0/B0 (normal),\cr 
-#' G0 = g0/(0.5*var(y)) (skew normal).
-#' @param nb_iter Number of MCMC iterations; default is 2000.
-#' @param burnin Number of MCMC iterations used as burnin; default is nb_iter/2.
-#' @param print Showing MCMC progression ?
+#' `a0 = 1`,\cr `A0 = 200`,\cr `b0 = median(y)`,\cr `B0 = (max(y) - min(y))^2` (normal),\cr
+#' `D_xi = 1`,\cr `D_psi =1`, (skew normal: `B0 = diag(D_xi,D_psi)`), \cr `c0 = 2.5`,\cr
+#' `l0 = 1.1` (poisson),\cr `l0 = 5` (shifted poisson),\cr `L0 = 1.1/median(y)`,\cr `L0 = l0 - 1` (shifted poisson),\cr
+#' `g0 = 0.5`,\cr `G0 = 100*g0/c0/B0` (normal),\cr 
+#' `G0 = g0/(0.5*var(y))` (skew normal).
+#' @param nb_iter Number of MCMC iterations; default is `2000`.
+#' @param burnin Number of MCMC iterations used as burnin; default is `nb_iter/2`.
+#' @param print Showing MCMC progression ? Default is `TRUE`.
 #' 
 #' @return A list of class \code{BayesMixture} containing
-#' \itemize{
-#'  \item{data}{ - Same as argument;}
-#'  \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
-#'  \item{mcmc_all}{ - Matrix of MCMC draws;}
-#'  \item{loglik}{ - Log likelihood at each MCMC draw;}
-#'  \item{loglik}{ - Number of components;}
-#'  \item{dist}{ - Same as argument;}
-#'  \item{dist_type}{ - Type of the distribution, i.e. continuous or discrete;}
-#'  \item{pars_names}{ - Names of the mixture components' parameters;}
-#'  \item{loc}{ - name of the location parameter of the mixture components;}
-#'  \item{nb_var}{ - number of variables/parameters in the mixture distribution;}
-#' }
+#'  \item{data}{Same as argument}
+#'  \item{mcmc}{Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
+#'  \item{mcmc_all}{Matrix of MCMC draws}
+#'  \item{loglik}{Log likelihood at each MCMC draw}
+#'  \item{loglik}{Number of components}
+#'  \item{dist}{Same as argument}
+#'  \item{dist_type}{Type of the distribution, i.e. continuous or discrete}
+#'  \item{pars_names}{Names of the mixture components' parameters}
+#'  \item{loc}{name of the location parameter of the mixture components}
+#'  \item{nb_var}{number of variables/parameters in the mixture distribution}
 #' 
 #' @details
 #' 

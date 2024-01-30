@@ -6,25 +6,23 @@
 #' The Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
 #' A basic algorithm is used for discrete mixtures (see Cross et al. 2023).
 #'
-#' @param BayesMix An object of class \code{BayesMixture}.
+#' @param BayesMix An object of class `BayesMixture` generated with either [bayes_estimation()] or [new_BayesMixture()].
 #' @param rd Rounding parameter; integer indicating the number of decimal places.
-#' @param tol_mixp Components with a mixture proportion below tol_mixp are discarded when estimating modes; default is 1e-2.
-#' @param tol_x Tolerance parameter for distance in-between modes; default is sd(data)/10 where data is an element of argument \code{BayesMix}.
-#' If two modes are closer than \code{tol_x}, only the first estimated mode is kept.
-#' @param tol_conv Tolerance parameter for convergence of the algorithm; default is 1e-8.
+#' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes; default is `1e-2`.
+#' @param tol_x Tolerance parameter for distance in-between modes; default is `sd(data)/10` where data is an element of argument `BayesMix`.
+#' If two modes are closer than `tol_x`, only the first estimated mode is kept.
+#' @param tol_conv Tolerance parameter for convergence of the algorithm; default is `1e-8`.
 #' Not needed for mixtures of discrete distributions.
-#' @return A list of class \code{BayesMode} containing
-#' \itemize{
-#'  \item{data}{ - from \code{BayesMix}.}
-#'  \item{dist}{ - from \code{BayesMix}.}
-#'  \item{dist_type}{ - from \code{BayesMix}.}
-#'  \item{pars_names}{ - from \code{BayesMix}.}
-#'  \item{modes}{ - Matrix with a row for each draw and columns showing modes.}
-#'  \item{p1}{ - Posterior probability of unimodality.}
-#'  \item{tb_nb_modes}{ - Matrix showing posterior probabilities for the number of modes.}
-#'  \item{table_location}{ - Matrix showing the posterior probabilities for location points being modes.}
-#'  \item{algo}{ - Algorithm used for mode estimation.}
-#' }
+#' @return A list of class `BayesMode` containing
+#'  \item{data}{from `BayesMix`}
+#'  \item{dist}{from `BayesMix`}
+#'  \item{dist_type}{from `BayesMix`}
+#'  \item{pars_names}{from `BayesMix`}
+#'  \item{modes}{Matrix with a row for each draw and columns showing modes.}
+#'  \item{p1}{Posterior probability of unimodality.}
+#'  \item{tb_nb_modes}{Matrix showing posterior probabilities for the number of modes.}
+#'  \item{table_location}{Matrix showing the posterior probabilities for location points being modes.}
+#'  \item{algo}{Algorithm used for mode estimation.}
 #' 
 #' @details
 #' Each draw from the MCMC output after burnin, \eqn{\theta^{(d)}, \quad d = 1,...,D}, leads to a posterior predictive probability
@@ -100,10 +98,7 @@
 #' mu = c(0.5,6)
 #' sigma = c(1,2)
 #' nu = c(5,5)
-#' p = c(0.8,0.2)
-#' params = c(eta = p, mu = mu, sigma = sigma, nu = nu)
-#' dist_type = "continuous"
-#'
+#' p = c(0.8,0.2)#'
 #' data = c(sn::rst(p[1]*1000, mu[1], sigma[1], nu = nu[1]),
 #'          sn::rst(p[2]*1000, mu[2], sigma[2], nu = nu[2]))
 #'
@@ -113,6 +108,8 @@
 #' pdf_func = function(x, pars) {
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
+#' 
+#' dist_type = "continuous"
 #' 
 #' bayesmix = new_BayesMixture(fit, data, burnin = 1, 
 #' pdf_func = pdf_func, dist_type = dist_type, loc = "mu")

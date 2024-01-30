@@ -24,39 +24,37 @@ new_BayesMixture(
 \item{burnin}{Number of draws to discard as burnin.}
 
 \item{dist}{Distribution family of the mixture components supported by
-the package (e.g. "normal", "student", "skew_normal" or "shifted_poisson").}
+the package (e.g. \code{"normal"}, \code{"student"}, \code{"skew_normal"} or \code{"shifted_poisson"}).}
 
 \item{pdf_func}{Pdf or pmf of the mixture components;
-this input is used only if dist_name is invalid or NULL.}
+this input is used only if \code{dist_name} is invalid or \code{NULL}.}
 
-\item{dist_type}{Either "continuous" or "discrete".}
+\item{dist_type}{Either \code{"continuous"} or \code{"discrete"}.}
 
 \item{loglik}{Vector showing the log likelihood at each MCMC draw.}
 
 \item{vars_to_keep}{(optional) Character vector containing the names
-of the variables to keep in mcmc.}
+of the variables to keep in \code{mcmc}.}
 
 \item{loc}{(for continuous mixtures other than Normal mixtures) String indicating the location parameter
 of the distribution; the latter is used to initialise the MEM algorithm.}
 }
 \value{
 A list of class \code{BayesMixture} containing
-\itemize{
- \item{data}{ - Same as argument;}
- \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
- \item{mcmc_all}{ - Matrix of MCMC draws;}
- \item{loglik}{ - Log likelihood at each MCMC draw;}
- \item{loglik}{ - Number of components;}
- \item{dist}{ - Same as argument;}
- \item{dist_type}{ - Type of the distribution, i.e. continuous or discrete;}
- \item{pars_names}{ - Names of the mixture components' parameters;}
- \item{loc}{ - name of the location parameter of the mixture components;}
- \item{nb_var}{ - number of variables/parameters in the mixture distribution;}
-}
+\item{data}{ - Same as argument}
+\item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
+\item{mcmc_all}{ - Matrix of MCMC draws}
+\item{loglik}{ - Log likelihood at each MCMC draw}
+\item{loglik}{ - Number of components}
+\item{dist}{ - Same as argument}
+\item{dist_type}{ - Type of the distribution, i.e. \code{"continuous"} or \code{"discrete"}}
+\item{pars_names}{ - Names of the mixture components' parameters}
+\item{loc}{ - name of the location parameter of the mixture components}
+\item{nb_var}{ - number of variables/parameters in the mixture distribution}
 }
 \description{
-Function for creating an object of class \code{BayesMixture} which can subsequently be used as argument in [bayes_mode()].
-This function is useful for users who want to use the mode inference functions of the package with MCMC output generated using 
+Function for creating an object of class \code{BayesMixture} which can subsequently be used as argument in \code{\link[=bayes_mode]{bayes_mode()}}.
+This function is useful for users who want to use the mode inference functions of the package with MCMC output generated using
 other software packages.
 }
 \examples{

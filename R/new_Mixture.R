@@ -1,24 +1,22 @@
-#' Creating a S3 object of class \code{Mixture}
+#' Creating a S3 object of class `Mixture`
 #' 
-#' Function for creating an object of class \code{Mixture} which can subsequently be used as argument in [MEM()] and [fixed_point()].
+#' Function for creating an object of class `Mixture` which can subsequently be used as argument in [mix_mode()] to find its modes.
 #' 
 #' @param pars Named vector of mixture parameters.
-#' @param dist String indicating the distribution of the mixture components; default is "NA".
-#' Currently supports "normal" and "skew_normal"; not needed if pdf_func is provided.
-#' @param pdf_func Pdf of the mixture components; default is null.
-#' @param dist_type Either "continuous" or "discrete".
+#' @param dist String indicating the distribution of the mixture components; default is `"NA"`.
+#' Currently supports `"normal"` and `"skew_normal"`; not needed if `pdf_func` is provided.
+#' @param pdf_func Pdf of the mixture components; default is `NULL`.
+#' @param dist_type Either `"continuous"` or `"discrete"`.
 #' @param range (for discrete mixtures) upper and lower limit of the range where the mixture should be evaluated.
 #' @param loc (for continuous mixtures other than Normal mixtures) String indicating the location parameter
 #' of the distribution; the latter is used to initialise the MEM algorithm.
 #' 
 #' @returns
-#' A list of class \code{Mixture} containing:
-#' \itemize{
-#'  \item{pars}{ - Same as argument.}
-#'  \item{dist}{ - Same as argument.}
-#'  \item{pdf_func}{ - Same as argument.}
-#'  \item{dist_type}{ - Same as argument.}
-#' }
+#' A list of class `Mixture` containing:
+#'  \item{pars}{Same as argument}
+#'  \item{dist}{Same as argument}
+#'  \item{pdf_func}{Same as argument}
+#'  \item{dist_type}{Same as argument}
 #' 
 #' 
 #' @examples

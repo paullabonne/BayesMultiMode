@@ -13,28 +13,26 @@ mix_mode(
 )
 }
 \arguments{
-\item{mixture}{An object of class \code{Mixture} generated with \code{new_Mixture()}.}
+\item{mixture}{An object of class \code{Mixture} generated with \code{\link[=new_Mixture]{new_Mixture()}}.}
 
-\item{tol_mixp}{Components with a mixture proportion below tol_mixp are discarded when estimating modes; default is 1e-2.}
+\item{tol_mixp}{Components with a mixture proportion below \code{tol_mixp} are discarded when estimating modes; default is \code{1e-2}.}
 
-\item{tol_x}{(for continuous mixtures) Tolerance parameter for distance in-between modes; default is 1e-6; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
+\item{tol_x}{(for continuous mixtures) Tolerance parameter for distance in-between modes; default is \code{1e-6}; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
 
-\item{tol_conv}{(for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is 1e-8.}
+\item{tol_conv}{(for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is \code{1e-8}.}
 
-\item{type}{(for discrete mixtures) Type of modes, either unique or all (the latter includes flat modes); default is "all".}
+\item{type}{(for discrete mixtures) Type of modes, either \code{"unique"} or \code{"all"} (the latter includes flat modes); default is \code{"all"}.}
 }
 \value{
 A list of class \code{Mode} containing
-\itemize{
- \item{mode_estimates}{ - estimates of the mixture modes.}
- \item{algo}{ - algorithm used for mode estimation;}
- \item{dist}{ - from \code{mixture};}
- \item{dist_type}{ - type of mixture distribution, i.e. continuous or discrete;}
- \item{pars}{ - from \code{mixture};}
- \item{pdf_func}{ - from \code{mixture};}
- \item{K}{ - from \code{mixture};}
- \item{nb_var}{ - from \code{mixture};}
-}
+\item{mode_estimates}{estimates of the mixture modes}
+\item{algo}{algorithm used for mode estimation}
+\item{dist}{from \code{mixture}}
+\item{dist_type}{type of mixture distribution, i.e. continuous or discrete}
+\item{pars}{from \code{mixture}}
+\item{pdf_func}{from \code{mixture}}
+\item{K}{from \code{mixture}}
+\item{nb_var}{from \code{mixture}}
 }
 \description{
 This function estimate modes in univariate mixture distributions.
@@ -77,11 +75,11 @@ than \eqn{sd(y)/10} are merged; this tolerance value can be controlled with the 
 
 \cr\cr
 Discrete method\cr
-By definition, modes must satisfy either: 
- \deqn{p_k(y_{m}-1) < p_k(y_{m}) > p_k(y_{m}+1)};
- \deqn{p_k(y_{m}-1) < p_k(y_{m}) = p_k(y_{m}+1) = \ldots = p_k(y_{m}+l-1) > p_k(y_{m}+l).}
- 
- The algorithm evaluate each location point with these two conditions.
+By definition, modes must satisfy either:
+\deqn{p_k(y_{m}-1) < p_k(y_{m}) > p_k(y_{m}+1)};
+\deqn{p_k(y_{m}-1) < p_k(y_{m}) = p_k(y_{m}+1) = \ldots = p_k(y_{m}+l-1) > p_k(y_{m}+l).}
+
+The algorithm evaluate each location point with these two conditions.
 }
 \examples{
 
