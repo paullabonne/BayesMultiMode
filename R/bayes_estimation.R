@@ -178,8 +178,8 @@ bayes_estimation <- function(data,
               msg = paste0("Unsupported distribution;\n",
               "dist should be either\n",
               "'normal', 'skew_normal', 'poisson' or 'shifted_poisson'"))
-  assert_that(is.scalar(nb_iter) & nb_iter > 0, msg = "nb_iter should be a positive integer")
-  assert_that(is.scalar(burnin) & burnin > 0 & burnin < nb_iter,
+  assert_that(is.scalar(nb_iter), round(nb_iter) == nb_iter, nb_iter > 0, msg = "nb_iter should be a positive integer")
+  assert_that(is.scalar(burnin), burnin > 0, burnin < nb_iter, round(burnin) == burnin,
               msg = "nb_iter should be a positive integer lower than burnin")
   assert_that(is.scalar(K), round(K) == K, K > 0, msg = "K should be a positive integer")
   assert_that(is.logical(print), msg = "print should be either TRUE or FALSE")
@@ -190,10 +190,6 @@ bayes_estimation <- function(data,
     assert_that(min(data) > -1,
                 msg = "data should not include negative values when using the Poisson or shifted Poisson.") 
   }
-
-  # rounding parameters that should be integers
-  nb_iter = round(nb_iter)
-  burnin = round(burnin)
   
   if (dist == "normal") {
     priors_labels = c("a0", "A0", "e0", "b0", "B0", "c0", "g0", "G0")

@@ -11,7 +11,7 @@ bayes_estimation(
   priors = list(),
   nb_iter = 2000,
   burnin = nb_iter/2,
-  printing = TRUE
+  print = TRUE
 )
 }
 \arguments{
@@ -33,7 +33,7 @@ G0 = g0/(0.5*var(y)) (skew normal).}
 
 \item{burnin}{Number of MCMC iterations used as burnin; default is nb_iter/2.}
 
-\item{printing}{Showing MCMC progression ?}
+\item{print}{Showing MCMC progression ?}
 }
 \value{
 A list of class \code{BayesMixture} containing

@@ -86,6 +86,11 @@ new_Mixture <- function(pars,
                 msg = "lower and upper limits of range should be finite")
     assert_that(range[2] > range[1],
                 msg = "upper limit of range not greater than lower limit")
+    
+    if (dist %in% c("poisson", "shifted_poisson")) {
+      assert_that(all(range>=0),
+                  msg = "lower limit should be greater or equal than zero when using the Poisson or shifted Poisson.")
+    }
   }
   
   Mixture = list(pars = pars,
