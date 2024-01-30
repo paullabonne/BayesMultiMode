@@ -138,17 +138,6 @@ gibbs_SFM_poisson <- function(y,
   assert_that(is.scalar(A0) & A0 > 0, msg = "A0 should be positive")
   assert_that(is.scalar(L0) & L0 > 0, msg = "L0 should be a positive integer")
   
-  # Error Messages  
-  if(round(K) != K | K < 1){
-    stop("number of mixture components should be integer >= 1")
-  }
-  
-  if(!is.vector(y)){
-    stop("data 'y' should be a vector")
-  }
-  
-  assert_that(min(y) > -1, msg = "y should not include negative values")
-  
   n_obs <- length(y)
   
   # Initial conditions
@@ -403,18 +392,6 @@ gibbs_SFM_sp <- function(y,
   
   assert_that(is.scalar(A0) & A0 > 0, msg = "A0 should be positive")
   assert_that(is.scalar(L0) & L0 > 0, msg = "L0 should be a positive integer")
-  
-  # Error Messages  
-  if(round(K) != K | K < 1){
-    stop("number of mixture components should be integer >= 1")
-  }
-  
-  if(!is.vector(y)){
-    stop("data 'y' should be a vector")
-  }
-  
-  assert_that(min(y) > -1, msg = "y should not include negative values")
-  
   
   n_obs <- length(y)
   
