@@ -50,7 +50,7 @@ bayesmix = bayes_estimation(data = y,
                             dist = "normal",
                             nb_iter = 2000,
                             burnin = 1000,
-                            printing = F)
+                            print = F)
 
 plot(bayesmix, draws = 200)
 ```

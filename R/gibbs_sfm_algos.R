@@ -12,7 +12,7 @@ gibbs_SFM_normal <- function(y,
                              K,
                              nb_iter,
                              priors = list(),
-                             printing = TRUE){
+                             print = TRUE){
   
   # unpacking priors
   a0 = ifelse(is.null(priors$a0), 1, priors$a0)
@@ -101,7 +101,7 @@ gibbs_SFM_normal <- function(y,
     lp[m] = sum(probs)
     
     ## counter
-    if(printing){
+    if(print){
       if(m %% (round(nb_iter / 10)) == 0){
         cat(paste(100 * m / nb_iter, ' % draws finished'), fill=TRUE)
       }
@@ -127,7 +127,7 @@ gibbs_SFM_poisson <- function(y,
                               K,
                               nb_iter,
                               priors = list(),
-                              printing = TRUE){
+                              print = TRUE){
   
   # unpacking priors
   a0 = ifelse(is.null(priors$a0), 1, priors$a0)
@@ -212,7 +212,7 @@ gibbs_SFM_poisson <- function(y,
     lp[m] = sum(probs)
     
     ## counter
-    if(printing){
+    if(print){
       if(m %% (round(nb_iter / 10)) == 0){
         cat(paste(100 * m / nb_iter, ' % draws finished'), fill=TRUE)
       }
@@ -238,7 +238,7 @@ gibbs_SFM_skew_n <- function(y,
                              K,
                              nb_iter,
                              priors = list(),
-                             printing = TRUE){
+                             print = TRUE){
   
   # unpacking priors
   a0 = ifelse(is.null(priors$a0), 1, priors$a0)
@@ -366,7 +366,7 @@ gibbs_SFM_skew_n <- function(y,
     lp[m] = sum(probs)
     
     ## counter
-    if(printing){
+    if(print){
       if(m %% (round(nb_iter / 10)) == 0){
         cat(paste(100 * m / nb_iter, ' % draws finished'), fill=TRUE)
       }
@@ -393,7 +393,7 @@ gibbs_SFM_sp <- function(y,
                          K,
                          nb_iter,
                          priors = list(),
-                         printing = TRUE){
+                         print = TRUE){
   
   # unpacking priors
   a0 = ifelse(is.null(priors$a0), 1, priors$a0)
@@ -497,7 +497,7 @@ gibbs_SFM_sp <- function(y,
     kappa[m, ] = kappa_m
     
     ## counter
-    if(printing){
+    if(print){
       if(m %% (round(nb_iter / 10)) == 0){
         cat(paste(100 * m / nb_iter, ' % draws finished'), fill=TRUE)
       }

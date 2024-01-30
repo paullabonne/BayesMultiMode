@@ -14,7 +14,7 @@
 #' G0 = g0/(0.5*var(y)) (skew normal).
 #' @param nb_iter Number of MCMC iterations; default is 2000.
 #' @param burnin Number of MCMC iterations used as burnin; default is nb_iter/2.
-#' @param printing Showing MCMC progression ?
+#' @param print Showing MCMC progression ?
 #' 
 #' @return A list of class \code{BayesMixture} containing
 #' \itemize{
@@ -105,6 +105,7 @@
 #' 
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.scalar
+#' @importFrom assertthat is.string
 #' 
 #' @examples
 #' # Example with galaxy data ================================================
@@ -167,20 +168,21 @@ bayes_estimation <- function(data,
                              priors = list(),
                              nb_iter = 2000,
                              burnin = nb_iter/2,
-                             printing = TRUE) {
+                             print = TRUE) {
   
-  assert_that(is.vector(data) & length(data) > 0,
-              msg = "data should be a vector of length > 0")
-  assert_that(!any(is.na(data)) & !any(is.infinite(data)),
-              msg = "y should not include missing or infinite values")
-  assert_that(dist %in% c("normal", "skew_normal", "poisson", "shifted_poisson") & is.character(dist),
-              msg = "Unsupported distribution. 
-              dist should be either normal, skew_normal, poisson, shifted_poisson or 'NA'")
+  assert_that(is.vector(data) & length(data) > K,
+              msg = "data should be a vector of length greater than K")
+  assert_that(all(is.finite(data)),
+              msg = "data should only include numeric finite values")
+  assert_that(is.string(dist) & dist %in% c("normal", "skew_normal", "poisson", "shifted_poisson"),
+              msg = paste0("Unsupported distribution;\n",
+              "dist should be either\n",
+              "'normal', 'skew_normal', 'poisson' or 'shifted_poisson'"))
   assert_that(is.scalar(nb_iter) & nb_iter > 0, msg = "nb_iter should be a positive integer")
   assert_that(is.scalar(burnin) & burnin > 0 & burnin < nb_iter,
               msg = "nb_iter should be a positive integer lower than burnin")
   assert_that(is.scalar(K) & K > 0, msg = "K should be a positive integer")
-  assert_that(is.logical(printing), msg = "printing should be either TRUE or FALSE")
+  assert_that(is.logical(print), msg = "print should be either TRUE or FALSE")
 
   # rounding parameters that should be integers
   K = round(K)
@@ -194,7 +196,7 @@ bayes_estimation <- function(data,
                             K = K,
                             nb_iter = nb_iter,
                             priors = priors[priors_labels],
-                            printing = printing)
+                            print = print)
     dist_type = "continuous"
     
   } else if (dist == "skew_normal") {
@@ -204,7 +206,7 @@ bayes_estimation <- function(data,
                              K = K,
                              nb_iter = nb_iter,
                              priors = priors[priors_labels],
-                             printing = printing)
+                             print = print)
     dist_type = "continuous"
     
   } else if (dist == "poisson") {
@@ -214,7 +216,7 @@ bayes_estimation <- function(data,
                               K = K,
                               nb_iter = nb_iter,
                               priors = priors[priors_labels],
-                              printing = printing)
+                              print = print)
     dist_type = "discrete"
     
   } else if (dist == "shifted_poisson") {
@@ -224,7 +226,7 @@ bayes_estimation <- function(data,
                          K = K,
                          nb_iter = nb_iter,
                          priors = priors[priors_labels],
-                         printing = printing)
+                         print = print)
     dist_type = "discrete"
     
   } else {
