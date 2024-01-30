@@ -10,7 +10,7 @@
 #' 
 #' @export
 print.BayesMode <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
-  print_list(x, max_length, max_width)
+  print_list(x, max_length, max_width, print_all)
 }
 
 
@@ -24,7 +24,7 @@ print.BayesMode <- function(x, max_length = 6L, max_width = 6L, print_all = F, .
 #' 
 #' @export
 print.Mode <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
-  print_list(x, max_length, max_width)
+  print_list(x, max_length, max_width, print_all)
 }
 
 
@@ -38,7 +38,7 @@ print.Mode <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
 #' 
 #' @export
 print.BayesMixture <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
-  print_list(x, max_length, max_width)
+  print_list(x, max_length, max_width, print_all)
 }
 
 #' Print method for \code{Mixture} objects
@@ -51,7 +51,7 @@ print.BayesMixture <- function(x, max_length = 6L, max_width = 6L, print_all = F
 #' 
 #' @export
 print.Mixture <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
-  print_list(x, max_length, max_width)
+  print_list(x, max_length, max_width, print_all)
 }
 
 

@@ -163,7 +163,7 @@
 #' 
 #' @export
 
-mix_mode <- function(mixture, tol_mixp = 1e-6, tol_x = 1e-6, tol_conv = 1e-8, type = "all") {
+mix_mode <- function(mixture, tol_mixp = 1e-2, tol_x = 1e-6, tol_conv = 1e-8, type = "all") {
   assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
   assert_that(all(c("pars", "pars_names", "dist_type",
                     "dist", "pdf_func", "range", "nb_var", "K") %in% names(mixture)),
