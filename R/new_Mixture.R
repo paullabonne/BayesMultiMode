@@ -7,7 +7,7 @@
 #' Currently supports `"normal"` and `"skew_normal"`; not needed if `pdf_func` is provided.
 #' @param pdf_func Pdf of the mixture components; default is `NULL`.
 #' @param dist_type Either `"continuous"` or `"discrete"`.
-#' @param range (for discrete mixtures) upper and lower limit of the range where the mixture should be evaluated.
+#' @param range (optional for continuous mixtures) upper and lower limit of the range where the mixture should be evaluated.
 #' @param loc (for continuous mixtures other than Normal mixtures) String indicating the location parameter
 #' of the distribution; the latter is used to initialise the MEM algorithm.
 #' 

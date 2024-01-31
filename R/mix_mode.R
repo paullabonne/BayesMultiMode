@@ -12,6 +12,8 @@
 #' @param tol_x (for continuous mixtures) Tolerance parameter for distance in-between modes; default is `1e-6`; if two modes are closer than `tol_x`, only the first estimated mode is kept.
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
 #' @param type (for discrete mixtures) Type of modes, either `"unique"` or `"all"` (the latter includes flat modes); default is `"all"`.
+#' @param inside_range Should modes outside of `mixture$range` be discarded? Default is `TRUE`.
+#' This sometimes occurs with very small components when K is large.  
 #' 
 #' @return A list of class \code{Mode} containing
 #'  \item{mode_estimates}{estimates of the mixture modes}
