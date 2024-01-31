@@ -7,7 +7,7 @@
 bayes_mode(
   BayesMix,
   rd = 1,
-  tol_mixp = 0.01,
+  tol_mixp = 0,
   tol_x = sd(BayesMix$data)/10,
   tol_conv = 1e-08
 )
@@ -18,7 +18,7 @@ bayes_mode(
 \item{rd}{(for continuous mixtures) Integer indicating the number of decimal places when rounding the location domain.
 It is necessary to compute posterior probabilities of mode locations.}
 
-\item{tol_mixp}{Components with a mixture proportion below \code{tol_mixp} are discarded when estimating modes; default is \code{1e-2}.}
+\item{tol_mixp}{Components with a mixture proportion below \code{tol_mixp} are discarded when estimating modes; should be between \code{0} and \code{1}; default is \code{0}.}
 
 \item{tol_x}{(for continuous mixtures) Tolerance parameter for distance in-between modes; default is \code{sd(data)/10} where data qre the observations from \code{BayesMix}.
 If two modes are closer than \code{tol_x}, only the first estimated mode is kept.}

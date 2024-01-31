@@ -6,7 +6,7 @@
 #' A basic algorithm is used for discrete mixtures (see Cross et al. 2023).
 #' 
 #' @param mixture An object of class `Mixture` generated with [new_Mixture()].
-#' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes; default is `1e-2`.
+#' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes; should be between `0` and `1`; default is `0`.
 #' @param tol_x (for continuous mixtures) Tolerance parameter for distance in-between modes; default is `1e-6`; if two modes are closer than `tol_x`, only the first estimated mode is kept.
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
 #' @param type (for discrete mixtures) Type of modes, either `"unique"` or `"all"` (the latter includes flat modes); default is `"all"`.
@@ -158,13 +158,13 @@
 #' 
 #' @export
 
-mix_mode <- function(mixture, tol_mixp = 1e-2, tol_x = 1e-6, tol_conv = 1e-8, type = "all") {
+mix_mode <- function(mixture, tol_mixp = 0, tol_x = 1e-6, tol_conv = 1e-8, type = "all") {
   assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
   assert_that(all(c("pars", "pars_names", "dist_type",
                     "dist", "pdf_func", "range", "nb_var", "K") %in% names(mixture)),
               msg = "mixture is not a proper Mixture object.") 
   assert_that(is.scalar(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
-  assert_that(is.scalar(tol_mixp) & tol_mixp > 0, msg = "tol_mixp should be a positive scalar")
+  assert_that(is.scalar(tol_mixp) & tol_mixp >= 0 & tol_mixp < 1, msg = "tol_mixp should be a positive scalar between 0 and 1")
   assert_that(is.scalar(tol_conv) & tol_conv > 0, msg = "tol_conv should be a positive scalar")
   
   pars = mixture$pars

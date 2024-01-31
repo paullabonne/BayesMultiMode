@@ -7,7 +7,7 @@
 #' @param BayesMix An object of class `BayesMixture` generated with either [bayes_estimation()] or [new_BayesMixture()].
 #' @param rd (for continuous mixtures) Integer indicating the number of decimal places when rounding the location domain.
 #' It is necessary to compute posterior probabilities of mode locations.
-#' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes; default is `1e-2`.
+#' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes; should be between `0` and `1`; default is `0`.
 #' @param tol_x (for continuous mixtures) Tolerance parameter for distance in-between modes; default is `sd(data)/10` where data qre the observations from `BayesMix`.
 #' If two modes are closer than `tol_x`, only the first estimated mode is kept.
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
@@ -119,7 +119,7 @@
 #' # summary(bayesmode)
 #'
 #' @export
-bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 2/length(BayesMix$data), tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8) {
+bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8) {
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   assert_that(all(c("data", "mcmc", "mcmc_all",
                     "loglik", "K", "dist",
@@ -129,7 +129,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 2/length(BayesMix$data), tol
   
   assert_that(is.scalar(rd), rd >= 0, round(rd) == rd, msg = "rd should be an integer greater or equal than zero")
   assert_that(is.scalar(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
-  assert_that(is.scalar(tol_mixp) & tol_mixp > 0, msg = "tol_mixp should be a positive scalar")
+  assert_that(is.scalar(tol_mixp) & tol_mixp >= 0 & tol_mixp < 1, msg = "tol_mixp should be a positive scalar between 0 and 1")
   assert_that(is.scalar(tol_conv) & tol_conv > 0, msg = "tol_conv should be a positive scalar")
   
   dist = BayesMix$dist
