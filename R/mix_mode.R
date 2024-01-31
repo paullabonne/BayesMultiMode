@@ -172,6 +172,7 @@ mix_mode <- function(mixture, tol_mixp = 1e-2, tol_x = 1e-6, tol_conv = 1e-8, ty
   dist = mixture$dist
   dist_type = mixture$dist_type
   pdf_func = mixture$pdf_func
+  range = mixture$range
   
   mode = list()
   mode$dist = dist
@@ -197,10 +198,15 @@ mix_mode <- function(mixture, tol_mixp = 1e-2, tol_x = 1e-6, tol_conv = 1e-8, ty
   }
   
   if (dist_type == "discrete") {
-    range = mixture$range
     mode_estimates = discrete_MF(pars_mat, pdf_func, range, type)
     mode$algo = "discrete"
     mode$dist_type = "discrete"
+  }
+  
+  if (!is.null(range)) {
+    # discard modes outside of the data range
+    mode_estimates = mode_estimates[mode_estimates >= range[1]]
+    mode_estimates = mode_estimates[mode_estimates <= range[2]] 
   }
   
   mode$mode_estimates = mode_estimates

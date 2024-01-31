@@ -119,7 +119,7 @@
 #' # summary(bayesmode)
 #'
 #' @export
-bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8) {
+bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 2/length(BayesMix$data), tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8) {
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   assert_that(all(c("data", "mcmc", "mcmc_all",
                     "loglik", "K", "dist",
