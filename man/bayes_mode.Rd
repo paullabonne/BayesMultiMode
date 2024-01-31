@@ -9,7 +9,8 @@ bayes_mode(
   rd = 1,
   tol_mixp = 0,
   tol_x = sd(BayesMix$data)/10,
-  tol_conv = 1e-08
+  tol_conv = 1e-08,
+  inside_range = TRUE
 )
 }
 \arguments{
@@ -26,6 +27,9 @@ should be between \code{0} and \code{1}; default is \code{0}.}
 If two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
 
 \item{tol_conv}{(for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is \code{1e-8}.}
+
+\item{inside_range}{Should modes outside of the observations range be discarded? Default is \code{TRUE}.
+This sometimes occurs with very small components when K is large.}
 }
 \value{
 A list of class \code{BayesMode} containing

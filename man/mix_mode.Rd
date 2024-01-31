@@ -4,7 +4,14 @@
 \alias{mix_mode}
 \title{Find modes in mixtures}
 \usage{
-mix_mode(mixture, tol_mixp = 0, tol_x = 1e-06, tol_conv = 1e-08, type = "all")
+mix_mode(
+  mixture,
+  tol_mixp = 0,
+  tol_x = 1e-06,
+  tol_conv = 1e-08,
+  type = "all",
+  inside_range = TRUE
+)
 }
 \arguments{
 \item{mixture}{An object of class \code{Mixture} generated with \code{\link[=new_Mixture]{new_Mixture()}}.}

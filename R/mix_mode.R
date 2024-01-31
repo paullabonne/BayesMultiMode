@@ -160,7 +160,7 @@
 #' 
 #' @export
 
-mix_mode <- function(mixture, tol_mixp = 0, tol_x = 1e-6, tol_conv = 1e-8, type = "all") {
+mix_mode <- function(mixture, tol_mixp = 0, tol_x = 1e-6, tol_conv = 1e-8, type = "all", inside_range = TRUE) {
   assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
   assert_that(all(c("pars", "pars_names", "dist_type",
                     "dist", "pdf_func", "range", "nb_var", "K") %in% names(mixture)),
@@ -206,7 +206,7 @@ mix_mode <- function(mixture, tol_mixp = 0, tol_x = 1e-6, tol_conv = 1e-8, type 
     mode$dist_type = "discrete"
   }
   
-  if (!is.null(range)) {
+  if (!is.null(range) & inside_range) {
     # discard modes outside of the data range
     mode_estimates = mode_estimates[mode_estimates >= range[1]]
     mode_estimates = mode_estimates[mode_estimates <= range[2]] 

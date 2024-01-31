@@ -13,6 +13,8 @@
 #' @param tol_x (for continuous mixtures) Tolerance parameter for distance in-between modes; default is `sd(data)/10` where data qre the observations from `BayesMix`.
 #' If two modes are closer than `tol_x`, only the first estimated mode is kept.
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
+#' @param inside_range Should modes outside of the observations range be discarded? Default is `TRUE`.
+#' This sometimes occurs with very small components when K is large.  
 #' @return A list of class `BayesMode` containing
 #'  \item{data}{From `BayesMix`.}
 #'  \item{dist}{From `BayesMix`.}
@@ -121,7 +123,7 @@
 #' # summary(bayesmode)
 #'
 #' @export
-bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8) {
+bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8, inside_range = TRUE) {
   assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
   assert_that(all(c("data", "mcmc", "mcmc_all",
                     "loglik", "K", "dist",
@@ -145,7 +147,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   modes = t(apply(mcmc, 1, mix_mode_estimates, dist = dist,
                   pdf_func = pdf_func, dist_type = dist_type,
                   tol_mixp = tol_mixp, tol_x = tol_x, tol_conv = tol_conv,
-                  loc = loc, range = c(min(data), max(data))))
+                  loc = loc, range = c(min(data), max(data)),
+                  inside_range = TRUE))
 
   # Number of modes 
   n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw
@@ -178,7 +181,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
                       tol_x = tol_x,
                       tol_conv = tol_conv,
                       type = "unique",
-                      pdf_func = pdf_func))
+                      pdf_func = pdf_func,
+                      inside_range = inside_range))
     
     n_modes = apply(!is.na(modes),1,sum)
     
@@ -231,7 +235,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
 mix_mode_estimates <- function(mcmc, dist = NA_character_, dist_type = NA_character_,
                                tol_mixp, tol_x, tol_conv,
                                pdf_func = NULL, type = "all", range = NULL,
-                               loc = NA_character_) {
+                               loc = NA_character_, inside_range = TRUE) {
   output = rep(NA_real_, length(mcmc))
   
   mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func,
