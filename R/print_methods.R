@@ -1,8 +1,8 @@
 #' Print method for \code{BayesMode} objects
 #' 
 #' @param x An object of class \code{BayesMode}.
-#' @param max_length maximum number of elements (for vector) or rows (for matrices) to show.
-#' @param max_width maximum number of columns to show (for matrices).
+#' @param max_length maximum number of elements (for vector) or rows (for matrices) to show. Default is `6L`.
+#' @param max_width maximum number of columns to show (for matrices). Default is `6L`.
 #' @param print_all override max_length and max_width to print everything? Default is FALSE.
 #' @param ... Not used.
 #' 
@@ -17,8 +17,8 @@ print.BayesMode <- function(x, max_length = 6L, max_width = 6L, print_all = F, .
 #' Print method for \code{Mode} objects
 #' 
 #' @param x An object of class \code{Mode}.
-#' @param max_length maximum number of elements (for vector) or rows (for matrices) to show.
-#' @param max_width maximum number of columns to show (for matrices).
+#' @param max_length maximum number of elements (for vector) or rows (for matrices) to show. Default is `6L`.
+#' @param max_width maximum number of columns to show (for matrices). Default is `6L`.
 #' @param print_all override max_length and max_width to print everything? Default is FALSE.
 #' @param ... Not used.
 #' 
@@ -31,8 +31,8 @@ print.Mode <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
 #' Print method for \code{BayesMixture} objects
 #' 
 #' @param x An object of class \code{BayesMixture}.
-#' @param max_length maximum number of elements (for vector) or rows (for matrices) to show.
-#' @param max_width maximum number of columns to show (for matrices).
+#' @param max_length maximum number of elements (for vector) or rows (for matrices) to show. Default is `6L`.
+#' @param max_width maximum number of columns to show (for matrices). Default is `6L`.
 #' @param print_all override max_length and max_width to print everything? Default is FALSE.
 #' @param ... Not used.
 #' 
@@ -44,8 +44,8 @@ print.BayesMixture <- function(x, max_length = 6L, max_width = 6L, print_all = F
 #' Print method for \code{Mixture} objects
 #' 
 #' @param x An object of class \code{Mixture}.
-#' @param max_length maximum number of elements (for vector) or rows (for matrices) to show.
-#' @param max_width maximum number of columns to show (for matrices).
+#' @param max_length maximum number of elements (for vector) or rows (for matrices) to show. Default is `6L`.
+#' @param max_width maximum number of columns to show (for matrices). Default is `6L`.
 #' @param print_all override max_length and max_width to print everything? Default is FALSE.
 #' @param ... Not used.
 #' 

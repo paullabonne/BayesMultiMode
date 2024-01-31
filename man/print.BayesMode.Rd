@@ -9,9 +9,9 @@
 \arguments{
 \item{x}{An object of class \code{BayesMode}.}
 
-\item{max_length}{maximum number of elements (for vector) or rows (for matrices) to show.}
+\item{max_length}{maximum number of elements (for vector) or rows (for matrices) to show. Default is \code{6L}.}
 
-\item{max_width}{maximum number of columns to show (for matrices).}
+\item{max_width}{maximum number of columns to show (for matrices). Default is \code{6L}.}
 
 \item{print_all}{override max_length and max_width to print everything? Default is FALSE.}
 
