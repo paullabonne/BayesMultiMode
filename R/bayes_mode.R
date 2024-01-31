@@ -131,7 +131,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$da
   assert_that(is.scalar(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
   assert_that(is.scalar(tol_mixp) & tol_mixp > 0, msg = "tol_mixp should be a positive scalar")
   assert_that(is.scalar(tol_conv) & tol_conv > 0, msg = "tol_conv should be a positive scalar")
-
+  
   dist = BayesMix$dist
   data = BayesMix$data
   mcmc = BayesMix$mcmc
@@ -139,73 +139,37 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$da
   pdf_func = BayesMix$pdf_func
   pars_names = BayesMix$pars_names
   loc = BayesMix$loc
+  
+  modes = t(apply(mcmc, 1, mix_mode_estimates, dist = dist,
+                  pdf_func = pdf_func, dist_type = dist_type,
+                  tol_mixp = tol_mixp, tol_x = tol_x, tol_conv = tol_conv,
+                  loc = loc, range = c(min(data), max(data))))
 
+  # Number of modes 
+  n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw
+  modes = matrix(modes[, 1:max(n_modes)], nrow = nrow(mcmc))
+  colnames(modes) = paste('mode',1:max(n_modes))
+
+  vec_modes = as.vector(modes)
+  vec_modes = vec_modes[!is.na(vec_modes)]
+  
   if (dist_type == "continuous") {
     if (!is.na(dist) & dist == "normal") {
       algo = "fixed-point"
     } else {
       algo = "Modal Expectation-Maximization (MEM)"
     }
-    modes = t(apply(mcmc, 1, mix_mode_estimates, dist = dist,
-                    pdf_func = pdf_func, dist_type = dist_type,
-                    tol_mixp = tol_mixp, tol_x = tol_x, tol_conv = tol_conv,
-                    loc = loc))
     
-    ### Posterior probability of being a mode for each location
-    m_range = seq(from = min(round(data,rd)), to = max(round(data,rd)), by = 1/(10^rd)) # range of potential values for the modes
-    modes_disc = round(modes, rd)
-    
-    matrix_modes = matrix(0, nrow = nrow(modes), ncol = length(m_range))
-    for (i in 1:nrow(matrix_modes)) {
-      matrix_modes[i, modes_disc[i, ][!is.na(modes_disc[i, ])] %.in% m_range] = 1
-    }
-    
-    sum_modes = apply(matrix_modes,2,sum)
-    probs_modes = sum_modes/nrow(modes)
-    probs_modes = probs_modes[probs_modes>0]
-    location_at_modes = m_range[sum_modes>0]
-    table_location = rbind(location_at_modes, probs_modes)
-    
-    # Number of modes 
-    n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw
+    vec_modes = round(vec_modes, rd)
+    mode_range = seq(min(vec_modes), max(vec_modes), by = 10^-rd)
   }
   
   if (dist_type == "discrete") {
-    x = min(data):max(data)
-    range = c(min(data), max(data))
-    # Posterior probability of being a mode for each location
-    modes <- t(apply(mcmc,1,FUN = mix_mode_estimates,
-                     range = range,
-                     dist = dist,
-                     dist_type = dist_type,
-                     tol_mixp = tol_mixp,
-                     tol_x = tol_x,
-                     tol_conv = tol_conv,
-                     pdf_func = pdf_func))
+    mode_range = min(vec_modes):max(vec_modes)
     
-   
-    modes_xid = matrix(0, nrow(mcmc), length(x))
-    for (i in 1:nrow(modes)) {
-      modes_xid[i, modes[i,!is.na(modes[i, ])]] = 1
-    }
- 
-    # number of modes
-    n_modes = rowSums(modes_xid)
-    
-    sum_modes = apply(modes_xid,2,sum)
-    probs_modes = sum_modes/nrow(mcmc)
-    probs_modes = probs_modes[probs_modes>0]
-    
-    location_at_modes = x[sum_modes>0]
-    
-    modes = as.matrix(modes[, 1:max(n_modes)], nrow = nrow(mcmc))
-    colnames(modes) = paste('mode',1:max(n_modes))
-    
-    table_location = rbind(location_at_modes, probs_modes)
-
     # unique modes to calculate post probs of number of modes
     modes <-  t(apply(mcmc,1,FUN = mix_mode_estimates,
-                      range = range,
+                      range = c(min(data), max(data)),
                       dist = dist,
                       dist_type = dist_type,
                       tol_mixp = tol_mixp,
@@ -218,6 +182,16 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$da
     
     algo = "discrete"
   }
+  
+  ### Posterior probability of being a mode for each location
+  sum_modes = unlist(lapply(mode_range,
+                            FUN = counting,
+                            vec = vec_modes))
+  
+  probs_modes = sum_modes/nrow(mcmc)
+  
+  table_location = rbind(mode_range, probs_modes)
+  rownames(table_location) = c("mode location", "posterior probability")
   
   ##### testing unimodality
   p1 = 0 # posterior probability of unimodality
@@ -233,6 +207,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$da
     prob_nb_modes[i] = length(n_modes[n_modes==unique_modes[i]])/nrow(modes)
   }
   tb_nb_modes = rbind(unique_modes,prob_nb_modes)
+  rownames(tb_nb_modes) = c("number of modes", "posterior probability")
   
   BayesMode = list()
   BayesMode$data = data
@@ -250,29 +225,22 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 1e-2, tol_x = sd(BayesMix$da
   return(BayesMode)
 }
 
-## This function overcomes the problem arising from comparing floating points
-## (0.1==0.1 can be false for instance,
-## see https://stackoverflow.com/questions/9508518/why-are-these-numbers-not-equal/9508558#9508558)
-#' @keywords internal
-`%.in%` = function(a, b, eps = sqrt(.Machine$double.eps)) {
-  output = rep(F,length(b))
-  for (x in a){
-    output <- (abs(b-x) <= eps) | output
-  }
-  output
-}
-
 #' @keywords internal
 mix_mode_estimates <- function(mcmc, dist = NA_character_, dist_type = NA_character_,
                                tol_mixp, tol_x, tol_conv,
                                pdf_func = NULL, type = "all", range = NULL,
                                loc = NA_character_) {
   output = rep(NA_real_, length(mcmc))
-
+  
   mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func,
                     dist_type = dist_type, range = range, loc = loc)
   modes = mix_mode(mix, tol_mixp, tol_x, tol_conv, type = type)$mode_estimates
   output[1:length(modes)] = modes
   
   return(output)
+}
+
+#' @keywords internal
+counting <- function(x, vec) {
+  length(vec[vec==x])
 }

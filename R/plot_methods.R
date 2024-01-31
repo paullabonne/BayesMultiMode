@@ -71,7 +71,7 @@ plot.BayesMixture <- function(x, draws = 250,
     
     df_y_temp = tibble(density = d_y,
                        x = unique(y))
-    
+
     x_all = seq(min(y),max(y),1)
     
     mixture_uncertainty = matrix(NA, length(x_all), draws)
@@ -84,11 +84,11 @@ plot.BayesMixture <- function(x, draws = 250,
       mixture_uncertainty[,j] = pdf_func_mix(x_all, pars, pdf_func)
       j = j+1
     }
-    
+
     # 
     df_y = tibble(x = seq(min(y),max(y),1)) %>%
       left_join(df_y_temp, by=c("x"="x")) %>%
-      mutate(density = ifelse(is.na(density),NA,density)) %>%
+      mutate(density = ifelse(is.na(density),0,density)) %>%
       cbind(mixture_uncertainty)
 
     df_y %<>%
@@ -148,7 +148,7 @@ plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
   
   df_g1 = as_tibble(t(table_location))
   
-  g1 = ggplot(data=df_g1, aes(x=location_at_modes, y=probs_modes)) +
+  g1 = ggplot(data=df_g1, aes(x = `mode location`, y = `posterior probability`)) +
     theme_gg +
     # scale_x_continuous(breaks=df_g1$possible_nb_modes) +
     ggtitle("Mode locations") +
@@ -156,16 +156,16 @@ plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
     geom_bar(stat="identity")
   
   if (x$dist_type == "continuous") {
-    g1 = g1 + ylim(0, max(df_g1$probs_modes))
+    g1 = g1 + ylim(0, max(df_g1$`posterior probability`))
   } else {
     g1 = g1 + ylim(0, 1)
   }
   
   df_g2 = as_tibble(t(tb_nb_modes))
   
-  g2= ggplot(data=df_g2, aes(x=unique_modes, y=prob_nb_modes)) +
+  g2= ggplot(data=df_g2, aes(x = `number of modes`, y = `posterior probability`)) +
     theme_gg +
-    scale_x_continuous(breaks=df_g2$unique_modes) +
+    scale_x_continuous(breaks=df_g2$`number of modes`) +
     ggtitle("Number of modes") +
     ylim(0, 1) +
     xlab("") + ylab("Posterior probability") +
