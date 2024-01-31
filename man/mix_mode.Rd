@@ -25,6 +25,9 @@ should be between \code{0} and \code{1}; default is \code{0}.}
 \item{tol_conv}{(for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is \code{1e-8}.}
 
 \item{type}{(for discrete mixtures) Type of modes, either \code{"unique"} or \code{"all"} (the latter includes flat modes); default is \code{"all"}.}
+
+\item{inside_range}{Should modes outside of \code{mixture$range} be discarded? Default is \code{TRUE}.
+This sometimes occurs with very small components when K is large.}
 }
 \value{
 A list of class \code{Mode} containing

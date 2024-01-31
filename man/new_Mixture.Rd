@@ -23,7 +23,7 @@ Currently supports \code{"normal"} and \code{"skew_normal"}; not needed if \code
 
 \item{dist_type}{Either \code{"continuous"} or \code{"discrete"}.}
 
-\item{range}{(for discrete mixtures) upper and lower limit of the range where the mixture should be evaluated.}
+\item{range}{(optional for continuous mixtures) upper and lower limit of the range where the mixture should be evaluated.}
 
 \item{loc}{(for continuous mixtures other than Normal mixtures) String indicating the location parameter
 of the distribution; the latter is used to initialise the MEM algorithm.}
