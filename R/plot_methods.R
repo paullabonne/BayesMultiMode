@@ -123,7 +123,7 @@ plot.BayesMixture <- function(x, draws = 250,
 #' 
 #' @export
 plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
-  Pb <- value <- location_at_modes <- probs_modes <- unique_modes <- prob_nb_modes <- NULL
+  Pb <- value <- `posterior probability` <- `number of modes` <- `mode location` <- NULL
   
   stopifnot(inherits(x, "BayesMode"))
   assert_that(is.vector(graphs) & is.character(graphs),
