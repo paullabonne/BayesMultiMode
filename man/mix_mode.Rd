@@ -9,7 +9,9 @@ mix_mode(mixture, tol_mixp = 0, tol_x = 1e-06, tol_conv = 1e-08, type = "all")
 \arguments{
 \item{mixture}{An object of class \code{Mixture} generated with \code{\link[=new_Mixture]{new_Mixture()}}.}
 
-\item{tol_mixp}{Components with a mixture proportion below \code{tol_mixp} are discarded when estimating modes; should be between \code{0} and \code{1}; default is \code{0}.}
+\item{tol_mixp}{Components with a mixture proportion below \code{tol_mixp} are discarded when estimating modes;
+note that this does not apply to the biggest component so that it is not possible to discard all components;
+should be between \code{0} and \code{1}; default is \code{0}.}
 
 \item{tol_x}{(for continuous mixtures) Tolerance parameter for distance in-between modes; default is \code{1e-6}; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
 

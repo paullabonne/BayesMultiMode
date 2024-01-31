@@ -6,7 +6,9 @@
 #' A basic algorithm is used for discrete mixtures (see Cross et al. 2023).
 #' 
 #' @param mixture An object of class `Mixture` generated with [new_Mixture()].
-#' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes; should be between `0` and `1`; default is `0`.
+#' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes;
+#' note that this does not apply to the biggest component so that it is not possible to discard all components;
+#' should be between `0` and `1`; default is `0`.
 #' @param tol_x (for continuous mixtures) Tolerance parameter for distance in-between modes; default is `1e-6`; if two modes are closer than `tol_x`, only the first estimated mode is kept.
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
 #' @param type (for discrete mixtures) Type of modes, either `"unique"` or `"all"` (the latter includes flat modes); default is `"all"`.
@@ -182,7 +184,8 @@ mix_mode <- function(mixture, tol_mixp = 0, tol_x = 1e-6, tol_conv = 1e-8, type 
   mode$nb_var = mixture$nb_var
   
   pars_mat <- vec_to_mat(pars, pars_names)
-  pars_mat[, "eta"][pars_mat[, "eta"] < tol_mixp] = NA
+  tol_mixp_c = min(tol_mixp, pars_mat[, "eta"]) # the component with highest proportion cannot be excluded
+  pars_mat[, "eta"][pars_mat[, "eta"] < tol_mixp_c] = NA
   pars_mat = na.omit(pars_mat) # remove empty components (a feature of some MCMC methods)
   if (dist_type == "continuous") {
     mode$dist_type = "continuous"

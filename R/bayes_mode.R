@@ -7,7 +7,9 @@
 #' @param BayesMix An object of class `BayesMixture` generated with either [bayes_estimation()] or [new_BayesMixture()].
 #' @param rd (for continuous mixtures) Integer indicating the number of decimal places when rounding the location domain.
 #' It is necessary to compute posterior probabilities of mode locations.
-#' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes; should be between `0` and `1`; default is `0`.
+#' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes;
+#' note that this does not apply to the biggest component so that it is not possible to discard all components;
+#' should be between `0` and `1`; default is `0`.
 #' @param tol_x (for continuous mixtures) Tolerance parameter for distance in-between modes; default is `sd(data)/10` where data qre the observations from `BayesMix`.
 #' If two modes are closer than `tol_x`, only the first estimated mode is kept.
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
