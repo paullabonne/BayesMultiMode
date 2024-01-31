@@ -61,7 +61,7 @@ bayesmix = bayes_estimation(data = y,
                             dist = "normal",
                             nb_iter = 2000,
                             burnin = 1000,
-                            printing = F)
+                            print = F)
 
 plot(bayesmix, draws = 200)
 ```
@@ -83,15 +83,15 @@ plot(bayesmode)
 summary(bayesmode)
 ```
 
-    ## The posterior probability of the data being multimodal is 0.999
+    ## The posterior probability of the data being multimodal is 0.993
     ## 
     ##  Number of estimated modes and their posterior probabilities:
 
     ##      Number of modes Posterior probabilty
-    ## [1,]               1                0.001
-    ## [2,]               2                0.067
-    ## [3,]               3                0.902
-    ## [4,]               4                0.030
+    ## [1,]               1                0.007
+    ## [2,]               2                0.133
+    ## [3,]               3                0.840
+    ## [4,]               4                0.020
 
 ### Using BayesMultiMode for mode inference with external MCMC output
 
@@ -186,8 +186,7 @@ summary(bayesmode)
 
     ##      Number of modes Posterior probabilty
     ## [1,]               2                0.897
-    ## [2,]               3                0.102
-    ## [3,]               4                0.001
+    ## [2,]               3                0.103
 
 ### References
 
