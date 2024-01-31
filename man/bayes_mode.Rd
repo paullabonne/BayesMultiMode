@@ -15,15 +15,15 @@ bayes_mode(
 \arguments{
 \item{BayesMix}{An object of class \code{BayesMixture} generated with either \code{\link[=bayes_estimation]{bayes_estimation()}} or \code{\link[=new_BayesMixture]{new_BayesMixture()}}.}
 
-\item{rd}{Rounding parameter; integer indicating the number of decimal places.}
+\item{rd}{(for continuous mixtures) Integer indicating the number of decimal places when rounding the location domain.
+It is necessary to compute posterior probabilities of mode locations.}
 
 \item{tol_mixp}{Components with a mixture proportion below \code{tol_mixp} are discarded when estimating modes; default is \code{1e-2}.}
 
-\item{tol_x}{Tolerance parameter for distance in-between modes; default is \code{sd(data)/10} where data is an element of argument \code{BayesMix}.
+\item{tol_x}{(for continuous mixtures) Tolerance parameter for distance in-between modes; default is \code{sd(data)/10} where data qre the observations from \code{BayesMix}.
 If two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
 
-\item{tol_conv}{Tolerance parameter for convergence of the algorithm; default is \code{1e-8}.
-Not needed for mixtures of discrete distributions.}
+\item{tol_conv}{(for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is \code{1e-8}.}
 }
 \value{
 A list of class \code{BayesMode} containing

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mix_mode.R
 \name{mix_mode}
 \alias{mix_mode}
-\title{Find modes of mixtures}
+\title{Find modes in mixtures}
 \usage{
 mix_mode(
   mixture,
@@ -45,8 +45,7 @@ This function finds modes in a univariate mixture defined as:
 \deqn{p(.) = \sum_{k=1}^{K}\pi_k p_k(.),}
 where \eqn{p_k} is a density or probability mass function.
 
-\cr\cr
-Fixed-point algorithm\cr
+\strong{Fixed-point algorithm}
 Following Carreira-perpinan (2000), a mode \eqn{x} is found by iterating the two steps:
 \deqn{(i) \quad p(k|x^{(n)}) = \frac{\pi_k p_k(x^{(n)})}{p(x^{(n)})},}
 \deqn{(ii) \quad x^{(n+1)} = f(x^{(n)}),}
@@ -60,8 +59,7 @@ a small value. By default modes which are closer
 than \eqn{sd(y)/10} are merged; this tolerance value can be controlled with the argument
 \code{tol_x}.
 
-\cr\cr
-MEM algorithm\cr
+\strong{MEM algorithm}
 Following Li and Lindsay (2007), a mode \eqn{x} is found by iterating the two steps:
 \deqn{(i) \quad p(k|x^{(n)}) = \frac{\pi_k p_k(x^{(n)})}{p(x^{(n)})},}
 \deqn{(ii) \quad x^{(n+1)} = \text{argmax}_x  \sum_k p(k|x) \text{log} p_k(x^{(n)}),}
@@ -73,8 +71,7 @@ a small value. By default modes which are closer
 than \eqn{sd(y)/10} are merged; this tolerance value can be controlled with the argument
 \code{tol_x}.
 
-\cr\cr
-Discrete method\cr
+\strong{Discrete method}
 By definition, modes must satisfy either:
 \deqn{p_k(y_{m}-1) < p_k(y_{m}) > p_k(y_{m}+1)};
 \deqn{p_k(y_{m}-1) < p_k(y_{m}) = p_k(y_{m}+1) = \ldots = p_k(y_{m}+l-1) > p_k(y_{m}+l).}
