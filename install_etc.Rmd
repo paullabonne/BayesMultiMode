@@ -1,11 +1,13 @@
 ## Loading package
 ```{r}
 library(BayesMultiMode)
+
+BayesMultiMode::mix_mode()
 ```
 
 ## 
 ```{r}
-roxygen2::roxygenize()
+# roxygen2::roxygenize()
 devtools::document()
 
 devtools::test()
@@ -15,6 +17,8 @@ devtools::run_examples()
 devtools::install()
 
 devtools::build_manual()
+
+devtools::build()
 
 devtools::check()
 
@@ -30,3 +34,24 @@ devtools::submit_cran()
 devtools::load_all()
 devtools::test()
 ```
+
+```{r}
+  set.seed(123)
+  
+  mu = c(5,10)
+  # retrieve galaxy data
+  y = rnorm(100, mu)
+  y = y[y>=0]
+  # estimation
+  bayesmix = bayes_estimation(data = round(y),
+                              K = 2, #not many to run the example rapidly
+                              dist = "shifted_poisson",
+                              nb_iter = 500, #not many to run the example rapidly
+                              burnin = 100)
+  
+# mode estimation
+bayesmode = bayes_mode(bayesmix, tol_mixp = 0.99)
+  
+plot(bayesmix)
+```
+

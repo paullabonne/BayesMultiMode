@@ -7,8 +7,8 @@
 mix_mode(
   mixture,
   tol_mixp = 0,
-  tol_x = 0.000001,
-  tol_conv = 0.00000001,
+  tol_x = 1e-06,
+  tol_conv = 1e-08,
   type = "all",
   inside_range = TRUE
 )

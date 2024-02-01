@@ -101,7 +101,7 @@ software. The function `new_BayesMixture()` creates an object of class
 function `bayes_mode()`. Here is an example using cyclone intensity data
 (Knapp et al. 2018) and the `BNPmix` package for estimation. More
 examples can be found
-[here](https://github.com/paullabonne/BayesMultiMode/external_comp.md).
+[here](https://github.com/paullabonne/BayesMultiMode/blob/main/external_comp.md).
 
 ``` r
 library(BNPmix)
@@ -190,10 +190,10 @@ summary(bayesmode)
 
 ### BayesMultiMode for mode estimation in mixtures estimated with ML
 
-It possible to use `BayesMultiMode` to find modes in mixtures estimated
-using maximum likelihood and the EM algorithm. Below is an example using
-the popular package `mclust`. More examples can be found
-[here](https://github.com/paullabonne/BayesMultiMode/external_comp.md).
+It is possible to use `BayesMultiMode` to find modes in mixtures
+estimated using maximum likelihood and the EM algorithm. Below is an
+example using the popular package `mclust`. More examples can be found
+[here](https://github.com/paullabonne/BayesMultiMode/blob/main/external_comp.md).
 
 ``` r
 set.seed(123)

@@ -9,7 +9,7 @@ bayes_mode(
   rd = 1,
   tol_mixp = 0,
   tol_x = sd(BayesMix$data)/10,
-  tol_conv = 0.00000001,
+  tol_conv = 1e-08,
   inside_range = TRUE
 )
 }
