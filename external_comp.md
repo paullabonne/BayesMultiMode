@@ -211,8 +211,8 @@ fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, ch
     ## 
     ## SAMPLING FOR MODEL '07e8533f6a3188d2d50eb989867b63d7' NOW (CHAIN 1).
     ## Chain 1: 
-    ## Chain 1: Gradient evaluation took 4.3e-05 seconds
-    ## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.43 seconds.
+    ## Chain 1: Gradient evaluation took 6e-05 seconds
+    ## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.6 seconds.
     ## Chain 1: Adjust your expectations accordingly!
     ## Chain 1: 
     ## Chain 1: 
@@ -229,9 +229,9 @@ fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, ch
     ## Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
     ## Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
     ## Chain 1: 
-    ## Chain 1:  Elapsed Time: 0.254158 seconds (Warm-up)
-    ## Chain 1:                0.194073 seconds (Sampling)
-    ## Chain 1:                0.448231 seconds (Total)
+    ## Chain 1:  Elapsed Time: 0.255639 seconds (Warm-up)
+    ## Chain 1:                0.196833 seconds (Sampling)
+    ## Chain 1:                0.452472 seconds (Total)
     ## Chain 1:
 
 #### Create a BayesMixture object
@@ -353,8 +353,8 @@ summary(bayesmode)
 
     ##      Number of modes Posterior probabilty
     ## [1,]               1                0.949
-    ## [2,]               2                0.046
-    ## [3,]               3                0.005
+    ## [2,]               2                0.042
+    ## [3,]               3                0.009
 
 ### BNPmix
 
@@ -471,7 +471,7 @@ library(mixtools)
 y = c(rnorm(100,0,1),
       rnorm(100,5,2))
 
-fit = mixtools::normalmixEM(y)
+fit = normalmixEM(y)
 ```
 
     ## number of iterations= 75
@@ -479,7 +479,7 @@ fit = mixtools::normalmixEM(y)
 ``` r
 pars = c(eta = fit$lambda, mu = fit$mu, sigma = fit$sigma)
 
-mix = new_Mixture(pars, dist = "normal") # create new object of class Mixture
+mix = new_Mixture(pars, dist = "normal") # create a new object of class Mixture
 modes = mix_mode(mix) # estimate modes and create an object of class Mode
 
 plot(modes)
@@ -514,8 +514,8 @@ pars = c(eta = fit$parameters$pro,
          mu = fit$parameters$mean,
          sigma = sqrt(fit$parameters$variance$sigmasq))
 
-mix = new_Mixture(pars, dist = "normal") # create new object of class Mixture
-modes = mix_mode(mix) # estimate modes and create an object of class Mode
+mix = new_Mixture(pars, dist = "normal") # creates a new object of class Mixture
+modes = mix_mode(mix) # estimates modes and creates an object of class Mode
 
 plot(modes)
 ```

@@ -277,11 +277,11 @@ library(mixtools)
 y = c(rnorm(100,0,1),
       rnorm(100,5,2))
 
-fit = mixtools::normalmixEM(y)
+fit = normalmixEM(y)
 
 pars = c(eta = fit$lambda, mu = fit$mu, sigma = fit$sigma)
 
-mix = new_Mixture(pars, dist = "normal") # create new object of class Mixture
+mix = new_Mixture(pars, dist = "normal") # create a new object of class Mixture
 modes = mix_mode(mix) # estimate modes and create an object of class Mode
 
 plot(modes)
@@ -301,8 +301,8 @@ pars = c(eta = fit$parameters$pro,
          mu = fit$parameters$mean,
          sigma = sqrt(fit$parameters$variance$sigmasq))
 
-mix = new_Mixture(pars, dist = "normal") # create new object of class Mixture
-modes = mix_mode(mix) # estimate modes and create an object of class Mode
+mix = new_Mixture(pars, dist = "normal") # creates a new object of class Mixture
+modes = mix_mode(mix) # estimates modes and creates an object of class Mode
 
 plot(modes)
 ```
