@@ -62,8 +62,8 @@
 #' 
 #' **Discrete method**
 #' By definition, modes must satisfy either: 
-#'  \deqn{p_k(y_{m}-1) < p_k(y_{m}) > p_k(y_{m}+1)};
-#'  \deqn{p_k(y_{m}-1) < p_k(y_{m}) = p_k(y_{m}+1) = \ldots = p_k(y_{m}+l-1) > p_k(y_{m}+l).}
+#'  \deqn{p(y_{m}-1) < p(y_{m}) > p(y_{m}+1)};
+#'  \deqn{p(y_{m}-1) < p(y_{m}) = p(y_{m}+1) = \ldots = p(y_{m}+l-1) > p(y_{m}+l).}
 #'  
 #'  The algorithm evaluate each location point with these two conditions.
 #' 
