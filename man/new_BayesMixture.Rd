@@ -13,6 +13,7 @@ new_BayesMixture(
   dist_type = NA_character_,
   loglik = NULL,
   vars_to_keep = NA_character_,
+  vars_to_rename = NA_character_,
   loc = NA_character_
 )
 }
@@ -35,6 +36,10 @@ this input is used only if \code{dist_name} is invalid or \code{NULL}.}
 
 \item{vars_to_keep}{(optional) Character vector containing the names
 of the variables to keep in \code{mcmc}.}
+
+\item{vars_to_rename}{(optional) Use for renaming variables in \code{mcmc}.
+A named character vector where the names are the new variable names
+and the elements the variables in \code{mcmc}, e.g. c("new_name" = "old_name").}
 
 \item{loc}{(for continuous mixtures other than Normal mixtures) String indicating the location parameter
 of the distribution; the latter is used to initialise the MEM algorithm.}

@@ -18,6 +18,7 @@ pdf_func_mix <- function(x, pars, pdf_func) {
 #' @keywords internal
 test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, loc) {
   par_type = deparse(substitute(p))
+  par_type = str_extract(par_type, "[a-z]+")
   list_func = list()
   
   K = length(p)/length(pars_names)

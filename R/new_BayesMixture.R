@@ -15,6 +15,9 @@
 #' @param loglik Vector showing the log likelihood at each MCMC draw.
 #' @param vars_to_keep (optional) Character vector containing the names
 #' of the variables to keep in `mcmc`.
+#' @param vars_to_rename (optional) Use for renaming variables in `mcmc`.
+#' A named character vector where the names are the new variable names
+#' and the elements the variables in `mcmc`, e.g. c("new_name" = "old_name").
 #' @param loc (for continuous mixtures other than Normal mixtures) String indicating the location parameter
 #' of the distribution; the latter is used to initialise the MEM algorithm.
 #' 
@@ -34,7 +37,7 @@
 #' @importFrom posterior subset_draws
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_to_lower
-#' @importFrom stringr str_replace
+#' @importFrom stringr str_replace_all
 #' @importFrom stringr str_locate
 #' 
 #' @examples
@@ -84,6 +87,7 @@ new_BayesMixture <- function(mcmc,
                              dist_type = NA_character_,
                              loglik = NULL,
                              vars_to_keep = NA_character_,
+                             vars_to_rename = NA_character_,
                              loc = NA_character_) {
   ## input checks
   assert_that(is.matrix(mcmc))
@@ -96,7 +100,7 @@ new_BayesMixture <- function(mcmc,
               msg = "burnin parameter should be less than the number of mcmc draws")
   ## input checks
   assert_that(is.character(vars_to_keep))
-  
+  assert_that(is.character(vars_to_rename))
   ##
   rownames(mcmc) = NULL
   mcmc_all = mcmc
@@ -111,9 +115,26 @@ new_BayesMixture <- function(mcmc,
     pars_names = pars_names[pars_names %in% vars_to_keep]
     mcmc = mcmc[ , col_names %in% pars_names, drop = F]
   }
+  
+  if(any(!is.na(vars_to_rename))) {
+    assert_that(!is.null(names(vars_to_rename)),
+                msg = "vars_to_rename should be named character vector")
+    assert_that(all(vars_to_rename %in% pars_names),
+                msg = "old variable names in vars_to_rename should all be in the retained mcmc variables")
 
+    new_names = colnames(mcmc)
+    for (i in 1:length(vars_to_rename)) {
+      new_names = str_replace_all(new_names,
+                                  vars_to_rename[[i]],
+                                  names(vars_to_rename)[i])
+    }
+    
+    colnames(mcmc) = new_names
+    pars_names = unique(str_extract(new_names, "[a-z]+"))
+  }
+  
   list_func = test_and_export(mcmc[1,], pdf_func, dist, pars_names, dist_type, loc)
-
+  
   BayesMix = list(data = data,
                   mcmc = mcmc,
                   mcmc_all = mcmc_all,
