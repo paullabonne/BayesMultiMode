@@ -30,6 +30,8 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, loc) {
                            "should include a variable named eta representing mixture proportions."))
   
   pars_mat = vec_to_mat(p, pars_names)
+  pars_mat = na.omit(pars_mat)
+
   assert_that(nrow(pars_mat) > 1,
               msg = paste("there must be at least two components per variable in",
                            par_type))

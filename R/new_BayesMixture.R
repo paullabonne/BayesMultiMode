@@ -33,7 +33,6 @@
 #'  \item{loc}{ - name of the location parameter of the mixture components}
 #'  \item{nb_var}{ - number of variables/parameters in the mixture distribution}
 #' 
-#' @importFrom posterior as_draws_matrix
 #' @importFrom posterior subset_draws
 #' @importFrom stringr str_extract
 #' @importFrom stringr str_to_lower
@@ -132,8 +131,8 @@ new_BayesMixture <- function(mcmc,
     colnames(mcmc) = new_names
     pars_names = unique(str_extract(new_names, "[a-z]+"))
   }
-  
-  list_func = test_and_export(mcmc[1,], pdf_func, dist, pars_names, dist_type, loc)
+
+  list_func = test_and_export(mcmc[1,,drop =T], pdf_func, dist, pars_names, dist_type, loc)
   
   BayesMix = list(data = data,
                   mcmc = mcmc,

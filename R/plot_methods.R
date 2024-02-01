@@ -9,7 +9,6 @@
 #' @param alpha transparency of the density lines. Default is 0.1. Should be greater than 0 and below or equal to 1.
 #' @param ... Not used.
 #' 
-#' @importFrom posterior as_draws_matrix
 #' @importFrom ggpubr ggarrange
 #' @importFrom assertthat assert_that
 #' @importFrom dplyr tibble
@@ -50,7 +49,7 @@ plot.BayesMixture <- function(x, draws = 250,
     
     ## plot the mixture for each draw
     for (i in sample(nrow(mcmc),min(nrow(mcmc), draws))) {
-      pars = vec_to_mat(mcmc[i, ], pars_names)
+      pars = vec_to_mat(mcmc[i, , drop = T], pars_names)
       pars = na.omit(pars)
       
       g = g +
@@ -117,7 +116,6 @@ plot.BayesMixture <- function(x, draws = 250,
 #' @param graphs which plot to show ? Default is all three c("p1", "number", "loc").
 #' @param ... Not used.
 #' 
-#' @importFrom posterior as_draws_matrix
 #' @importFrom ggpubr ggarrange
 #' @import ggplot2
 #' 

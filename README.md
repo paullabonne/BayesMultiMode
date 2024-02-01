@@ -39,7 +39,7 @@ devtools::install_github("paullabonne/BayesMultiMode")
 library(BayesMultiMode)
 ```
 
-### Using BayesMultiMode for both MCMC estimation and mode inference
+### BayesMultiMode for MCMC estimation and mode inference
 
 `BayesMultiMode` provides a very flexible and efficient MCMC estimation
 approach : it handles mixtures with unknown number of components through
@@ -93,13 +93,15 @@ summary(bayesmode)
     ## [3,]               3                0.840
     ## [4,]               4                0.020
 
-### Using BayesMultiMode for mode inference with external MCMC output
+### BayesMultiMode for mode inference with external MCMC output
 
 `BayesMultiMode` also works on MCMC output generated using external
 software. The function `new_BayesMixture()` creates an object of class
 `BayesMixture` which can then be used as input in the mode inference
 function `bayes_mode()`. Here is an example using cyclone intensity data
-(Knapp et al. 2018) and the `BNPmix` package for estimation.
+(Knapp et al. 2018) and the `BNPmix` package for estimation. More
+examples can be found
+[here](https://github.com/paullabonne/BayesMultiMode/external_comp.md).
 
 ``` r
 library(BNPmix)
@@ -108,7 +110,7 @@ library(dplyr)
 y = cyclone %>%
   filter(BASIN == "SI",
          SEASON > "1981") %>%
-  select(max_wind) %>%
+  dplyr::select(max_wind) %>%
   unlist()
 
 ## estimation
@@ -122,8 +124,6 @@ PY_result = PYdensity(y,
 #### Transforming the output into a mcmc matrix with one column per variable
 
 ``` r
-library(dplyr)
-
 mcmc_py = list()
 
 for (i in 1:length(PY_result$p)) {
@@ -187,6 +187,42 @@ summary(bayesmode)
     ##      Number of modes Posterior probabilty
     ## [1,]               2                0.897
     ## [2,]               3                0.103
+
+### BayesMultiMode for mode estimation in mixtures estimated with ML
+
+It possible to use `BayesMultiMode` to find modes in mixtures estimated
+using maximum likelihood and the EM algorithm. Below is an example using
+the popular package `mclust`. More examples can be found
+[here](https://github.com/paullabonne/BayesMultiMode/external_comp.md).
+
+``` r
+set.seed(123)
+library(mclust)
+```
+
+    ## Package 'mclust' version 6.0.0
+    ## Type 'citation("mclust")' for citing this R package in publications.
+
+``` r
+y = cyclone %>%
+  filter(BASIN == "SI",
+         SEASON > "1981") %>%
+  dplyr::select(max_wind) %>%
+  unlist()
+
+fit = Mclust(y)
+
+pars = c(eta = fit$parameters$pro,
+         mu = fit$parameters$mean,
+         sigma = sqrt(fit$parameters$variance$sigmasq))
+
+mix = new_Mixture(pars, dist = "normal") # create new object of class Mixture
+modes = mix_mode(mix) # estimate modes
+
+plot(modes)
+```
+
+![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
 
 ### References
 
