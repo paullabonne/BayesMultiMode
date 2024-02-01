@@ -21,7 +21,7 @@ Currently supports \code{"normal"} and \code{"skew_normal"}; not needed if \code
 
 \item{pdf_func}{Pdf of the mixture components; default is \code{NULL}.}
 
-\item{dist_type}{Either \code{"continuous"} or \code{"discrete"}.}
+\item{dist_type}{Type of the distribution, either \code{"continuous"} or \code{"discrete"}.}
 
 \item{range}{(optional for continuous mixtures) upper and lower limit of the range where the mixture should be evaluated.}
 
@@ -31,9 +31,14 @@ of the distribution; the latter is used to initialise the MEM algorithm.}
 \value{
 A list of class \code{Mixture} containing:
 \item{pars}{Same as argument.}
+\item{pars_names}{Names of the parameters of the components' distribution.}
 \item{dist}{Same as argument.}
-\item{pdf_func}{Same as argument.}
+\item{pdf_func}{Pdf (or pmf) of the mixture components.}
 \item{dist_type}{Same as argument.}
+\item{loc}{Type of the distribution, either \code{"continuous"} or \code{"discrete"}.}
+\item{nb_var}{Number of parameters in the mixture distribution.}
+\item{K}{Number of mixture components.}
+\item{range}{Same as argument.}
 }
 \description{
 Function for creating an object of class \code{Mixture} which can subsequently be used as argument in \code{\link[=mix_mode]{mix_mode()}} to find its modes.

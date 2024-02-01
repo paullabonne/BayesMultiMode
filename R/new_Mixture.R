@@ -6,7 +6,7 @@
 #' @param dist String indicating the distribution of the mixture components; default is `"NA"`.
 #' Currently supports `"normal"` and `"skew_normal"`; not needed if `pdf_func` is provided.
 #' @param pdf_func Pdf of the mixture components; default is `NULL`.
-#' @param dist_type Either `"continuous"` or `"discrete"`.
+#' @param dist_type Type of the distribution, either `"continuous"` or `"discrete"`.
 #' @param range (optional for continuous mixtures) upper and lower limit of the range where the mixture should be evaluated.
 #' @param loc (for continuous mixtures other than Normal mixtures) String indicating the location parameter
 #' of the distribution; the latter is used to initialise the MEM algorithm.
@@ -14,10 +14,14 @@
 #' @returns
 #' A list of class `Mixture` containing:
 #'  \item{pars}{Same as argument.}
+#'  \item{pars_names}{Names of the parameters of the components' distribution.}
 #'  \item{dist}{Same as argument.}
-#'  \item{pdf_func}{Same as argument.}
+#'  \item{pdf_func}{Pdf (or pmf) of the mixture components.}
 #'  \item{dist_type}{Same as argument.}
-#' 
+#'  \item{loc}{Type of the distribution, either `"continuous"` or `"discrete"`.}
+#'  \item{nb_var}{Number of parameters in the mixture distribution.}
+#'  \item{K}{Number of mixture components.}
+#'  \item{range}{Same as argument.}
 #' 
 #' @examples
 #' 
