@@ -4,7 +4,7 @@
 #' Provides posterior probabilities of the number of modes and their locations.
 #' Under the hood it calls the function [mix_mode()] to find the modes in each MCMC draw.
 #' 
-#' @param BayesMix An object of class `BayesMixture` generated with either [bayes_estimation()] or [new_BayesMixture()].
+#' @param BayesMix An object of class `bayes_mixture` generated with either [bayes_fit()] or [bayes_mixture()].
 #' @param rd (for continuous mixtures) Integer indicating the number of decimal places when rounding the distribution's support.
 #' It is necessary to compute posterior probabilities of mode locations.
 #' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes;
@@ -16,7 +16,7 @@
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
 #' @param inside_range Should modes outside of the observations range be discarded? Default is `TRUE`.
 #' This sometimes occurs with very small components when K is large.  
-#' @return A list of class `BayesMode` containing:
+#' @return A list of class `bayes_mode` containing:
 #'  \item{data}{From `BayesMix`.}
 #'  \item{dist}{From `BayesMix`.}
 #'  \item{dist_type}{From `BayesMix`.}
@@ -58,20 +58,20 @@
 #' y = galaxy
 #'
 #' # estimation
-#' bayesmix = bayes_estimation(data = y,
+#' bayesmix = bayes_fit(data = y,
 #'                            K = 5, #not many to run the example rapidly
 #'                            dist = "normal",
 #'                            nb_iter = 500, #not many to run the example rapidly
 #'                            burnin = 100)
 #' 
 #' # mode estimation
-#' bayesmode = bayes_mode(bayesmix)
+#' BayesMode = bayes_mode(bayesmix)
 #'
 #' # plot 
-#' # plot(bayesmode, max_size = 200)
+#' # plot(BayesMode, max_size = 200)
 #'
 #' # summary 
-#' # summary(bayesmode)
+#' # summary(BayesMode)
 #' 
 #' # Example with DNA data ================================================
 #' set.seed(123) 
@@ -80,20 +80,20 @@
 #' y = d4z4
 #'
 #' # estimation
-#' bayesmix = bayes_estimation(data = y,
+#' bayesmix = bayes_fit(data = y,
 #'                            K = 5, #not many to run the example rapidly
 #'                            dist = "shifted_poisson",
 #'                            nb_iter = 500, #not many to run the example rapidly
 #'                            burnin = 100)
 #' 
 #' # mode estimation
-#' bayesmode = bayes_mode(bayesmix)
+#' BayesMode = bayes_mode(bayesmix)
 #'
 #' # plot 
-#' # plot(bayesmode, max_size = 200)
+#' # plot(BayesMode, max_size = 200)
 #'
 #' # summary 
-#' # summary(bayesmode)
+#' # summary(BayesMode)
 #' 
 #' # Example with a Student t ================================================
 #' mu = c(0.5,6)
@@ -112,25 +112,25 @@
 #' 
 #' dist_type = "continuous"
 #' 
-#' bayesmix = new_BayesMixture(fit, data, burnin = 1, 
+#' bayesmix = bayes_mixture(fit, data, burnin = 1, 
 #' pdf_func = pdf_func, dist_type = dist_type, loc = "mu")
 #' 
-#' bayesmode = bayes_mode(bayesmix)
+#' BayesMode = bayes_mode(bayesmix)
 #' 
 #' # plot 
-#' # plot(bayesmode, max_size = 200)
+#' # plot(BayesMode, max_size = 200)
 #'
 #' # summary 
-#' # summary(bayesmode)
+#' # summary(BayesMode)
 #'
 #' @export
 bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8, inside_range = TRUE) {
-  assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
+  assert_that(inherits(BayesMix, "bayes_mixture"), msg = "BayesMix should be an object of class bayes_mixture")
   assert_that(all(c("data", "mcmc", "mcmc_all",
                     "loglik", "K", "dist",
                     "dist_type", "pdf_func", "pars_names",
                     "loc", "nb_var") %in% names(BayesMix)),
-              msg = "BayesMix is not a proper BayesMixture object.") 
+              msg = "BayesMix is not a proper bayes_mixture object.") 
   
   assert_that(is.scalar(rd), rd >= 0, round(rd) == rd, msg = "rd should be an integer greater or equal than zero")
   assert_that(is.scalar(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
@@ -216,20 +216,20 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   tb_nb_modes = rbind(unique_modes,prob_nb_modes)
   rownames(tb_nb_modes) = c("number of modes", "posterior probability")
   
-  BayesMode = list()
-  BayesMode$data = data
-  BayesMode$dist = dist
-  BayesMode$dist_type = dist_type
-  BayesMode$pars_names = pars_names
-  BayesMode$modes = modes
-  BayesMode$p1 = p1
-  BayesMode$tb_nb_modes = tb_nb_modes
-  BayesMode$table_location = table_location
-  BayesMode$algo = algo
+  bayes_mode = list()
+  bayes_mode$data = data
+  bayes_mode$dist = dist
+  bayes_mode$dist_type = dist_type
+  bayes_mode$pars_names = pars_names
+  bayes_mode$modes = modes
+  bayes_mode$p1 = p1
+  bayes_mode$tb_nb_modes = tb_nb_modes
+  bayes_mode$table_location = table_location
+  bayes_mode$algo = algo
   
-  class(BayesMode) <- "BayesMode"
+  class(bayes_mode) <- "bayes_mode"
   
-  return(BayesMode)
+  return(bayes_mode)
 }
 
 #' @keywords internal
