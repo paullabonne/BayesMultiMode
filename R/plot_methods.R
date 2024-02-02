@@ -113,93 +113,115 @@ plot.bayes_mixture <- function(x, draws = 250,
 #' 
 #' @param x An object of class `bayes_mode`.
 #' @param graphs which plot to show ? Default is all three c("p1", "number", "loc").
+#' @param draw Plot modes in a given mcmc draw; note that `graphs` is discarded. Default is `NULL`.
 #' @param ... Not used.
 #' 
 #' @importFrom ggpubr ggarrange
+#' @importFrom assertthat is.scalar
 #' @import ggplot2
 #' 
 #' @export
-plot.bayes_mode <- function(x, graphs = c("p1", "number", "loc"), ...) {
+plot.bayes_mode <- function(x, graphs = c("p1", "number", "loc"), draw = NULL, ...) {
   Pb <- value <- `posterior probability` <- `number of modes` <- `mode location` <- NULL
   
-  stopifnot(inherits(x, "bayes_mode"))
-  assert_that(is.vector(graphs) & is.character(graphs),
-              msg = "graphs should be a character vector")
-  assert_that(sum(graphs %in% c("p1", "number", "loc"))>=1,
-              msg = "graphs should include at least p1, number or loc")
+  if (!is.null(draw)) {
+    assert_that(is.scalar(draw),
+                msg = paste0("draw should be a scale greater than zero and ",
+                             "inferior to the number of mcmc draws used in",
+                             deparse(substitute(x))))
+    
+    BayesMix = x$BayesMix
   
-  modes = x$modes
-  p1 = x$p1
-  tb_nb_modes = x$tb_nb_modes
-  table_location = x$table_location
-  
-  df_g0 = tibble(Pb = "Pb",
-                 value = (1-p1))
-  
-  g0 = ggplot(data=df_g0, aes(x=Pb, y=value)) +
-    ggtitle("Nb. modes > 1") +
-    theme_gg +
-    ylim(0, 1) +
-    xlab("") + ylab("Posterior probability") +
-    geom_bar(stat="identity")
-  
-  df_g1 = as_tibble(t(table_location))
-  
-  g1 = ggplot(data=df_g1, aes(x = `mode location`, y = `posterior probability`)) +
-    theme_gg +
-    # scale_x_continuous(breaks=df_g1$possible_nb_modes) +
-    ggtitle("Mode locations") +
-    xlab("") + ylab("Posterior probability") +
-    geom_bar(stat="identity")
-  
-  if (x$dist_type == "continuous") {
-    g1 = g1 + ylim(0, max(df_g1$`posterior probability`))
+    mix = mixture(BayesMix$mcmc[draw,],
+            dist = BayesMix$dist,
+            pdf_func = BayesMix$pdf_func,
+            dist_type = BayesMix$dist_type,
+            loc = BayesMix$loc,
+            range = x$range)
+    
+    modes = mix_mode(mix)
+    
+    plot(modes)
   } else {
-    g1 = g1 + ylim(0, 1)
+    assert_that(is.vector(graphs) & is.character(graphs),
+                msg = "graphs should be a character vector")
+    assert_that(sum(graphs %in% c("p1", "number", "loc"))>=1,
+                msg = "graphs should include at least p1, number or loc")
+    
+    modes = x$modes
+    p1 = x$p1
+    tb_nb_modes = x$tb_nb_modes
+    table_location = x$table_location
+    
+    df_g0 = tibble(Pb = "Pb",
+                   value = (1-p1))
+    
+    g0 = ggplot(data=df_g0, aes(x=Pb, y=value)) +
+      ggtitle("Nb. modes > 1") +
+      theme_gg +
+      ylim(0, 1) +
+      xlab("") + ylab("Posterior probability") +
+      geom_bar(stat="identity")
+    
+    df_g1 = as_tibble(t(table_location))
+    
+    g1 = ggplot(data=df_g1, aes(x = `mode location`, y = `posterior probability`)) +
+      theme_gg +
+      # scale_x_continuous(breaks=df_g1$possible_nb_modes) +
+      ggtitle("Mode locations") +
+      xlab("") + ylab("Posterior probability") +
+      geom_bar(stat="identity")
+    
+    if (x$dist_type == "continuous") {
+      g1 = g1 + ylim(0, max(df_g1$`posterior probability`))
+    } else {
+      g1 = g1 + ylim(0, 1)
+    }
+    
+    df_g2 = as_tibble(t(tb_nb_modes))
+    
+    g2= ggplot(data=df_g2, aes(x = `number of modes`, y = `posterior probability`)) +
+      theme_gg +
+      scale_x_continuous(breaks=df_g2$`number of modes`) +
+      ggtitle("Number of modes") +
+      ylim(0, 1) +
+      xlab("") + ylab("Posterior probability") +
+      geom_bar(stat="identity")
+    
+    # selecting which graphs to show
+    plot_list = list()
+    i = 0
+    
+    widths_p = rep(NA, length(graphs))
+    
+    if("p1" %in% graphs) {
+      i = i + 1
+      plot_list[[i]] <- g0
+      widths_p[i] = 0.7
+    }
+    
+    if("number" %in% graphs) {
+      i = i + 1
+      plot_list[[i]] <- g2
+      widths_p[i] = 1
+    }
+    
+    if("loc" %in% graphs) {
+      i = i + 1
+      plot_list[[i]] <- g1
+      widths_p[i] = 1
+    }
+    
+    if (i > 1) {
+      g <- ggarrange(plotlist = plot_list,
+                     ncol = length(graphs), nrow = 1, widths = widths_p)  
+    } else {
+      g <- plot_list[[i]] 
+    }
+    
+    g
   }
   
-  df_g2 = as_tibble(t(tb_nb_modes))
-  
-  g2= ggplot(data=df_g2, aes(x = `number of modes`, y = `posterior probability`)) +
-    theme_gg +
-    scale_x_continuous(breaks=df_g2$`number of modes`) +
-    ggtitle("Number of modes") +
-    ylim(0, 1) +
-    xlab("") + ylab("Posterior probability") +
-    geom_bar(stat="identity")
-  
-  # selecting which graphs to show
-  plot_list = list()
-  i = 0
-  
-  widths_p = rep(NA, length(graphs))
-  
-  if("p1" %in% graphs) {
-    i = i + 1
-    plot_list[[i]] <- g0
-    widths_p[i] = 0.7
-  }
-  
-  if("number" %in% graphs) {
-    i = i + 1
-    plot_list[[i]] <- g2
-    widths_p[i] = 1
-  }
-  
-  if("loc" %in% graphs) {
-    i = i + 1
-    plot_list[[i]] <- g1
-    widths_p[i] = 1
-  }
-  
-  if (i > 1) {
-    g <- ggarrange(plotlist = plot_list,
-                   ncol = length(graphs), nrow = 1, widths = widths_p)  
-  } else {
-    g <- plot_list[[i]] 
-  }
-  
-  g
 }
 
 #' Plot method for `mixture` objects

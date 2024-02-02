@@ -275,7 +275,7 @@ set.seed(123)
 library(mixtools)
 
 y = c(rnorm(100,0,1),
-      rnorm(100,5,2))
+      rnorm(100,3.5,1.5))
 
 fit = normalmixEM(y)
 
@@ -293,7 +293,7 @@ set.seed(123)
 library(mclust)
 
 y = c(rnorm(100,0,1),
-      rnorm(100,5,2))
+      rnorm(100,3.5,1.5))
 
 fit = Mclust(y)
 

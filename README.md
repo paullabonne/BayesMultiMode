@@ -83,15 +83,16 @@ plot(bayesmode)
 summary(bayesmode)
 ```
 
-    ## The posterior probability of the data being multimodal is 0.993
+    ## The posterior probability of the data being multimodal is 0.999
     ## 
     ##  Number of estimated modes and their posterior probabilities:
 
     ##      Number of modes Posterior probabilty
-    ## [1,]               1                0.007
-    ## [2,]               2                0.133
-    ## [3,]               3                0.840
-    ## [4,]               4                0.020
+    ## [1,]               1                0.001
+    ## [2,]               2                0.031
+    ## [3,]               3                0.919
+    ## [4,]               4                0.047
+    ## [5,]               5                0.002
 
 ### BayesMultiMode for mode inference with external MCMC output
 

@@ -4,12 +4,14 @@
 \alias{plot.bayes_mode}
 \title{Plot method for \code{bayes_mode} objects}
 \usage{
-\method{plot}{bayes_mode}(x, graphs = c("p1", "number", "loc"), ...)
+\method{plot}{bayes_mode}(x, graphs = c("p1", "number", "loc"), draw = NULL, ...)
 }
 \arguments{
 \item{x}{An object of class \code{bayes_mode}.}
 
 \item{graphs}{which plot to show ? Default is all three c("p1", "number", "loc").}
+
+\item{draw}{Plot modes in a given mcmc draw; note that \code{graphs} is discarded. Default is \code{NULL}.}
 
 \item{...}{Not used.}
 }

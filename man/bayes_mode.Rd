@@ -43,6 +43,8 @@ A list of class \code{bayes_mode} containing:
 \item{tb_nb_modes}{Matrix showing posterior probabilities for the number of modes.}
 \item{table_location}{Matrix showing posterior probabilities for mode locations.}
 \item{algo}{Algorithm used for mode estimation.}
+\item{range}{Range outside which modes are discarded if \code{inside_range} is \code{TRUE}.}
+\item{BayesMix}{\code{BayesMix}.}
 }
 \description{
 Bayesian inference on the modes in a univariate mixture estimated with MCMC methods, see Cross et al. 2024.

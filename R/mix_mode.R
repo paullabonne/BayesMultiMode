@@ -207,7 +207,7 @@ mix_mode <- function(mixture, tol_mixp = 0, tol_x = 1e-6, tol_conv = 1e-8, type 
     mode_estimates = mode_estimates[mode_estimates >= range[1]]
     mode_estimates = mode_estimates[mode_estimates <= range[2]] 
   }
-  
+ 
   mode$mode_estimates = mode_estimates
   class(mode) = "mix_mode"
   
@@ -255,7 +255,7 @@ fixed_point <- function(pars, tol_x = 1e-6, tol_conv = 1e-8) {
       modes[i] = x 
     }
   }
-  
+
   modes = modes[!is.na(modes)]
   
   return(modes)

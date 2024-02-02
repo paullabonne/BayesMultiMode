@@ -211,8 +211,8 @@ fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, ch
     ## 
     ## SAMPLING FOR MODEL '07e8533f6a3188d2d50eb989867b63d7' NOW (CHAIN 1).
     ## Chain 1: 
-    ## Chain 1: Gradient evaluation took 5.5e-05 seconds
-    ## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.55 seconds.
+    ## Chain 1: Gradient evaluation took 5.7e-05 seconds
+    ## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.57 seconds.
     ## Chain 1: Adjust your expectations accordingly!
     ## Chain 1: 
     ## Chain 1: 
@@ -229,9 +229,9 @@ fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, ch
     ## Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
     ## Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
     ## Chain 1: 
-    ## Chain 1:  Elapsed Time: 0.252384 seconds (Warm-up)
-    ## Chain 1:                0.193822 seconds (Sampling)
-    ## Chain 1:                0.446206 seconds (Total)
+    ## Chain 1:  Elapsed Time: 0.254857 seconds (Warm-up)
+    ## Chain 1:                0.194138 seconds (Sampling)
+    ## Chain 1:                0.448995 seconds (Total)
     ## Chain 1:
 
 #### Create a BayesMixture object
@@ -347,14 +347,13 @@ plot(bayesmode)
 summary(bayesmode)
 ```
 
-    ## The posterior probability of the data being multimodal is 0.065
+    ## The posterior probability of the data being multimodal is 0.033
     ## 
     ##  Number of estimated modes and their posterior probabilities:
 
     ##      Number of modes Posterior probabilty
-    ## [1,]               1                0.935
-    ## [2,]               2                0.055
-    ## [3,]               3                0.010
+    ## [1,]               1                0.967
+    ## [2,]               2                0.033
 
 ### BNPmix
 
@@ -448,8 +447,9 @@ summary(bayesmode)
     ##  Number of estimated modes and their posterior probabilities:
 
     ##      Number of modes Posterior probabilty
-    ## [1,]               2                0.993
-    ## [2,]               3                0.007
+    ## [1,]               2                0.960
+    ## [2,]               3                0.038
+    ## [3,]               4                0.002
 
 ## Mode estimation in mixtures estimated with maximum likelihood
 
@@ -469,12 +469,12 @@ library(mixtools)
 
 ``` r
 y = c(rnorm(100,0,1),
-      rnorm(100,5,2))
+      rnorm(100,3.5,1.5))
 
 fit = normalmixEM(y)
 ```
 
-    ## number of iterations= 75
+    ## number of iterations= 172
 
 ``` r
 pars = c(eta = fit$lambda, mu = fit$mu, sigma = fit$sigma)
@@ -506,7 +506,7 @@ library(mclust)
 
 ``` r
 y = c(rnorm(100,0,1),
-      rnorm(100,5,2))
+      rnorm(100,3.5,1.5))
 
 fit = Mclust(y)
 

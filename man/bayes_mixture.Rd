@@ -45,17 +45,18 @@ and the elements the variables in \code{mcmc}, e.g. c("new_name" = "old_name").}
 of the distribution; the latter is used to initialise the MEM algorithm.}
 }
 \value{
-A list of class \code{bayes_mixture} containing
-\item{data}{ - Same as argument}
-\item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
-\item{mcmc_all}{ - Matrix of MCMC draws}
-\item{loglik}{ - Log likelihood at each MCMC draw}
-\item{loglik}{ - Number of components}
-\item{dist}{ - Same as argument}
-\item{dist_type}{ - Type of the distribution, i.e. \code{"continuous"} or \code{"discrete"}}
-\item{pars_names}{ - Names of the mixture components' parameters}
-\item{loc}{ - name of the location parameter of the mixture components}
-\item{nb_var}{ - number of variables/parameters in the mixture distribution}
+A list of class \code{bayes_mixture} containing:
+\item{data}{Same as argument.}
+\item{mcmc}{Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
+\item{mcmc_all}{Matrix of MCMC draws.}
+\item{loglik}{Log likelihood at each MCMC draw.}
+\item{K}{Number of components.}
+\item{dist}{Same as argument.}
+\item{pdf_func}{The pdf/pmf of the mixture components.}
+\item{dist_type}{Type of the distribution, i.e. continuous or discrete.}
+\item{pars_names}{Names of the mixture components' parameters.}
+\item{loc}{Name of the location parameter of the mixture components.}
+\item{nb_var}{Number of variables/parameters in the mixture distribution.}
 }
 \description{
 Creates an object of class \code{bayes_mixture} which can subsequently be used as argument in \code{\link[=bayes_mode]{bayes_mode()}}.

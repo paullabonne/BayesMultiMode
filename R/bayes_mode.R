@@ -26,6 +26,8 @@
 #'  \item{tb_nb_modes}{Matrix showing posterior probabilities for the number of modes.}
 #'  \item{table_location}{Matrix showing posterior probabilities for mode locations.}
 #'  \item{algo}{Algorithm used for mode estimation.}
+#'  \item{range}{Range outside which modes are discarded if `inside_range` is `TRUE`.}
+#'  \item{BayesMix}{`BayesMix`.}
 #' 
 #' @details
 #' Each draw from the MCMC output after burnin, \eqn{\theta^{(d)}, \quad d = 1,...,D}, leads to a posterior predictive probability
@@ -145,10 +147,16 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   pars_names = BayesMix$pars_names
   loc = BayesMix$loc
   
+  if (dist_type == "continuous") {
+    range = c(min(data) - sd(data), max(data) + sd(data)) 
+  } else {
+    range = c(min(data), max(data))
+  }
+  
   modes = t(apply(mcmc, 1, mix_mode_estimates, dist = dist,
                   pdf_func = pdf_func, dist_type = dist_type,
                   tol_mixp = tol_mixp, tol_x = tol_x, tol_conv = tol_conv,
-                  loc = loc, range = c(min(data), max(data)),
+                  loc = loc, range = range,
                   inside_range = TRUE))
 
   # Number of modes 
@@ -175,7 +183,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
     
     # unique modes to calculate post probs of number of modes
     modes <-  t(apply(mcmc,1,FUN = mix_mode_estimates,
-                      range = c(min(data), max(data)),
+                      range = range,
                       dist = dist,
                       dist_type = dist_type,
                       tol_mixp = tol_mixp,
@@ -226,6 +234,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   bayes_mode$tb_nb_modes = tb_nb_modes
   bayes_mode$table_location = table_location
   bayes_mode$algo = algo
+  bayes_mode$BayesMix = BayesMix
+  bayes_mode$range = range
   
   class(bayes_mode) <- "bayes_mode"
   
