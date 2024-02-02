@@ -209,7 +209,7 @@ plot.bayes_mode <- function(x, graphs = c("p1", "number", "loc"), ...) {
 #' @param to the upper limit of the range over which the function will be plotted.
 #' @param ... Not used.
 #' 
-#' @importfrom graphics curve
+#' @importFrom graphics curve
 #' 
 #' @export
 plot.mixture <- function(x, from = NULL, to = NULL, ...) {
@@ -285,7 +285,7 @@ plot.mixture <- function(x, from = NULL, to = NULL, ...) {
 #' @param to the upper limit of the range over which the function will be plotted.
 #' @param ... Not used.
 #' 
-#' @importfrom graphics curve abline
+#' @importFrom graphics curve abline
 #' 
 #' @export
 plot.mix_mode <- function(x, from = NULL, to = NULL, ...) {
