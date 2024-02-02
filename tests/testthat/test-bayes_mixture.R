@@ -1,4 +1,4 @@
-test_that("New_BayesMixture returns expected results for the normal distribution", {
+test_that("bayes_mixture returns expected results for the normal distribution", {
   set.seed(1)
   mu = c(0,5)
   sigma = c(1,2)
@@ -9,11 +9,11 @@ test_that("New_BayesMixture returns expected results for the normal distribution
   fit = c(eta = p, mu = mu, sigma = sigma)
   fit = rbind(fit, fit)
 
-  BM = new_BayesMixture(fit, data, burnin = 1, dist = "normal", pdf_func = NULL, dist_type = dist_type)
-  expect_s3_class(BM, "BayesMixture")
+  BM = bayes_mixture(fit, data, burnin = 1, dist = "normal", pdf_func = NULL, dist_type = dist_type)
+  expect_s3_class(BM, "bayes_mixture")
 })
 
-test_that("New_BayesMixture returns expected results for the student distribution", {
+test_that("bayes_mixture returns expected results for the student distribution", {
   set.seed(1)
   mu = c(0.5,6)
   sigma = c(1,2)
@@ -32,7 +32,7 @@ test_that("New_BayesMixture returns expected results for the student distributio
     sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
   }
 
-  BM = new_BayesMixture(
+  BM = bayes_mixture(
     fit,
     data,
     burnin = 1,
@@ -40,5 +40,5 @@ test_that("New_BayesMixture returns expected results for the student distributio
     dist_type = dist_type,
     loc = "mu"
   )
-  expect_s3_class(BM, "BayesMixture")
+  expect_s3_class(BM, "bayes_mixture")
 })

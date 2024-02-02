@@ -6,7 +6,7 @@ test_that("mix_mode() returns expected results with dist = shifted_poisson and f
   params = c(eta = p, lambda = lambda, kappa = kappa)
   dist = "shifted_poisson"
   
-  mix = new_Mixture(params, range = c(0, 50), dist = dist)
+  mix = mixture(params, range = c(0, 50), dist = dist)
   modes = mix_mode(mix)
   
   # summary
@@ -19,14 +19,14 @@ test_that("mix_mode() returns expected results with dist = shifted_poisson and f
   expect_equal(modes$mode_estimates[3] == 10,  TRUE)
 })
 
-test_that("mix_mode function returns expected results with dist = poisson", {
+test_that("mix_mode() function returns expected results with dist = poisson", {
   set.seed(1)
   lambda = c(0.1,10)
   p = c(0.5,0.5)
   params = c(eta = p, lambda = lambda)
   dist = "poisson"
   
-  mix = new_Mixture(params, range = c(0, 50), dist = dist)
+  mix = mixture(params, range = c(0, 50), dist = dist)
   modes = mix_mode(mix)
   
   expect_snapshot(summary(mix))
@@ -49,7 +49,7 @@ test_that("mix_mode() function returns expected results with arbitrary function"
     dnbinom(x, mu = pars["mu"], size = pars["size"])
   }
   
-  mix = new_Mixture(params, range = c(0, 50), pdf_func = pmf_func,
+  mix = mixture(params, range = c(0, 50), pdf_func = pmf_func,
                     dist_type = "discrete")
   modes = mix_mode(mix)
   
@@ -76,7 +76,7 @@ test_that("mix_mode() function returns expected results with dist = skew_normal"
   params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
   dist = "skew_normal"
   
-  mix = new_Mixture(params, dist = dist)
+  mix = mixture(params, dist = dist)
   modes = mix_mode(mix)
   
   expect_snapshot(summary(mix))
@@ -102,7 +102,7 @@ test_that("mix_mode() function returns expected results with an arbitrary functi
     sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
   }
   
-  mix = new_Mixture(params, pdf_func = pdf_func,
+  mix = mixture(params, pdf_func = pdf_func,
                     dist_type = "continuous",
                     loc = "mu")
   modes = mix_mode(mix)
@@ -123,7 +123,7 @@ test_that("mix_mode() function returns expected results", {
   
   params = c(eta = p, mu = mu, sigma = sigma)
   
-  mix = new_Mixture(params, dist = "normal")
+  mix = mixture(params, dist = "normal")
   modes = mix_mode(mix)
   
   expect_snapshot(summary(mix))

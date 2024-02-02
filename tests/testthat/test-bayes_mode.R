@@ -16,7 +16,7 @@ test_that("bayes_mode works with external MCMC output", {
     sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
   }
   
-  bayesmix = new_BayesMixture(fit,
+  bayesmix = bayes_mixture(fit,
                               data,
                               burnin = 1,
                               pdf_func = pdf_func,
@@ -42,7 +42,7 @@ test_that("bayes_mode works with normal mixture", {
   y = rnorm(200, mu)
   
   # estimation
-  bayesmix = bayes_estimation(data = y,
+  bayesmix = bayes_fit(data = y,
                               K = 2, #not many to run the example rapidly
                               dist = "normal",
                               nb_iter = 500, #not many to run the example rapidly
@@ -68,7 +68,7 @@ test_that("bayes_mode works with skew_normal mixture", {
   y = rnorm(200, mu)
   
   # estimation
-  bayesmix = bayes_estimation(data = y,
+  bayesmix = bayes_fit(data = y,
                               K = 2, #not many to run the example rapidly
                               dist = "skew_normal",
                               nb_iter = 500, #not many to run the example rapidly
@@ -95,7 +95,7 @@ test_that("bayes_mode works with shifted poisson mixture", {
         rpois(100, 1) + mu[2])
   
   # estimation
-  bayesmix = bayes_estimation(data = y,
+  bayesmix = bayes_fit(data = y,
                               K = 2, #not many to run the example rapidly
                               dist = "shifted_poisson",
                               nb_iter = 500, #not many to run the example rapidly
@@ -126,7 +126,7 @@ test_that("bayes_mode works with poisson mixture", {
         rpois(100, 10))
   
   # estimation
-  bayesmix = bayes_estimation(data = y,
+  bayesmix = bayes_fit(data = y,
                               K = 2, #not many to run the example rapidly
                               dist = "poisson",
                               nb_iter = 500, #not many to run the example rapidly
