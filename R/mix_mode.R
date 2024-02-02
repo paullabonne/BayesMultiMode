@@ -5,7 +5,7 @@
 #' The Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
 #' A basic algorithm is used for discrete mixtures (see Cross et al. 2024).
 #' 
-#' @param mixture An object of class `Mixture` generated with [new_Mixture()].
+#' @param mixture An object of class `mixture` generated with [mixture()].
 #' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes;
 #' note that this does not apply to the biggest component so that it is not possible to discard all components;
 #' should be between `0` and `1`; default is `0`.
@@ -15,7 +15,7 @@
 #' @param inside_range Should modes outside of `mixture$range` be discarded? Default is `TRUE`.
 #' This sometimes occurs with very small components when K is large.  
 #' 
-#' @return A list of class \code{Mode} containing:
+#' @return A list of class \code{mix_mode} containing:
 #'  \item{mode_estimates}{estimates of the mixture modes.}
 #'  \item{algo}{algorithm used for mode estimation.}
 #'  \item{dist}{from `mixture`.}
@@ -84,7 +84,7 @@
 #' p = c(0.5,0.5)
 #'
 #' params = c(eta = p, mu = mu, sigma = sigma)
-#' mix = new_Mixture(params, dist = "normal")
+#' mix = mixture(params, dist = "normal")
 #' modes = mix_mode(mix)
 #' 
 #' # summary(modes)
@@ -98,7 +98,7 @@
 #' params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
 #' dist = "skew_normal"
 #' 
-#' mix = new_Mixture(params, dist = dist)
+#' mix = mixture(params, dist = dist)
 #' modes = mix_mode(mix)
 #' # summary(modes)
 #' # plot(modes)
@@ -115,7 +115,7 @@
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
 #' 
-#' mix = new_Mixture(params, pdf_func = pdf_func,
+#' mix = mixture(params, pdf_func = pdf_func,
 #' dist_type = "continuous", loc = "mu")
 #' modes = mix_mode(mix)
 #' 
@@ -129,7 +129,7 @@
 #' dist = "poisson"
 #' 
 #' 
-#' mix = new_Mixture(params, range = c(0,50), dist = dist)
+#' mix = mixture(params, range = c(0,50), dist = dist)
 #' 
 #' modes = mix_mode(mix)
 #'
@@ -147,7 +147,7 @@
 #'   dnbinom(x, mu = pars["mu"], size = pars["size"])
 #' }
 #' 
-#' mix = new_Mixture(params, range = c(0, 50),
+#' mix = mixture(params, range = c(0, 50),
 #' pdf_func = pmf_func, dist_type = "discrete")
 #' modes = mix_mode(mix)
 #' 
@@ -157,10 +157,10 @@
 #' @export
 
 mix_mode <- function(mixture, tol_mixp = 0, tol_x = 1e-6, tol_conv = 1e-8, type = "all", inside_range = TRUE) {
-  assert_that(inherits(mixture, "Mixture"), msg = "mixture should be an object of class Mixture")
+  assert_that(inherits(mixture, "mixture"), msg = "mixture should be an object of class mixture")
   assert_that(all(c("pars", "pars_names", "dist_type",
                     "dist", "pdf_func", "range", "nb_var", "K") %in% names(mixture)),
-              msg = "mixture is not a proper Mixture object.") 
+              msg = "mixture is not a proper mixture object.") 
   assert_that(is.scalar(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
   assert_that(is.scalar(tol_mixp) & tol_mixp >= 0 & tol_mixp < 1, msg = "tol_mixp should be a positive scalar between 0 and 1")
   assert_that(is.scalar(tol_conv) & tol_conv > 0, msg = "tol_conv should be a positive scalar")
@@ -209,7 +209,7 @@ mix_mode <- function(mixture, tol_mixp = 0, tol_x = 1e-6, tol_conv = 1e-8, type 
   }
   
   mode$mode_estimates = mode_estimates
-  class(mode) = "Mode"
+  class(mode) = "mix_mode"
   
   return(mode)
 }
