@@ -7,4 +7,7 @@
 ^\.github$
 ^CRAN-SUBMISSION$
 ^install_etc.Rmd
+^external_comp.Rmd
+^external_comp.md
 ^data-raw$
+^external_comp_files$
