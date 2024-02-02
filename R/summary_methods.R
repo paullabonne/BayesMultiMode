@@ -1,10 +1,10 @@
-#' Summary method for \code{BayesMode} objects
+#' Summary method for `bayes_mode` objects
 #' 
-#' @param object An object of class \code{BayesMode}.
+#' @param object An object of class `bayes_mode`.
 #' @param ... Not used.
 #' 
 #' @export
-summary.BayesMode <- function(object, ...) {
+summary.bayes_mode <- function(object, ...) {
   modes = object$modes
   
   p1 = object$p1
@@ -19,13 +19,13 @@ summary.BayesMode <- function(object, ...) {
 }
 
 
-#' Summary method for \code{Mode} objects
+#' Summary method for `mix_mode` objects
 #' 
-#' @param object An object of class \code{Mode}.
+#' @param object An object of class `mix_mode`.
 #' @param ... Not used.
 #' 
 #' @export
-summary.Mode <- function(object, ...) {
+summary.mix_mode <- function(object, ...) {
   Nb_m = length(object$mode_estimates)
   algo = object$algo
   d = object$dist
@@ -47,13 +47,13 @@ summary.Mode <- function(object, ...) {
 }
 
 
-#' Summary method for \code{Mixture} objects
+#' Summary method for `mixture` objects
 #' 
-#' @param object An object of class \code{Mode}.
+#' @param object An object of class `mixture`.
 #' @param ... Not used.
 #' 
 #' @export
-summary.Mixture <- function(object, ...) {
+summary.mixture <- function(object, ...) {
   cat("\n Estimated mixture distribution.")
   cat("\n- Mixture type:", object$dist_type)
   cat("\n- Number of components:", object$K)
@@ -65,16 +65,16 @@ summary.Mixture <- function(object, ...) {
 
 
 
-#' Summary method for \code{BayesMixture} objects
+#' Summary method for `bayes_mixture` objects
 #' The summary of MCMC draws is given by the function
-#' \code{summarise_draws} from package \pkg{posterior}.
-#' @param object An object of class \code{BayesMixture}.
+#' `summarise_draws` from package \pkg{posterior}.
+#' @param object An object of class `bayes_mixture`.
 #' @param ... Not used.
 #' 
 #' @importFrom posterior summarise_draws
 #' 
 #' @export
-summary.BayesMixture <- function(object, ...) {
+summary.bayes_mixture <- function(object, ...) {
   d = object$dist
   K = object$K
   

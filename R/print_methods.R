@@ -1,6 +1,6 @@
-#' Print method for \code{BayesMode} objects
+#' Print method for \code{bayes_mode} objects
 #' 
-#' @param x An object of class \code{BayesMode}.
+#' @param x An object of class \code{bayes_mode}.
 #' @param max_length maximum number of elements (for vector) or rows (for matrices) to show. Default is `6L`.
 #' @param max_width maximum number of columns to show (for matrices). Default is `6L`.
 #' @param print_all override max_length and max_width to print everything? Default is FALSE.
@@ -9,48 +9,48 @@
 #' @importFrom utils head
 #' 
 #' @export
-print.BayesMode <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
+print.bayes_mode <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
   print_list(x, max_length, max_width, print_all)
 }
 
 
-#' Print method for \code{Mode} objects
+#' Print method for \code{mix_mode} objects
 #' 
-#' @param x An object of class \code{Mode}.
+#' @param x An object of class \code{mix_mode}.
 #' @param max_length maximum number of elements (for vector) or rows (for matrices) to show. Default is `6L`.
 #' @param max_width maximum number of columns to show (for matrices). Default is `6L`.
 #' @param print_all override max_length and max_width to print everything? Default is FALSE.
 #' @param ... Not used.
 #' 
 #' @export
-print.Mode <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
+print.mix_mode <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
   print_list(x, max_length, max_width, print_all)
 }
 
 
-#' Print method for \code{BayesMixture} objects
+#' Print method for `bayes_mixture` objects
 #' 
-#' @param x An object of class \code{BayesMixture}.
+#' @param x An object of class `bayes_mixture`.
 #' @param max_length maximum number of elements (for vector) or rows (for matrices) to show. Default is `6L`.
 #' @param max_width maximum number of columns to show (for matrices). Default is `6L`.
 #' @param print_all override max_length and max_width to print everything? Default is FALSE.
 #' @param ... Not used.
 #' 
 #' @export
-print.BayesMixture <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
+print.bayes_mixture <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
   print_list(x, max_length, max_width, print_all)
 }
 
-#' Print method for \code{Mixture} objects
+#' Print method for `mixture` objects
 #' 
-#' @param x An object of class \code{Mixture}.
+#' @param x An object of class `mixture`.
 #' @param max_length maximum number of elements (for vector) or rows (for matrices) to show. Default is `6L`.
 #' @param max_width maximum number of columns to show (for matrices). Default is `6L`.
 #' @param print_all override max_length and max_width to print everything? Default is FALSE.
 #' @param ... Not used.
 #' 
 #' @export
-print.Mixture <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
+print.mixture <- function(x, max_length = 6L, max_width = 6L, print_all = F, ...) {
   print_list(x, max_length, max_width, print_all)
 }
 

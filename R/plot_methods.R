@@ -1,11 +1,11 @@
-#' Plot method for \code{BayesMixture} objects
+#' Plot method for `bayes_mixture` objects
 #' 
 #' Plot an estimated mixture for a given number of draws with a frequency distribution of the data.
 #' 
-#' @param x An object of class \code{BayesMixture}.
+#' @param x An object of class `bayes_mixture`.
 #' @param draws The number of MCMC draws to plot.
 #' @param bins (for continuous mixtures) Number of bins for the histogram of
-#' the data. Passed to \code{geom_histogram()}.
+#' the data. Passed to `geom_histogram()`.
 #' @param alpha transparency of the density lines. Default is 0.1. Should be greater than 0 and below or equal to 1.
 #' @param ... Not used.
 #' 
@@ -22,12 +22,11 @@
 #' @import ggplot2
 #' 
 #' @export
-plot.BayesMixture <- function(x, draws = 250,
-                              bins = 30,
-                              alpha = 0.1, ...) {
+plot.bayes_mixture <- function(x, draws = 250,
+                               bins = 30,
+                               alpha = 0.1, ...) {
   density <- component <- value <- NULL
   
-  assert_that(inherits(x, "BayesMixture"), msg = "input should be an object of class BayesMixture")
   assert_that(is.scalar(alpha) & alpha >= 0 & alpha <= 1,
               msg = "alpha should be a scalar between zero and one")
   
@@ -70,7 +69,7 @@ plot.BayesMixture <- function(x, draws = 250,
     
     df_y_temp = tibble(density = d_y,
                        x = unique(y))
-
+    
     x_all = seq(min(y),max(y),1)
     
     mixture_uncertainty = matrix(NA, length(x_all), draws)
@@ -83,13 +82,13 @@ plot.BayesMixture <- function(x, draws = 250,
       mixture_uncertainty[,j] = pdf_func_mix(x_all, pars, pdf_func)
       j = j+1
     }
-
+    
     # 
     df_y = tibble(x = seq(min(y),max(y),1)) %>%
       left_join(df_y_temp, by=c("x"="x")) %>%
       mutate(density = ifelse(is.na(density),0,density)) %>%
       cbind(mixture_uncertainty)
-
+    
     df_y %<>%
       gather(-x,-density,key="component",value="value")
     
@@ -110,9 +109,9 @@ plot.BayesMixture <- function(x, draws = 250,
 }
 
 
-#' Plot method for \code{BayesMode} objects
+#' Plot method for `bayes_mode` objects
 #' 
-#' @param x An object of class \code{BayesMode}.
+#' @param x An object of class `bayes_mode`.
 #' @param graphs which plot to show ? Default is all three c("p1", "number", "loc").
 #' @param ... Not used.
 #' 
@@ -120,10 +119,10 @@ plot.BayesMixture <- function(x, draws = 250,
 #' @import ggplot2
 #' 
 #' @export
-plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
+plot.bayes_mode <- function(x, graphs = c("p1", "number", "loc"), ...) {
   Pb <- value <- `posterior probability` <- `number of modes` <- `mode location` <- NULL
   
-  stopifnot(inherits(x, "BayesMode"))
+  stopifnot(inherits(x, "bayes_mode"))
   assert_that(is.vector(graphs) & is.character(graphs),
               msg = "graphs should be a character vector")
   assert_that(sum(graphs %in% c("p1", "number", "loc"))>=1,
@@ -203,15 +202,15 @@ plot.BayesMode <- function(x, graphs = c("p1", "number", "loc"), ...) {
   g
 }
 
-#' Plot method for \code{Mixture} objects
+#' Plot method for `mixture` objects
 #' 
-#' @param x An object of class \code{Mixture}.
+#' @param x An object of class `mixture`.
 #' @param from the lower limit of the range over which the function will be plotted.
 #' @param to the upper limit of the range over which the function will be plotted.
 #' @param ... Not used.
 #' 
 #' @export
-plot.Mixture <- function(x, from = NULL, to = NULL, ...) {
+plot.mixture <- function(x, from = NULL, to = NULL, ...) {
   assert_that(is.null(from)|(is.numeric(from) && is.finite(to)),
               is.null(to)|(is.numeric(to) && is.finite(to)),
               msg = "arguments from and to must be numeric and finite")
@@ -277,20 +276,20 @@ plot.Mixture <- function(x, from = NULL, to = NULL, ...) {
   }
 }
 
-#' Plot method for \code{Mode} objects
+#' Plot method for `mix_mode` objects
 #' 
-#' @param x An object of class \code{Mode}.
+#' @param x An object of class `mix_mode`.
 #' @param from the lower limit of the range over which the function will be plotted.
 #' @param to the upper limit of the range over which the function will be plotted.
 #' @param ... Not used.
 #' 
 #' 
 #' @export
-plot.Mode <- function(x, from = NULL, to = NULL, ...) {
-  mix = new_Mixture(x$pars, dist = x$dist,
-                    pdf_func = x$pdf_func,
-                    dist_type = x$dist_type,
-                    range = x$range)
+plot.mix_mode <- function(x, from = NULL, to = NULL, ...) {
+  mix = mixture(x$pars, dist = x$dist,
+                pdf_func = x$pdf_func,
+                dist_type = x$dist_type,
+                range = x$range)
   
   plot(mix, from = from, to = to)
   for (m in x$mode_estimates) {
