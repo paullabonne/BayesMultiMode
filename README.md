@@ -56,7 +56,7 @@ set.seed(123)
 y = galaxy
 
 # estimation
-bayesmix = bayes_estimation(data = y,
+bayesmix = bayes_fit(data = y,
                             K = 10,
                             dist = "normal",
                             nb_iter = 2000,
@@ -96,7 +96,7 @@ summary(bayesmode)
 ### BayesMultiMode for mode inference with external MCMC output
 
 `BayesMultiMode` also works on MCMC output generated using external
-software. The function `new_BayesMixture()` creates an object of class
+software. The function `bayes_mixture()` creates an object of class
 `BayesMixture` which can then be used as input in the mode inference
 function `bayes_mode()`. Here is an example using cyclone intensity data
 (Knapp et al. 2018) and the `BNPmix` package for estimation. More
@@ -148,7 +148,7 @@ mcmc_py = as.matrix(bind_rows(mcmc_py))
 #### Creating an object of class `BayesMixture`
 
 ``` r
-py_BayesMix = new_BayesMixture(mcmc = mcmc_py,
+py_BayesMix = bayes_mixture(mcmc = mcmc_py,
                                data = y,
                                burnin = 0, # the burnin has already been discarded
                                dist = "normal",
@@ -216,7 +216,7 @@ pars = c(eta = fit$parameters$pro,
          mu = fit$parameters$mean,
          sigma = sqrt(fit$parameters$variance$sigmasq))
 
-mix = new_Mixture(pars, dist = "normal") # create new object of class Mixture
+mix = mixture(pars, dist = "normal") # create new object of class Mixture
 modes = mix_mode(mix) # estimate modes
 
 plot(modes)

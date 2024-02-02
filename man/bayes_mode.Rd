@@ -14,16 +14,17 @@ bayes_mode(
 )
 }
 \arguments{
-\item{BayesMix}{An object of class \code{BayesMixture} generated with either \code{\link[=bayes_estimation]{bayes_estimation()}} or \code{\link[=new_BayesMixture]{new_BayesMixture()}}.}
+\item{BayesMix}{An object of class \code{bayes_mixture} generated with either \code{\link[=bayes_fit]{bayes_fit()}} or \code{\link[=bayes_mixture]{bayes_mixture()}}.}
 
-\item{rd}{(for continuous mixtures) Integer indicating the number of decimal places when rounding the location domain.
+\item{rd}{(for continuous mixtures) Integer indicating the number of decimal places when rounding the distribution's support.
 It is necessary to compute posterior probabilities of mode locations.}
 
 \item{tol_mixp}{Components with a mixture proportion below \code{tol_mixp} are discarded when estimating modes;
 note that this does not apply to the biggest component so that it is not possible to discard all components;
 should be between \code{0} and \code{1}; default is \code{0}.}
 
-\item{tol_x}{(for continuous mixtures) Tolerance parameter for distance in-between modes; default is \code{sd(data)/10} where data qre the observations from \code{BayesMix}.
+\item{tol_x}{(for continuous mixtures) Tolerance parameter for distance in-between modes; default is \code{sd(data)/10}
+where data is the vector of observations from \code{BayesMix}.
 If two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
 
 \item{tol_conv}{(for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is \code{1e-8}.}
@@ -32,7 +33,7 @@ If two modes are closer than \code{tol_x}, only the first estimated mode is kept
 This sometimes occurs with very small components when K is large.}
 }
 \value{
-A list of class \code{BayesMode} containing
+A list of class \code{bayes_mode} containing:
 \item{data}{From \code{BayesMix}.}
 \item{dist}{From \code{BayesMix}.}
 \item{dist_type}{From \code{BayesMix}.}
@@ -40,13 +41,13 @@ A list of class \code{BayesMode} containing
 \item{modes}{Matrix with a row for each draw and columns showing modes.}
 \item{p1}{Posterior probability of unimodality.}
 \item{tb_nb_modes}{Matrix showing posterior probabilities for the number of modes.}
-\item{table_location}{Matrix showing the posterior probabilities for location points being modes.}
+\item{table_location}{Matrix showing posterior probabilities for mode locations.}
 \item{algo}{Algorithm used for mode estimation.}
 }
 \description{
-This function carries out a Bayesian inference on the number of modes
-and their locations in a mixture estimated with MCMC methods, see Cross et al. 2023.
-Under the hood it calls the function \code{\link[=mix_mode]{mix_mode()}} on the mixture estimate of each MCMC draw.
+Bayesian inference on the modes in a univariate mixture estimated with MCMC methods, see Cross et al. 2024.
+Provides posterior probabilities of the number of modes and their locations.
+Under the hood it calls the function \code{\link[=mix_mode]{mix_mode()}} to find the modes in each MCMC draw.
 }
 \details{
 Each draw from the MCMC output after burnin, \eqn{\theta^{(d)}, \quad d = 1,...,D}, leads to a posterior predictive probability
@@ -73,20 +74,20 @@ set.seed(123)
 y = galaxy
 
 # estimation
-bayesmix = bayes_estimation(data = y,
+bayesmix = bayes_fit(data = y,
                            K = 5, #not many to run the example rapidly
                            dist = "normal",
                            nb_iter = 500, #not many to run the example rapidly
                            burnin = 100)
 
 # mode estimation
-bayesmode = bayes_mode(bayesmix)
+BayesMode = bayes_mode(bayesmix)
 
 # plot 
-# plot(bayesmode, max_size = 200)
+# plot(BayesMode, max_size = 200)
 
 # summary 
-# summary(bayesmode)
+# summary(BayesMode)
 
 # Example with DNA data ================================================
 set.seed(123) 
@@ -95,20 +96,20 @@ set.seed(123)
 y = d4z4
 
 # estimation
-bayesmix = bayes_estimation(data = y,
+bayesmix = bayes_fit(data = y,
                            K = 5, #not many to run the example rapidly
                            dist = "shifted_poisson",
                            nb_iter = 500, #not many to run the example rapidly
                            burnin = 100)
 
 # mode estimation
-bayesmode = bayes_mode(bayesmix)
+BayesMode = bayes_mode(bayesmix)
 
 # plot 
-# plot(bayesmode, max_size = 200)
+# plot(BayesMode, max_size = 200)
 
 # summary 
-# summary(bayesmode)
+# summary(BayesMode)
 
 # Example with a Student t ================================================
 mu = c(0.5,6)
@@ -127,16 +128,16 @@ pdf_func = function(x, pars) {
 
 dist_type = "continuous"
 
-bayesmix = new_BayesMixture(fit, data, burnin = 1, 
+bayesmix = bayes_mixture(fit, data, burnin = 1, 
 pdf_func = pdf_func, dist_type = dist_type, loc = "mu")
 
-bayesmode = bayes_mode(bayesmix)
+BayesMode = bayes_mode(bayesmix)
 
 # plot 
-# plot(bayesmode, max_size = 200)
+# plot(BayesMode, max_size = 200)
 
 # summary 
-# summary(bayesmode)
+# summary(BayesMode)
 
 }
 \references{

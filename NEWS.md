@@ -1,8 +1,10 @@
 ## Version 0.7.0
 * Major changes around the structure of the package
-* Added a class "Mixture" representing estimated mixtures which is used as input to mode estimation functions
-* Added a class "Mode" for the output of the mode estimation functions
-* Created mix_mode() which calls the mode finding algorithms; discrete_MF, fixed_point and MEM have been removed
+* bayes_estimation() renamed to bayes_fit()
+* new_BayesMixture() renamed to bayes_mixture()
+* Added a class "mixture" representing estimated mixtures which is used as input to mode estimation functions; see mixture()
+* Added mix_mode() which calls the mode finding algorithms; discrete_MF, fixed_point and MEM have been removed
+* Added a class "mix_mode"
 * Removed the plotting option inside the mode estimation functions
 * Added print, plot and summary methods for all classes.
 

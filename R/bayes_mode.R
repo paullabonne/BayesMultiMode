@@ -239,7 +239,7 @@ mix_mode_estimates <- function(mcmc, dist = NA_character_, dist_type = NA_charac
                                loc = NA_character_, inside_range = TRUE) {
   output = rep(NA_real_, length(mcmc))
   
-  mix = new_Mixture(mcmc, dist = dist, pdf_func = pdf_func,
+  mix = mixture(mcmc, dist = dist, pdf_func = pdf_func,
                     dist_type = dist_type, range = range, loc = loc)
   modes = mix_mode(mix, tol_mixp, tol_x, tol_conv, type = type)$mode_estimates
   output[1:length(modes)] = modes

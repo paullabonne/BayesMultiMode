@@ -2,7 +2,7 @@
 ```{r}
 library(BayesMultiMode)
 
-BayesMultiMode::mix_mode()
+BayesMultiMode::new_BayesMixture()
 ```
 
 ## 

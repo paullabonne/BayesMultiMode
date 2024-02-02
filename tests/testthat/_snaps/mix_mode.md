@@ -28,7 +28,7 @@
     Output
       [1]  0  1 10
 
-# mix_mode function returns expected results with dist = poisson
+# mix_mode() function returns expected results with dist = poisson
 
     Code
       summary(mix)

@@ -2,7 +2,7 @@
 #' 
 #' This is wrapper around the [bayesplot::mcmc_trace()] function from package `bayesplot`.
 #'
-#' @param BayesMix An object of class `BayesMixture`.
+#' @param BayesMix An object of class `bayes_mixture`.
 #' @param mcmc_vars Variables to plot; default is all the variable in the MCMC output.
 #' @param with_burnin Plot all draws ?
 #' @param ... Additional arguments passed to function [bayesplot::mcmc_trace()].
@@ -20,7 +20,7 @@
 #' y = galaxy
 #'
 #' # estimation
-#' bayesmix = bayes_estimation(data = y,
+#' bayesmix = bayes_fit(data = y,
 #'                            K = 5, #not many to run the example rapidly
 #'                            dist = "normal",
 #'                            nb_iter = 500, #not many to run the example rapidly
@@ -36,7 +36,7 @@ bayes_trace <- function(BayesMix,
                         with_burnin = FALSE,
                         ...) {
   
-  assert_that(inherits(BayesMix, "BayesMixture"), msg = "BayesMix should be an object of class BayesMixture")
+  assert_that(inherits(BayesMix, "bayes_mixture"), msg = "BayesMix should be an object of class bayes_mixture")
   assert_that(is.logical(with_burnin), msg = "with_burnin should be either TRUE or FALSE")
   
   if (with_burnin){

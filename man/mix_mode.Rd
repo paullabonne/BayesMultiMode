@@ -14,7 +14,7 @@ mix_mode(
 )
 }
 \arguments{
-\item{mixture}{An object of class \code{Mixture} generated with \code{\link[=new_Mixture]{new_Mixture()}}.}
+\item{mixture}{An object of class \code{mixture} generated with \code{\link[=mixture]{mixture()}}.}
 
 \item{tol_mixp}{Components with a mixture proportion below \code{tol_mixp} are discarded when estimating modes;
 note that this does not apply to the biggest component so that it is not possible to discard all components;
@@ -30,26 +30,26 @@ should be between \code{0} and \code{1}; default is \code{0}.}
 This sometimes occurs with very small components when K is large.}
 }
 \value{
-A list of class \code{Mode} containing
-\item{mode_estimates}{estimates of the mixture modes}
-\item{algo}{algorithm used for mode estimation}
-\item{dist}{from \code{mixture}}
-\item{dist_type}{type of mixture distribution, i.e. continuous or discrete}
-\item{pars}{from \code{mixture}}
-\item{pdf_func}{from \code{mixture}}
-\item{K}{from \code{mixture}}
-\item{nb_var}{from \code{mixture}}
+A list of class \code{mix_mode} containing:
+\item{mode_estimates}{estimates of the mixture modes.}
+\item{algo}{algorithm used for mode estimation.}
+\item{dist}{from \code{mixture}.}
+\item{dist_type}{type of mixture distribution, i.e. continuous or discrete.}
+\item{pars}{from \code{mixture}.}
+\item{pdf_func}{from \code{mixture}.}
+\item{K}{from \code{mixture}.}
+\item{nb_var}{from \code{mixture}.}
 }
 \description{
 This function estimate modes in univariate mixture distributions.
 The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures.
 The Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
-A basic algorithm is used for discrete mixtures (see Cross et al. 2023).
+A basic algorithm is used for discrete mixtures (see Cross et al. 2024).
 }
 \details{
 This function finds modes in a univariate mixture defined as:
 \deqn{p(.) = \sum_{k=1}^{K}\pi_k p_k(.),}
-where \eqn{p_k} is a density or probability mass function.
+where \eqn{p_k} is a density or probability mass/density function.
 
 \strong{Fixed-point algorithm}
 Following Carreira-perpinan (2000), a mode \eqn{x} is found by iterating the two steps:
@@ -61,8 +61,7 @@ until convergence, that is, until \eqn{abs(x^{(n+1)}-x^{(n)})< \text{tol}_\text{
 where \eqn{\text{tol}_\text{conv}} is an argument with default value \eqn{1e-8}.
 Following Carreira-perpinan (2000), the algorithm is started at each component location.
 Separately, it is necessary to identify identical modes which diverge only up to
-a small value. By default modes which are closer
-than \eqn{sd(y)/10} are merged; this tolerance value can be controlled with the argument
+a small value; this tolerance value can be controlled with the argument
 \code{tol_x}.
 
 \strong{MEM algorithm}
@@ -73,13 +72,11 @@ until convergence, that is, until \eqn{abs(x^{(n+1)}-x^{(n)})< \text{tol}_\text{
 where \eqn{\text{tol}_\text{conv}} is an argument with default value \eqn{1e-8}.
 The algorithm is started at each component location.
 Separately, it is necessary to identify identical modes which diverge only up to
-a small value. By default modes which are closer
-than \eqn{sd(y)/10} are merged; this tolerance value can be controlled with the argument
-\code{tol_x}.
+a small value. Modes which are closer then \code{tol_x} are merged.
 
 \strong{Discrete method}
 By definition, modes must satisfy either:
-\deqn{p(y_{m}-1) < p(y_{m}) > p(y_{m}+1)};
+\deqn{p(y_{m}-1) < p(y_{m}) > p(y_{m}+1);}
 \deqn{p(y_{m}-1) < p(y_{m}) = p(y_{m}+1) = \ldots = p(y_{m}+l-1) > p(y_{m}+l).}
 
 The algorithm evaluate each location point with these two conditions.
@@ -92,7 +89,7 @@ sigma = c(1,2)
 p = c(0.5,0.5)
 
 params = c(eta = p, mu = mu, sigma = sigma)
-mix = new_Mixture(params, dist = "normal")
+mix = mixture(params, dist = "normal")
 modes = mix_mode(mix)
 
 # summary(modes)
@@ -106,7 +103,7 @@ p = c(0.8,0.2)
 params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
 dist = "skew_normal"
 
-mix = new_Mixture(params, dist = dist)
+mix = mixture(params, dist = dist)
 modes = mix_mode(mix)
 # summary(modes)
 # plot(modes)
@@ -123,7 +120,7 @@ pdf_func <- function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 }
 
-mix = new_Mixture(params, pdf_func = pdf_func,
+mix = mixture(params, pdf_func = pdf_func,
 dist_type = "continuous", loc = "mu")
 modes = mix_mode(mix)
 
@@ -137,7 +134,7 @@ params = c(eta = p, lambda = lambda)
 dist = "poisson"
 
 
-mix = new_Mixture(params, range = c(0,50), dist = dist)
+mix = mixture(params, range = c(0,50), dist = dist)
 
 modes = mix_mode(mix)
 
@@ -155,7 +152,7 @@ pmf_func <- function(x, pars) {
   dnbinom(x, mu = pars["mu"], size = pars["size"])
 }
 
-mix = new_Mixture(params, range = c(0, 50),
+mix = mixture(params, range = c(0, 50),
 pdf_func = pmf_func, dist_type = "discrete")
 modes = mix_mode(mix)
 
