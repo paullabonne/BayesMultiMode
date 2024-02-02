@@ -1,11 +1,11 @@
 #' Bayesian estimation of mixture distributions
 #' 
-#' Gibbs samplers for sparse finite mixture Markov chain Monte Carlo (SFM MCMC) estimation.
+#' Estimation of a univariate mixture with unknown number of components using a sparse finite mixture Markov chain Monte Carlo (SFM MCMC) algorithm.
 #' 
 #' @param data Vector of observations.
 #' @param K Maximum number of mixture components.
 #' @param dist String indicating the distribution of the mixture components;
-#' Currently supports `"normal"`, `"skew_normal"`, `"poisson"` and `"shifted_poisson"`.
+#' currently supports `"normal"`, `"skew_normal"`, `"poisson"` and `"shifted_poisson"`.
 #' @param priors List of priors; default is an empty list which implies the following priors:\cr
 #' `a0 = 1`,\cr `A0 = 200`,\cr `b0 = median(y)`,\cr `B0 = (max(y) - min(y))^2` (normal),\cr
 #' `D_xi = 1`,\cr `D_psi =1`, (skew normal: `B0 = diag(D_xi,D_psi)`), \cr `c0 = 2.5`,\cr
@@ -16,13 +16,14 @@
 #' @param burnin Number of MCMC iterations used as burnin; default is `nb_iter/2`.
 #' @param print Showing MCMC progression ? Default is `TRUE`.
 #' 
-#' @return A list of class \code{BayesMixture} containing
+#' @return A list of class \code{BayesMixture} containing:
 #'  \item{data}{Same as argument.}
 #'  \item{mcmc}{Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
 #'  \item{mcmc_all}{Matrix of MCMC draws.}
 #'  \item{loglik}{Log likelihood at each MCMC draw.}
-#'  \item{loglik}{Number of components.}
+#'  \item{K}{Number of components.}
 #'  \item{dist}{Same as argument.}
+#'  \item{pdf_func}{The pdf/pmf of the mixture components.}
 #'  \item{dist_type}{Type of the distribution, i.e. continuous or discrete.}
 #'  \item{pars_names}{Names of the mixture components' parameters.}
 #'  \item{loc}{Name of the location parameter of the mixture components.}
@@ -36,24 +37,24 @@
 #' \deqn{y_i \sim \sum_{k=1}^{K}\pi_k p(\cdot|\theta_k)}
 #' with \eqn{\sum_{k=1}^{K}\pi_k=1} and \eqn{\pi_k\geq 0}, \eqn{k=1, ...,K}.
 #' \cr\cr
-#' The exact number of components does not have to be known a priori
-#' when using the SFM MCMC approach. Rather, an upper bound is specified for the
+#' The exact number of components does not have to be known *a priori*
+#' when using an SFM MCMC approach. Rather, an upper bound is specified for the
 #' number of components and the weights of superfluous components are shrunk
-#' towards zero during the estimation. Following Malsiner-Walli et al. (2016)
+#' towards zero during estimation. Following Malsiner-Walli et al. (2016)
 #' a symmetric Dirichlet prior is used for the mixture weights:
-#' \deqn{\pi_k \sim \text{Dirichlet}(e_0,\dots,e_0)}
+#' \deqn{\pi_k \sim \text{Dirichlet}(e_0,\dots,e_0),}
 #' where a Gamma hyperprior is used on the concentration parameter \eqn{e_0}:\cr\cr
-#' \deqn{e_0 \sim \text{Gamma}\left(a_0, A_0\right)}
+#' \deqn{e_0 \sim \text{Gamma}\left(a_0, A_0\right).}
 #' 
 #' **Mixture of Normal distributions**
 #' 
 #' Normal components take the form:
 #' \deqn{p(y_i|\mu_k,\sigma_k) = \frac{1}{\sqrt{2 \pi} \
 #'   \sigma_k} \exp\left( - \, \frac{1}{2}            \left(  \frac{y_i -
-#'       \mu_k}{\sigma_k} \right)^2     \right)}
+#'       \mu_k}{\sigma_k} \right)^2     \right).}
 #' 
 #' Independent conjugate priors are used for \eqn{\mu_k} and \eqn{\sigma^2_k}
-#' (see for instance Malsiner-Walli et al. 2016) :
+#' (see for instance Malsiner-Walli et al. 2016):
 #' \deqn{\mu_k \sim \text{Normal}( \text{b}_0, \text{B}_0),}
 #' \deqn{\sigma^{-2}_k \sim \text{Gamma}( \text{c}_0, \text{C}_0),}
 #' \deqn{C_0 \sim \text{Gamma}( \text{g}_0, \text{G}_0).}
@@ -64,14 +65,14 @@
 #' We use the skew-Normal of Azzalini (1985) which takes the form:
 #' \deqn{p(y_i| \xi_k,\omega_k,\alpha_k) = \frac{1}{\omega_k\sqrt{2\pi}} \ \exp\left( - \,
 #' \frac{1}{2}            \left(  \frac{y_i - \xi_k}{\omega_k} \right)^2\right) \
-#' \left(1 + \text{erf}\left( \alpha_k\left(\frac{y_i - \xi_k}{\omega_k\sqrt{2}}\right)\right)\right)}
+#' \left(1 + \text{erf}\left( \alpha_k\left(\frac{y_i - \xi_k}{\omega_k\sqrt{2}}\right)\right)\right),}
 #' where \eqn{\xi_k} is a location parameter, \eqn{\omega_k} a scale parameter and \eqn{\alpha_k}
 #' the shape parameter introducing skewness. For Bayesian estimation, we adopt the approach of
 #' Fruhwirth-Schnatter and Pyne (2010) and use the following reparameterised random-effect model:
-#' \deqn{z_i \sim TN_{[0,\infty)}(0, 1)}
-#' \deqn{y_i|(S_i = k) = \xi_k + \psi_k z_i + \epsilon_i, \quad \epsilon_i \sim N(0, \sigma^2_k)}
+#' \deqn{z_i \sim TN_{[0,\infty)}(0, 1),}
+#' \deqn{y_i|(S_i = k) = \xi_k + \psi_k z_i + \epsilon_i, \quad \epsilon_i \sim N(0, \sigma^2_k),}
 #' where the parameters of the skew-Normal are recovered with
-#' \deqn{\omega_k = \frac{\psi_k}{\sigma_k}, \qquad \omega^2_k = \sigma^2_k + \psi^2_k}
+#' \deqn{\omega_k = \frac{\psi_k}{\sigma_k}, \qquad \omega^2_k = \sigma^2_k + \psi^2_k.}
 #' By defining a regressor \eqn{x_i = (1, z_i)'}, the skew-Normal mixture can be seen as
 #' random effect model and sampled using standard techniques. Thus we use priors similar to
 #' the Normal mixture model:
@@ -94,8 +95,7 @@
 #' Shifted-Poisson components take the form
 #' \deqn{p(y_i |\lambda_k, \kappa_k) = \frac{1}{(y_i - \kappa_k)!} \,
 #' \lambda^{(y_i - \kappa_k)!}_k \,\exp(-\lambda_k)}
-#' where \eqn{\kappa_k} is a location or shift parameter with uniform prior.
-#' 
+#' where \eqn{\kappa_k} is a location or shift parameter with uniform prior, see Cross et al. (2024).
 #' 
 #' @references
 #' 
