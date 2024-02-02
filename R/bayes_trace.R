@@ -1,8 +1,8 @@
 #' Trace plots
 #' 
-#' This is wrapper around the [bayesplot::mcmc_trace()] function from package \pkg{bayesplot}.
+#' This is wrapper around the [bayesplot::mcmc_trace()] function from package `bayesplot`.
 #'
-#' @param BayesMix An object of class \code{BayesMixture}.
+#' @param BayesMix An object of class `BayesMixture`.
 #' @param mcmc_vars Variables to plot; default is all the variable in the MCMC output.
 #' @param with_burnin Plot all draws ?
 #' @param ... Additional arguments passed to function [bayesplot::mcmc_trace()].

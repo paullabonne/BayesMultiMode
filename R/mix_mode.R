@@ -3,7 +3,7 @@
 #' This function estimate modes in univariate mixture distributions.
 #' The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures.
 #' The Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
-#' A basic algorithm is used for discrete mixtures (see Cross et al. 2023).
+#' A basic algorithm is used for discrete mixtures (see Cross et al. 2024).
 #' 
 #' @param mixture An object of class `Mixture` generated with [new_Mixture()].
 #' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes;
@@ -15,15 +15,15 @@
 #' @param inside_range Should modes outside of `mixture$range` be discarded? Default is `TRUE`.
 #' This sometimes occurs with very small components when K is large.  
 #' 
-#' @return A list of class \code{Mode} containing
-#'  \item{mode_estimates}{estimates of the mixture modes}
-#'  \item{algo}{algorithm used for mode estimation}
-#'  \item{dist}{from `mixture`}
-#'  \item{dist_type}{type of mixture distribution, i.e. continuous or discrete}
-#'  \item{pars}{from `mixture`}
-#'  \item{pdf_func}{from `mixture`}
-#'  \item{K}{from `mixture`}
-#'  \item{nb_var}{from `mixture`}
+#' @return A list of class \code{Mode} containing:
+#'  \item{mode_estimates}{estimates of the mixture modes.}
+#'  \item{algo}{algorithm used for mode estimation.}
+#'  \item{dist}{from `mixture`.}
+#'  \item{dist_type}{type of mixture distribution, i.e. continuous or discrete.}
+#'  \item{pars}{from `mixture`.}
+#'  \item{pdf_func}{from `mixture`.}
+#'  \item{K}{from `mixture`.}
+#'  \item{nb_var}{from `mixture`.}
 #' 
 #' @references
 #' \insertRef{cross_2023}{BayesMultiMode}
@@ -32,7 +32,7 @@
 #' 
 #' This function finds modes in a univariate mixture defined as:
 #' \deqn{p(.) = \sum_{k=1}^{K}\pi_k p_k(.),}
-#' where \eqn{p_k} is a density or probability mass function.
+#' where \eqn{p_k} is a density or probability mass/density function.
 #' 
 #' **Fixed-point algorithm**
 #' Following Carreira-perpinan (2000), a mode \eqn{x} is found by iterating the two steps:
@@ -44,9 +44,8 @@
 #' where \eqn{\text{tol}_\text{conv}} is an argument with default value \eqn{1e-8}.
 #' Following Carreira-perpinan (2000), the algorithm is started at each component location.
 #' Separately, it is necessary to identify identical modes which diverge only up to
-#' a small value. By default modes which are closer
-#' than \eqn{sd(y)/10} are merged; this tolerance value can be controlled with the argument
-#' \code{tol_x}.
+#' a small value; this tolerance value can be controlled with the argument
+#' `tol_x`.
 #' 
 #' **MEM algorithm**
 #' Following Li and Lindsay (2007), a mode \eqn{x} is found by iterating the two steps:
@@ -56,13 +55,11 @@
 #' where \eqn{\text{tol}_\text{conv}} is an argument with default value \eqn{1e-8}.
 #' The algorithm is started at each component location.
 #' Separately, it is necessary to identify identical modes which diverge only up to
-#' a small value. By default modes which are closer
-#' than \eqn{sd(y)/10} are merged; this tolerance value can be controlled with the argument
-#' \code{tol_x}.
+#' a small value. Modes which are closer then `tol_x` are merged.
 #' 
 #' **Discrete method**
 #' By definition, modes must satisfy either: 
-#'  \deqn{p(y_{m}-1) < p(y_{m}) > p(y_{m}+1)};
+#'  \deqn{p(y_{m}-1) < p(y_{m}) > p(y_{m}+1);}
 #'  \deqn{p(y_{m}-1) < p(y_{m}) = p(y_{m}+1) = \ldots = p(y_{m}+l-1) > p(y_{m}+l).}
 #'  
 #'  The algorithm evaluate each location point with these two conditions.
@@ -76,10 +73,7 @@
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.string
 #' @importFrom assertthat is.scalar
-#' @importFrom stringr str_remove
 #' @importFrom sn dst
-#' @importFrom sn dsn
-#' @importFrom graphics abline curve
 #' @importFrom stats dnorm sd optim na.omit var
 #' 
 #' @examples

@@ -1,21 +1,22 @@
 #' Bayesian Mode Inference
 #' 
-#' This function carries out a Bayesian inference on the number of modes
-#' and their locations in a mixture estimated with MCMC methods, see Cross et al. 2023.
-#' Under the hood it calls the function [mix_mode()] on the mixture estimate of each MCMC draw.
+#' Bayesian inference on the modes in a univariate mixture estimated with MCMC methods, see Cross et al. 2024.
+#' Provides posterior probabilities of the number of modes and their locations.
+#' Under the hood it calls the function [mix_mode()] to find the modes in each MCMC draw.
 #' 
 #' @param BayesMix An object of class `BayesMixture` generated with either [bayes_estimation()] or [new_BayesMixture()].
-#' @param rd (for continuous mixtures) Integer indicating the number of decimal places when rounding the location domain.
+#' @param rd (for continuous mixtures) Integer indicating the number of decimal places when rounding the distribution's support.
 #' It is necessary to compute posterior probabilities of mode locations.
 #' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes;
 #' note that this does not apply to the biggest component so that it is not possible to discard all components;
 #' should be between `0` and `1`; default is `0`.
-#' @param tol_x (for continuous mixtures) Tolerance parameter for distance in-between modes; default is `sd(data)/10` where data qre the observations from `BayesMix`.
+#' @param tol_x (for continuous mixtures) Tolerance parameter for distance in-between modes; default is `sd(data)/10`
+#' where data is the vector of observations from `BayesMix`.
 #' If two modes are closer than `tol_x`, only the first estimated mode is kept.
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
 #' @param inside_range Should modes outside of the observations range be discarded? Default is `TRUE`.
 #' This sometimes occurs with very small components when K is large.  
-#' @return A list of class `BayesMode` containing
+#' @return A list of class `BayesMode` containing:
 #'  \item{data}{From `BayesMix`.}
 #'  \item{dist}{From `BayesMix`.}
 #'  \item{dist_type}{From `BayesMix`.}
@@ -23,7 +24,7 @@
 #'  \item{modes}{Matrix with a row for each draw and columns showing modes.}
 #'  \item{p1}{Posterior probability of unimodality.}
 #'  \item{tb_nb_modes}{Matrix showing posterior probabilities for the number of modes.}
-#'  \item{table_location}{Matrix showing the posterior probabilities for location points being modes.}
+#'  \item{table_location}{Matrix showing posterior probabilities for mode locations.}
 #'  \item{algo}{Algorithm used for mode estimation.}
 #' 
 #' @details
