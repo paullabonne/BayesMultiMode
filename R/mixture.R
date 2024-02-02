@@ -1,6 +1,6 @@
 #' Creating a S3 object of class `mixture`
 #' 
-#' Function for creating an object of class `mixture` which can subsequently be used as argument in [mix_mode()] to find its modes.
+#' Creates an object of class `mixture` which can subsequently be used as argument in [mix_mode()] for mode estimation.
 #' 
 #' @param pars Named vector of mixture parameters.
 #' @param dist String indicating the distribution of the mixture components; default is `"NA"`.

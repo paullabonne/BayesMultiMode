@@ -1,6 +1,6 @@
 #' Find modes in mixtures
 #' 
-#' This function estimate modes in univariate mixture distributions.
+#' Mode estimation in univariate mixture distributions.
 #' The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures.
 #' The Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
 #' A basic algorithm is used for discrete mixtures (see Cross et al. 2024).
@@ -15,7 +15,7 @@
 #' @param inside_range Should modes outside of `mixture$range` be discarded? Default is `TRUE`.
 #' This sometimes occurs with very small components when K is large.  
 #' 
-#' @return A list of class \code{mix_mode} containing:
+#' @return A list of class `mix_mode` containing:
 #'  \item{mode_estimates}{estimates of the mixture modes.}
 #'  \item{algo}{algorithm used for mode estimation.}
 #'  \item{dist}{from `mixture`.}

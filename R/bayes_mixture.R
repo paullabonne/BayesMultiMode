@@ -1,8 +1,8 @@
 #' Creating a S3 object of class `bayes_mixture`
 #' 
-#' Function for creating an object of class `bayes_mixture` which can subsequently be used as argument in [bayes_mode()].
-#' This function is useful for users who want to use the mode inference functions of the package with MCMC output generated using 
-#' other software packages.
+#' Creates an object of class `bayes_mixture` which can subsequently be used as argument in [bayes_mode()].
+#' This function is useful for users who want to use the mode inference capabilities of `BayesMultiMode` with mixture
+#' estimated using external software.
 #' 
 #' @param mcmc A matrix of MCMC draws.
 #' @param data A vector containing the data used for estimating the model and generating the MCMC draws.

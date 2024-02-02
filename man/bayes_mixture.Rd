@@ -58,9 +58,9 @@ A list of class \code{bayes_mixture} containing
 \item{nb_var}{ - number of variables/parameters in the mixture distribution}
 }
 \description{
-Function for creating an object of class \code{bayes_mixture} which can subsequently be used as argument in \code{\link[=bayes_mode]{bayes_mode()}}.
-This function is useful for users who want to use the mode inference functions of the package with MCMC output generated using
-other software packages.
+Creates an object of class \code{bayes_mixture} which can subsequently be used as argument in \code{\link[=bayes_mode]{bayes_mode()}}.
+This function is useful for users who want to use the mode inference capabilities of \code{BayesMultiMode} with mixture
+estimated using external software.
 }
 \examples{
 

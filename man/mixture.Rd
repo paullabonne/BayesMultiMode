@@ -41,7 +41,7 @@ A list of class \code{mixture} containing:
 \item{range}{Same as argument.}
 }
 \description{
-Function for creating an object of class \code{mixture} which can subsequently be used as argument in \code{\link[=mix_mode]{mix_mode()}} to find its modes.
+Creates an object of class \code{mixture} which can subsequently be used as argument in \code{\link[=mix_mode]{mix_mode()}} for mode estimation.
 }
 \examples{
 

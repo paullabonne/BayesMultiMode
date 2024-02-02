@@ -41,7 +41,7 @@ A list of class \code{mix_mode} containing:
 \item{nb_var}{from \code{mixture}.}
 }
 \description{
-This function estimate modes in univariate mixture distributions.
+Mode estimation in univariate mixture distributions.
 The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures.
 The Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
 A basic algorithm is used for discrete mixtures (see Cross et al. 2024).
