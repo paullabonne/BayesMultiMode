@@ -1,6 +1,6 @@
-#' Creating a S3 object of class `BayesMixture`
+#' Creating a S3 object of class `bayes_mixture`
 #' 
-#' Function for creating an object of class `BayesMixture` which can subsequently be used as argument in [bayes_mode()].
+#' Function for creating an object of class `bayes_mixture` which can subsequently be used as argument in [bayes_mode()].
 #' This function is useful for users who want to use the mode inference functions of the package with MCMC output generated using 
 #' other software packages.
 #' 
@@ -21,7 +21,7 @@
 #' @param loc (for continuous mixtures other than Normal mixtures) String indicating the location parameter
 #' of the distribution; the latter is used to initialise the MEM algorithm.
 #' 
-#' @return A list of class `BayesMixture` containing
+#' @return A list of class `bayes_mixture` containing
 #'  \item{data}{ - Same as argument}
 #'  \item{mcmc}{ - Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
 #'  \item{mcmc_all}{ - Matrix of MCMC draws}
@@ -73,21 +73,21 @@
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
 #' 
-#' BM = new_BayesMixture(fit, data, burnin = 50,
+#' BM = bayes_mixture(fit, data, burnin = 50,
 #' pdf_func = pdf_func, dist_type = dist_type, loc = "xi")
 #' # plot(BM)
 #' @export
 
-new_BayesMixture <- function(mcmc,
-                             data,
-                             burnin,
-                             dist = NA_character_,
-                             pdf_func = NULL,
-                             dist_type = NA_character_,
-                             loglik = NULL,
-                             vars_to_keep = NA_character_,
-                             vars_to_rename = NA_character_,
-                             loc = NA_character_) {
+bayes_mixture <- function(mcmc,
+                          data,
+                          burnin,
+                          dist = NA_character_,
+                          pdf_func = NULL,
+                          dist_type = NA_character_,
+                          loglik = NULL,
+                          vars_to_keep = NA_character_,
+                          vars_to_rename = NA_character_,
+                          loc = NA_character_) {
   ## input checks
   assert_that(is.matrix(mcmc))
   assert_that(is.string(dist))
@@ -120,7 +120,7 @@ new_BayesMixture <- function(mcmc,
                 msg = "vars_to_rename should be named character vector")
     assert_that(all(vars_to_rename %in% pars_names),
                 msg = "old variable names in vars_to_rename should all be in the retained mcmc variables")
-
+    
     new_names = colnames(mcmc)
     for (i in 1:length(vars_to_rename)) {
       new_names = str_replace_all(new_names,
@@ -131,7 +131,7 @@ new_BayesMixture <- function(mcmc,
     colnames(mcmc) = new_names
     pars_names = unique(str_extract(new_names, "[a-z]+"))
   }
-
+  
   list_func = test_and_export(mcmc[1,,drop =T], pdf_func, dist, pars_names, dist_type, loc)
   
   BayesMix = list(data = data,
@@ -146,7 +146,7 @@ new_BayesMixture <- function(mcmc,
                   loc = list_func$loc,
                   nb_var = length(pars_names) - 1) #minus the shares
   
-  class(BayesMix) <- "BayesMixture"
+  class(BayesMix) <- "bayes_mixture"
   
   return(BayesMix)
 }

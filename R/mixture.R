@@ -1,6 +1,6 @@
-#' Creating a S3 object of class `Mixture`
+#' Creating a S3 object of class `mixture`
 #' 
-#' Function for creating an object of class `Mixture` which can subsequently be used as argument in [mix_mode()] to find its modes.
+#' Function for creating an object of class `mixture` which can subsequently be used as argument in [mix_mode()] to find its modes.
 #' 
 #' @param pars Named vector of mixture parameters.
 #' @param dist String indicating the distribution of the mixture components; default is `"NA"`.
@@ -12,7 +12,7 @@
 #' of the distribution; the latter is used to initialise the MEM algorithm.
 #' 
 #' @returns
-#' A list of class `Mixture` containing:
+#' A list of class `mixture` containing:
 #'  \item{pars}{Same as argument.}
 #'  \item{pars_names}{Names of the parameters of the components' distribution.}
 #'  \item{dist}{Same as argument.}
@@ -33,7 +33,7 @@
 #' params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
 #' dist = "skew_normal"
 #' 
-#' mix = new_Mixture(params, dist = dist)
+#' mix = mixture(params, dist = dist)
 #' 
 #' # summary(mix)
 #' # plot(mix)
@@ -52,7 +52,7 @@
 #' }
 #' 
 #' 
-#' mix = new_Mixture(params, pdf_func = pdf_func,
+#' mix = mixture(params, pdf_func = pdf_func,
 #' dist_type = "continuous", loc = "mu")
 #' 
 #' # summary(mix)
@@ -60,7 +60,7 @@
 #' 
 #' @export
 
-new_Mixture <- function(pars,
+mixture <- function(pars,
                         dist = NA_character_,
                         pdf_func = NULL,
                         dist_type = NA_character_,
@@ -95,7 +95,7 @@ new_Mixture <- function(pars,
     }
   }
   
-  Mixture = list(pars = pars,
+  mixture = list(pars = pars,
                  pars_names = pars_names,
                  dist_type = list_func$dist_type,
                  dist = dist,
@@ -105,7 +105,7 @@ new_Mixture <- function(pars,
                  nb_var = length(pars_names) - 1, #minus the shares
                  K = list_func$K)
   
-  class(Mixture) <- "Mixture"
+  class(mixture) <- "mixture"
   
-  return(Mixture)
+  return(mixture)
 }
