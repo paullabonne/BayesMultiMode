@@ -16,7 +16,7 @@
 #' @param burnin Number of MCMC iterations used as burnin; default is `nb_iter/2`.
 #' @param print Showing MCMC progression ? Default is `TRUE`.
 #' 
-#' @return A list of class \code{BayesMixture} containing:
+#' @return A list of class \code{bayes_mixture} containing:
 #'  \item{data}{Same as argument.}
 #'  \item{mcmc}{Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
 #'  \item{mcmc_all}{Matrix of MCMC draws.}
@@ -117,7 +117,7 @@
 #' y = galaxy
 #'
 #' # estimation
-#' bayesmix = bayes_estimation(data = y,
+#' bayesmix = bayes_fit(data = y,
 #'                            K = 5, #not many to run the example rapidly
 #'                            dist = "normal",
 #'                            nb_iter = 500, #not many to run the example rapidly
@@ -134,7 +134,7 @@
 #'
 #' # estimation
 #' K = 5
-#' bayesmix = bayes_estimation(data = y,
+#' bayesmix = bayes_fit(data = y,
 #'                            K = K, #not many to run the example rapidly
 #'                            dist = "normal",
 #'                            priors = list(a0 = 10,
@@ -153,7 +153,7 @@
 #' y = d4z4
 #'
 #' # estimation
-#' bayesmix = bayes_estimation(data = y,
+#' bayesmix = bayes_fit(data = y,
 #'                            K = 5, #not many to run the example rapidly
 #'                            dist = "shifted_poisson",
 #'                            nb_iter = 500, #not many to run the example rapidly
@@ -164,13 +164,13 @@
 #' }
 #' 
 #' @export
-bayes_estimation <- function(data,
-                             K,
-                             dist,
-                             priors = list(),
-                             nb_iter = 2000,
-                             burnin = nb_iter/2,
-                             print = TRUE) {
+bayes_fit <- function(data,
+                      K,
+                      dist,
+                      priors = list(),
+                      nb_iter = 2000,
+                      burnin = nb_iter/2,
+                      print = TRUE) {
   
   assert_that(is.vector(data) & length(data) > K,
               msg = "data should be a vector of length greater than K")
@@ -178,8 +178,8 @@ bayes_estimation <- function(data,
               msg = "data should only include numeric finite values")
   assert_that(is.string(dist) & dist %in% c("normal", "skew_normal", "poisson", "shifted_poisson"),
               msg = paste0("Unsupported distribution;\n",
-              "dist should be either\n",
-              "'normal', 'skew_normal', 'poisson' or 'shifted_poisson'"))
+                           "dist should be either\n",
+                           "'normal', 'skew_normal', 'poisson' or 'shifted_poisson'"))
   assert_that(is.scalar(nb_iter), round(nb_iter) == nb_iter, nb_iter > 0, msg = "nb_iter should be a positive integer")
   assert_that(is.scalar(burnin), burnin > 0, burnin < nb_iter, round(burnin) == burnin,
               msg = "nb_iter should be a positive integer lower than burnin")
@@ -214,7 +214,7 @@ bayes_estimation <- function(data,
     dist_type = "continuous"
     
   } else if (dist == "poisson") {
-
+    
     priors_labels = c("a0", "A0", "e0", "l0", "L0")
     
     mcmc <- gibbs_SFM_poisson(y = data,
@@ -243,13 +243,13 @@ bayes_estimation <- function(data,
   ll_id = which(colnames(mcmc) == "loglik")
   loglik = mcmc[,ll_id]
   mcmc = mcmc[,-ll_id]
-
-  BayesMixture = new_BayesMixture(mcmc = mcmc,
-                                  data = data,
-                                  burnin = burnin,
-                                  dist = dist,
-                                  dist_type = dist_type,
-                                  loglik = loglik)
+  
+  BayesMixture = bayes_mixture(mcmc = mcmc,
+                               data = data,
+                               burnin = burnin,
+                               dist = dist,
+                               dist_type = dist_type,
+                               loglik = loglik)
   
   return(BayesMixture)
 }
