@@ -26,7 +26,7 @@
 #'  \item{nb_var}{from `mixture`.}
 #' 
 #' @references
-#' \insertRef{cross_2023}{BayesMultiMode}
+#' \insertRef{Cross2024}{BayesMultiMode}
 #' 
 #' @details
 #' 

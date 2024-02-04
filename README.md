@@ -17,7 +17,7 @@ modes of the estimated mixture in each MCMC draw are retrieved using
 algorithms specifically tailored for mode detection. These estimates are
 then used to construct posterior probabilities for the number of modes,
 their locations and uncertainties, providing a powerful tool for mode
-inference. See Basturk et al. (2023) and Cross et al. (2023) for more
+inference. See Basturk et al. (2023) and Cross et al. (2024) for more
 details.
 
 ### Installing BayesMultiMode from CRAN
@@ -238,12 +238,12 @@ Mode Inference in r.” *Tinbergen Institute Discussion Paper TI
 
 </div>
 
-<div id="ref-cross_2023" class="csl-entry">
+<div id="ref-Cross2024" class="csl-entry">
 
 Cross, Jamie L., Lennart Hoogerheide, Paul Labonne, and Herman K. van
-Dijk. 2023. “Credible Mode Determination in Multimodal Economic and
-Financial Data Distributions.” *Tinbergen Institute Discussion Paper TI
-2023-038/III*.
+Dijk. 2024. “Bayesian Mode Inference for Discrete Distributions in
+Economics and Finance.” *Economics Letters* 235 (February): 111579.
+<https://doi.org/10.1016/j.econlet.2024.111579>.
 
 </div>
 

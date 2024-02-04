@@ -161,7 +161,7 @@ modes = mix_mode(mix)
 
 }
 \references{
-\insertRef{cross_2023}{BayesMultiMode}
+\insertRef{Cross2024}{BayesMultiMode}
 
 \insertRef{li_nonparametric_2007}{BayesMultiMode}\cr\cr
 \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr

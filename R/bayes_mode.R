@@ -47,7 +47,7 @@
 #' it is therefore necessary to choose a rounding decimal to discretize their support (with the \code{rd} argument).
 #' 
 #' @references
-#' \insertRef{cross_2023}{BayesMultiMode}\cr\cr
+#' \insertRef{Cross2024}{BayesMultiMode}\cr\cr
 #
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.scalar

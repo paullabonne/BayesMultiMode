@@ -143,5 +143,5 @@ BayesMode = bayes_mode(bayesmix)
 
 }
 \references{
-\insertRef{cross_2023}{BayesMultiMode}\cr\cr
+\insertRef{Cross2024}{BayesMultiMode}\cr\cr
 }
