@@ -189,9 +189,9 @@ bayes_fit <- function(data,
   
   if (dist %in% c("poisson", "shifted_poisson")) {
     assert_that(!any(!data%%1==0),
-                msg = "data must include only integer values when using the Poisson or shifted Poisson.")
+                msg = "data must include only integer values when using Poisson or shifted Poisson mixtures.")
     assert_that(min(data) > -1,
-                msg = "data should not include negative values when using the Poisson or shifted Poisson.")
+                msg = "data should not include negative values when using Poisson or shifted Poisson mixtures.")
     dist_type = "discrete"
   } else {
     dist_type = "continuous"
