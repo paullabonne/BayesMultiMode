@@ -2,7 +2,7 @@
 % Please edit documentation in R/mix_mode.R
 \name{mix_mode}
 \alias{mix_mode}
-\title{Find modes in mixtures}
+\title{Mode estimation}
 \usage{
 mix_mode(
   mixture,

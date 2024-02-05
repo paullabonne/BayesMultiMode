@@ -2,7 +2,7 @@
 % Please edit documentation in R/bayes_mode.R
 \name{bayes_mode}
 \alias{bayes_mode}
-\title{Bayesian Mode Inference}
+\title{Bayesian mode inference}
 \usage{
 bayes_mode(
   BayesMix,

@@ -16,10 +16,16 @@ mixture(
 \arguments{
 \item{pars}{Named vector of mixture parameters.}
 
-\item{dist}{String indicating the distribution of the mixture components; default is \code{"NA"}.
-Currently supports \code{"normal"} and \code{"skew_normal"}; not needed if \code{pdf_func} is provided.}
+\item{dist}{Distribution family of the mixture components supported by
+the package (i.e. \code{"normal"}, \code{"student"}, \code{"skew_normal"} or \code{"shifted_poisson"}).
+If left unspecified, \code{pdf_func} is required.}
 
-\item{pdf_func}{Pdf of the mixture components; default is \code{NULL}.}
+\item{pdf_func}{(function) Pdf or pmf of the mixture components;
+this input is used only if \code{dist} is left unspecified.
+pdf_func should have two arguments : (i) the observation where the pdf is evaluated;
+(ii) a named vector representing the function parameters. For instance a normal pdf would take the form:
+\code{pdf_func <- function(x, par) dnorm(x, par['mu'], par['sigma'])}.
+The names of \code{par} should correspond to variables in \code{pars}, e.g. \code{"mu1"}, \code{"mu2"} etc...}
 
 \item{dist_type}{Type of the distribution, either \code{"continuous"} or \code{"discrete"}.}
 

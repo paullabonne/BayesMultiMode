@@ -17,11 +17,11 @@ test_that("bayes_mode works with external MCMC output", {
   }
   
   bayesmix = bayes_mixture(fit,
-                              data,
-                              burnin = 1,
-                              pdf_func = pdf_func,
-                              dist_type = dist_type,
-                              loc = "mu")
+                           data,
+                           burnin = 1,
+                           pdf_func = pdf_func,
+                           dist_type = dist_type,
+                           loc = "mu")
   
   bayesmode = bayes_mode(bayesmix)
   m = apply(bayesmode$modes,2,mean)
@@ -43,10 +43,10 @@ test_that("bayes_mode works with normal mixture", {
   
   # estimation
   bayesmix = bayes_fit(data = y,
-                              K = 2, #not many to run the example rapidly
-                              dist = "normal",
-                              nb_iter = 500, #not many to run the example rapidly
-                              burnin = 100)
+                       K = 2, #not many to run the example rapidly
+                       dist = "normal",
+                       nb_iter = 500, #not many to run the example rapidly
+                       burnin = 100)
   
   # mode estimation
   bayesmode = bayes_mode(bayesmix)
@@ -69,10 +69,10 @@ test_that("bayes_mode works with skew_normal mixture", {
   
   # estimation
   bayesmix = bayes_fit(data = y,
-                              K = 2, #not many to run the example rapidly
-                              dist = "skew_normal",
-                              nb_iter = 500, #not many to run the example rapidly
-                              burnin = 100)
+                       K = 2, #not many to run the example rapidly
+                       dist = "skew_normal",
+                       nb_iter = 500, #not many to run the example rapidly
+                       burnin = 100)
   
   # mode estimation
   bayesmode = bayes_mode(bayesmix)
@@ -96,10 +96,10 @@ test_that("bayes_mode works with shifted poisson mixture", {
   
   # estimation
   bayesmix = bayes_fit(data = y,
-                              K = 2, #not many to run the example rapidly
-                              dist = "shifted_poisson",
-                              nb_iter = 500, #not many to run the example rapidly
-                              burnin = 100)
+                       K = 2, #not many to run the example rapidly
+                       dist = "shifted_poisson",
+                       nb_iter = 500, #not many to run the example rapidly
+                       burnin = 100)
   
   # mode estimation
   bayesmode = bayes_mode(bayesmix)
@@ -127,10 +127,10 @@ test_that("bayes_mode works with poisson mixture", {
   
   # estimation
   bayesmix = bayes_fit(data = y,
-                              K = 2, #not many to run the example rapidly
-                              dist = "poisson",
-                              nb_iter = 500, #not many to run the example rapidly
-                              burnin = 100)
+                       K = 2, #not many to run the example rapidly
+                       dist = "poisson",
+                       nb_iter = 500, #not many to run the example rapidly
+                       burnin = 100)
   
   # mode estimation
   bayesmode = bayes_mode(bayesmix)
