@@ -520,8 +520,8 @@ check_priors <- function(priors, dist, data) {
   priors$a0 = ifelse(is.null(priors$a0), 1, priors$a0)
   priors$A0 = ifelse(is.null(priors$A0), 200, priors$A0)
   
-  assert_that(is.scalar(priors$a0) & priors$a0 > 0, msg = "A0 should be a scalar")
-  assert_that(is.scalar(priors$A0) & priors$A0 > 0, msg = "A0 should be a positive scalar")
+  assert_that(is.scalar(priors$a0), priors$a0 > 0, msg = "A0 should be a scalar")
+  assert_that(is.scalar(priors$A0), priors$A0 > 0, msg = "A0 should be a positive scalar")
   
   
   if (dist == "shifted_poisson") {
@@ -539,32 +539,30 @@ check_priors <- function(priors, dist, data) {
   }
   
   if (dist %in% c("shifted_poisson", "poisson")) {
-    assert_that(is.scalar(priors$L0) & priors$L0 > 0, msg = "L0 should be a positive scalar")
-    assert_that(is.scalar(priors$l0), msg = "l0 should be a scalar")
-  }
-  
-  if (dist %in% c("normal", "skew_normal")) {
-    priors$b0 = ifelse(is.null(priors$b0), median(data), priors$b0)
-    priors$B0 = ifelse(is.null(priors$B0), (max(data) - min(data))^2, priors$B0)
-    
-    assert_that(is.scalar(priors$b0), msg = "b0 should be a scalar")
-    assert_that(is.scalar(priors$B0) & priors$B0 > 0, msg = "B0 should be a positive scalar")
+    assert_that(is.scalar(priors$L0), priors$L0 > 0, msg = "L0 should be a positive scalar")
+    assert_that(is.scalar(priors$l0), priors$L0 > 0, msg = "l0 should be a positive scalar")
   }
   
   if (dist == "normal") {
     priors_labels = c("a0", "A0", "b0", "B0", "c0", "g0", "G0")
     
+    priors$b0 = ifelse(is.null(priors$b0), median(data), priors$b0)
+    priors$B0 = ifelse(is.null(priors$B0), (max(data) - min(data))^2, priors$B0)
     priors$c0 = ifelse(is.null(priors$c0), 2.5, priors$c0)
     priors$g0 = ifelse(is.null(priors$g0), 0.5, priors$g0)
     priors$G0 = ifelse(is.null(priors$G0), 100*priors$g0/priors$c0/priors$B0, priors$G0)
-    assert_that(is.scalar(priors$c0) & priors$c0 > 0, msg = "c0 should be a positive scalar")
-    assert_that(is.scalar(priors$g0) & priors$g0 > 0, msg = "g0 should be a positive scalar")
-    assert_that(is.scalar(priors$G0) & priors$G0 > 0, msg = "G0 should be a positive scalar")
+    
+    assert_that(is.scalar(priors$b0), msg = "b0 should be a scalar")
+    assert_that(is.scalar(priors$B0), priors$B0 > 0, msg = "B0 should be a positive scalar")
+    assert_that(is.scalar(priors$c0), priors$c0 > 0, msg = "c0 should be a positive scalar")
+    assert_that(is.scalar(priors$g0), priors$g0 > 0, msg = "g0 should be a positive scalar")
+    assert_that(is.scalar(priors$G0), priors$G0 > 0, msg = "G0 should be a positive scalar")
   }
   
   if (dist == "skew_normal") {
     priors_labels = c("a0", "A0", "b0", "c0", "C0", "g0", "G0", "D_xi", "D_psi")
     
+    priors$b0 = ifelse(is.null(priors$b0), median(data), priors$b0)
     priors$c0 = ifelse(is.null(priors$c0), 2.5, priors$c0)
     priors$C0 = ifelse(is.null(priors$C0), 0.5*var(data), priors$C0)
     priors$g0 = ifelse(is.null(priors$g0), 0.5, priors$g0)
@@ -572,12 +570,19 @@ check_priors <- function(priors, dist, data) {
     priors$D_xi = ifelse(is.null(priors$D_xi), 1, priors$D_xi)
     priors$D_psi = ifelse(is.null(priors$D_psi), 1, priors$D_psi)
     
-    assert_that(is.scalar(priors$C0) & priors$C0 > 0, msg = "C0 should be a positive scalar")
-    assert_that(is.scalar(priors$D_xi), msg = "D_xi should be a scalar")
-    assert_that(is.scalar(priors$D_psi), msg = "D_psi should be a scalar")
-    assert_that(is.scalar(priors$c0) & priors$c0 > 0, msg = "c0 should be a positive scalar")
-    assert_that(is.scalar(priors$g0) & priors$g0 > 0, msg = "g0 should be a positive scalar")
-    assert_that(is.scalar(priors$G0) & priors$G0 > 0, msg = "G0 should be a positive scalar")
+    assert_that(is.scalar(priors$b0), msg = "b0 should be a scalar")
+    assert_that(is.scalar(priors$D_xi), priors$D_xi > 0, msg = "D_xi should be a positive scalar")
+    assert_that(is.scalar(priors$D_psi), priors$D_psi > 0, msg = "D_psi should be a positive scalar")
+    assert_that(is.scalar(priors$c0), priors$c0 > 0, msg = "c0 should be a positive scalar")
+    assert_that(is.scalar(priors$C0), priors$C0 > 0, msg = "C0 should be a positive scalar")
+    assert_that(is.scalar(priors$g0), priors$g0 > 0, msg = "g0 should be a positive scalar")
+    assert_that(is.scalar(priors$G0), priors$G0 > 0, msg = "G0 should be a positive scalar")
+  }
+  
+  isnot = which(!names(priors) %in% priors_labels)
+  
+  if (length(isnot) > 0) {
+    warning(paste("prior(s)", names(priors)[isnot], "not needed when estimating a", dist, "mixture."))
   }
   
   return (priors[priors_labels])
