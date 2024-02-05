@@ -1,8 +1,6 @@
 ## Loading package
 ```{r}
 library(BayesMultiMode)
-
-BayesMultiMode::new_BayesMixture()
 ```
 
 ## 
@@ -27,6 +25,8 @@ devtools::check_rhub()
 devtools::test_coverage()
 
 devtools::submit_cran()
+
+devtools::spell_check()
 ```
 
 #### Loading all functions for testing before installing
