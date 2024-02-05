@@ -191,54 +191,20 @@ bayes_fit <- function(data,
     assert_that(!any(!data%%1==0),
                 msg = "data must include only integer values when using the Poisson or shifted Poisson.")
     assert_that(min(data) > -1,
-                msg = "data should not include negative values when using the Poisson or shifted Poisson.") 
+                msg = "data should not include negative values when using the Poisson or shifted Poisson.")
+    dist_type = "discrete"
+  } else {
+    dist_type = "continuous"
   }
   
-  if (dist == "normal") {
-    priors_labels = c("a0", "A0", "e0", "b0", "B0", "c0", "g0", "G0")
-    
-    mcmc = gibbs_SFM_normal(y = data,
-                            K = K,
-                            nb_iter = nb_iter,
-                            priors = priors[priors_labels],
-                            print = print)
-    dist_type = "continuous"
-    
-  } else if (dist == "skew_normal") {
-    priors_labels = c("a0", "A0", "e0", "b0", "c0", "C0", "g0", "G0", "D_xi", "D_psi")
-    
-    mcmc <- gibbs_SFM_skew_n(y = data,
-                             K = K,
-                             nb_iter = nb_iter,
-                             priors = priors[priors_labels],
-                             print = print)
-    dist_type = "continuous"
-    
-  } else if (dist == "poisson") {
-    
-    priors_labels = c("a0", "A0", "e0", "l0", "L0")
-    
-    mcmc <- gibbs_SFM_poisson(y = data,
-                              K = K,
-                              nb_iter = nb_iter,
-                              priors = priors[priors_labels],
-                              print = print)
-    dist_type = "discrete"
-    
-  } else if (dist == "shifted_poisson") {
-    
-    priors_labels = c("a0", "A0", "e0", "l0", "L0")
-    
-    mcmc <- gibbs_SFM_sp(y = data,
-                         K = K,
-                         nb_iter = nb_iter,
-                         priors = priors[priors_labels],
-                         print = print)
-    dist_type = "discrete"
-    
-  } else {
-    stop("mixture distribution not supported")
-  }
+  priors = check_priors(priors, dist, data)
+  
+  mcmc <- gibbs_SFM(y = data,
+                    K = K,
+                    nb_iter = nb_iter,
+                    priors = priors,
+                    print = print,
+                    dist = dist)
   
   # extract loglik from mcmc
   ll_id = which(colnames(mcmc) == "loglik")
