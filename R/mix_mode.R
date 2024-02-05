@@ -1,15 +1,15 @@
 #' Mode estimation
 #' 
 #' Mode estimation in univariate mixture distributions.
-#' The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures.
-#' The Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
-#' A basic algorithm is used for discrete mixtures (see Cross et al. 2024).
+#' The fixed-point algorithm of \insertCite{carreira-perpinan_mode-finding_2000;textual}{BayesMultiMode} is used for Gaussian mixtures.
+#' The Modal EM algorithm of \insertCite{li_nonparametric_2007;textual}{BayesMultiMode} is used for other continuous mixtures.
+#' A basic algorithm is used for discrete mixtures, see \insertCite{Cross2024;textual}{BayesMultiMode}.
 #' 
 #' @param mixture An object of class `mixture` generated with [mixture()].
 #' @param tol_mixp Components with a mixture proportion below `tol_mixp` are discarded when estimating modes;
 #' note that this does not apply to the biggest component so that it is not possible to discard all components;
 #' should be between `0` and `1`; default is `0`.
-#' @param tol_x (for continuous mixtures) Tolerance parameter for distance in-between modes; default is `1e-6`; if two modes are closer than `tol_x`, only the first estimated mode is kept.
+#' @param tol_x (for continuous mixtures) Tolerance parameter for distance in-between modes; default is `1e-6`; if two modes are closer than `tol_x` the first estimated mode is kept.
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
 #' @param type (for discrete mixtures) Type of modes, either `"unique"` or `"all"` (the latter includes flat modes); default is `"all"`.
 #' @param inside_range Should modes outside of `mixture$range` be discarded? Default is `TRUE`.
@@ -35,7 +35,7 @@
 #' where \eqn{p_k} is a density or probability mass/density function.
 #' 
 #' **Fixed-point algorithm**
-#' Following Carreira-perpinan (2000), a mode \eqn{x} is found by iterating the two steps:
+#' Following \insertCite{carreira-perpinan_mode-finding_2000;textual}{BayesMultiMode}, a mode \eqn{x} is found by iterating the two steps:
 #' \deqn{(i) \quad p(k|x^{(n)}) = \frac{\pi_k p_k(x^{(n)})}{p(x^{(n)})},}
 #' \deqn{(ii) \quad x^{(n+1)} = f(x^{(n)}),}
 #' with
@@ -48,7 +48,7 @@
 #' `tol_x`.
 #' 
 #' **MEM algorithm**
-#' Following Li and Lindsay (2007), a mode \eqn{x} is found by iterating the two steps:
+#' Following \insertCite{li_nonparametric_2007;textual}{BayesMultiMode}, a mode \eqn{x} is found by iterating the two steps:
 #' \deqn{(i) \quad p(k|x^{(n)}) = \frac{\pi_k p_k(x^{(n)})}{p(x^{(n)})},}
 #' \deqn{(ii) \quad x^{(n+1)} = \text{argmax}_x  \sum_k p(k|x) \text{log} p_k(x^{(n)}),}
 #' until convergence, that is, until \eqn{abs(x^{(n+1)}-x^{(n)})< \text{tol}_\text{conv}},
@@ -65,10 +65,7 @@
 #'  The algorithm evaluate each location point with these two conditions.
 #' 
 #' @references
-#' \insertRef{li_nonparametric_2007}{BayesMultiMode}\cr\cr
-#' \insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
-#' \insertRef{schaap_genome-wide_2013}{BayesMultiMode}
-#' 
+#' \insertAllCited{}
 #' 
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.string

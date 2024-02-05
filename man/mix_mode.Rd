@@ -20,7 +20,7 @@ mix_mode(
 note that this does not apply to the biggest component so that it is not possible to discard all components;
 should be between \code{0} and \code{1}; default is \code{0}.}
 
-\item{tol_x}{(for continuous mixtures) Tolerance parameter for distance in-between modes; default is \code{1e-6}; if two modes are closer than \code{tol_x}, only the first estimated mode is kept.}
+\item{tol_x}{(for continuous mixtures) Tolerance parameter for distance in-between modes; default is \code{1e-6}; if two modes are closer than \code{tol_x} the first estimated mode is kept.}
 
 \item{tol_conv}{(for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is \code{1e-8}.}
 
@@ -42,9 +42,9 @@ A list of class \code{mix_mode} containing:
 }
 \description{
 Mode estimation in univariate mixture distributions.
-The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures.
-The Modal EM algorithm of Li et al. (2007) is used for other continuous mixtures.
-A basic algorithm is used for discrete mixtures (see Cross et al. 2024).
+The fixed-point algorithm of \insertCite{carreira-perpinan_mode-finding_2000;textual}{BayesMultiMode} is used for Gaussian mixtures.
+The Modal EM algorithm of \insertCite{li_nonparametric_2007;textual}{BayesMultiMode} is used for other continuous mixtures.
+A basic algorithm is used for discrete mixtures, see \insertCite{Cross2024;textual}{BayesMultiMode}.
 }
 \details{
 This function finds modes in a univariate mixture defined as:
@@ -52,7 +52,7 @@ This function finds modes in a univariate mixture defined as:
 where \eqn{p_k} is a density or probability mass/density function.
 
 \strong{Fixed-point algorithm}
-Following Carreira-perpinan (2000), a mode \eqn{x} is found by iterating the two steps:
+Following \insertCite{carreira-perpinan_mode-finding_2000;textual}{BayesMultiMode}, a mode \eqn{x} is found by iterating the two steps:
 \deqn{(i) \quad p(k|x^{(n)}) = \frac{\pi_k p_k(x^{(n)})}{p(x^{(n)})},}
 \deqn{(ii) \quad x^{(n+1)} = f(x^{(n)}),}
 with
@@ -65,7 +65,7 @@ a small value; this tolerance value can be controlled with the argument
 \code{tol_x}.
 
 \strong{MEM algorithm}
-Following Li and Lindsay (2007), a mode \eqn{x} is found by iterating the two steps:
+Following \insertCite{li_nonparametric_2007;textual}{BayesMultiMode}, a mode \eqn{x} is found by iterating the two steps:
 \deqn{(i) \quad p(k|x^{(n)}) = \frac{\pi_k p_k(x^{(n)})}{p(x^{(n)})},}
 \deqn{(ii) \quad x^{(n+1)} = \text{argmax}_x  \sum_k p(k|x) \text{log} p_k(x^{(n)}),}
 until convergence, that is, until \eqn{abs(x^{(n+1)}-x^{(n)})< \text{tol}_\text{conv}},
@@ -163,7 +163,5 @@ modes = mix_mode(mix)
 \references{
 \insertRef{Cross2024}{BayesMultiMode}
 
-\insertRef{li_nonparametric_2007}{BayesMultiMode}\cr\cr
-\insertRef{carreira-perpinan_mode-finding_2000}{BayesMultiMode}\cr\cr
-\insertRef{schaap_genome-wide_2013}{BayesMultiMode}
+\insertAllCited{}
 }

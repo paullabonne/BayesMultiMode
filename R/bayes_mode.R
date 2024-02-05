@@ -1,6 +1,6 @@
 #' Bayesian mode inference
 #' 
-#' Bayesian inference on the modes in a univariate mixture estimated with MCMC methods, see Cross et al. 2024.
+#' Bayesian inference on the modes in a univariate mixture estimated with MCMC methods, see \insertCite{Cross2024;textual}{BayesMultiMode}.
 #' Provides posterior probabilities of the number of modes and their locations.
 #' Under the hood it calls the function [mix_mode()] to find the modes in each MCMC draw.
 #' 
@@ -47,7 +47,7 @@
 #' it is therefore necessary to choose a rounding decimal to discretize their support (with the \code{rd} argument).
 #' 
 #' @references
-#' \insertRef{Cross2024}{BayesMultiMode}\cr\cr
+#' \insertAllCited{}
 #
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.scalar

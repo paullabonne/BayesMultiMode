@@ -62,7 +62,7 @@ with \eqn{\sum_{k=1}^{K}\pi_k=1} and \eqn{\pi_k\geq 0}, \eqn{k=1, ...,K}.
 The exact number of components does not have to be known \emph{a priori}
 when using an SFM MCMC approach. Rather, an upper bound is specified for the
 number of components and the weights of superfluous components are shrunk
-towards zero during estimation. Following Malsiner-Walli et al. (2016)
+towards zero during estimation. Following \insertCite{malsiner-walli_model-based_2016;textual}{BayesMultiMode}
 a symmetric Dirichlet prior is used for the mixture weights:
 \deqn{\pi_k \sim \text{Dirichlet}(e_0,\dots,e_0),}
 where a Gamma hyperprior is used on the concentration parameter \eqn{e_0}:\cr\cr
@@ -83,13 +83,13 @@ Independent conjugate priors are used for \eqn{\mu_k} and \eqn{\sigma^2_k}
 
 \strong{Mixture of skew-Normal distributions}
 
-We use the skew-Normal of Azzalini (1985) which takes the form:
+We use the skew-Normal of \insertCite{azzalini_1985;textual}{BayesMultiMode} which takes the form:
 \deqn{p(y_i| \xi_k,\omega_k,\alpha_k) = \frac{1}{\omega_k\sqrt{2\pi}} \ \exp\left( - \,
 \frac{1}{2}            \left(  \frac{y_i - \xi_k}{\omega_k} \right)^2\right) \
 \left(1 + \text{erf}\left( \alpha_k\left(\frac{y_i - \xi_k}{\omega_k\sqrt{2}}\right)\right)\right),}
 where \eqn{\xi_k} is a location parameter, \eqn{\omega_k} a scale parameter and \eqn{\alpha_k}
 the shape parameter introducing skewness. For Bayesian estimation, we adopt the approach of
-Fruhwirth-Schnatter and Pyne (2010) and use the following reparameterised random-effect model:
+\insertCite{fruhwirth-schnatter_bayesian_2010;textual}{BayesMultiMode} and use the following reparameterised random-effect model:
 \deqn{z_i \sim TN_{[0,\infty)}(0, 1),}
 \deqn{y_i|(S_i = k) = \xi_k + \psi_k z_i + \epsilon_i, \quad \epsilon_i \sim N(0, \sigma^2_k),}
 where the parameters of the skew-Normal are recovered with
@@ -106,7 +106,7 @@ We set \deqn{\text{b}_0 = (\text{median}(y), 0)'} and \deqn{\text{B}_0 = \text{d
 
 Poisson components take the form:
 \deqn{p(y_i|\lambda_k) = \frac{1}{y_i!} \, \lambda^{y_i}_k \,\exp(-\lambda_k).}
-The prior for \eqn{\lambda_k} follows from Viallefont et al. (2002):
+The prior for \eqn{\lambda_k} follows from \insertCite{viallefont2002bayesian;textual}{BayesMultiMode}:
 \deqn{\lambda_k \sim \text{Gamma}(\text{l}_0,\text{L}_0).}
 
 \strong{Mixture of shifted-Poisson distributions}
@@ -114,7 +114,7 @@ The prior for \eqn{\lambda_k} follows from Viallefont et al. (2002):
 Shifted-Poisson components take the form
 \deqn{p(y_i |\lambda_k, \kappa_k) = \frac{1}{(y_i - \kappa_k)!} \,
 \lambda^{(y_i - \kappa_k)!}_k \,\exp(-\lambda_k)}
-where \eqn{\kappa_k} is a location or shift parameter with uniform prior, see Cross et al. (2024).
+where \eqn{\kappa_k} is a location or shift parameter with uniform prior, see \insertCite{Cross2024;textual}{BayesMultiMode}.
 }
 \examples{
 # Example with galaxy data ================================================
@@ -172,10 +172,5 @@ bayesmix = bayes_fit(data = y,
 
 }
 \references{
-\insertRef{Cross2024}{BayesMultiMode}\cr\cr
-\insertRef{malsiner-walli_model-based_2016}{BayesMultiMode}\cr\cr
-\insertRef{fruhwirth-schnatter_bayesian_2010}{BayesMultiMode}\cr\cr
-\insertRef{SFS:Mal:2019}{BayesMultiMode}\cr\cr
-\insertRef{azzalini_1985}{BayesMultiMode}\cr\cr
-\insertRef{viallefont2002bayesian}{BayesMultiMode}
+\insertAllCited{}
 }

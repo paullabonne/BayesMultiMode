@@ -47,7 +47,7 @@ A list of class \code{bayes_mode} containing:
 \item{BayesMix}{\code{BayesMix}.}
 }
 \description{
-Bayesian inference on the modes in a univariate mixture estimated with MCMC methods, see Cross et al. 2024.
+Bayesian inference on the modes in a univariate mixture estimated with MCMC methods, see \insertCite{Cross2024;textual}{BayesMultiMode}.
 Provides posterior probabilities of the number of modes and their locations.
 Under the hood it calls the function \code{\link[=mix_mode]{mix_mode()}} to find the modes in each MCMC draw.
 }
@@ -143,5 +143,5 @@ BayesMode = bayes_mode(bayesmix)
 
 }
 \references{
-\insertRef{Cross2024}{BayesMultiMode}\cr\cr
+\insertAllCited{}
 }
