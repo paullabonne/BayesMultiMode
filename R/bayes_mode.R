@@ -1,4 +1,4 @@
-#' Bayesian Mode Inference
+#' Bayesian mode inference
 #' 
 #' Bayesian inference on the modes in a univariate mixture estimated with MCMC methods, see Cross et al. 2024.
 #' Provides posterior probabilities of the number of modes and their locations.

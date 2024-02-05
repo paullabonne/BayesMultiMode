@@ -1,4 +1,4 @@
-#' Find modes in mixtures
+#' Mode estimation
 #' 
 #' Mode estimation in univariate mixture distributions.
 #' The fixed-point algorithm of Carreira-Perpinan (2000) is used for Gaussian mixtures.

@@ -8,9 +8,14 @@
 #' @param data A vector containing the data used for estimating the model and generating the MCMC draws.
 #' @param burnin Number of draws to discard as burnin.
 #' @param dist Distribution family of the mixture components supported by
-#' the package (e.g. `"normal"`, `"student"`, `"skew_normal"` or `"shifted_poisson"`).
-#' @param pdf_func Pdf or pmf of the mixture components;
-#' this input is used only if `dist_name` is invalid or `NULL`.
+#' the package (i.e. `"normal"`, `"student"`, `"skew_normal"` or `"shifted_poisson"`).
+#' If left unspecified, `pdf_func` is required.
+#' @param pdf_func (function) Pdf or pmf of the mixture components;
+#' this input is used only if `dist` is left unspecified.
+#' pdf_func should have two arguments : (i) the observation where the pdf is evaluated;
+#' (ii) a named vector representing the function parameters. For instance a normal pdf would take the form:
+#' `pdf_func <- function(x, pars) dnorm(x, pars['mu'], pars['sigma'])`.
+#' The names of `pars` should correspond to variables in `mcmc`, e.g. `"mu1"`, `"mu2"` etc... 
 #' @param dist_type Either `"continuous"` or `"discrete"`.
 #' @param loglik Vector showing the log likelihood at each MCMC draw.
 #' @param vars_to_keep (optional) Character vector containing the names
@@ -47,8 +52,8 @@
 #' mu_mat = matrix(rep(mu, 100) + rnorm(200, 0, 0.1),
 #'             ncol = 2, byrow = TRUE)
 #'
-#' sigma = c(1,2)
-#' sigma_mat = matrix(rep(sigma, 100) + rnorm(200, 0, 0.1),
+#' omega = c(1,2)
+#' sigma_mat = matrix(rep(omega, 100) + rnorm(200, 0, 0.1),
 #'             ncol = 2, byrow = TRUE)
 #' 
 #' nu = c(5,5)
@@ -64,18 +69,19 @@
 #' 
 #' dist_type = "continuous"
 #' 
-#' data = c(sn::rst(eta[1]*1000, mu[1], sigma[1], nu = nu[1]),
-#'         sn::rst(eta[2]*1000, mu[2], sigma[2], nu = nu[2]))
+#' data = c(sn::rst(eta[1]*1000, mu[1], omega[1], nu = nu[1]),
+#'         sn::rst(eta[2]*1000, mu[2], omega[2], nu = nu[2]))
 #' 
 #' fit = cbind(eta_mat, mu_mat, sigma_mat, nu_mat, xi_mat)
 #' colnames(fit) = c("eta1", "eta2", "mu1", "mu2",
-#'                   "sigma1", "sigma2", "nu1", "nu2", "xi1", "xi2")
+#'                   "omega1", "omega2", "nu1", "nu2", "xi1", "xi2")
 #' pdf_func = function(x, pars) {
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
 #' 
 #' BM = bayes_mixture(fit, data, burnin = 50,
-#' pdf_func = pdf_func, dist_type = dist_type, loc = "xi")
+#' pdf_func = pdf_func, dist_type = dist_type,
+#' vars_to_rename = c("sigma" = "omega"), loc = "xi")
 #' # plot(BM)
 #' @export
 

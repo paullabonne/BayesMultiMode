@@ -3,9 +3,15 @@
 #' Creates an object of class `mixture` which can subsequently be used as argument in [mix_mode()] for mode estimation.
 #' 
 #' @param pars Named vector of mixture parameters.
-#' @param dist String indicating the distribution of the mixture components; default is `"NA"`.
-#' Currently supports `"normal"` and `"skew_normal"`; not needed if `pdf_func` is provided.
-#' @param pdf_func Pdf of the mixture components; default is `NULL`.
+#' @param dist Distribution family of the mixture components supported by
+#' the package (i.e. `"normal"`, `"student"`, `"skew_normal"` or `"shifted_poisson"`).
+#' If left unspecified, `pdf_func` is required.
+#' @param pdf_func (function) Pdf or pmf of the mixture components;
+#' this input is used only if `dist` is left unspecified.
+#' pdf_func should have two arguments : (i) the observation where the pdf is evaluated;
+#' (ii) a named vector representing the function parameters. For instance a normal pdf would take the form:
+#' `pdf_func <- function(x, par) dnorm(x, par['mu'], par['sigma'])`.
+#' The names of `par` should correspond to variables in `pars`, e.g. `"mu1"`, `"mu2"` etc... 
 #' @param dist_type Type of the distribution, either `"continuous"` or `"discrete"`.
 #' @param range (optional for continuous mixtures) upper and lower limit of the range where the mixture should be evaluated.
 #' @param loc (for continuous mixtures other than Normal mixtures) String indicating the location parameter
