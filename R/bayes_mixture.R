@@ -4,8 +4,8 @@
 #' This function is useful for users who want to use the mode inference capabilities of `BayesMultiMode` with mixture
 #' estimated using external software.
 #' 
-#' @param mcmc A matrix of MCMC draws.
-#' @param data A vector containing the data used for estimating the model and generating the MCMC draws.
+#' @param mcmc A matrix of MCMC draws with one column per variable, e.g. eta1, eta2, ..., mu1, mu2, etc...
+#' @param data Vector of observation used for estimating the model.
 #' @param burnin Number of draws to discard as burnin.
 #' @param dist Distribution family of the mixture components supported by
 #' the package (i.e. `"normal"`, `"student"`, `"skew_normal"` or `"shifted_poisson"`).

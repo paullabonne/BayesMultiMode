@@ -18,9 +18,9 @@ bayes_mixture(
 )
 }
 \arguments{
-\item{mcmc}{A matrix of MCMC draws.}
+\item{mcmc}{A matrix of MCMC draws with one column per variable, e.g. eta1, eta2, ..., mu1, mu2, etc...}
 
-\item{data}{A vector containing the data used for estimating the model and generating the MCMC draws.}
+\item{data}{Vector of observation used for estimating the model.}
 
 \item{burnin}{Number of draws to discard as burnin.}
 
