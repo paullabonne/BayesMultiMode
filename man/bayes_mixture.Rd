@@ -42,7 +42,7 @@ The names of \code{pars} should correspond to variables in \code{mcmc}, e.g. \co
 \item{vars_to_keep}{(optional) Character vector containing the names
 of the variables to keep in \code{mcmc}.}
 
-\item{vars_to_rename}{(optional) Use for renaming variables in \code{mcmc}.
+\item{vars_to_rename}{(optional) Use for renaming variables/parameters in \code{mcmc}.
 A named character vector where the names are the new variable names
 and the elements the variables in \code{mcmc}, e.g. c("new_name" = "old_name").}
 
@@ -61,7 +61,7 @@ A list of class \code{bayes_mixture} containing:
 \item{dist_type}{Type of the distribution, i.e. continuous or discrete.}
 \item{pars_names}{Names of the mixture components' parameters.}
 \item{loc}{Name of the location parameter of the mixture components.}
-\item{nb_var}{Number of variables/parameters in the mixture distribution.}
+\item{nb_var}{Number of parameters in the mixture distribution.}
 }
 \description{
 Creates an object of class \code{bayes_mixture} which can subsequently be used as argument in \code{\link[=bayes_mode]{bayes_mode()}}.

@@ -20,7 +20,7 @@
 #' @param loglik Vector showing the log likelihood at each MCMC draw.
 #' @param vars_to_keep (optional) Character vector containing the names
 #' of the variables to keep in `mcmc`.
-#' @param vars_to_rename (optional) Use for renaming variables in `mcmc`.
+#' @param vars_to_rename (optional) Use for renaming variables/parameters in `mcmc`.
 #' A named character vector where the names are the new variable names
 #' and the elements the variables in `mcmc`, e.g. c("new_name" = "old_name").
 #' @param loc (for continuous mixtures other than Normal mixtures) String indicating the location parameter
@@ -37,7 +37,7 @@
 #'  \item{dist_type}{Type of the distribution, i.e. continuous or discrete.}
 #'  \item{pars_names}{Names of the mixture components' parameters.}
 #'  \item{loc}{Name of the location parameter of the mixture components.}
-#'  \item{nb_var}{Number of variables/parameters in the mixture distribution.}
+#'  \item{nb_var}{Number of parameters in the mixture distribution.}
 #' 
 #' @importFrom posterior subset_draws
 #' @importFrom stringr str_extract
