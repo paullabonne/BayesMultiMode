@@ -7,7 +7,7 @@
 bayes_mixture(
   mcmc,
   data,
-  burnin,
+  burnin = 0,
   dist = NA_character_,
   pdf_func = NULL,
   dist_type = NA_character_,
@@ -22,7 +22,7 @@ bayes_mixture(
 
 \item{data}{Vector of observation used for estimating the model.}
 
-\item{burnin}{Number of draws to discard as burnin.}
+\item{burnin}{Number of draws to discard as burnin; default is \code{0}.}
 
 \item{dist}{Distribution family of the mixture components supported by
 the package (i.e. \code{"normal"}, \code{"student"}, \code{"skew_normal"} or \code{"shifted_poisson"}).
