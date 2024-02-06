@@ -4,6 +4,7 @@
 #' 
 #' @param x An object of class `bayes_mixture`.
 #' @param draws The number of MCMC draws to plot.
+#' @param draw Plot estimated mixture in draw `draw`; note that `draws` is discarded. Default is `NULL`.
 #' @param bins (for continuous mixtures) Number of bins for the histogram of
 #' the data. Passed to `geom_histogram()`.
 #' @param alpha transparency of the density lines. Default is 0.1. Should be greater than 0 and below or equal to 1.
@@ -23,89 +24,108 @@
 #' 
 #' @export
 plot.bayes_mixture <- function(x, draws = 250,
+                               draw = NULL,
                                bins = 30,
                                alpha = 0.1, ...) {
   density <- component <- value <- NULL
   
-  assert_that(is.scalar(alpha) & alpha >= 0 & alpha <= 1,
-              msg = "alpha should be a scalar between zero and one")
-  
-  mcmc = x$mcmc
-  pdf_func = x$pdf_func
-  y = x$data
-  pars_names = x$pars_names
-  
-  if (x$dist_type == "continuous") {
-    ## plot the data
-    g = ggplot(data.frame(y = y), aes(y)) +
-      theme_gg +
-      theme(legend.position="none") +
-      xlab("") + ylab("Density") +
-      geom_histogram(aes(y = after_stat(density)),
-                     fill="grey33",
-                     colour = "white",
-                     bins = bins)
+  if (!is.null(draw)) {
     
-    ## plot the mixture for each draw
-    for (i in sample(nrow(mcmc),min(nrow(mcmc), draws))) {
-      pars = vec_to_mat(mcmc[i, , drop = T], pars_names)
-      pars = na.omit(pars)
+    assert_that(is.scalar(draw), round(draw) == draw, draw <= nrow(x$mcmc),
+                draw > 0,
+                msg = paste("draw should be an integer greater than zero and ",
+                            "inferior to the number of MCMC draws in",
+                            deparse(substitute(x))))
+    
+    mix = mixture(x$mcmc[draw,],
+                  dist = x$dist,
+                  pdf_func = x$pdf_func,
+                  dist_type = x$dist_type,
+                  loc = x$loc,
+                  range = c(min(x$data), max(x$data)))
+    
+    plot(mix)
+  } else {
+    assert_that(is.scalar(alpha) & alpha >= 0 & alpha <= 1,
+                msg = "alpha should be a scalar between zero and one")
+    
+    mcmc = x$mcmc
+    pdf_func = x$pdf_func
+    y = x$data
+    pars_names = x$pars_names
+    
+    if (x$dist_type == "continuous") {
+      ## plot the data
+      g = ggplot(data.frame(y = y), aes(y)) +
+        theme_gg +
+        theme(legend.position="none") +
+        xlab("") + ylab("Density") +
+        geom_histogram(aes(y = after_stat(density)),
+                       fill="grey33",
+                       colour = "white",
+                       bins = bins)
       
-      g = g +
-        geom_function(fun = pdf_func_mix,
-                      args = list(pdf_func = pdf_func,
-                                  pars = pars),
-                      alpha = alpha,
-                      colour = "#FF6347")
-    } 
-  }
-  
-  if (x$dist_type == "discrete") {
-    ####### Discrete distribution
-    d_y = rep(NA,length(unique(y)))
-    for (i in 1:length(d_y)){
-      d_y[i] = length(y[y==unique(y)[i]])/length(y)
+      ## plot the mixture for each draw
+      for (i in sample(nrow(mcmc),min(nrow(mcmc), draws))) {
+        pars = vec_to_mat(mcmc[i, , drop = T], pars_names)
+        pars = na.omit(pars)
+        
+        g = g +
+          geom_function(fun = pdf_func_mix,
+                        args = list(pdf_func = pdf_func,
+                                    pars = pars),
+                        alpha = alpha,
+                        colour = "#FF6347")
+      } 
     }
     
-    df_y_temp = tibble(density = d_y,
-                       x = unique(y))
-    
-    x_all = seq(min(y),max(y),1)
-    
-    mixture_uncertainty = matrix(NA, length(x_all), draws)
-    j = 1
-    for (i in sample(nrow(mcmc),min(nrow(mcmc), draws))) {
-      ##
-      pars = vec_to_mat(mcmc[i, ], pars_names)
-      pars = na.omit(pars)
+    if (x$dist_type == "discrete") {
+      ####### Discrete distribution
+      d_y = rep(NA,length(unique(y)))
+      for (i in 1:length(d_y)){
+        d_y[i] = length(y[y==unique(y)[i]])/length(y)
+      }
       
-      mixture_uncertainty[,j] = pdf_func_mix(x_all, pars, pdf_func)
-      j = j+1
+      df_y_temp = tibble(density = d_y,
+                         x = unique(y))
+      
+      x_all = seq(min(y),max(y),1)
+      
+      mixture_uncertainty = matrix(NA, length(x_all), draws)
+      j = 1
+      for (i in sample(nrow(mcmc),min(nrow(mcmc), draws))) {
+        ##
+        pars = vec_to_mat(mcmc[i, ], pars_names)
+        pars = na.omit(pars)
+        
+        mixture_uncertainty[,j] = pdf_func_mix(x_all, pars, pdf_func)
+        j = j+1
+      }
+      
+      # 
+      df_y = tibble(x = seq(min(y),max(y),1)) %>%
+        left_join(df_y_temp, by=c("x"="x")) %>%
+        mutate(density = ifelse(is.na(density),0,density)) %>%
+        cbind(mixture_uncertainty)
+      
+      df_y %<>%
+        gather(-x,-density,key="component",value="value")
+      
+      g = ggplot(df_y, aes(x=x)) + 
+        theme_gg +
+        theme(legend.position="none") +
+        xlab("") + ylab("Probability") +
+        geom_col(data = filter(df_y,component=="1"),aes(y=density,fill="grey33"),colour="white",alpha=1) +
+        geom_line(aes(y=value,colour=component),alpha= alpha) +
+        scale_colour_manual(values=rep("#FF6347",length(unique(df_y$component)))) +
+        scale_fill_manual(name = "",
+                          values = c("grey33"), # Color specification
+                          labels = c("Data density"))
+      
     }
     
-    # 
-    df_y = tibble(x = seq(min(y),max(y),1)) %>%
-      left_join(df_y_temp, by=c("x"="x")) %>%
-      mutate(density = ifelse(is.na(density),0,density)) %>%
-      cbind(mixture_uncertainty)
-    
-    df_y %<>%
-      gather(-x,-density,key="component",value="value")
-    
-    g = ggplot(df_y, aes(x=x)) + 
-      theme_gg +
-      theme(legend.position="none") +
-      xlab("") + ylab("Probability") +
-      geom_col(data = filter(df_y,component=="1"),aes(y=density,fill="grey33"),colour="white",alpha=1) +
-      geom_line(aes(y=value,colour=component),alpha= alpha) +
-      scale_colour_manual(values=rep("#FF6347",length(unique(df_y$component)))) +
-      scale_fill_manual(name = "",
-                        values = c("grey33"), # Color specification
-                        labels = c("Data density"))
-    
+    g
   }
-  
-  g
 }
 
 
@@ -125,21 +145,23 @@ plot.bayes_mode <- function(x, graphs = c("p1", "number", "loc"), draw = NULL, .
   Pb <- value <- `posterior probability` <- `number of modes` <- `mode location` <- NULL
   
   if (!is.null(draw)) {
-    assert_that(is.scalar(draw),
-                msg = paste0("draw should be a scale greater than zero and ",
-                             "inferior to the number of mcmc draws used in",
-                             deparse(substitute(x))))
     
     BayesMix = x$BayesMix
-  
-    mix = mixture(BayesMix$mcmc[draw,],
-            dist = BayesMix$dist,
-            pdf_func = BayesMix$pdf_func,
-            dist_type = BayesMix$dist_type,
-            loc = BayesMix$loc,
-            range = x$range)
     
-    modes = mix_mode(mix)
+    assert_that(is.scalar(draw), round(draw) == draw, draw <= nrow(BayesMix$mcmc),
+                draw > 0,
+                msg = paste("draw should be an integer greater than zero and ",
+                            "inferior to the number of MCMC draws in",
+                            deparse(substitute(x))))
+    
+    mix = mixture(BayesMix$mcmc[draw,],
+                  dist = BayesMix$dist,
+                  pdf_func = BayesMix$pdf_func,
+                  dist_type = BayesMix$dist_type,
+                  loc = BayesMix$loc,
+                  range = x$range)
+    
+    modes = mix_mode(mix, inside_range = F)
     
     plot(modes)
   } else {
@@ -228,71 +250,39 @@ plot.bayes_mode <- function(x, graphs = c("p1", "number", "loc"), draw = NULL, .
 #' 
 #' @param x An object of class `mixture`.
 #' @param from the lower limit of the range over which the function will be plotted.
+#' Default is `x$range[1]`.
 #' @param to the upper limit of the range over which the function will be plotted.
+#' Default is `x$range[2]`.
 #' @param ... Not used.
 #' 
 #' @importFrom graphics curve
 #' 
 #' @export
-plot.mixture <- function(x, from = NULL, to = NULL, ...) {
-  assert_that(is.null(from)|(is.numeric(from) && is.finite(to)),
-              is.null(to)|(is.numeric(to) && is.finite(to)),
-              msg = "arguments from and to must be numeric and finite")
-  
+plot.mixture <- function(x, from = x$range[1], to = x$range[2], ...) {
   pars = x$pars
   mode_est = x$mode_estimates
   pdf_func = x$pdf_func
   dist = x$dist
   
-  if (dist %in% c("normal", "skew_normal")) {
-    par_names = str_extract(names(pars), "[a-z]+")
-    mu = pars[par_names %in% c("mu", "xi")]
-    sigma = pars[par_names %in% c("sigma", "omega")]
-    
-    # calculate min and max for x axis
-    if (is.null(from)) {
-      min_mu = min(mu)
-      min_sigma = sigma[mu == min_mu]
-      min_x = min_mu - 4*min_sigma
-    } else {
-      min_x = from
-    }
-    
-    if (is.null(to)) {
-      max_mu = max(mu)
-      max_sigma = sigma[mu == max_mu]
-      max_x = max_mu + 4*max_sigma
-    } else {
-      max_x = to
-    }
-    
-    pars = vec_to_mat(pars, par_names)
-    curve(pdf_func_mix(x, pars, pdf_func), from = min_x,
-          to = max_x, xlab = "", ylab = "")
-    
-  } else if (x$dist_type == "continuous") {
-    assert_that(!is.null(from) & !is.null(to),
-                msg = "arguments from and to must be provided when plotting
-                a continuous distribution other than the normal and skew
-                normal provided by BayesMultiMode.")
-    
-    assert_that(is.finite(from) && is.finite(to),
+  assert_that(is.finite(from), is.finite(from),
+              is.finite(to), is.finite(to),
                 msg = "from and to must be finite")
-    
+  
+  assert_that(from < to,
+              msg = "from must be lower than to")
+  
+  if (x$dist_type == "continuous") {
     par_names = str_extract(names(pars), "[a-z]+")
     pars = vec_to_mat(pars, par_names)
+    pars = na.omit(pars)
     curve(pdf_func_mix(x, pars, pdf_func), from = from,
           to = to, xlab = "", ylab = "")
     
   } else if (x$dist_type  == "discrete") {
-    assert_that(!is.null(from) & !is.null(to),
-                msg = "arguments from and to must be provided when plotting
-                a discrete mixture.")
-    assert_that(is.finite(from) && is.finite(to),
-                msg = "from and to must be finite")
     xx = round(from):round(to)
     par_names = str_extract(names(pars), "[a-z]+")
     pars_mat = vec_to_mat(pars, par_names)
+    pars_mat = na.omit(pars_mat)
     py = pdf_func_mix(xx, pars_mat, pdf_func)
     
     plot(xx, py, type = "h", xlab = "", ylab = "", lwd = 4,
@@ -304,21 +294,32 @@ plot.mixture <- function(x, from = NULL, to = NULL, ...) {
 #' 
 #' @param x An object of class `mix_mode`.
 #' @param from the lower limit of the range over which the function will be plotted.
+#' Default is `x$range[1]`.
 #' @param to the upper limit of the range over which the function will be plotted.
+#' Default is `x$range[2]`.
 #' @param ... Not used.
 #' 
 #' @importFrom graphics curve abline
 #' 
 #' @export
-plot.mix_mode <- function(x, from = NULL, to = NULL, ...) {
+plot.mix_mode <- function(x, from = x$range[1], to = x$range[2], ...) {
   mix = mixture(x$pars, dist = x$dist,
                 pdf_func = x$pdf_func,
                 dist_type = x$dist_type,
                 range = x$range)
   
+  modes = x$mode_estimates
+  modes_outside = modes[modes > x$range[2] | modes < x$range[1]]
+  modes_inside = modes[modes <= x$range[2] & modes >= x$range[1]]
+  
   plot(mix, from = from, to = to)
-  for (m in x$mode_estimates) {
+  
+  for (m in modes_inside) {
     abline(v = m, col = "red")
+  }
+  
+  for (m in modes_outside) {
+    abline(v = m, lty = 2, col = "grey")
   }
 }
 

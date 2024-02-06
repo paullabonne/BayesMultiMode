@@ -67,11 +67,11 @@
 #' @export
 
 mixture <- function(pars,
-                        dist = NA_character_,
-                        pdf_func = NULL,
-                        dist_type = NA_character_,
-                        range = NULL,
-                        loc = NA_character_) {
+                    dist = NA_character_,
+                    pdf_func = NULL,
+                    dist_type = NA_character_,
+                    range = NULL,
+                    loc = NA_character_) {
   ## input checks
   assert_that(is.string(dist))
   assert_that(is.string(dist_type))

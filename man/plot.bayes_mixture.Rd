@@ -4,12 +4,14 @@
 \alias{plot.bayes_mixture}
 \title{Plot method for \code{bayes_mixture} objects}
 \usage{
-\method{plot}{bayes_mixture}(x, draws = 250, bins = 30, alpha = 0.1, ...)
+\method{plot}{bayes_mixture}(x, draws = 250, draw = NULL, bins = 30, alpha = 0.1, ...)
 }
 \arguments{
 \item{x}{An object of class \code{bayes_mixture}.}
 
 \item{draws}{The number of MCMC draws to plot.}
+
+\item{draw}{Plot estimated mixture in draw \code{draw}; note that \code{draws} is discarded. Default is \code{NULL}.}
 
 \item{bins}{(for continuous mixtures) Number of bins for the histogram of
 the data. Passed to \code{geom_histogram()}.}

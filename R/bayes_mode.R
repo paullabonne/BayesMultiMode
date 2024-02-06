@@ -14,7 +14,9 @@
 #' where data is the vector of observations from `BayesMix`.
 #' If two modes are closer than `tol_x`, only the first estimated mode is kept.
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
-#' @param inside_range Should modes outside of the observations range be discarded? Default is `TRUE`.
+#' @param inside_range Should modes outside of `range` be discarded? Default is `TRUE`.
+#' @param range limits of the support where modes are saved (if `inside_range` is `TRUE`);
+#' default is `c(min(BayesMix$data), max(BayesMix$data))`.
 #' This sometimes occurs with very small components when K is large.  
 #' @return A list of class `bayes_mode` containing:
 #'  \item{data}{From `BayesMix`.}
@@ -126,7 +128,7 @@
 #' # summary(BayesMode)
 #'
 #' @export
-bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8, inside_range = TRUE) {
+bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8, inside_range = TRUE, range = c(min(BayesMix$data), max(BayesMix$data))) {
   assert_that(inherits(BayesMix, "bayes_mixture"), msg = "BayesMix should be an object of class bayes_mixture")
   assert_that(all(c("data", "mcmc", "mcmc_all",
                     "loglik", "K", "dist",
@@ -147,17 +149,23 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   pars_names = BayesMix$pars_names
   loc = BayesMix$loc
   
-  if (dist_type == "continuous") {
-    range = c(min(data) - sd(data), max(data) + sd(data)) 
-  } else {
-    range = c(min(data), max(data))
-  }
+    assert_that(is.vector(range) & length(range) == 2,
+                msg = "range should be a vector of length 2")
+    assert_that(all(is.finite(range)),
+                msg = "lower and upper limits of range should be finite")
+    assert_that(range[2] > range[1],
+                msg = "upper limit of range not greater than lower limit")
+    
+    if (dist %in% c("poisson", "shifted_poisson")) {
+      assert_that(all(range>=0),
+                  msg = "lower limit should be greater or equal than zero when using the Poisson or shifted Poisson.")
+    }
   
   modes = t(apply(mcmc, 1, mix_mode_estimates, dist = dist,
                   pdf_func = pdf_func, dist_type = dist_type,
                   tol_mixp = tol_mixp, tol_x = tol_x, tol_conv = tol_conv,
                   loc = loc, range = range,
-                  inside_range = TRUE))
+                  inside_range = inside_range))
 
   # Number of modes 
   n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw

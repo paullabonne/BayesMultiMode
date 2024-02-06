@@ -175,6 +175,7 @@ mix_mode <- function(mixture, tol_mixp = 0, tol_x = 1e-6, tol_conv = 1e-8, type 
   mode$pdf_func = pdf_func
   mode$K = mixture$K
   mode$nb_var = mixture$nb_var
+  mode$range = range
   
   pars_mat <- vec_to_mat(pars, pars_names)
   tol_mixp_c = min(tol_mixp, pars_mat[, "eta"]) # the component with highest proportion cannot be excluded

@@ -4,14 +4,16 @@
 \alias{plot.mixture}
 \title{Plot method for \code{mixture} objects}
 \usage{
-\method{plot}{mixture}(x, from = NULL, to = NULL, ...)
+\method{plot}{mixture}(x, from = x$range[1], to = x$range[2], ...)
 }
 \arguments{
 \item{x}{An object of class \code{mixture}.}
 
-\item{from}{the lower limit of the range over which the function will be plotted.}
+\item{from}{the lower limit of the range over which the function will be plotted.
+Default is \code{x$range[1]}.}
 
-\item{to}{the upper limit of the range over which the function will be plotted.}
+\item{to}{the upper limit of the range over which the function will be plotted.
+Default is \code{x$range[2]}.}
 
 \item{...}{Not used.}
 }

@@ -10,7 +10,8 @@ bayes_mode(
   tol_mixp = 0,
   tol_x = sd(BayesMix$data)/10,
   tol_conv = 1e-08,
-  inside_range = TRUE
+  inside_range = TRUE,
+  range = c(min(BayesMix$data), max(BayesMix$data))
 )
 }
 \arguments{
@@ -29,7 +30,10 @@ If two modes are closer than \code{tol_x}, only the first estimated mode is kept
 
 \item{tol_conv}{(for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is \code{1e-8}.}
 
-\item{inside_range}{Should modes outside of the observations range be discarded? Default is \code{TRUE}.
+\item{inside_range}{Should modes outside of \code{range} be discarded? Default is \code{TRUE}.}
+
+\item{range}{limits of the support where modes are saved (if \code{inside_range} is \code{TRUE});
+default is \code{c(min(BayesMix$data), max(BayesMix$data))}.
 This sometimes occurs with very small components when K is large.}
 }
 \value{

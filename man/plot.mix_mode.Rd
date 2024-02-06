@@ -4,14 +4,16 @@
 \alias{plot.mix_mode}
 \title{Plot method for \code{mix_mode} objects}
 \usage{
-\method{plot}{mix_mode}(x, from = NULL, to = NULL, ...)
+\method{plot}{mix_mode}(x, from = x$range[1], to = x$range[2], ...)
 }
 \arguments{
 \item{x}{An object of class \code{mix_mode}.}
 
-\item{from}{the lower limit of the range over which the function will be plotted.}
+\item{from}{the lower limit of the range over which the function will be plotted.
+Default is \code{x$range[1]}.}
 
-\item{to}{the upper limit of the range over which the function will be plotted.}
+\item{to}{the upper limit of the range over which the function will be plotted.
+Default is \code{x$range[2]}.}
 
 \item{...}{Not used.}
 }
