@@ -19,7 +19,7 @@
 #' @param dist_type Either `"continuous"` or `"discrete"`.
 #' @param loglik Vector showing the log likelihood at each MCMC draw.
 #' @param vars_to_keep (optional) Character vector containing the names
-#' of the variables to keep in `mcmc`.
+#' of the variables to keep in `mcmc`, e.g. `c("eta", "mu", "sigma")`.
 #' @param vars_to_rename (optional) Use for renaming variables/parameters in `mcmc`.
 #' A named character vector where the names are the new variable names
 #' and the elements the variables in `mcmc`, e.g. c("new_name" = "old_name").
