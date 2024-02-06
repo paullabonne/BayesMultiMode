@@ -1,3 +1,6 @@
+## Version 0.7.1
+* Range argument not optional any more when plotting mixtures
+
 ## Version 0.7.0
 * Major changes around the structure of the package
 * bayes_estimation() renamed to bayes_fit()

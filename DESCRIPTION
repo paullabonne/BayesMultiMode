@@ -1,7 +1,7 @@
 Package: BayesMultiMode
 Type: Package
 Title: Bayesian Mode Inference
-Version: 0.7.0
+Version: 0.7.0.9000
 Authors@R: c(person(given = "Nalan", family = "Baştürk", role = "aut"),
   person(given = "Jamie", family = "Cross", role = "aut"),
   person(given = "Peter", family = "de Knijff", role = "aut"),
