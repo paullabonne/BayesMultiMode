@@ -59,7 +59,7 @@ p = c(0.8,0.2)
 params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
 dist = "skew_normal"
 
-mix = mixture(params, dist = dist)
+mix = mixture(params, dist = dist, range = c(-2,10))
 
 # summary(mix)
 # plot(mix)
@@ -78,7 +78,7 @@ pdf_func <- function(x, pars) {
 
 
 mix = mixture(params, pdf_func = pdf_func,
-dist_type = "continuous", loc = "mu")
+dist_type = "continuous", loc = "mu", range = c(-2,10))
 
 # summary(mix)
 # plot(mix, from = -4, to = 4)

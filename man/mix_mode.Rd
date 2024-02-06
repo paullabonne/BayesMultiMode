@@ -89,7 +89,7 @@ sigma = c(1,2)
 p = c(0.5,0.5)
 
 params = c(eta = p, mu = mu, sigma = sigma)
-mix = mixture(params, dist = "normal")
+mix = mixture(params, dist = "normal", range = c(-5,15))
 modes = mix_mode(mix)
 
 # summary(modes)
@@ -103,7 +103,7 @@ p = c(0.8,0.2)
 params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
 dist = "skew_normal"
 
-mix = mixture(params, dist = dist)
+mix = mixture(params, dist = dist, range = c(-5,15))
 modes = mix_mode(mix)
 # summary(modes)
 # plot(modes)
@@ -121,7 +121,7 @@ pdf_func <- function(x, pars) {
 }
 
 mix = mixture(params, pdf_func = pdf_func,
-dist_type = "continuous", loc = "mu")
+dist_type = "continuous", loc = "mu", range = c(-5,15))
 modes = mix_mode(mix)
 
 # summary(modes)
@@ -139,7 +139,7 @@ mix = mixture(params, range = c(0,50), dist = dist)
 modes = mix_mode(mix)
 
 # summary(modes)
-# plot(modes, from = 0, to = 20)
+# plot(modes)
 
 # Example with an arbitrary discrete distribution =======================
 mu = c(20,5)
@@ -157,7 +157,7 @@ pdf_func = pmf_func, dist_type = "discrete")
 modes = mix_mode(mix)
 
 # summary(modes)
-# plot(modes, from = 0, to = 50)
+# plot(modes)
 
 }
 \references{

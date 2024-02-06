@@ -76,7 +76,7 @@ test_that("mix_mode() function returns expected results with dist = skew_normal"
   params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
   dist = "skew_normal"
   
-  mix = mixture(params, dist = dist)
+  mix = mixture(params, dist = dist, range = c(-5,10))
   modes = mix_mode(mix)
   
   expect_snapshot(summary(mix))
@@ -104,7 +104,8 @@ test_that("mix_mode() function returns expected results with an arbitrary functi
   
   mix = mixture(params, pdf_func = pdf_func,
                     dist_type = "continuous",
-                    loc = "mu")
+                    loc = "mu",
+                range = c(-5,10))
   modes = mix_mode(mix)
   
   expect_snapshot(summary(mix))
@@ -123,7 +124,7 @@ test_that("mix_mode() function returns expected results", {
   
   params = c(eta = p, mu = mu, sigma = sigma)
   
-  mix = mixture(params, dist = "normal")
+  mix = mixture(params, dist = "normal", range = c(-4,10))
   modes = mix_mode(mix)
   
   expect_snapshot(summary(mix))
