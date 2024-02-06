@@ -13,7 +13,7 @@
 #' `pdf_func <- function(x, par) dnorm(x, par['mu'], par['sigma'])`.
 #' The names of `par` should correspond to variables in `pars`, e.g. `"mu1"`, `"mu2"` etc... 
 #' @param dist_type Type of the distribution, either `"continuous"` or `"discrete"`.
-#' @param range (optional for continuous mixtures) upper and lower limit of the range where the mixture should be evaluated.
+#' @param range upper and lower limit of the range where the mixture should be evaluated.
 #' @param loc (for continuous mixtures other than Normal mixtures) String indicating the location parameter
 #' of the distribution; the latter is used to initialise the MEM algorithm.
 #' 
@@ -70,7 +70,7 @@ mixture <- function(pars,
                     dist = NA_character_,
                     pdf_func = NULL,
                     dist_type = NA_character_,
-                    range = NULL,
+                    range,
                     loc = NA_character_) {
   ## input checks
   assert_that(is.string(dist))
@@ -85,20 +85,18 @@ mixture <- function(pars,
   
   list_func = test_and_export(pars, pdf_func, dist, pars_names, dist_type, loc)
   
-  if (list_func$dist_type == "discrete") {
-    assert_that(!is.null(range),
-                msg = "range argument must be filled when using a discrete distribution")
-    assert_that(is.vector(range) & length(range) == 2,
-                msg = "range should be a vector of length 2")
-    assert_that(all(is.finite(range)),
-                msg = "lower and upper limits of range should be finite")
-    assert_that(range[2] > range[1],
-                msg = "upper limit of range not greater than lower limit")
-    
-    if (dist %in% c("poisson", "shifted_poisson")) {
-      assert_that(all(range>=0),
-                  msg = "lower limit should be greater or equal than zero when using the Poisson or shifted Poisson.")
-    }
+  assert_that(!is.null(range),
+              msg = "range argument must be filled when using a discrete distribution")
+  assert_that(is.vector(range) & length(range) == 2,
+              msg = "range should be a vector of length 2")
+  assert_that(all(is.finite(range)),
+              msg = "lower and upper limits of range should be finite")
+  assert_that(range[2] > range[1],
+              msg = "upper limit of range not greater than lower limit")
+  
+  if (dist %in% c("poisson", "shifted_poisson")) {
+    assert_that(all(range>=0),
+                msg = "lower limit should be greater or equal than zero when using the Poisson or shifted Poisson.")
   }
   
   mixture = list(pars = pars,

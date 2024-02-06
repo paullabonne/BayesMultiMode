@@ -9,7 +9,7 @@ mixture(
   dist = NA_character_,
   pdf_func = NULL,
   dist_type = NA_character_,
-  range = NULL,
+  range,
   loc = NA_character_
 )
 }
@@ -29,7 +29,7 @@ The names of \code{par} should correspond to variables in \code{pars}, e.g. \cod
 
 \item{dist_type}{Type of the distribution, either \code{"continuous"} or \code{"discrete"}.}
 
-\item{range}{(optional for continuous mixtures) upper and lower limit of the range where the mixture should be evaluated.}
+\item{range}{upper and lower limit of the range where the mixture should be evaluated.}
 
 \item{loc}{(for continuous mixtures other than Normal mixtures) String indicating the location parameter
 of the distribution; the latter is used to initialise the MEM algorithm.}

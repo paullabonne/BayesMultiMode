@@ -152,7 +152,7 @@ pars = c(eta = fit$parameters$pro,
          mu = fit$parameters$mean,
          sigma = sqrt(fit$parameters$variance$sigmasq))
 
-mix = mixture(pars, dist = "normal") # create new object of class Mixture
+mix = mixture(pars, dist = "normal", range = c(min(y), max(y))) # create new object of class Mixture
 modes = mix_mode(mix) # estimate modes
 
 plot(modes)
