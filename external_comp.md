@@ -1,16 +1,13 @@
 Compatibility with other R packages
 ================
 
-``` r
-library(BayesMultiMode)
-library(posterior)
-```
-
-## Bayesian estimation and mode inference
-
 In the examples presented below external R packages are used for
 Bayesian estimation of mixture models while `BayesMultiMode` is used for
 mode inference.
+
+``` r
+library(BayesMultiMode)
+```
 
 ### rjags
 
@@ -75,7 +72,7 @@ fit = coda.samples(model, variable.names = c("mu", "tau", "theta"), n.iter = 200
 #### Create a BayesMixture object
 
 ``` r
-fit_mat = as_draws_matrix(fit)
+fit_mat = posterior::as_draws_matrix(fit)
 bmix = bayes_mixture(mcmc = fit_mat,
                         data = y,
                         burnin = 0, # the burnin has already been discarded
@@ -115,12 +112,12 @@ summary(bayesmode)
     ## Snapshot of inference results on mode locations:
     ##   table_location (matrix, dim 55x2): 
     ##      mode location posterior probability
-    ## [1,]          -0.2                0.0125
-    ## [2,]          -0.1                0.0875
-    ## [3,]           0.0                0.3000
+    ## [1,]          -0.2                0.0080
+    ## [2,]          -0.1                0.0855
+    ## [3,]           0.0                0.3125
     ## [4,]           0.1                0.0000
-    ## [5,]           0.2                0.1915
-    ## [6,]           0.3                0.0325
+    ## [5,]           0.2                0.1755
+    ## [6,]           0.3                0.0310
     ## ... (49 more rows)
 
 ### rstan
@@ -177,8 +174,8 @@ fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, ch
     ## 
     ## SAMPLING FOR MODEL '07e8533f6a3188d2d50eb989867b63d7' NOW (CHAIN 1).
     ## Chain 1: 
-    ## Chain 1: Gradient evaluation took 4.9e-05 seconds
-    ## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.49 seconds.
+    ## Chain 1: Gradient evaluation took 4.5e-05 seconds
+    ## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.45 seconds.
     ## Chain 1: Adjust your expectations accordingly!
     ## Chain 1: 
     ## Chain 1: 
@@ -195,15 +192,15 @@ fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, ch
     ## Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
     ## Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
     ## Chain 1: 
-    ## Chain 1:  Elapsed Time: 0.25367 seconds (Warm-up)
-    ## Chain 1:                0.194892 seconds (Sampling)
-    ## Chain 1:                0.448562 seconds (Total)
+    ## Chain 1:  Elapsed Time: 0.252847 seconds (Warm-up)
+    ## Chain 1:                0.194443 seconds (Sampling)
+    ## Chain 1:                0.44729 seconds (Total)
     ## Chain 1:
 
 #### Create a BayesMixture object
 
 ``` r
-fit_mat = as_draws_matrix(fit)
+fit_mat = posterior::as_draws_matrix(fit)
 bmix = bayes_mixture(mcmc = fit_mat,
                         data = y,
                         burnin = 0, # the burnin has already been discarded
@@ -324,25 +321,24 @@ plot(bayesmode)
 summary(bayesmode)
 ```
 
-    ## Posterior probability of multimodality is 0.058 
+    ## Posterior probability of multimodality is 0.005 
     ## 
     ## Snapshot of inference results on the number of modes:
-    ##   tb_nb_modes (matrix, dim 3x2): 
+    ##   tb_nb_modes (matrix, dim 2x2): 
     ##      number of modes posterior probability
-    ## [1,]               1                 0.942
-    ## [2,]               2                 0.046
-    ## [3,]               3                 0.012
+    ## [1,]               1                 0.995
+    ## [2,]               2                 0.005
     ## 
     ## Snapshot of inference results on mode locations:
-    ##   table_location (matrix, dim 75x2): 
+    ##   table_location (matrix, dim 68x2): 
     ##      mode location posterior probability
-    ## [1,]           4.7                 0.001
-    ## [2,]           4.8                 0.002
-    ## [3,]           4.9                 0.010
-    ## [4,]           5.0                 0.049
-    ## [5,]           5.1                 0.000
-    ## [6,]           5.2                 0.125
-    ## ... (69 more rows)
+    ## [1,]           4.9                 0.002
+    ## [2,]           5.0                 0.013
+    ## [3,]           5.1                 0.000
+    ## [4,]           5.2                 0.062
+    ## [5,]           5.3                 0.000
+    ## [6,]           5.4                 0.159
+    ## ... (62 more rows)
 
 ### BNPmix
 
@@ -511,8 +507,7 @@ mix = mixture(pars, dist = "normal", range = c(min(y), max(y))) # creates a new 
 summary(mix)
 ```
 
-    ## 
-    ##  Estimated mixture distribution.
+    ## Estimated mixture distribution.
     ## - Mixture type: continuous
     ## - Number of components: 2
     ## - Distribution family: normal

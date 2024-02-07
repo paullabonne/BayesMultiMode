@@ -10,13 +10,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+In the examples presented below external R packages are used for Bayesian estimation of mixture models while `BayesMultiMode` is used for mode inference.
+
 ```{r}
 library(BayesMultiMode)
-library(posterior)
 ```
-
-## Bayesian estimation and mode inference
-In the examples presented below external R packages are used for Bayesian estimation of mixture models while `BayesMultiMode` is used for mode inference.
 
 ### rjags
 #### Estimation
@@ -65,7 +63,7 @@ fit = coda.samples(model, variable.names = c("mu", "tau", "theta"), n.iter = 200
 
 #### Create a BayesMixture object
 ```{r}
-fit_mat = as_draws_matrix(fit)
+fit_mat = posterior::as_draws_matrix(fit)
 bmix = bayes_mixture(mcmc = fit_mat,
                         data = y,
                         burnin = 0, # the burnin has already been discarded
@@ -138,7 +136,7 @@ fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, ch
 
 #### Create a BayesMixture object
 ```{r}
-fit_mat = as_draws_matrix(fit)
+fit_mat = posterior::as_draws_matrix(fit)
 bmix = bayes_mixture(mcmc = fit_mat,
                         data = y,
                         burnin = 0, # the burnin has already been discarded

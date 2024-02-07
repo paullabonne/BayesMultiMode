@@ -83,7 +83,7 @@ plot(bayesmode)
 summary(bayesmode)
 ```
 
-    ## Posterior probability of multimodal is 0.993 
+    ## Posterior probability of multimodality is 0.993 
     ## 
     ## Snapshot of inference results on the number of modes:
     ##   tb_nb_modes (matrix, dim 4x2): 
@@ -191,7 +191,7 @@ plot(bayesmode)
 summary(bayesmode)
 ```
 
-    ## Posterior probability of multimodal is 1 
+    ## Posterior probability of multimodality is 1 
     ## 
     ## Snapshot of inference results on the number of modes:
     ##   tb_nb_modes (matrix, dim 2x2): 
@@ -220,12 +220,7 @@ example using the popular package `mclust`. More examples can be found
 ``` r
 set.seed(123)
 library(mclust)
-```
 
-    ## Package 'mclust' version 6.0.0
-    ## Type 'citation("mclust")' for citing this R package in publications.
-
-``` r
 y = cyclone %>%
   filter(BASIN == "SI",
          SEASON > "1981") %>%
@@ -250,8 +245,7 @@ plot(modes)
 summary(modes)
 ```
 
-    ## 
-    ##  Modes of a normal mixture with 3 components.
+    ## Modes of a normal mixture with 3 components.
     ## - Number of modes found: 3
     ## - Mode estimation technique: fixed-point algorithm
     ## - Estimates of mode locations:
