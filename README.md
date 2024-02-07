@@ -83,15 +83,26 @@ plot(bayesmode)
 summary(bayesmode)
 ```
 
-    ## The posterior probability of the data being multimodal is 0.993
+    ## Posterior probability of multimodal is 0.993 
     ## 
-    ##  Number of estimated modes and their posterior probabilities:
-
-    ##      Number of modes Posterior probabilty
-    ## [1,]               1                0.007
-    ## [2,]               2                0.133
-    ## [3,]               3                0.840
-    ## [4,]               4                0.020
+    ## Snapshot of inference results on the number of modes:
+    ##   tb_nb_modes (matrix, dim 4x2): 
+    ##      number of modes posterior probability
+    ## [1,]               1                 0.007
+    ## [2,]               2                 0.133
+    ## [3,]               3                 0.840
+    ## [4,]               4                 0.020
+    ## 
+    ## Snapshot of inference results on mode locations:
+    ##   table_location (matrix, dim 252x2): 
+    ##      mode location posterior probability
+    ## [1,]           9.2                 0.021
+    ## [2,]           9.3                 0.000
+    ## [3,]           9.4                 0.000
+    ## [4,]           9.5                 0.083
+    ## [5,]           9.6                 0.132
+    ## [6,]           9.7                 0.117
+    ## ... (246 more rows)
 
 ### BayesMultiMode for mode inference with external MCMC output
 
@@ -180,13 +191,24 @@ plot(bayesmode)
 summary(bayesmode)
 ```
 
-    ## The posterior probability of the data being multimodal is 1
+    ## Posterior probability of multimodal is 1 
     ## 
-    ##  Number of estimated modes and their posterior probabilities:
-
-    ##      Number of modes Posterior probabilty
-    ## [1,]               2                0.897
-    ## [2,]               3                0.103
+    ## Snapshot of inference results on the number of modes:
+    ##   tb_nb_modes (matrix, dim 2x2): 
+    ##      number of modes posterior probability
+    ## [1,]               2                 0.897
+    ## [2,]               3                 0.103
+    ## 
+    ## Snapshot of inference results on mode locations:
+    ##   table_location (matrix, dim 793x2): 
+    ##      mode location posterior probability
+    ## [1,]          40.2                 0.001
+    ## [2,]          40.3                 0.000
+    ## [3,]          40.4                 0.000
+    ## [4,]          40.5                 0.001
+    ## [5,]          40.6                 0.000
+    ## [6,]          40.7                 0.000
+    ## ... (787 more rows)
 
 ### BayesMultiMode for mode estimation in mixtures estimated with ML
 
@@ -222,7 +244,7 @@ modes = mix_mode(mix) # estimate modes
 plot(modes)
 ```
 
-![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
+<img src="man/figures/README-unnamed-chunk-12-1.png" width="70%" style="display: block; margin: auto;" />
 
 ### References
 

@@ -3,7 +3,7 @@
     Code
       summary(bayesmode)
     Output
-      Posterior probability of multimodal is 1 
+      Posterior probability of multimodality is 1 
       
       Snapshot of inference results on the number of modes:
         tb_nb_modes (matrix, dim 1x2): 
@@ -26,7 +26,7 @@
     Code
       summary(bayesmode)
     Output
-      Posterior probability of multimodal is 1 
+      Posterior probability of multimodality is 1 
       
       Snapshot of inference results on the number of modes:
         tb_nb_modes (matrix, dim 1x2): 
@@ -49,7 +49,7 @@
     Code
       summary(bayesmode)
     Output
-      Posterior probability of multimodal is 1 
+      Posterior probability of multimodality is 1 
       
       Snapshot of inference results on the number of modes:
         tb_nb_modes (matrix, dim 1x2): 
@@ -72,7 +72,7 @@
     Code
       summary(bayesmode)
     Output
-      Posterior probability of multimodal is 0.9975 
+      Posterior probability of multimodality is 0.9975 
       
       Snapshot of inference results on the number of modes:
         tb_nb_modes (matrix, dim 2x2): 
@@ -96,7 +96,7 @@
     Code
       summary(bayesmode)
     Output
-      Posterior probability of multimodal is 1 
+      Posterior probability of multimodality is 1 
       
       Snapshot of inference results on the number of modes:
         tb_nb_modes (matrix, dim 1x2): 

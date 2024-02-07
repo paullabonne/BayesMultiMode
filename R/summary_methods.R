@@ -8,7 +8,7 @@ summary.bayes_mode <- function(object, ...) {
   modes = object$modes
   
   p1 = object$p1
-  cat("Posterior probability of multimodal is", 1-p1, "\n")
+  cat("Posterior probability of multimodality is", 1-p1, "\n")
   
   cat("\nSnapshot of inference results on the number of modes:")
   cat("\n  tb_nb_modes")
