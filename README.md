@@ -246,6 +246,18 @@ plot(modes)
 
 <img src="man/figures/README-unnamed-chunk-12-1.png" width="70%" style="display: block; margin: auto;" />
 
+``` r
+summary(modes)
+```
+
+    ## 
+    ##  Modes of a normal mixture with 3 components.
+    ## - Number of modes found: 3
+    ## - Mode estimation technique: fixed-point algorithm
+    ## - Estimates of mode locations:
+    ##   mode_estimates (numeric vector, dim 3): 
+    ## [1]  41  60 110
+
 ### References
 
 <div id="refs" class="references csl-bib-body hanging-indent">

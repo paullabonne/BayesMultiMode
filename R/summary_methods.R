@@ -45,7 +45,7 @@ summary.mix_mode <- function(object, ...) {
     m = "Modes"
   }
   
-  cat("\n",m, "of a", d, "mixture with", K, "components.")
+  cat(m, "of a", d, "mixture with", K, "components.")
   cat("\n- Number of modes found:", Nb_m)
   cat("\n- Mode estimation technique:", object$algo, "algorithm")
   cat("\n- Estimates of mode locations:")
@@ -61,7 +61,7 @@ summary.mix_mode <- function(object, ...) {
 #' 
 #' @export
 summary.mixture <- function(object, ...) {
-  cat("\n Estimated mixture distribution.")
+  cat("Estimated mixture distribution.")
   cat("\n- Mixture type:", object$dist_type)
   cat("\n- Number of components:", object$K)
   cat("\n- Distribution family:", object$dist)
@@ -92,7 +92,7 @@ summary.bayes_mixture <- function(object, ...) {
     d = object$dist_type
   }
   
-  cat("\n Mixture estimated with a Bayesian MCMC method.")
+  cat("Mixture estimated with a Bayesian MCMC method.")
   cat("\n- Mixture type:", object$dist_type)
   cat("\n- Number of components:", object$K)
   cat("\n- Distribution family:", object$dist)

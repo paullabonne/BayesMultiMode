@@ -3,6 +3,13 @@ title: "Compatibility with other R packages"
 output: github_document
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE
+)
+```
+
 ```{r}
 library(BayesMultiMode)
 library(posterior)
@@ -53,7 +60,7 @@ inits = function() {
 # Run the model
 model = jags.model(textConnection(model_string), data = data_jags, inits = inits)
 update(model, 1000)  # Burn-in
-fit = coda.samples(model, variable.names = c("mu", "tau", "theta"), n.iter = 5000)
+fit = coda.samples(model, variable.names = c("mu", "tau", "theta"), n.iter = 2000)
 ```
 
 #### Create a BayesMixture object
@@ -284,7 +291,11 @@ pars = c(eta = fit$lambda, mu = fit$mu, sigma = fit$sigma)
 mix = mixture(pars, dist = "normal", range = c(min(y), max(y))) # create a new object of class Mixture
 modes = mix_mode(mix) # estimate modes and create an object of class Mode
 
+summary(modes)
+
+# mode inference
 plot(modes)
+summary(modes)
 ```
 
 ### mclust
@@ -302,8 +313,14 @@ pars = c(eta = fit$parameters$pro,
          sigma = sqrt(fit$parameters$variance$sigmasq))
 
 mix = mixture(pars, dist = "normal", range = c(min(y), max(y))) # creates a new object of class Mixture
+
+summary(mix)
+
+
+# mode inference
 modes = mix_mode(mix) # estimates modes and creates an object of class Mode
 
 plot(modes)
+summary(modes)
 ```
 

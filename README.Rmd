@@ -6,6 +6,8 @@ bibliography: inst/REFERENCES.bib
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
   dpi=600,
   fig.path = "man/figures/README-"
 )
@@ -156,6 +158,8 @@ mix = mixture(pars, dist = "normal", range = c(min(y), max(y))) # create new obj
 modes = mix_mode(mix) # estimate modes
 
 plot(modes)
+
+summary(modes)
 ```
 
 

@@ -3,8 +3,7 @@
     Code
       summary(mix)
     Output
-      
-       Estimated mixture distribution.
+      Estimated mixture distribution.
       - Mixture type: discrete
       - Number of components: 2
       - Distribution family: shifted_poisson
@@ -20,8 +19,7 @@
     Code
       summary(modes)
     Output
-      
-       Modes of a shifted_poisson mixture with 2 components.
+      Modes of a shifted_poisson mixture with 2 components.
       - Number of modes found: 3
       - Mode estimation technique: discrete algorithm
       - Estimates of mode locations:
@@ -40,8 +38,7 @@
     Code
       summary(mix)
     Output
-      
-       Estimated mixture distribution.
+      Estimated mixture distribution.
       - Mixture type: discrete
       - Number of components: 2
       - Distribution family: poisson
@@ -57,8 +54,7 @@
     Code
       summary(modes)
     Output
-      
-       Modes of a poisson mixture with 2 components.
+      Modes of a poisson mixture with 2 components.
       - Number of modes found: 2
       - Mode estimation technique: discrete algorithm
       - Estimates of mode locations:
@@ -77,8 +73,7 @@
     Code
       summary(mix)
     Output
-      
-       Estimated mixture distribution.
+      Estimated mixture distribution.
       - Mixture type: discrete
       - Number of components: 2
       - Distribution family: NA
@@ -94,8 +89,7 @@
     Code
       summary(modes)
     Output
-      
-       Modes of a discrete mixture with 2 components.
+      Modes of a discrete mixture with 2 components.
       - Number of modes found: 2
       - Mode estimation technique: discrete algorithm
       - Estimates of mode locations:
@@ -114,8 +108,7 @@
     Code
       summary(mix)
     Output
-      
-       Estimated mixture distribution.
+      Estimated mixture distribution.
       - Mixture type: continuous
       - Number of components: 2
       - Distribution family: skew_normal
@@ -132,8 +125,7 @@
     Code
       summary(modes)
     Output
-      
-       Modes of a skew_normal mixture with 2 components.
+      Modes of a skew_normal mixture with 2 components.
       - Number of modes found: 2
       - Mode estimation technique: Modal Expectation-Maximization (MEM) algorithm
       - Estimates of mode locations:
@@ -152,8 +144,7 @@
     Code
       summary(mix)
     Output
-      
-       Estimated mixture distribution.
+      Estimated mixture distribution.
       - Mixture type: continuous
       - Number of components: 2
       - Distribution family: NA
@@ -170,8 +161,7 @@
     Code
       summary(modes)
     Output
-      
-       Modes of a continuous mixture with 2 components.
+      Modes of a continuous mixture with 2 components.
       - Number of modes found: 2
       - Mode estimation technique: Modal Expectation-Maximization (MEM) algorithm
       - Estimates of mode locations:
@@ -190,8 +180,7 @@
     Code
       summary(mix)
     Output
-      
-       Estimated mixture distribution.
+      Estimated mixture distribution.
       - Mixture type: continuous
       - Number of components: 2
       - Distribution family: normal
@@ -207,8 +196,7 @@
     Code
       summary(modes)
     Output
-      
-       Modes of a normal mixture with 2 components.
+      Modes of a normal mixture with 2 components.
       - Number of modes found: 2
       - Mode estimation technique: fixed-point algorithm
       - Estimates of mode locations:

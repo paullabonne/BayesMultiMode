@@ -6,19 +6,6 @@ library(BayesMultiMode)
 library(posterior)
 ```
 
-    ## This is posterior version 1.5.0
-
-    ## 
-    ## Attaching package: 'posterior'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     mad, sd, var
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     %in%, match
-
 ## Bayesian estimation and mode inference
 
 In the examples presented below external R packages are used for
@@ -33,15 +20,7 @@ mode inference.
 set.seed(123)
 
 library(rjags)
-```
 
-    ## Loading required package: coda
-
-    ## Linked to JAGS 4.3.1
-
-    ## Loaded modules: basemod,bugs
-
-``` r
 # Assuming you have your data in 'data_vector'
 # Specify the model
 model_string = "
@@ -90,7 +69,7 @@ model = jags.model(textConnection(model_string), data = data_jags, inits = inits
 
 ``` r
 update(model, 1000)  # Burn-in
-fit = coda.samples(model, variable.names = c("mu", "tau", "theta"), n.iter = 5000)
+fit = coda.samples(model, variable.names = c("mu", "tau", "theta"), n.iter = 2000)
 ```
 
 #### Create a BayesMixture object
@@ -109,7 +88,7 @@ bmix = bayes_mixture(mcmc = fit_mat,
 plot(bmix)
 ```
 
-![](external_comp_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](external_comp_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
 # mode estimation
@@ -119,19 +98,30 @@ bayesmode = bayes_mode(bmix)
 plot(bayesmode)
 ```
 
-![](external_comp_files/figure-gfm/unnamed-chunk-3-2.png)<!-- -->
+![](external_comp_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
 
 ``` r
 # Summary of mode inference
 summary(bayesmode)
 ```
 
-    ## The posterior probability of the data being multimodal is 1
+    ## Posterior probability of multimodality is 1 
     ## 
-    ##  Number of estimated modes and their posterior probabilities:
-
-    ##      Number of modes Posterior probabilty 
-    ##                    2                    1
+    ## Snapshot of inference results on the number of modes:
+    ##   tb_nb_modes (matrix, dim 1x2): 
+    ##      number of modes posterior probability
+    ## [1,]               2                     1
+    ## 
+    ## Snapshot of inference results on mode locations:
+    ##   table_location (matrix, dim 55x2): 
+    ##      mode location posterior probability
+    ## [1,]          -0.2                0.0125
+    ## [2,]          -0.1                0.0875
+    ## [3,]           0.0                0.3000
+    ## [4,]           0.1                0.0000
+    ## [5,]           0.2                0.1915
+    ## [6,]           0.3                0.0325
+    ## ... (49 more rows)
 
 ### rstan
 
@@ -140,31 +130,7 @@ summary(bayesmode)
 ``` r
 set.seed(123)
 library(rstan)
-```
 
-    ## Loading required package: StanHeaders
-
-    ## Loading required package: ggplot2
-
-    ## rstan (Version 2.21.8, GitRev: 2e1f913d3ca3)
-
-    ## For execution on a local, multicore CPU with excess RAM we recommend calling
-    ## options(mc.cores = parallel::detectCores()).
-    ## To avoid recompilation of unchanged Stan programs, we recommend calling
-    ## rstan_options(auto_write = TRUE)
-
-    ## 
-    ## Attaching package: 'rstan'
-
-    ## The following object is masked from 'package:coda':
-    ## 
-    ##     traceplot
-
-    ## The following objects are masked from 'package:posterior':
-    ## 
-    ##     ess_bulk, ess_tail
-
-``` r
 normal_mixture_model <- "
 data {
   int<lower=0> N;         // number of data points
@@ -211,8 +177,8 @@ fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, ch
     ## 
     ## SAMPLING FOR MODEL '07e8533f6a3188d2d50eb989867b63d7' NOW (CHAIN 1).
     ## Chain 1: 
-    ## Chain 1: Gradient evaluation took 5.1e-05 seconds
-    ## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.51 seconds.
+    ## Chain 1: Gradient evaluation took 4.9e-05 seconds
+    ## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.49 seconds.
     ## Chain 1: Adjust your expectations accordingly!
     ## Chain 1: 
     ## Chain 1: 
@@ -229,9 +195,9 @@ fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, ch
     ## Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
     ## Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
     ## Chain 1: 
-    ## Chain 1:  Elapsed Time: 0.255 seconds (Warm-up)
-    ## Chain 1:                0.196832 seconds (Sampling)
-    ## Chain 1:                0.451832 seconds (Total)
+    ## Chain 1:  Elapsed Time: 0.25367 seconds (Warm-up)
+    ## Chain 1:                0.194892 seconds (Sampling)
+    ## Chain 1:                0.448562 seconds (Total)
     ## Chain 1:
 
 #### Create a BayesMixture object
@@ -249,7 +215,7 @@ bmix = bayes_mixture(mcmc = fit_mat,
 plot(bmix)
 ```
 
-![](external_comp_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](external_comp_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
 # mode estimation
@@ -259,19 +225,30 @@ bayesmode = bayes_mode(bmix)
 plot(bayesmode)
 ```
 
-![](external_comp_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
+![](external_comp_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
 
 ``` r
 # Summary of mode inference
 summary(bayesmode)
 ```
 
-    ## The posterior probability of the data being multimodal is 1
+    ## Posterior probability of multimodality is 1 
     ## 
-    ##  Number of estimated modes and their posterior probabilities:
-
-    ##      Number of modes Posterior probabilty 
-    ##                    2                    1
+    ## Snapshot of inference results on the number of modes:
+    ##   tb_nb_modes (matrix, dim 1x2): 
+    ##      number of modes posterior probability
+    ## [1,]               2                     1
+    ## 
+    ## Snapshot of inference results on mode locations:
+    ##   table_location (matrix, dim 55x2): 
+    ##      mode location posterior probability
+    ## [1,]          -0.2                 0.007
+    ## [2,]          -0.1                 0.097
+    ## [3,]           0.0                 0.308
+    ## [4,]           0.1                 0.000
+    ## [5,]           0.2                 0.194
+    ## [6,]           0.3                 0.031
+    ## ... (49 more rows)
 
 ### bayesmix
 
@@ -330,7 +307,7 @@ bmix = bayes_mixture(mcmc = fit,
 plot(bmix)
 ```
 
-![](external_comp_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](external_comp_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
 # mode estimation
@@ -340,21 +317,32 @@ bayesmode = bayes_mode(bmix)
 plot(bayesmode)
 ```
 
-![](external_comp_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
+![](external_comp_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
 
 ``` r
 # Summary of mode inference
 summary(bayesmode)
 ```
 
-    ## The posterior probability of the data being multimodal is 0.093
+    ## Posterior probability of multimodality is 0.058 
     ## 
-    ##  Number of estimated modes and their posterior probabilities:
-
-    ##      Number of modes Posterior probabilty
-    ## [1,]               1                0.907
-    ## [2,]               2                0.073
-    ## [3,]               3                0.020
+    ## Snapshot of inference results on the number of modes:
+    ##   tb_nb_modes (matrix, dim 3x2): 
+    ##      number of modes posterior probability
+    ## [1,]               1                 0.942
+    ## [2,]               2                 0.046
+    ## [3,]               3                 0.012
+    ## 
+    ## Snapshot of inference results on mode locations:
+    ##   table_location (matrix, dim 75x2): 
+    ##      mode location posterior probability
+    ## [1,]           4.7                 0.001
+    ## [2,]           4.8                 0.002
+    ## [3,]           4.9                 0.010
+    ## [4,]           5.0                 0.049
+    ## [5,]           5.1                 0.000
+    ## [6,]           5.2                 0.125
+    ## ... (69 more rows)
 
 ### BNPmix
 
@@ -364,20 +352,7 @@ summary(bayesmode)
 set.seed(123)
 library(BNPmix)
 library(dplyr)
-```
 
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
 y = c(rnorm(100,0,1),
       rnorm(100,5,1))
 
@@ -426,7 +401,7 @@ bmix = bayes_mixture(mcmc = fit_mat,
 plot(bmix)
 ```
 
-![](external_comp_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](external_comp_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
 # mode estimation
@@ -436,20 +411,31 @@ bayesmode = bayes_mode(bmix)
 plot(bayesmode)
 ```
 
-![](external_comp_files/figure-gfm/unnamed-chunk-10-2.png)<!-- -->
+![](external_comp_files/figure-gfm/unnamed-chunk-11-2.png)<!-- -->
 
 ``` r
 # Summary of mode inference
 summary(bayesmode)
 ```
 
-    ## The posterior probability of the data being multimodal is 1
+    ## Posterior probability of multimodality is 1 
     ## 
-    ##  Number of estimated modes and their posterior probabilities:
-
-    ##      Number of modes Posterior probabilty
-    ## [1,]               2                0.993
-    ## [2,]               3                0.007
+    ## Snapshot of inference results on the number of modes:
+    ##   tb_nb_modes (matrix, dim 2x2): 
+    ##      number of modes posterior probability
+    ## [1,]               2                 0.993
+    ## [2,]               3                 0.007
+    ## 
+    ## Snapshot of inference results on mode locations:
+    ##   table_location (matrix, dim 85x2): 
+    ##      mode location posterior probability
+    ## [1,] -3.000000e-01                 0.006
+    ## [2,] -2.000000e-01                 0.000
+    ## [3,] -1.000000e-01                 0.000
+    ## [4,]  5.551115e-17                 0.000
+    ## [5,]  1.000000e-01                 0.000
+    ## [6,]  2.000000e-01                 0.192
+    ## ... (79 more rows)
 
 ## Mode estimation in mixtures estimated with maximum likelihood
 
@@ -462,12 +448,7 @@ for estimating and plotting modes.
 ``` r
 set.seed(123)
 library(mixtools)
-```
 
-    ## mixtools package, version 2.0.0, Released 2022-12-04
-    ## This package is based upon work supported by the National Science Foundation under Grant No. SES-0518772 and the Chan Zuckerberg Initiative: Essential Open Source Software for Science (Grant No. 2020-255193).
-
-``` r
 y = c(rnorm(100,0,1),
       rnorm(100,3.5,1.5))
 
@@ -482,29 +463,40 @@ pars = c(eta = fit$lambda, mu = fit$mu, sigma = fit$sigma)
 mix = mixture(pars, dist = "normal", range = c(min(y), max(y))) # create a new object of class Mixture
 modes = mix_mode(mix) # estimate modes and create an object of class Mode
 
+summary(modes)
+```
+
+    ## Modes of a normal mixture with 2 components.
+    ## - Number of modes found: 2
+    ## - Mode estimation technique: fixed-point algorithm
+    ## - Estimates of mode locations:
+    ##   mode_estimates (numeric vector, dim 2): 
+    ## [1] 3 0
+
+``` r
+# mode inference
 plot(modes)
 ```
 
-![](external_comp_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](external_comp_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+``` r
+summary(modes)
+```
+
+    ## Modes of a normal mixture with 2 components.
+    ## - Number of modes found: 2
+    ## - Mode estimation technique: fixed-point algorithm
+    ## - Estimates of mode locations:
+    ##   mode_estimates (numeric vector, dim 2): 
+    ## [1] 3 0
 
 ### mclust
 
 ``` r
 set.seed(123)
 library(mclust)
-```
 
-    ## Package 'mclust' version 6.0.0
-    ## Type 'citation("mclust")' for citing this R package in publications.
-
-    ## 
-    ## Attaching package: 'mclust'
-
-    ## The following object is masked from 'package:mixtools':
-    ## 
-    ##     dmvnorm
-
-``` r
 y = c(rnorm(100,0,1),
       rnorm(100,3.5,1.5))
 
@@ -515,9 +507,38 @@ pars = c(eta = fit$parameters$pro,
          sigma = sqrt(fit$parameters$variance$sigmasq))
 
 mix = mixture(pars, dist = "normal", range = c(min(y), max(y))) # creates a new object of class Mixture
+
+summary(mix)
+```
+
+    ## 
+    ##  Estimated mixture distribution.
+    ## - Mixture type: continuous
+    ## - Number of components: 2
+    ## - Distribution family: normal
+    ## - Number of distribution variables: 2
+    ## - Names of variables: mu sigma
+    ## - Parameter estimates:
+    ##   pars (numeric vector, dim 6): 
+    ##        eta1        eta2        mu.1        mu.2      sigma1      sigma2 
+    ##  0.38684421  0.61315579 -0.03856849  2.82059287  0.83331314  1.75291009
+
+``` r
+# mode inference
 modes = mix_mode(mix) # estimates modes and creates an object of class Mode
 
 plot(modes)
 ```
 
-![](external_comp_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](external_comp_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+``` r
+summary(modes)
+```
+
+    ## Modes of a normal mixture with 2 components.
+    ## - Number of modes found: 2
+    ## - Mode estimation technique: fixed-point algorithm
+    ## - Estimates of mode locations:
+    ##   mode_estimates (numeric vector, dim 2): 
+    ## [1] 0 3
