@@ -8,14 +8,18 @@ summary.bayes_mode <- function(object, ...) {
   modes = object$modes
   
   p1 = object$p1
-  cat("The posterior probability of the data being multimodal is", 1-p1)
+  cat("Posterior probability of multimodal is", 1-p1, "\n")
   
-  tb_nb_modes = t(object$tb_nb_modes)
-  colnames(tb_nb_modes) = c("Number of modes", "Posterior probabilty")
-  tb_nb_modes = tb_nb_modes[order(tb_nb_modes[, 1]), ]
+  cat("\nSnapshot of inference results on the number of modes:")
+  cat("\n  tb_nb_modes")
+  head_print(t(object$tb_nb_modes))
+  # tb_nb_modes = t(object$tb_nb_modes)
+  # colnames(tb_nb_modes) = c("Number of modes", "Posterior probabilty")
+  # tb_nb_modes = tb_nb_modes[order(tb_nb_modes[, 1]), ]
 
-  cat("\n\n Number of estimated modes and their posterior probabilities:\n")
-  tb_nb_modes
+  cat("\nSnapshot of inference results on mode locations:")
+  cat("\n  table_location")
+  head_print(t(object$table_location))
 }
 
 
@@ -44,6 +48,9 @@ summary.mix_mode <- function(object, ...) {
   cat("\n",m, "of a", d, "mixture with", K, "components.")
   cat("\n- Number of modes found:", Nb_m)
   cat("\n- Mode estimation technique:", object$algo, "algorithm")
+  cat("\n- Estimates of mode locations:")
+  cat("\n  mode_estimates")
+  head_print(round(object$mode_estimates),3)
 }
 
 
@@ -61,6 +68,9 @@ summary.mixture <- function(object, ...) {
   cat("\n- Number of distribution variables:", object$nb_var)
   cat("\n- Names of variables:",
       object$pars_names[object$pars_names!="eta"])
+  cat("\n- Parameter estimates:")
+  cat("\n  pars")
+  head_print(object$pars)
 }
 
 

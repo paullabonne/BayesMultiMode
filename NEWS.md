@@ -1,5 +1,6 @@
 ## Version 0.7.1
 * Range argument not optional any more when plotting mixtures
+* added estimates to mixture and mix_mode summary methods
 
 ## Version 0.7.0
 * Major changes around the structure of the package

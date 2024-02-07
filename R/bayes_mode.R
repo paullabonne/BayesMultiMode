@@ -231,6 +231,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   }
   tb_nb_modes = rbind(unique_modes,prob_nb_modes)
   rownames(tb_nb_modes) = c("number of modes", "posterior probability")
+  # ordering
+  tb_nb_modes = tb_nb_modes[, order(unique_modes)]
   
   bayes_mode = list()
   bayes_mode$data = data
