@@ -40,7 +40,7 @@ The names of \code{pars} should correspond to variables in \code{mcmc}, e.g. \co
 \item{loglik}{Vector showing the log likelihood at each MCMC draw.}
 
 \item{vars_to_keep}{(optional) Character vector containing the names
-of the variables to keep in \code{mcmc}.}
+of the variables to keep in \code{mcmc}, e.g. \code{c("eta", "mu", "sigma")}.}
 
 \item{vars_to_rename}{(optional) Use for renaming variables/parameters in \code{mcmc}.
 A named character vector where the names are the new variable names
