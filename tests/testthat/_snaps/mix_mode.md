@@ -1,6 +1,13 @@
 # mix_mode() returns expected results with dist = shifted_poisson and flat modes
 
     Code
+      modes$mode_estimates
+    Output
+      [1]  0  1 10
+
+---
+
+    Code
       summary(mix)
     Output
       Estimated mixture distribution.
@@ -26,14 +33,14 @@
         mode_estimates (numeric vector, dim 3): 
       [1]  0  1 10
 
----
+# mix_mode() function returns expected results with dist = poisson
 
     Code
       modes$mode_estimates
     Output
-      [1]  0  1 10
+      [1] 0 9
 
-# mix_mode() function returns expected results with dist = poisson
+---
 
     Code
       summary(mix)
@@ -61,14 +68,14 @@
         mode_estimates (numeric vector, dim 2): 
       [1] 0 9
 
----
+# mix_mode() function returns expected results with arbitrary function
 
     Code
       modes$mode_estimates
     Output
-      [1] 0 9
+      [1]  0 18
 
-# mix_mode() function returns expected results with arbitrary function
+---
 
     Code
       summary(mix)
@@ -96,14 +103,14 @@
         mode_estimates (numeric vector, dim 2): 
       [1]  0 18
 
----
+# mix_mode() function returns expected results with dist = skew_normal
 
     Code
       modes$mode_estimates
     Output
-      [1]  0 18
+      [1] 0.002088749 5.999997076
 
-# mix_mode() function returns expected results with dist = skew_normal
+---
 
     Code
       summary(mix)
@@ -132,14 +139,14 @@
         mode_estimates (numeric vector, dim 2): 
       [1] 0 6
 
----
+# mix_mode() function returns expected results with an arbitrary function
 
     Code
       modes$mode_estimates
     Output
-      [1] 0.002088749 5.999997076
+      [1] 0.00182144 5.88332478
 
-# mix_mode() function returns expected results with an arbitrary function
+---
 
     Code
       summary(mix)
@@ -168,14 +175,14 @@
         mode_estimates (numeric vector, dim 2): 
       [1] 0 6
 
----
+# mix_mode() function returns expected results
 
     Code
       modes$mode_estimates
     Output
-      [1] 0.00182144 5.88332478
+      [1] 0.006915293 4.999402022
 
-# mix_mode() function returns expected results
+---
 
     Code
       summary(mix)
@@ -202,11 +209,4 @@
       - Estimates of mode locations:
         mode_estimates (numeric vector, dim 2): 
       [1] 0 5
-
----
-
-    Code
-      modes$mode_estimates
-    Output
-      [1] 0.006915293 4.999402022
 

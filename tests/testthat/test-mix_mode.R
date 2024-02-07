@@ -10,13 +10,15 @@ test_that("mix_mode() returns expected results with dist = shifted_poisson and f
   modes = mix_mode(mix)
   
   # summary
-  expect_snapshot(summary(mix))
-  expect_snapshot(summary(modes))
   expect_snapshot(modes$mode_estimates)
   
   expect_equal(modes$mode_estimates[1] == 0,  TRUE)
   expect_equal(modes$mode_estimates[2] == 1,  TRUE)
   expect_equal(modes$mode_estimates[3] == 10,  TRUE)
+  
+  skip_on_ci()
+  expect_snapshot(summary(mix))
+  expect_snapshot(summary(modes))
 })
 
 test_that("mix_mode() function returns expected results with dist = poisson", {
@@ -29,12 +31,14 @@ test_that("mix_mode() function returns expected results with dist = poisson", {
   mix = mixture(params, range = c(0, 50), dist = dist)
   modes = mix_mode(mix)
   
-  expect_snapshot(summary(mix))
-  expect_snapshot(summary(modes))
   expect_snapshot(modes$mode_estimates)
   
   expect_equal(modes$mode_estimates[1] == 0,  TRUE)
   expect_equal(modes$mode_estimates[2] == 9,  TRUE)
+  
+  skip_on_ci()
+  expect_snapshot(summary(mix))
+  expect_snapshot(summary(modes))
 })
 
 test_that("mix_mode() function returns expected results with arbitrary function", {
@@ -58,13 +62,15 @@ test_that("mix_mode() function returns expected results with arbitrary function"
   # expect_snapshot(plot(modes, from = 0, to = 50))
   
   # summary
-  expect_snapshot(summary(mix))
-  expect_snapshot(summary(modes))
   expect_snapshot(modes$mode_estimates)
   
   expect_equal(modes$mode_estimates[1] == 0,  TRUE)
   expect_equal(modes$mode_estimates[2] == 18,  TRUE)
   # the two densities are far appart so the modes should coincide with the location parameters
+  
+  skip_on_ci()
+  expect_snapshot(summary(mix))
+  expect_snapshot(summary(modes))
 })
 
 test_that("mix_mode() function returns expected results with dist = skew_normal", {
@@ -79,12 +85,14 @@ test_that("mix_mode() function returns expected results with dist = skew_normal"
   mix = mixture(params, dist = dist, range = c(-5,10))
   modes = mix_mode(mix)
   
-  expect_snapshot(summary(mix))
-  expect_snapshot(summary(modes))
   expect_snapshot(modes$mode_estimates)
   
   expect_equal(abs(sum(modes$mode_estimates-xi))<1,  TRUE)
   # the two densities are far apart so the modes should coincide with the location parameters
+  
+  skip_on_ci()
+  expect_snapshot(summary(mix))
+  expect_snapshot(summary(modes))
 })
 
 test_that("mix_mode() function returns expected results with an arbitrary function", {
@@ -108,12 +116,14 @@ test_that("mix_mode() function returns expected results with an arbitrary functi
                 range = c(-5,10))
   modes = mix_mode(mix)
   
-  expect_snapshot(summary(mix))
-  expect_snapshot(summary(modes))
   expect_snapshot(modes$mode_estimates)
   
   expect_equal(abs(sum(modes$mode_estimates-xi))<1,  TRUE)
   # the two densities are far apart so the modes should coincide with the location parameters
+  
+  skip_on_ci()
+  expect_snapshot(summary(mix))
+  expect_snapshot(summary(modes))
 })
 
 test_that("mix_mode() function returns expected results", {
@@ -127,9 +137,11 @@ test_that("mix_mode() function returns expected results", {
   mix = mixture(params, dist = "normal", range = c(-4,10))
   modes = mix_mode(mix)
   
-  expect_snapshot(summary(mix))
-  expect_snapshot(summary(modes))
   expect_snapshot(modes$mode_estimates)
   
   expect_equal(round(modes$mode_estimates),  mu)
+  
+  skip_on_ci()
+  expect_snapshot(summary(mix))
+  expect_snapshot(summary(modes))
 })

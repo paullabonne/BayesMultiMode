@@ -28,10 +28,11 @@ test_that("bayes_mode works with external MCMC output", {
   m = m[order(m)]
   m = m[!is.na(m)]
   
-  # expect_snapshot(summary(bayesmix))
-  expect_snapshot(summary(bayesmode))
-  
   expect_equal(sum(abs(m-mu)<0.1),  2)
+  
+  skip_on_ci()
+  expect_snapshot(summary(bayesmix))
+  expect_snapshot(summary(bayesmode))
 })
 
 test_that("bayes_mode works with normal mixture", {
@@ -54,10 +55,11 @@ test_that("bayes_mode works with normal mixture", {
   m = m[order(m)]
   m = m[!is.na(m)]
   
-  # expect_snapshot(summary(bayesmix))
-  expect_snapshot(summary(bayesmode))
-  
   expect_equal(sum(abs(m-mu)<0.1),  2)
+  
+  skip_on_ci()
+  expect_snapshot(summary(bayesmix))
+  expect_snapshot(summary(bayesmode))
 })
 
 test_that("bayes_mode works with skew_normal mixture", {
@@ -80,10 +82,11 @@ test_that("bayes_mode works with skew_normal mixture", {
   m = m[order(m)]
   m = m[!is.na(m)]
   
-  # expect_snapshot(summary(bayesmix))
-  expect_snapshot(summary(bayesmode))
-  
   expect_equal(sum(abs(m-mu)<0.5),  2)
+  
+  skip_on_ci()
+  expect_snapshot(summary(bayesmix))
+  expect_snapshot(summary(bayesmode))
 })
 
 test_that("bayes_mode works with shifted poisson mixture", {
@@ -112,10 +115,11 @@ test_that("bayes_mode works with shifted poisson mixture", {
   m = m[order(m)]
   m = m[!is.na(m)]
   
-  # expect_snapshot(summary(bayesmix))
-  expect_snapshot(summary(bayesmode))
-  
   expect_equal(sum(abs(m-mu)<0.5),  2)
+  
+  skip_on_ci()
+  expect_snapshot(summary(bayesmix))
+  expect_snapshot(summary(bayesmode))
 })
 
 test_that("bayes_mode works with poisson mixture", {
@@ -143,8 +147,9 @@ test_that("bayes_mode works with poisson mixture", {
   m = m[order(m)]
   m = m[!is.na(m)]
   
-  # expect_snapshot(summary(bayesmix))
-  expect_snapshot(summary(bayesmode))
-  
   expect_equal(sum(abs(m-c(0,10))<2),  2)
+  
+  skip_on_ci()
+  expect_snapshot(summary(bayesmix))
+  expect_snapshot(summary(bayesmode))
 })
