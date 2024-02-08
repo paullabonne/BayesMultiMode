@@ -104,21 +104,21 @@ summary(bayesmode)
 
     ## Posterior probability of multimodality is 1 
     ## 
-    ## Snapshot of inference results on the number of modes:
-    ##   tb_nb_modes (matrix, dim 1x2): 
+    ## Inference results on the number of modes:
+    ##   p_nb_modes (matrix, dim 1x2): 
     ##      number of modes posterior probability
     ## [1,]               2                     1
     ## 
-    ## Snapshot of inference results on mode locations:
-    ##   table_location (matrix, dim 55x2): 
+    ## Inference results on mode locations:
+    ##   p_loc (matrix, dim 56x2): 
     ##      mode location posterior probability
-    ## [1,]          -0.2                0.0080
-    ## [2,]          -0.1                0.0855
-    ## [3,]           0.0                0.3125
-    ## [4,]           0.1                0.0000
-    ## [5,]           0.2                0.1755
-    ## [6,]           0.3                0.0310
-    ## ... (49 more rows)
+    ## [1,] -3.000000e-01                0.0010
+    ## [2,] -2.000000e-01                0.0000
+    ## [3,] -1.000000e-01                0.0000
+    ## [4,]  5.551115e-17                0.0000
+    ## [5,]  1.000000e-01                0.0000
+    ## [6,]  2.000000e-01                0.1675
+    ## ... (50 more rows)
 
 ### rstan
 
@@ -174,8 +174,8 @@ fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, ch
     ## 
     ## SAMPLING FOR MODEL '07e8533f6a3188d2d50eb989867b63d7' NOW (CHAIN 1).
     ## Chain 1: 
-    ## Chain 1: Gradient evaluation took 4.5e-05 seconds
-    ## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.45 seconds.
+    ## Chain 1: Gradient evaluation took 4.1e-05 seconds
+    ## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.41 seconds.
     ## Chain 1: Adjust your expectations accordingly!
     ## Chain 1: 
     ## Chain 1: 
@@ -192,9 +192,9 @@ fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, ch
     ## Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
     ## Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
     ## Chain 1: 
-    ## Chain 1:  Elapsed Time: 0.252847 seconds (Warm-up)
-    ## Chain 1:                0.194443 seconds (Sampling)
-    ## Chain 1:                0.44729 seconds (Total)
+    ## Chain 1:  Elapsed Time: 0.254864 seconds (Warm-up)
+    ## Chain 1:                0.196625 seconds (Sampling)
+    ## Chain 1:                0.451489 seconds (Total)
     ## Chain 1:
 
 #### Create a BayesMixture object
@@ -231,13 +231,13 @@ summary(bayesmode)
 
     ## Posterior probability of multimodality is 1 
     ## 
-    ## Snapshot of inference results on the number of modes:
-    ##   tb_nb_modes (matrix, dim 1x2): 
+    ## Inference results on the number of modes:
+    ##   p_nb_modes (matrix, dim 1x2): 
     ##      number of modes posterior probability
     ## [1,]               2                     1
     ## 
-    ## Snapshot of inference results on mode locations:
-    ##   table_location (matrix, dim 55x2): 
+    ## Inference results on mode locations:
+    ##   p_loc (matrix, dim 55x2): 
     ##      mode location posterior probability
     ## [1,]          -0.2                 0.007
     ## [2,]          -0.1                 0.097
@@ -321,24 +321,25 @@ plot(bayesmode)
 summary(bayesmode)
 ```
 
-    ## Posterior probability of multimodality is 0.005 
+    ## Posterior probability of multimodality is 0.027 
     ## 
-    ## Snapshot of inference results on the number of modes:
-    ##   tb_nb_modes (matrix, dim 2x2): 
+    ## Inference results on the number of modes:
+    ##   p_nb_modes (matrix, dim 3x2): 
     ##      number of modes posterior probability
-    ## [1,]               1                 0.995
-    ## [2,]               2                 0.005
+    ## [1,]               1                 0.973
+    ## [2,]               2                 0.026
+    ## [3,]               3                 0.001
     ## 
-    ## Snapshot of inference results on mode locations:
-    ##   table_location (matrix, dim 68x2): 
+    ## Inference results on mode locations:
+    ##   p_loc (matrix, dim 73x2): 
     ##      mode location posterior probability
     ## [1,]           4.9                 0.002
-    ## [2,]           5.0                 0.013
+    ## [2,]           5.0                 0.014
     ## [3,]           5.1                 0.000
-    ## [4,]           5.2                 0.062
+    ## [4,]           5.2                 0.095
     ## [5,]           5.3                 0.000
-    ## [6,]           5.4                 0.159
-    ## ... (62 more rows)
+    ## [6,]           5.4                 0.148
+    ## ... (67 more rows)
 
 ### BNPmix
 
@@ -416,14 +417,14 @@ summary(bayesmode)
 
     ## Posterior probability of multimodality is 1 
     ## 
-    ## Snapshot of inference results on the number of modes:
-    ##   tb_nb_modes (matrix, dim 2x2): 
+    ## Inference results on the number of modes:
+    ##   p_nb_modes (matrix, dim 2x2): 
     ##      number of modes posterior probability
     ## [1,]               2                 0.993
     ## [2,]               3                 0.007
     ## 
-    ## Snapshot of inference results on mode locations:
-    ##   table_location (matrix, dim 85x2): 
+    ## Inference results on mode locations:
+    ##   p_loc (matrix, dim 85x2): 
     ##      mode location posterior probability
     ## [1,] -3.000000e-01                 0.006
     ## [2,] -2.000000e-01                 0.000

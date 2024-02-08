@@ -10,16 +10,13 @@ summary.bayes_mode <- function(object, ...) {
   p1 = object$p1
   cat("Posterior probability of multimodality is", 1-p1, "\n")
   
-  cat("\nSnapshot of inference results on the number of modes:")
-  cat("\n  tb_nb_modes")
-  head_print(t(object$tb_nb_modes))
-  # tb_nb_modes = t(object$tb_nb_modes)
-  # colnames(tb_nb_modes) = c("Number of modes", "Posterior probabilty")
-  # tb_nb_modes = tb_nb_modes[order(tb_nb_modes[, 1]), ]
+  cat("\nInference results on the number of modes:")
+  cat("\n  p_nb_modes")
+  head_print(t(object$p_nb_modes))
 
-  cat("\nSnapshot of inference results on mode locations:")
-  cat("\n  table_location")
-  head_print(t(object$table_location))
+  cat("\nInference results on mode locations:")
+  cat("\n  p_loc")
+  head_print(t(object$p_mode_loc))
 }
 
 

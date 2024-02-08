@@ -25,8 +25,8 @@
 #'  \item{pars_names}{From `BayesMix`.}
 #'  \item{modes}{Matrix with a row for each draw and columns showing modes.}
 #'  \item{p1}{Posterior probability of unimodality.}
-#'  \item{tb_nb_modes}{Matrix showing posterior probabilities for the number of modes.}
-#'  \item{table_location}{Matrix showing posterior probabilities for mode locations.}
+#'  \item{p_nb_modes}{Matrix showing posterior probabilities for the number of modes.}
+#'  \item{p_mode_loc}{Matrix showing posterior probabilities for mode locations.}
 #'  \item{algo}{Algorithm used for mode estimation.}
 #'  \item{range}{Range outside which modes are discarded if `inside_range` is `TRUE`.}
 #'  \item{BayesMix}{`BayesMix`.}
@@ -213,8 +213,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   
   probs_modes = sum_modes/nrow(mcmc)
   
-  table_location = rbind(mode_range, probs_modes)
-  rownames(table_location) = c("mode location", "posterior probability")
+  p_mode_loc = rbind(mode_range, probs_modes)
+  rownames(p_mode_loc) = c("mode location", "posterior probability")
   
   ##### testing unimodality
   p1 = 0 # posterior probability of unimodality
@@ -229,10 +229,10 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   for (i in 1:length(unique_modes)){
     prob_nb_modes[i] = length(n_modes[n_modes==unique_modes[i]])/nrow(modes)
   }
-  tb_nb_modes = rbind(unique_modes,prob_nb_modes)
-  rownames(tb_nb_modes) = c("number of modes", "posterior probability")
+  p_nb_modes = rbind(unique_modes,prob_nb_modes)
+  rownames(p_nb_modes) = c("number of modes", "posterior probability")
   # ordering
-  tb_nb_modes = tb_nb_modes[, order(unique_modes)]
+  p_nb_modes = p_nb_modes[, order(unique_modes)]
   
   bayes_mode = list()
   bayes_mode$data = data
@@ -241,8 +241,8 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   bayes_mode$pars_names = pars_names
   bayes_mode$modes = modes
   bayes_mode$p1 = p1
-  bayes_mode$tb_nb_modes = tb_nb_modes
-  bayes_mode$table_location = table_location
+  bayes_mode$p_nb_modes = p_nb_modes
+  bayes_mode$p_mode_loc = p_mode_loc
   bayes_mode$algo = algo
   bayes_mode$BayesMix = BayesMix
   bayes_mode$range = range

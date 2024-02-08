@@ -85,16 +85,16 @@ summary(bayesmode)
 
     ## Posterior probability of multimodality is 0.993 
     ## 
-    ## Snapshot of inference results on the number of modes:
-    ##   tb_nb_modes (matrix, dim 4x2): 
+    ## Inference results on the number of modes:
+    ##   p_nb_modes (matrix, dim 4x2): 
     ##      number of modes posterior probability
     ## [1,]               1                 0.007
     ## [2,]               2                 0.133
     ## [3,]               3                 0.840
     ## [4,]               4                 0.020
     ## 
-    ## Snapshot of inference results on mode locations:
-    ##   table_location (matrix, dim 252x2): 
+    ## Inference results on mode locations:
+    ##   p_loc (matrix, dim 252x2): 
     ##      mode location posterior probability
     ## [1,]           9.2                 0.021
     ## [2,]           9.3                 0.000
@@ -193,14 +193,14 @@ summary(bayesmode)
 
     ## Posterior probability of multimodality is 1 
     ## 
-    ## Snapshot of inference results on the number of modes:
-    ##   tb_nb_modes (matrix, dim 2x2): 
+    ## Inference results on the number of modes:
+    ##   p_nb_modes (matrix, dim 2x2): 
     ##      number of modes posterior probability
     ## [1,]               2                 0.897
     ## [2,]               3                 0.103
     ## 
-    ## Snapshot of inference results on mode locations:
-    ##   table_location (matrix, dim 793x2): 
+    ## Inference results on mode locations:
+    ##   p_loc (matrix, dim 793x2): 
     ##      mode location posterior probability
     ## [1,]          40.2                 0.001
     ## [2,]          40.3                 0.000

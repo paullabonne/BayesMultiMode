@@ -44,8 +44,8 @@ A list of class \code{bayes_mode} containing:
 \item{pars_names}{From \code{BayesMix}.}
 \item{modes}{Matrix with a row for each draw and columns showing modes.}
 \item{p1}{Posterior probability of unimodality.}
-\item{tb_nb_modes}{Matrix showing posterior probabilities for the number of modes.}
-\item{table_location}{Matrix showing posterior probabilities for mode locations.}
+\item{p_nb_modes}{Matrix showing posterior probabilities for the number of modes.}
+\item{p_mode_loc}{Matrix showing posterior probabilities for mode locations.}
 \item{algo}{Algorithm used for mode estimation.}
 \item{range}{Range outside which modes are discarded if \code{inside_range} is \code{TRUE}.}
 \item{BayesMix}{\code{BayesMix}.}

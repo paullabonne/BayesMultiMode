@@ -172,8 +172,8 @@ plot.bayes_mode <- function(x, graphs = c("p1", "number", "loc"), draw = NULL, .
     
     modes = x$modes
     p1 = x$p1
-    tb_nb_modes = x$tb_nb_modes
-    table_location = x$table_location
+    p_nb_modes = x$p_nb_modes
+    p_mode_loc = x$p_mode_loc
     
     df_g0 = tibble(Pb = "Pb",
                    value = (1-p1))
@@ -185,7 +185,7 @@ plot.bayes_mode <- function(x, graphs = c("p1", "number", "loc"), draw = NULL, .
       xlab("") + ylab("Posterior probability") +
       geom_bar(stat="identity")
     
-    df_g1 = as_tibble(t(table_location))
+    df_g1 = as_tibble(t(p_mode_loc))
     
     g1 = ggplot(data=df_g1, aes(x = `mode location`, y = `posterior probability`)) +
       theme_gg +
@@ -200,7 +200,7 @@ plot.bayes_mode <- function(x, graphs = c("p1", "number", "loc"), draw = NULL, .
       g1 = g1 + ylim(0, 1)
     }
     
-    df_g2 = as_tibble(t(tb_nb_modes))
+    df_g2 = as_tibble(t(p_nb_modes))
     
     g2= ggplot(data=df_g2, aes(x = `number of modes`, y = `posterior probability`)) +
       theme_gg +
