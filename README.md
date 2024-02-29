@@ -239,7 +239,7 @@ modes = mix_mode(mix) # estimate modes
 plot(modes)
 ```
 
-<img src="man/figures/README-unnamed-chunk-12-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-12-1.png" width="50%" style="display: block; margin: auto;" />
 
 ``` r
 summary(modes)
