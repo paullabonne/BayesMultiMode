@@ -242,6 +242,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
          pdf_func = pdf_func)
   mix_density = cbind(mode_range, mix_density)
   colnames(mix_density) = c("x", paste0("draw",1:nrow(mcmc)))
+  mix_density = as_tibble(mix_density)
   
   bayes_mode = list()
   bayes_mode$data = data
