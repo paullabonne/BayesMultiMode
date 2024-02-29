@@ -27,6 +27,7 @@
 #'  \item{p1}{Posterior probability of unimodality.}
 #'  \item{p_nb_modes}{Matrix showing posterior probabilities for the number of modes.}
 #'  \item{p_mode_loc}{Matrix showing posterior probabilities for mode locations.}
+#'  \item{mix_density}{Mixture density at all locations in each draw.}
 #'  \item{algo}{Algorithm used for mode estimation.}
 #'  \item{range}{Range outside which modes are discarded if `inside_range` is `TRUE`.}
 #'  \item{BayesMix}{`BayesMix`.}
@@ -53,6 +54,7 @@
 #
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.scalar
+#' @importFrom tidyr as_tibble
 #' 
 #' @examples
 #' # Example with galaxy data ================================================
@@ -234,6 +236,13 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   # ordering
   p_nb_modes = p_nb_modes[, order(unique_modes)]
   
+  # mixture density
+  mix_density = apply(mcmc,1, FUN = dmix, x = mode_range,
+         pars_names = pars_names,
+         pdf_func = pdf_func)
+  mix_density = cbind(mode_range, mix_density)
+  colnames(mix_density) = c("x", paste0("draw",1:nrow(mcmc)))
+  
   bayes_mode = list()
   bayes_mode$data = data
   bayes_mode$dist = dist
@@ -246,6 +255,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   bayes_mode$algo = algo
   bayes_mode$BayesMix = BayesMix
   bayes_mode$range = range
+  bayes_mode$mix_density = mix_density
   
   class(bayes_mode) <- "bayes_mode"
   
@@ -261,10 +271,18 @@ mix_mode_estimates <- function(mcmc, dist = NA_character_, dist_type = NA_charac
   
   mix = mixture(mcmc, dist = dist, pdf_func = pdf_func,
                     dist_type = dist_type, range = range, loc = loc)
+
   modes = mix_mode(mix, tol_mixp, tol_x, tol_conv, type = type)$mode_estimates
   output[1:length(modes)] = modes
   
   return(output)
+}
+
+#' @keywords internal
+dmix <- function(x, pars, pars_names, pdf_func) {
+  pars_mat = vec_to_mat(pars, pars_names)
+  pars_mat = na.omit(pars_mat) # when mcmc contains NA (i.e. BNPmix)
+  pdf_func_mix(x, pars_mat, pdf_func)
 }
 
 #' @keywords internal
