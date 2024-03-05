@@ -100,4 +100,6 @@ summary.bayes_mixture <- function(object, ...) {
   cat("\n\nSummary of MCMC output after burnin:\n")
   print(summarise_draws(object$mcmc))
   cat(paste0("this table can be reproduced with: summarise_draws(",deparse(substitute(object)),"$mcmc)"))
+  message(cat("\n\nNote that label-switching might occur in the MCMC draws becayse BayesMultiMode does not carry out post-processing.",
+          "\nWhile label-switching does not affect mode inference it can affect diagnostic checks."))
 }

@@ -61,8 +61,9 @@ print_list <- function(x, max_length = 6L, max_width = 6L, print_all = F) {
   # Check for data type and print accordingly
   # Print list details
   for (i in 1:length(x)) {
-    cat("\n", names(x)[i])
+    cat(names(x)[i])
     head_print(x[[i]], max_length, max_width, print_all)
+    cat("\n")
   }
 }
 

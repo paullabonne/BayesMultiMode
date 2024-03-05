@@ -1,7 +1,7 @@
 ## Version 0.7.1
 * Range argument not optional any more when plotting mixtures
 * More details in summary methods
-* Added mixture density in each draw to mode output
+* Added as df for mixture density in each draw to the mode output
 
 ## Version 0.7.0
 * Major changes around the structure of the package

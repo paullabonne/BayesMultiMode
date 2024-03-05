@@ -49,5 +49,7 @@ bayes_trace <- function(BayesMix,
     mcmc_vars = colnames(mcmc) 
   }
   
+  message(cat("\nNote that label-switching might occur in the MCMC draws because BayesMultiMode does not carry out post-processing.",
+              "\nWhile label-switching does not affect mode inference it can affect diagnostic checks."))
   mcmc_trace(mcmc, pars = mcmc_vars, ...)
 }
