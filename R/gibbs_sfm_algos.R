@@ -514,6 +514,122 @@ gibbs_SFM_sp <- function(y,
 }
 
 #' @keywords internal
+#' Gibbs sampler for the negative binomial
+#' 
+gibbs_SFM_neg_binomial <- function(y,
+                              K,
+                              nb_iter,
+                              priors = list(),
+                              print = TRUE){
+  
+  # unpacking priors
+  # priors for the negative binomial are implicit
+  a0 = priors$a0
+  A0 = priors$A0
+  sig = priors$sig # default 0.1
+
+  n_obs <- length(y)
+
+  # storage matrices
+  r_tilde = matrix(data=NA,nrow=nb_iter,ncol=K) # lambda
+  mu = matrix(data=NA,nrow=nb_iter,ncol=K)   # probabilities
+  probs = matrix(data=NaN,nrow=n_obs,ncol=K) # Storage for probabilities  
+  lp = matrix(0, nb_iter, 1) # Storage for log likelihood  
+  
+  # Initial conditions
+  cl_y <- kmeans(y, centers = K, nstart = 30)
+  
+  S <- matrix(0,length(y),K)
+  
+  for (k in 1:K) {
+    S[cl_y$cluster==k ,k] = 1
+  }
+  
+  e0 = a0 / A0
+  
+  # initial value for the parameters
+  mu_m <- cbind(t(cl_y$centers))
+  r_tilde_m <- 1/2
+  
+  ## Sample lamda and S for each component, k=1,...,k
+  for(m in 1:nb_iter){
+    
+    # Compute number of observations allocated in each component
+    N = colSums(S)
+    
+    ## sample component proportion
+    eta[m, ] = rdirichlet(1, e0 + N) 
+    
+    for (k in 1:K){
+      
+      if (N[k]==0) {
+        yk = 0
+      } else {
+        yk = y[S[, k]==1]
+      }
+      
+      # Sample r tilde and mu
+      draw_pars = rneg_binom(y, sig, mu_m[k], r_tilde_m[k])
+      mu_m[k] = draw_pars[1]
+      r_tilde_m[k] = draw_pars[2]
+
+      # transform parameters
+      r = (1-r_tilde_m[k])/r_tilde_m[k]
+      p = mu_m[k] / (r + mu_m[k])
+      
+      # 
+      probs[,k]  = eta[m,k] * dnbinom(y, r, 1 - p);   
+    }
+    
+    # 2. classification
+    pnorm = probs/rowSums(probs) 
+    
+    ## if the initial classification is bad then some data points won't be 
+    # allocated to any components and some rows will be 
+    # NAs (because if dividing by zero). We correct this by replacing NAs with
+    # equal probabilities
+    NA_id = which(is.na(pnorm[,1]))
+    pnorm[NA_id, ] = 1/ncol(pnorm)
+    
+    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
+    
+    ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
+    e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
+    
+    # compute log lik
+    lp[m] = sum(probs)
+
+    # storing
+    mu[m,] = mu_m
+    r_tilde[m, ] = r_tilde_m
+    
+    ## counter
+    if(print){
+      if(m %% (round(nb_iter / 10)) == 0){
+        cat(paste(100 * m / nb_iter, ' % draws finished'), fill=TRUE)
+      }
+    }
+  }
+  
+  # output
+  mcmc = cbind(eta, mu, r_tilde)
+  colnames(mcmc) = 1:ncol(mcmc)
+  
+  for (i in 1:K) {
+    colnames(mcmc)[c(i, K + i)] = c(
+      paste0("eta", i),
+      paste0("mu", i),
+      paste0("r_tilde", i)
+    )
+  }
+  
+  colnames(mcmc)[ncol(mcmc)] = "loglik"
+  
+  # Return output   
+  return(mcmc)
+}
+
+#' @keywords internal
 check_priors <- function(priors, dist, data) {
   assert_that(all(is.finite(unlist(priors))),
               msg = "All priors should be finite.")
@@ -593,12 +709,11 @@ check_priors <- function(priors, dist, data) {
 ## functions used in the SFM MCMC algorithm
 
 #' @keywords internal
-rneg_binom <- function(Y, d_stdev_candidate, i_n_acceptances, d_mu, d_rtilde) {
+rneg_binom <- function(Y, d_stdev_candidate, d_mu, d_rtilde) {
   # Inputs
   # Y: Nx1 vector of observations
   # d_stdev_candidate: scalar valued std dev for MH step 
   # Initial values of:
-  #   i_n_acceptances: scalar valued number of accepted MH draws 
   #   d_mu: scalar valued mean
   #   d_rtilde: scalar valued rtilde
   
@@ -606,7 +721,6 @@ rneg_binom <- function(Y, d_stdev_candidate, i_n_acceptances, d_mu, d_rtilde) {
   # Updated values of:
   #   d_mu: scalar valued mean
   #   d_rtilde: scalar valued rtilde
-  #   i_n_acceptances: scalar valued number of accepted MH draws 
   
   # Sample
   # Define useful terms
@@ -655,11 +769,10 @@ rneg_binom <- function(Y, d_stdev_candidate, i_n_acceptances, d_mu, d_rtilde) {
       d_r <- d_r_candidate
       d_rtilde <- d_rtilde_candidate
       d_p <- d_p_candidate
-      i_n_acceptances <- i_n_acceptances + 1
     }
   }
   
-  return(list(d_mu = d_mu, d_rtilde = d_rtilde, i_n_acceptances = i_n_acceptances))
+  return(c(d_mu,d_rtilde))
 }
 
 
