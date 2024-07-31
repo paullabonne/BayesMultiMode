@@ -31,6 +31,10 @@ gibbs_SFM <- function(y,
   if (dist == "shifted_poisson") {
     mcmc = gibbs_SFM_sp(y, K, nb_iter, priors, print)
   }
+
+  if (dist == "neg_binomial") {
+    mcmc = gibbs_SFM_neg_binomial(y, K, nb_iter, priors, print)
+  }
   
   return(mcmc)
   
@@ -535,6 +539,7 @@ gibbs_SFM_neg_binomial <- function(y,
   mu = matrix(data=NA,nrow=nb_iter,ncol=K)   # probabilities
   probs = matrix(data=NaN,nrow=n_obs,ncol=K) # Storage for probabilities  
   lp = matrix(0, nb_iter, 1) # Storage for log likelihood  
+  eta = matrix(data = NA, nrow = nb_iter, ncol = K)
   
   # Initial conditions
   cl_y <- kmeans(y, centers = K, nstart = 30)
@@ -549,7 +554,7 @@ gibbs_SFM_neg_binomial <- function(y,
   
   # initial value for the parameters
   mu_m <- cbind(t(cl_y$centers))
-  r_tilde_m <- 1/2
+  r_tilde_m <- rep(0.09, K)
   
   ## Sample lamda and S for each component, k=1,...,k
   for(m in 1:nb_iter){
@@ -567,9 +572,9 @@ gibbs_SFM_neg_binomial <- function(y,
       } else {
         yk = y[S[, k]==1]
       }
-      
+     
       # Sample r tilde and mu
-      draw_pars = rneg_binom(y, sig, mu_m[k], r_tilde_m[k])
+      draw_pars = rneg_binom(yk, sig, mu_m[k], r_tilde_m[k])
       mu_m[k] = draw_pars[1]
       r_tilde_m[k] = draw_pars[2]
 
@@ -577,8 +582,8 @@ gibbs_SFM_neg_binomial <- function(y,
       r = (1-r_tilde_m[k])/r_tilde_m[k]
       p = mu_m[k] / (r + mu_m[k])
       
-      # 
-      probs[,k]  = eta[m,k] * dnbinom(y, r, 1 - p);   
+      #
+      probs[,k]  = eta[m,k] * dnbinom(y, r, 1 - p)
     }
     
     # 2. classification
@@ -610,24 +615,25 @@ gibbs_SFM_neg_binomial <- function(y,
       }
     }
   }
-  
+
   # output
-  mcmc = cbind(eta, mu, r_tilde)
+  mcmc = cbind(eta, mu, r_tilde, lp)
   colnames(mcmc) = 1:ncol(mcmc)
   
   for (i in 1:K) {
-    colnames(mcmc)[c(i, K + i)] = c(
+    colnames(mcmc)[c(i, K + i,  2*K+i)] = c(
       paste0("eta", i),
       paste0("mu", i),
-      paste0("r_tilde", i)
+      paste0("rtilde", i)
     )
   }
   
   colnames(mcmc)[ncol(mcmc)] = "loglik"
-  
+
   # Return output   
   return(mcmc)
 }
+
 
 #' @keywords internal
 check_priors <- function(priors, dist, data) {
@@ -651,14 +657,20 @@ check_priors <- function(priors, dist, data) {
   
   if (dist == "poisson") {
     priors_labels = c("a0", "A0", "l0", "L0")
-    
+
     priors$l0 = ifelse(is.null(priors$l0), 1.1, priors$l0)
-    priors$L0 = ifelse(is.null(priors$L0), 1.1/median(data), priors$L0)
+    priors$L0 = ifelse(is.null(priors$L0), 1.1 / median(data), priors$L0)
   }
   
   if (dist %in% c("shifted_poisson", "poisson")) {
     assert_that(is.scalar(priors$L0), priors$L0 > 0, msg = "prior L0 should be a positive scalar")
     assert_that(is.scalar(priors$l0), priors$L0 > 0, msg = "prior l0 should be a positive scalar")
+  }
+
+  if (dist == "neg_binomial") {
+    priors_labels = c("a0", "A0", "sig")
+    
+    priors$sig = ifelse(is.null(priors$sig), 0.1, priors$sig)
   }
   
   if (dist == "normal") {
@@ -731,7 +743,7 @@ rneg_binom <- function(Y, d_stdev_candidate, d_mu, d_rtilde) {
   d_r <- (1 - d_rtilde) / d_rtilde
   d_p <- d_mu / (d_r + d_mu)
   
-  # Simulate vector of lambda_i (i=1,2,....,n) from 
+  # Simulate vector of lambda_i (i=1,2,....,n) from
   # Gamma(alpha = y_i + r, beta = 1 / p) distribution
   d_b <- d_p
   v_lambda <- rgamma(N, shape = Y + d_r, scale = d_b)
@@ -756,7 +768,7 @@ rneg_binom <- function(Y, d_stdev_candidate, d_mu, d_rtilde) {
   
   # If the candidate draw r~ < 0 or r~ > 0.5, then 
   # it is rejected without the need to evaluate a loglikelihood
-  if (d_rtilde_candidate >= 0 && d_rtilde_candidate <= 0.5) {
+  if (d_rtilde_candidate >= 0 & d_rtilde_candidate <= 0.5) {
     d_r_candidate <- (1 - d_rtilde_candidate) / d_rtilde_candidate
     d_p_candidate <- d_mu / (d_r_candidate + d_mu)
     d_log_l_candidate <- d_r_candidate * N * log(1 - d_p_candidate) -
@@ -776,11 +788,17 @@ rneg_binom <- function(Y, d_stdev_candidate, d_mu, d_rtilde) {
 }
 
 
-# Posterior of kappa
+# Posterior of kappa (poisson)
 #' @keywords internal
 post_kap <- function(x,LAMBDA,KAPPA) {
   n = length(x) # Number of elements in the component
   result <-  exp(-LAMBDA)*(LAMBDA^(sum(x)-n*KAPPA))/prod(factorial(x-KAPPA)) 
+}
+
+# Posterior of kappa (neg binomial)
+#' @keywords internal
+post_kap_neg_binom <- function(x, r, p, kappa) {
+  exp(sum(lgamma(x - kappa + r) - lfactorial(x - kappa)) + sum(x - kappa) * log(p))
 }
 
 # Draw kappa from posterior using MH step

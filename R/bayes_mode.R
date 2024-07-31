@@ -158,7 +158,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
     assert_that(range[2] > range[1],
                 msg = "upper limit of range not greater than lower limit")
     
-    if (dist %in% c("poisson", "shifted_poisson")) {
+    if (dist %in% c("poisson", "shifted_poisson", "neg_binomial")) {
       assert_that(all(range>=0),
                   msg = "lower limit should be greater or equal than zero when using the Poisson or shifted Poisson.")
     }

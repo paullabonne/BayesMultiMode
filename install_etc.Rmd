@@ -34,3 +34,55 @@ devtools::spell_check()
 devtools::load_all()
 devtools::test()
 ```
+
+#### test_neg_binom
+```{r, eval = FALSE}
+# Set seed for reproducibility
+set.seed(123) 
+
+# Simulate data
+N <- 1000  # Number of observations
+J <- 2     # Number of components
+p <- c(0.5, 0.5)  # Component probabilities
+
+# True parameters of DGP
+true_Mu <- c(1, 20)  # True mean
+true_R <- c(2, 10)   # True shape parameter
+
+true_P <- true_Mu / (true_R + true_Mu)  # p = mu/(r+mu)
+P_R <- 1 - true_P  # R specification of NB uses 1-p
+
+# Simulate components
+Y1 <- rnbinom(round(p[1] * N), size = true_R[1], prob = P_R[1])
+Y2 <- rnbinom(round(p[2] * N), size = true_R[2], prob = P_R[2])
+
+Y <- c(Y1, Y2)
+
+hist(Y)
+```
+
+```{r, eval = FALSE}
+set.seed(123)
+
+# retrieve galaxy data
+y = Y
+
+# estimation
+bayesmix = bayes_fit(data = y,
+                     K = 2,
+                     dist = "neg_binomial",
+                     nb_iter = 2000,
+                     burnin = 1000,
+                     print = T)
+
+plot(bayesmix, draws = 200)
+```
+
+```{r, out.width = '70%', fig.align = "center"}
+# mode estimation
+bayesmode = bayes_mode(bayesmix)
+
+plot(bayesmode)
+
+summary(bayesmode)
+```
