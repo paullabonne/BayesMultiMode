@@ -592,6 +592,77 @@ check_priors <- function(priors, dist, data) {
 
 ## functions used in the SFM MCMC algorithm
 
+#' @keywords internal
+rneg_binom <- function(Y, d_stdev_candidate, i_n_acceptances, d_mu, d_rtilde) {
+  # Inputs
+  # Y: Nx1 vector of observations
+  # d_stdev_candidate: scalar valued std dev for MH step 
+  # Initial values of:
+  #   i_n_acceptances: scalar valued number of accepted MH draws 
+  #   d_mu: scalar valued mean
+  #   d_rtilde: scalar valued rtilde
+  
+  # Output
+  # Updated values of:
+  #   d_mu: scalar valued mean
+  #   d_rtilde: scalar valued rtilde
+  #   i_n_acceptances: scalar valued number of accepted MH draws 
+  
+  # Sample
+  # Define useful terms
+  N <- length(Y) # Sample size
+  max_y <- max(Y) # max Y
+  
+  # Define NB terms
+  d_r <- (1 - d_rtilde) / d_rtilde
+  d_p <- d_mu / (d_r + d_mu)
+  
+  # Simulate vector of lambda_i (i=1,2,....,n) from 
+  # Gamma(alpha = y_i + r, beta = 1 / p) distribution
+  d_b <- d_p
+  v_lambda <- rgamma(N, shape = Y + d_r, scale = d_b)
+  
+  # Simulate 1 / mu from truncated version on interval (1 / M, infinity) of
+  # Gamma(alpha = rn - 1, beta = r * sum(lambda_i))
+  d_a <- d_r * N - 1
+  d_b <- 1 / (d_r * sum(v_lambda))
+  d_cdf_at_1_over_m <- pgamma(1 / max_y, shape = d_a, scale = d_b)
+  # Simulate U on (CDF(1 / m), 1 = CDF(infinity))
+  d_u <- d_cdf_at_1_over_m + (1 - d_cdf_at_1_over_m) * runif(1)
+  # Invert Gamma CDF and compute inverse mu = 1 / (1 / mu)
+  d_mu <- 1 / qgamma(d_u, shape = d_a, scale = d_b)
+  
+  # Update value of d_p and compute loglikelihood (excluding the term 
+  # -sum log(y_i!) that only depends on the data) of current draw (mu, r~)
+  d_p <- d_mu / (d_r + d_mu)
+  d_log_l <- d_r * N * log(1 - d_p) - N * lgamma(d_r) + sum(lgamma(Y + d_r) + Y * log(d_p))
+  
+  # Simulate r~ using a random-walk Metropolis(-Hastings) step
+  d_rtilde_candidate <- rnorm(1, mean = d_rtilde, sd = d_stdev_candidate)
+  
+  # If the candidate draw r~ < 0 or r~ > 0.5, then 
+  # it is rejected without the need to evaluate a loglikelihood
+  if (d_rtilde_candidate >= 0 && d_rtilde_candidate <= 0.5) {
+    d_r_candidate <- (1 - d_rtilde_candidate) / d_rtilde_candidate
+    d_p_candidate <- d_mu / (d_r_candidate + d_mu)
+    d_log_l_candidate <- d_r_candidate * N * log(1 - d_p_candidate) -
+      N * lgamma(d_r_candidate) + sum(lgamma(Y + d_r_candidate) + Y * log(d_p_candidate))
+    
+    d_acceptance_probability <- min(exp(d_log_l_candidate - d_log_l), 1)
+    
+    d_u_rw_mh <- runif(1)
+    if (d_u_rw_mh < d_acceptance_probability) {
+      d_r <- d_r_candidate
+      d_rtilde <- d_rtilde_candidate
+      d_p <- d_p_candidate
+      i_n_acceptances <- i_n_acceptances + 1
+    }
+  }
+  
+  return(list(d_mu = d_mu, d_rtilde = d_rtilde, i_n_acceptances = i_n_acceptances))
+}
+
+
 # Posterior of kappa
 #' @keywords internal
 post_kap <- function(x,LAMBDA,KAPPA) {
