@@ -70,12 +70,13 @@ y = Y
 # estimation
 bayesmix = bayes_fit(data = y,
                      K = 2,
-                     dist = "neg_binomial",
+                     dist = "shifted_neg_binomial",
                      nb_iter = 2000,
                      burnin = 1000,
                      print = T)
 
 plot(bayesmix, draws = 200)
+bayes_trace(bayesmix)
 ```
 
 ```{r, out.width = '70%', fig.align = "center"}

@@ -171,21 +171,21 @@ bayes_fit <- function(data,
               msg = "data should be a vector of length greater than K")
   assert_that(all(is.finite(data)),
               msg = "data should only include numeric finite values")
-  assert_that(is.string(dist) & dist %in% c("normal", "skew_normal", "poisson", "shifted_poisson", "neg_binomial"),
+  assert_that(is.string(dist) & dist %in% c("normal", "skew_normal", "poisson", "shifted_poisson", "neg_binomial", "shifted_neg_binomial"),
               msg = paste0("Unsupported distribution;\n",
                            "dist should be either\n",
-                           "'normal', 'skew_normal', 'poisson', 'shifted_poisson' or 'neg_binomial'"))
+                           "'normal', 'skew_normal', 'poisson', 'shifted_poisson', 'neg_binomial' or 'shifted_neg_binomial'"))
   assert_that(is.scalar(nb_iter), round(nb_iter) == nb_iter, nb_iter > 0, msg = "nb_iter should be a positive integer")
   assert_that(is.scalar(burnin), burnin > 0, burnin < nb_iter, round(burnin) == burnin,
               msg = "nb_iter should be a positive integer lower than burnin")
   assert_that(is.scalar(K), round(K) == K, K > 0, msg = "K should be a positive integer")
   assert_that(is.logical(print), msg = "print should be either TRUE or FALSE")
   
-  if (dist %in% c("poisson", "shifted_poisson", "neg_binomial")) {
+  if (dist %in% c("poisson", "shifted_poisson", "neg_binomial", "shifted_neg_binomial")) {
     assert_that(!any(!data%%1==0),
-                msg = "data must include only integer values when using Poisson or shifted Poisson mixtures.")
+                msg = "data must include only integer values when using Poisson, shifted Poisson, negative Binomial or shifted negative Binomial mixtures.")
     assert_that(min(data) > -1,
-                msg = "data should not include negative values when using Poisson or shifted Poisson mixtures.")
+                msg = "data should not include negative values when using Poisson, shifted Poisson, negative Binomial or shifted negative Binomial mixtures.")
     dist_type = "discrete"
   } else {
     dist_type = "continuous"

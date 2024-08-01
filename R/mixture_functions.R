@@ -70,7 +70,7 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, loc) {
     
     if (dist == "shifted_poisson") {
       assert_that(sum(pars_names %in% c("eta", "kappa", "lambda")) == 3,
-        msg = paste0(msg_0, "eta and lambda when dist = shifted_poisson")
+        msg = paste0(msg_0, "eta, kappa and lambda when dist = shifted_poisson")
       )
       pdf_func <- function(x, pars) dpois(x - pars["kappa"], pars["lambda"])
     }
@@ -83,6 +83,17 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, loc) {
           r = (1-pars["rtilde"])/pars["rtilde"]
           p = pars["mu"] / (r + pars["mu"])
           return(dnbinom(x, r, 1 - p))
+      }
+    }
+
+    if (dist == "shifted_neg_binomial"){
+      assert_that(sum(pars_names %in% c("eta", "kappa", "mu", "rtilde"))==4,
+                  msg = paste0(msg_0, "eta, kappa, mu and rtilde when dist = shifted_neg_binomial"))
+
+      pdf_func <- function(x, pars) {
+          r = (1-pars["rtilde"])/pars["rtilde"]
+          p = pars["mu"] / (r + pars["mu"])
+          return(dnbinom(x - pars["kappa"], r, 1 - p))
       }
     }
     
@@ -101,10 +112,10 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, loc) {
     
     if (dist %in% c("normal", "skew_normal")) {
       dist_type = "continuous"
-    } else if (dist %in% c("poisson", "shifted_poisson", "neg_binomial")) {
+    } else if (dist %in% c("poisson", "shifted_poisson", "neg_binomial", "shifted_neg_binomial")) {
       dist_type = "discrete"
     } else {
-      stop("Unsupported distribution; dist should be either normal, skew_normal, poisson, shifted_poisson or neg_binomial")
+      stop("Unsupported distribution; dist should be either normal, skew_normal, poisson, shifted_poisson, neg_binomial or shifted_neg_binomial")
     } 
   }
   

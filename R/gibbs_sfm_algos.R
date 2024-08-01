@@ -29,11 +29,15 @@ gibbs_SFM <- function(y,
   }
   
   if (dist == "shifted_poisson") {
-    mcmc = gibbs_SFM_sp(y, K, nb_iter, priors, print)
+    mcmc = gibbs_SFM_shifted_poisson(y, K, nb_iter, priors, print)
   }
 
   if (dist == "neg_binomial") {
     mcmc = gibbs_SFM_neg_binomial(y, K, nb_iter, priors, print)
+  }
+
+  if (dist == "shifted_neg_binomial") {
+    mcmc = gibbs_SFM_shifted_neg_binomial(y, K, nb_iter, priors, print)
   }
   
   return(mcmc)
@@ -402,7 +406,7 @@ gibbs_SFM_skew_n <- function(y,
 }
 
 #' @keywords internal
-gibbs_SFM_sp <- function(y,
+gibbs_SFM_shifted_poisson <- function(y,
                          K,
                          nb_iter,
                          priors = list(),
@@ -460,7 +464,8 @@ gibbs_SFM_sp <- function(y,
       } else if (kapub < kappa_m[k]) {# Set to upper bound if outside boudary
         kappa_m[k] = kapub
       } else {
-        temp = draw_kap(yk, lambda_m[k], kappa_m[k], kaplb = 0, kapub) # Draw kappa from MH step
+        pars_m = c(kappa_m[k], lambda_m[k])
+        temp = draw_kap(yk, pars_m, kaplb = 0, kapub, dist = "shifted_poisson") # Draw kappa from MH step
         kappa_m[k] = temp[[1]]
       }
       
@@ -517,9 +522,8 @@ gibbs_SFM_sp <- function(y,
   return(mcmc)
 }
 
+# Gibbs sampler for the negative binomial
 #' @keywords internal
-#' Gibbs sampler for the negative binomial
-#' 
 gibbs_SFM_neg_binomial <- function(y,
                               K,
                               nb_iter,
@@ -535,8 +539,8 @@ gibbs_SFM_neg_binomial <- function(y,
   n_obs <- length(y)
 
   # storage matrices
-  r_tilde = matrix(data=NA,nrow=nb_iter,ncol=K) # lambda
-  mu = matrix(data=NA,nrow=nb_iter,ncol=K)   # probabilities
+  r_tilde = matrix(data=NA,nrow=nb_iter,ncol=K)
+  mu = matrix(data=NA,nrow=nb_iter,ncol=K)  
   probs = matrix(data=NaN,nrow=n_obs,ncol=K) # Storage for probabilities  
   lp = matrix(0, nb_iter, 1) # Storage for log likelihood  
   eta = matrix(data = NA, nrow = nb_iter, ncol = K)
@@ -634,6 +638,134 @@ gibbs_SFM_neg_binomial <- function(y,
   return(mcmc)
 }
 
+# Shifted negative binomial
+#' @keywords internal
+gibbs_SFM_shifted_neg_binomial <- function(y,
+                         K,
+                         nb_iter,
+                         priors = list(),
+                         print = TRUE){
+  
+  # unpacking priors
+  a0 = priors$a0
+  A0 = priors$A0
+  sig = priors$sig
+  
+  n_obs <- length(y)
+  
+  # storage matrices
+  kappa = matrix(data=NA,nrow=nb_iter,ncol=K) 
+  r_tilde = matrix(data=NA,nrow=nb_iter,ncol=K)
+  mu = matrix(data=NA,nrow=nb_iter,ncol=K)  
+  probs = matrix(data=NaN,nrow=n_obs,ncol=K) # Storage for probabilities  
+  lp = matrix(0, nb_iter, 1) # Storage for log likelihood  
+  eta = matrix(data = NA, nrow = nb_iter, ncol = K)
+  
+  # Initial conditions
+  cl_y <- kmeans(y, centers = K, nstart = 30)
+  
+  S <- matrix(0,length(y),K)
+  for (k in 1:K) {
+    S[cl_y$cluster==k ,k] = 1
+  }
+  
+  e0 = a0/A0
+  
+  # initial value for the parameters
+  kappa_m = rep(0,K)
+  mu_m <- cbind(t(cl_y$centers))
+  r_tilde_m <- rep(0.09, K)
+  
+  ## Sample lamda and S for each component, k=1,...,k
+  for(m in 1:nb_iter){
+    
+    # Compute number of observations allocated in each component
+    N = colSums(S)
+    
+    ## sample component proportion
+    eta[m, ] = rdirichlet(1, e0 + N) 
+    
+    for (k in 1:K){
+      
+      if (N[k]==0) {
+        yk = 0
+      } else {
+        yk = y[S[, k]==1]
+      }
+      
+      # Sample kappa using MH Step
+      kapub = min(yk)
+      if (length(kapub) == 0) {# Set to zero if component is empty
+        kappa_m[k] = 0; 
+      } else if (kapub < kappa_m[k]) {# Set to upper bound if outside boudary
+        kappa_m[k] = kapub
+      } else {
+        pars_m = c(kappa_m[k], r_tilde_m[k], mu_m[k])
+        temp = draw_kap(yk, pars_m, kaplb = 0, kapub, dist = "shifted_neg_binomial") # Draw kappa from MH step
+        kappa_m[k] = temp[[1]]
+      }
+      
+      # Sample r tilde and mu
+      draw_pars = rneg_binom(yk - kappa_m[k], sig, mu_m[k], r_tilde_m[k])
+      mu_m[k] = draw_pars[1]
+      r_tilde_m[k] = draw_pars[2]
+
+      # transform parameters
+      r = (1-r_tilde_m[k])/r_tilde_m[k]
+      p = mu_m[k] / (r + mu_m[k])
+      
+      #
+      probs[,k]  = eta[m,k] * dnbinom(y - kappa_m[k], r, 1 - p)
+    }
+    
+    # 2. classification
+    pnorm = probs/rowSums(probs)
+    
+    ## if the initial classification is bad then some data points won't be 
+    # allocated to any components and some rows will be 
+    # NAs (because if dividing by zero). We correct this by replacing NAs with
+    # equal probabilities
+    NA_id = which(is.na(pnorm[,1]))
+    pnorm[NA_id, ] = 1/ncol(pnorm)
+    
+    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
+    
+    ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
+    e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
+    
+    # compute log lik
+    lp[m] = sum(probs)
+    
+    # storing
+    mu[m,] = mu_m
+    r_tilde[m, ] = r_tilde_m
+    kappa[m, ] = kappa_m
+    
+    ## counter
+    if(print){
+      if(m %% (round(nb_iter / 10)) == 0){
+        cat(paste(100 * m / nb_iter, ' % draws finished'), fill=TRUE)
+      }
+    }
+  }
+  
+  # output
+  mcmc = cbind(eta, kappa, mu, r_tilde, lp)
+  colnames(mcmc) = 1:ncol(mcmc)
+  
+  for (i in 1:K) {
+    colnames(mcmc)[c(i, K + i,  2*K+i, 3*K+i)] = c(
+      paste0("eta", i),
+      paste0("kappa", i),
+      paste0("mu", i),
+      paste0("rtilde", i)
+    )
+  }
+  colnames(mcmc)[ncol(mcmc)] = "loglik"
+  
+  # Return output   
+  return(mcmc)
+}
 
 #' @keywords internal
 check_priors <- function(priors, dist, data) {
@@ -667,9 +799,9 @@ check_priors <- function(priors, dist, data) {
     assert_that(is.scalar(priors$l0), priors$L0 > 0, msg = "prior l0 should be a positive scalar")
   }
 
-  if (dist == "neg_binomial") {
+  if (dist %in% c("shifted_neg_binomial", "neg_binomial")) {
     priors_labels = c("a0", "A0", "sig")
-    
+
     priors$sig = ifelse(is.null(priors$sig), 0.1, priors$sig)
   }
   
@@ -787,26 +919,39 @@ rneg_binom <- function(Y, d_stdev_candidate, d_mu, d_rtilde) {
   return(c(d_mu,d_rtilde))
 }
 
-
-# Posterior of kappa (poisson)
+# Posterior of kappa 
 #' @keywords internal
-post_kap <- function(x,LAMBDA,KAPPA) {
-  n = length(x) # Number of elements in the component
-  result <-  exp(-LAMBDA)*(LAMBDA^(sum(x)-n*KAPPA))/prod(factorial(x-KAPPA)) 
-}
+post_kap <- function(x, pars, dist){
 
-# Posterior of kappa (neg binomial)
-#' @keywords internal
-post_kap_neg_binom <- function(x, r, p, kappa) {
-  exp(sum(lgamma(x - kappa + r) - lfactorial(x - kappa)) + sum(x - kappa) * log(p))
+  kappa = pars[1]
+
+  if (dist == "shifted_poisson") {
+    lambda = pars[2]
+    n = length(x) # Number of elements in the component
+    result <-  exp(-lambda)*(lambda^(sum(x)-n*kappa))/prod(factorial(x-kappa)) 
+  }
+
+  if (dist == "shifted_neg_binomial") {
+    r_tilde = pars[2]
+    mu = pars[3]
+    
+    # transform parameters
+    r = (1-r_tilde)/r_tilde
+    p = mu / (r + mu)
+    result = exp(sum(lgamma(x - kappa + r) - lfactorial(x - kappa)) + sum(x - kappa) * log(p))
+  }
+
+  return (result)
 }
 
 # Draw kappa from posterior using MH step
 #' @keywords internal
-draw_kap <- function(x,LAMBDA,KAPPA,kaplb,kapub) {
+draw_kap <- function(x,pars,kaplb,kapub, dist) {
+  KAPPA = pars[1]
   n = length(x) # Number of elements in the component
   KAPPAhat = sample(kaplb:kapub, 1) # Draw candidate from uniform proposal
-  accratio = post_kap(x,LAMBDA,KAPPAhat)/post_kap(x,LAMBDA,KAPPA) # Acceptance ratio
+  pars_hat = c(KAPPAhat, pars[-1])
+  accratio = post_kap(x, pars_hat, dist)/post_kap(x, pars, dist) # Acceptance ratio
   if(is.na(accratio)){
     accprob = 1 # Acceptance probability if denominator = inf (numerical error due to large number) 
   } else {

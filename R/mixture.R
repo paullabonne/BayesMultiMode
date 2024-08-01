@@ -94,7 +94,7 @@ mixture <- function(pars,
   assert_that(range[2] > range[1],
               msg = "upper limit of range not greater than lower limit")
   
-  if (dist %in% c("poisson", "shifted_poisson")) {
+  if (dist %in% c("poisson", "shifted_poisson", "neg_binomial", "shifted_neg_binomial")) {
     assert_that(all(range>=0),
                 msg = "lower limit should be greater or equal than zero when using the Poisson or shifted Poisson.")
   }
