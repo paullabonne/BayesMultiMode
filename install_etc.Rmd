@@ -32,7 +32,8 @@ devtools::spell_check()
 #### Loading all functions for testing before installing
 ```{r, eval = FALSE}
 devtools::load_all()
-devtools::test()
+
+#devtools::test()
 ```
 
 #### test_neg_binom
@@ -46,7 +47,7 @@ J <- 2     # Number of components
 p <- c(0.5, 0.5)  # Component probabilities
 
 # True parameters of DGP
-true_Mu <- c(1, 20)  # True mean
+true_Mu <- c(1, 15)  # True mean
 true_R <- c(2, 10)   # True shape parameter
 
 true_P <- true_Mu / (true_R + true_Mu)  # p = mu/(r+mu)
@@ -56,9 +57,30 @@ P_R <- 1 - true_P  # R specification of NB uses 1-p
 Y1 <- rnbinom(round(p[1] * N), size = true_R[1], prob = P_R[1])
 Y2 <- rnbinom(round(p[2] * N), size = true_R[2], prob = P_R[2])
 
-Y <- c(Y1, Y2)
+kappa <- c(10,0)
+Y <- c(Y1 + kappa[1], Y2+ kappa[2])
 
 hist(Y)
+```
+
+# dna
+
+
+
+```{r, eval = FALSE}
+x <- 0:34
+freq.x <- c(3002, 502, 187, 138, 233, 160, 107, 80, 59, 53, 41, 28, 34, 10, 13, 11, 4, 5, 8, 6, 3, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1) 
+
+# create whole data
+y <- rep(x[1], freq.x[1])
+
+for(i in 1:34){
+  tmp <- rep(x[i + 1], freq.x[i + 1])
+  y <- c(y, tmp)
+}
+
+hist(y)
+Y = y
 ```
 
 ```{r, eval = FALSE}
@@ -69,7 +91,7 @@ y = Y
 
 # estimation
 bayesmix = bayes_fit(data = y,
-                     K = 2,
+                     K = 5,
                      dist = "shifted_neg_binomial",
                      nb_iter = 2000,
                      burnin = 1000,
