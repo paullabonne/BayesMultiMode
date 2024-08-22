@@ -559,7 +559,7 @@ check_priors <- function(priors, dist, data) {
     priors_labels = c("a0", "A0", "l0", "L0")
     
     priors$l0 = ifelse(is.null(priors$l0), 1.1, priors$l0)
-    priors$L0 = ifelse(is.null(priors$L0), 1.1/median(data), priors$L0)
+    priors$L0 = ifelse(is.null(priors$L0), priors$l0/median(data), priors$L0)
   }
   
   if (dist %in% c("shifted_poisson", "poisson")) {
