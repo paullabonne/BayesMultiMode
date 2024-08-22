@@ -75,9 +75,10 @@ gibbs_SFM_normal <- function(y,
   # sampling
   for (m in 2:nb_iter){
     # 1. parameter simulation conditional on the classification
-    
+
     ## a. sample component proportion
     N = colSums(S)
+  
     eta[m, ] = rdirichlet(1, e0 + N) 
     
     probs = matrix(NA, length(y), K)
@@ -112,8 +113,13 @@ gibbs_SFM_normal <- function(y,
     NA_id = which(is.na(pnorm[,1]))
     pnorm[NA_id, ] = 1/ncol(pnorm)
     
-    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
+    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1, size = 1, prob = x)))
     
+    # The dimmension of S is not right if K =1
+    if (K == 1) {
+      S = matrix(S, ncol = 1)
+    }
+
     # 3. sample hyperparameters
     
     ## a. sample C0
@@ -144,7 +150,7 @@ gibbs_SFM_normal <- function(y,
                                          paste0("sigma", i))
   }
   colnames(mcmc)[ncol(mcmc)] = "loglik"
-  
+
   return(mcmc)
 }
 
@@ -187,7 +193,7 @@ gibbs_SFM_poisson <- function(y,
     N = colSums(S)
     
     ## sample component proportion
-    eta[m, ] = rdirichlet(1, e0 + N) 
+    eta[m, ] = rdirichlet(1, e0 + N)
     
     for (k in 1:K){
       
@@ -215,7 +221,12 @@ gibbs_SFM_poisson <- function(y,
     NA_id = which(is.na(pnorm[,1]))
     pnorm[NA_id, ] = 1/ncol(pnorm)
     
-    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
+    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1, size = 1, prob = x)))
+    
+    # The dimmension of S is not right if K =1
+    if (K == 1) {
+      S = matrix(S, ncol = 1)
+    }
     
     ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
     e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
@@ -304,6 +315,7 @@ gibbs_SFM_skew_n <- function(y,
     
     ## a.1 sample component proportion
     N = colSums(S)
+    
     eta[m, ] = rdirichlet(1, e0 + N) 
     
     probs = matrix(NA, n_obs, K)
@@ -362,6 +374,11 @@ gibbs_SFM_skew_n <- function(y,
     pnorm[NA_id, ] = 1/ncol(pnorm)
     
     S = t(apply(pnorm, 1, function(x) rmultinom(n = 1, size = 1, prob = x)))
+
+    # The dimmension of S is not right if K =1
+    if (K == 1) {
+      S = matrix(S, ncol = 1)
+    }
     
     # 3. sample hyperparameters
     ## a. sample C0
@@ -478,7 +495,12 @@ gibbs_SFM_sp <- function(y,
     NA_id = which(is.na(pnorm[,1]))
     pnorm[NA_id, ] = 1/ncol(pnorm)
     
-    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
+    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1, size = 1, prob = x)))
+    
+    # The dimmension of S is not right if K =1
+    if (K == 1) {
+      S = matrix(S, ncol = 1)
+    }
     
     ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
     e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]

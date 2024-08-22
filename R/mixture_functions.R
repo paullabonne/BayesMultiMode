@@ -31,10 +31,6 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, loc) {
   
   pars_mat = vec_to_mat(p, pars_names)
   pars_mat = na.omit(pars_mat)
-
-  assert_that(nrow(pars_mat) > 1,
-              msg = paste("there must be at least two components per variable in",
-                           par_type))
   
   assert_that(round(sum(pars_mat[, "eta"], na.rm = T),2)==1,
               msg = "The mixture proportions, eta, should sum to one.")
