@@ -671,12 +671,9 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
   e0 = a0/A0
   
   # initial value for the parameters
-  kappa_m = rep(0,K)
+  kappa_m = rep(0, K)
   mu_m <- cbind(t(cl_y$centers))
   r_tilde_m <- rep(0.09, K)
-
-  #
-  ykb = matrix(NA, length(y), K)
   
   ## Sample lamda and S for each component, k=1,...,k
   for(m in 1:nb_iter){
@@ -686,28 +683,34 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
     
     ## sample component proportion
     eta[m, ] = rdirichlet(1, e0 + N) 
-    
+
     for (k in 1:K){      
       if (N[k]==0) {
         yk = 0
-        ykb[, k] = yk
       } else {
         yk = y[S[, k] == 1]
-        ykb[1:length(yk),k] = yk
       }
-      
+
       # Sample kappa using MH Step
+      #if (length(yk) == 0) { # Set to zero if component is empty
+      #  kappa_m[k] = 0
+      #} else {
+      #  pars_m = c(kappa_m[k], r_tilde_m[k], mu_m[k])
+      #  temp = draw_kap(yk, pars_m, kaplb = 0, kapub = min(yk), dist = "shifted_neg_binomial") # Draw kappa from MH step
+      #  kappa_m[k] = temp[[1]]
+      #}
+
       kapub = min(yk)
-      if (length(kapub) == 0) { # Set to zero if component is empty
-        kappa_m[k] = 0
-      } else if (kapub < kappa_m[k]) { # Set to upper bound if outside boudary
+      if (length(kapub) == 0) {# Set to zero if component is empty
+        kappa_m[k] = 0; 
+      } else if (kapub < kappa_m[k]) {# Set to upper bound if outside boudary
         kappa_m[k] = kapub
       } else {
         pars_m = c(kappa_m[k], r_tilde_m[k], mu_m[k])
-        temp = draw_kap(yk, pars_m, kaplb = 0, kapub, dist = "shifted_neg_binomial") # Draw kappa from MH step
+        temp = draw_kap(yk, pars_m, kaplb = 0, kapub = min(yk), dist = "shifted_neg_binomial") # Draw kappa from MH step
         kappa_m[k] = temp[[1]]
       }
-      
+
       # if component not empy or only zero
       #if (length(yk) == 0 | sum(yk) == 0) {
        # mu_m[k] = 1
@@ -717,7 +720,7 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
         draw_pars = rneg_binom(yk - kappa_m[k], sig, mu_m[k], r_tilde_m[k])
         mu_m[k] = draw_pars[1]
         r_tilde_m[k] = draw_pars[2]
-      #}
+      # }
 
       # transform parameters
       r = (1-r_tilde_m[k])/r_tilde_m[k]
@@ -864,7 +867,7 @@ check_priors <- function(priors, dist, data) {
 #' @keywords internal
 rneg_binom <- function(Y, d_stdev_candidate, d_mu, d_rtilde) {
 
-  # Y[Y < 0] = 0
+  #Y = Y[Y >= 0]
   
   # Inputs
   # Y: Nx1 vector of observations
@@ -943,7 +946,7 @@ post_kap <- function(x, pars, dist){
   if (dist == "shifted_poisson") {
     lambda = pars[2]
     n = length(x) # Number of elements in the component
-    result <-  exp(-lambda)*(lambda^(sum(x)-n*kappa))/prod(factorial(x-kappa)) 
+    result <- log(exp(-lambda) * (lambda^(sum(x) - n * kappa)) / prod(factorial(x - kappa)))
   }
 
   if (dist == "shifted_neg_binomial") {
@@ -953,7 +956,8 @@ post_kap <- function(x, pars, dist){
     # transform parameters
     r = (1-r_tilde)/r_tilde
     p = mu / (r + mu)
-    result = shifted_neg_binom_ll(x, r, p, kappa)
+    
+    result = neg_binom_ll(x - kappa, r, p)
     #result = exp(sum(lgamma(x - kappa + r) - lfactorial(x - kappa)) + sum(x - kappa) * log(p))
   }
 
@@ -967,7 +971,9 @@ draw_kap <- function(x,pars,kaplb,kapub, dist) {
   n = length(x) # Number of elements in the component
   KAPPAhat = sample(kaplb:kapub, 1) # Draw candidate from uniform proposal
   pars_hat = c(KAPPAhat, pars[-1])
-  accratio = post_kap(x, pars_hat, dist)/post_kap(x, pars, dist) # Acceptance ratio
+
+  accratio = exp(post_kap(x, pars_hat, dist) - post_kap(x, pars, dist)) # Acceptance ratio
+  #accratio = post_kap(x, pars_hat, dist)/post_kap(x, pars, dist) # Acceptance ratio
   if(is.na(accratio)){
     accprob = 1 # Acceptance probability if denominator = inf (numerical error due to large number) 
   } else {
@@ -975,12 +981,17 @@ draw_kap <- function(x,pars,kaplb,kapub, dist) {
   }
   rand = runif(1, min = 0, max = 1) # Random draw from unifrom (0,1)
   if (rand < accprob) {
-    KAPPA = KAPPAhat; # update
-    acc = 1; # indicate update
-  } else{
-    KAPPA = KAPPA; # don't update
-    acc = 0;  # indicate failure to update
+    KAPPA = KAPPAhat # update
+    acc = 1 # indicate update
+  } else {
+    # don't update
+    acc = 0 # indicate failure to update
   }
+  
+  if (KAPPA > kapub) { # Set to upper bound if outside boudary
+      KAPPA = kapub
+  } 
+ 
   out <- list(KAPPA, acc) # Store output in list
   return(out)           # Return output
 }
@@ -996,7 +1007,8 @@ post_e0 <- function(e0,nu0_p,S0_p,p) {
 #' @keywords internal
 draw_e0 <- function(e0,nu0,S0,p){
   # Define terms
-  e0hat = e0 + rnorm(1,0,0.1) # Draw a candidate from Random walk proposal
+  e0hat = e0 + rnorm(1, 0, 0.1) # Draw a candidate from Random walk proposal
+  #accratio = exp(log(post_e0(e0hat,nu0,S0,p)) - log(post_e0(e0,nu0,S0,p)))
   accratio = post_e0(e0hat,nu0,S0,p)/post_e0(e0,nu0,S0,p) # Acceptance ratio
   if(is.na(accratio)){
     accprob = 0 # Acceptance probability if denominator = 0 
@@ -1017,7 +1029,7 @@ draw_e0 <- function(e0,nu0,S0,p){
 }
 
 # for the negative binomial
-neg_binom_ll <- function(y, p, r) {
+neg_binom_ll <- function(y, r, p) {
   # Evaluates the negative binomial log-likelihood using the paramterization
   # where p is the probability of success, and r is the number of successes,
   # i.e.,
@@ -1041,38 +1053,6 @@ neg_binom_ll <- function(y, p, r) {
     term3 <- y * log(1 - p)
 
     logLikelihood <- sum(term1 + term2 + term3)
-  }
-
-  return(logLikelihood)
-}
-
-shifted_neg_binom_ll <- function(x, r, p, kap) {
-  # Evaluates the shifted negative binomial log-likelihood over a range of
-  # possible values for the shift parameter, kappa.
-  # Use the custom function `NBLL_v1'. This uses the classical
-  #   success-probability parameterization of the NB distribution:
-  #   P(Y=y)=(gamma(y + r)/(gamma(y+1)*gamma(r)))*p^r*(1-p)^y
-
-  # Inputs:
-  #   y     - Nx1 vector of observed counts (non-negative integers).
-  #   p     - probability of success (real number in (0,1)).
-  #   r     - Dispersion parameter (positive real number).
-  #   kap   - Kx1 vector of shift parameters counts (non-negative integers).
-  #   ind   - Categorical indicator selecting the three options above
-  # Output:
-  #   logLikelihood - The negative binomial log-likelihood.
-
-  # Number of shift parameters to evaluate
-  nkap <- length(kap)
-
-  # Initialize the target density as NaN (not-a-number)
-  logLikelihood <- rep(NA, nkap)
-
-  # Loop over each shift parameter in kap
-  for (ii in 1:nkap) {
-    # Adjusted counts after applying the shift parameter
-    x_shifted <- x - kap[ii]
-    logLikelihood[ii] <- neg_binom_ll(x_shifted, p, r)
   }
 
   return(logLikelihood)
