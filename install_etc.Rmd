@@ -1,6 +1,7 @@
 ## Loading package
 ```{r}
-library(BayesMultiMode)
+#library(BayesMultiMode)
+#install.packages("BayesMultiMode")
 ```
 
 ## 
@@ -33,7 +34,7 @@ devtools::spell_check()
 ```{r, eval = FALSE}
 devtools::load_all()
 
-#devtools::test()
+devtools::test()
 ```
 
 #### test_neg_binom
@@ -57,14 +58,20 @@ P_R <- 1 - true_P  # R specification of NB uses 1-p
 Y1 <- rnbinom(round(p[1] * N), size = true_R[1], prob = P_R[1])
 Y2 <- rnbinom(round(p[2] * N), size = true_R[2], prob = P_R[2])
 
-kappa <- c(10,0)
-Y <- c(Y1 + kappa[1], Y2+ kappa[2])
+kappa <- c(0, 0)
+kappa <- c(0,0)
+
+Y <- c(Y1 + kappa[1], Y2)
 
 hist(Y)
 ```
 
 # dna
-
+```{r, eval = FALSE}
+Y <- BayesMultiMode::ct47
+Y <- BayesMultiMode::d4z4
+hist(Y)
+```
 
 
 ```{r, eval = FALSE}
@@ -84,21 +91,28 @@ Y = y
 ```
 
 ```{r, eval = FALSE}
-set.seed(123)
+#set.seed(123)
 
 # retrieve galaxy data
 y = Y
 
 # estimation
 bayesmix = bayes_fit(data = y,
-                     K = 5,
-                     dist = "shifted_neg_binomial",
+                     K = 1,
+                     #priors = list(a0 = 100, A0 = 1),
+                     #dist = "neg_binomial",
+                     dist = "neg_binomial",
                      nb_iter = 2000,
                      burnin = 1000,
                      print = T)
 
 plot(bayesmix, draws = 200)
 bayes_trace(bayesmix)
+bayes_trace(bayesmix, with_burnin = TRUE)
+```
+
+```{r, out.width = '70%', fig.align = "center"}
+bayes_info(bayesmix)
 ```
 
 ```{r, out.width = '70%', fig.align = "center"}
@@ -108,4 +122,6 @@ bayesmode = bayes_mode(bayesmix)
 plot(bayesmode)
 
 summary(bayesmode)
+
+sum(bayesmode$mix_density[,3])
 ```
