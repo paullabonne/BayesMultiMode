@@ -171,7 +171,7 @@ bayes_fit <- function(data,
               msg = "data should be a vector of length greater than K")
   assert_that(all(is.finite(data)),
               msg = "data should only include numeric finite values")
-  assert_that(is.string(dist) & dist %in% c("normal", "skew_normal", "poisson", "shifted_poisson"),
+  assert_that(is.string(dist) && dist %in% c("normal", "skew_normal", "poisson", "shifted_poisson"),
               msg = paste0("Unsupported distribution;\n",
                            "dist should be either\n",
                            "'normal', 'skew_normal', 'poisson' or 'shifted_poisson'"))
