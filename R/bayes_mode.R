@@ -139,9 +139,9 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
               msg = "BayesMix is not a proper bayes_mixture object.") 
   
   assert_that(is.scalar(rd), rd >= 0, round(rd) == rd, msg = "rd should be an integer greater or equal than zero")
-  assert_that(is.scalar(tol_x) & tol_x > 0, msg = "tol_x should be a positive scalar")
-  assert_that(is.scalar(tol_mixp) & tol_mixp >= 0 & tol_mixp < 1, msg = "tol_mixp should be a positive scalar between 0 and 1")
-  assert_that(is.scalar(tol_conv) & tol_conv > 0, msg = "tol_conv should be a positive scalar")
+  assert_that(is.scalar(tol_x) && tol_x > 0, msg = "tol_x should be a positive scalar")
+  assert_that(is.scalar(tol_mixp) && tol_mixp >= 0 & tol_mixp < 1, msg = "tol_mixp should be a positive scalar between 0 and 1")
+  assert_that(is.scalar(tol_conv) && tol_conv > 0, msg = "tol_conv should be a positive scalar")
   
   dist = BayesMix$dist
   data = BayesMix$data
@@ -151,7 +151,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   pars_names = BayesMix$pars_names
   loc = BayesMix$loc
   
-    assert_that(is.vector(range) & length(range) == 2,
+    assert_that(is.vector(range) && length(range) == 2,
                 msg = "range should be a vector of length 2")
     assert_that(all(is.finite(range)),
                 msg = "lower and upper limits of range should be finite")

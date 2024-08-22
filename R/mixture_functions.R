@@ -93,7 +93,7 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, loc) {
   }
   
   if ((is.na(dist) | !(dist %in% c("normal", "skew_normal"))) & dist_type != "discrete") {
-    assert_that(!is.na(loc) & is.string(loc),
+    assert_that(is.string(loc) && !is.na(loc),
                 msg = paste0("loc argument must be given when using a continuous distribution other than the normal distribution;",
                              "\n loc should be the location parameter of pdf_func"))
     assert_that(loc %in% pars_names[pars_names!="eta"],

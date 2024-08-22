@@ -167,7 +167,7 @@ bayes_fit <- function(data,
                       burnin = nb_iter/2,
                       print = TRUE) {
   
-  assert_that(is.vector(data) & length(data) > K,
+  assert_that(is.vector(data) && length(data) > K,
               msg = "data should be a vector of length greater than K")
   assert_that(all(is.finite(data)),
               msg = "data should only include numeric finite values")

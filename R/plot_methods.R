@@ -46,7 +46,7 @@ plot.bayes_mixture <- function(x, draws = 250,
     
     plot(mix)
   } else {
-    assert_that(is.scalar(alpha) & alpha >= 0 & alpha <= 1,
+    assert_that(is.scalar(alpha) && alpha >= 0 & alpha <= 1,
                 msg = "alpha should be a scalar between zero and one")
     
     mcmc = x$mcmc
@@ -165,7 +165,7 @@ plot.bayes_mode <- function(x, graphs = c("p1", "number", "loc"), draw = NULL, .
     
     plot(modes)
   } else {
-    assert_that(is.vector(graphs) & is.character(graphs),
+    assert_that(is.vector(graphs) && is.character(graphs),
                 msg = "graphs should be a character vector")
     assert_that(sum(graphs %in% c("p1", "number", "loc"))>=1,
                 msg = "graphs should include at least p1, number or loc")

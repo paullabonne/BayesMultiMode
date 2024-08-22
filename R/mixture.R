@@ -87,7 +87,7 @@ mixture <- function(pars,
   
   assert_that(!is.null(range),
               msg = "range argument must be filled when using a discrete distribution")
-  assert_that(is.vector(range) & length(range) == 2,
+  assert_that(is.vector(range) && length(range) == 2,
               msg = "range should be a vector of length 2")
   assert_that(all(is.finite(range)),
               msg = "lower and upper limits of range should be finite")

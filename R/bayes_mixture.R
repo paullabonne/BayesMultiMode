@@ -103,9 +103,9 @@ bayes_mixture <- function(mcmc,
   assert_that(is.matrix(mcmc))
   assert_that(is.string(dist))
   assert_that(is.string(dist_type))
-  assert_that(is.vector(data) & length(data) > 0,
+  assert_that(is.vector(data) && length(data) > 0,
               msg = "data should be a vector of length > 0")
-  assert_that(is.scalar(burnin) & burnin >= 0, msg = "burnin should be an integer positive or zero")
+  assert_that(is.scalar(burnin) && burnin >= 0, msg = "burnin should be an integer positive or zero")
   assert_that(burnin < nrow(mcmc),
               msg = "burnin parameter should be less than the number of mcmc draws")
   ## input checks
