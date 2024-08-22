@@ -84,77 +84,81 @@ The algorithm evaluate each location point with these two conditions.
 \examples{
 
 # Example with a normal distribution ====================================
-mu = c(0,5)
-sigma = c(1,2)
-p = c(0.5,0.5)
+mu <- c(0, 5)
+sigma <- c(1, 2)
+p <- c(0.5, 0.5)
 
-params = c(eta = p, mu = mu, sigma = sigma)
-mix = mixture(params, dist = "normal", range = c(-5,15))
-modes = mix_mode(mix)
+params <- c(eta = p, mu = mu, sigma = sigma)
+mix <- mixture(params, dist = "normal", range = c(-5, 15))
+modes <- mix_mode(mix)
 
 # summary(modes)
 # plot(modes)
 
 # Example with a skew normal =============================================
-xi = c(0,6)
-omega = c(1,2)
-alpha = c(0,0)
-p = c(0.8,0.2)
-params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
-dist = "skew_normal"
+xi <- c(0, 6)
+omega <- c(1, 2)
+alpha <- c(0, 0)
+p <- c(0.8, 0.2)
+params <- c(eta = p, xi = xi, omega = omega, alpha = alpha)
+dist <- "skew_normal"
 
-mix = mixture(params, dist = dist, range = c(-5,15))
-modes = mix_mode(mix)
+mix <- mixture(params, dist = dist, range = c(-5, 15))
+modes <- mix_mode(mix)
 # summary(modes)
 # plot(modes)
 
 # Example with an arbitrary continuous distribution ======================
-xi = c(0,6)
-omega = c(1,2)
-alpha = c(0,0)
-nu = c(3,100)
-p = c(0.8,0.2)
-params = c(eta = p, mu = xi, sigma = omega, xi = alpha, nu = nu)
+xi <- c(0, 6)
+omega <- c(1, 2)
+alpha <- c(0, 0)
+nu <- c(3, 100)
+p <- c(0.8, 0.2)
+params <- c(eta = p, mu = xi, sigma = omega, xi = alpha, nu = nu)
 
 pdf_func <- function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 }
 
-mix = mixture(params, pdf_func = pdf_func,
-dist_type = "continuous", loc = "mu", range = c(-5,15))
-modes = mix_mode(mix)
+mix <- mixture(params,
+  pdf_func = pdf_func,
+  dist_type = "continuous", loc = "mu", range = c(-5, 15)
+)
+modes <- mix_mode(mix)
 
 # summary(modes)
 # plot(modes, from = -4, to = 4)
 
 # Example with a poisson distribution ====================================
-lambda = c(0.1,10)
-p = c(0.5,0.5)
-params = c(eta = p, lambda = lambda)
-dist = "poisson"
+lambda <- c(0.1, 10)
+p <- c(0.5, 0.5)
+params <- c(eta = p, lambda = lambda)
+dist <- "poisson"
 
 
-mix = mixture(params, range = c(0,50), dist = dist)
+mix <- mixture(params, range = c(0, 50), dist = dist)
 
-modes = mix_mode(mix)
+modes <- mix_mode(mix)
 
 # summary(modes)
 # plot(modes)
 
 # Example with an arbitrary discrete distribution =======================
-mu = c(20,5)
-size = c(20,0.5)
-p = c(0.5,0.5)
-params = c(eta = p, mu = mu, size = size)
+mu <- c(20, 5)
+size <- c(20, 0.5)
+p <- c(0.5, 0.5)
+params <- c(eta = p, mu = mu, size = size)
 
 
 pmf_func <- function(x, pars) {
   dnbinom(x, mu = pars["mu"], size = pars["size"])
 }
 
-mix = mixture(params, range = c(0, 50),
-pdf_func = pmf_func, dist_type = "discrete")
-modes = mix_mode(mix)
+mix <- mixture(params,
+  range = c(0, 50),
+  pdf_func = pmf_func, dist_type = "discrete"
+)
+modes <- mix_mode(mix)
 
 # summary(modes)
 # plot(modes)

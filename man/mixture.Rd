@@ -52,33 +52,35 @@ Creates an object of class \code{mixture} which can subsequently be used as argu
 \examples{
 
 # Example with the skew normal =============================================
-xi = c(0,6)
-omega = c(1,2)
-alpha = c(0,0)
-p = c(0.8,0.2)
-params = c(eta = p, xi = xi, omega = omega, alpha = alpha)
-dist = "skew_normal"
+xi <- c(0, 6)
+omega <- c(1, 2)
+alpha <- c(0, 0)
+p <- c(0.8, 0.2)
+params <- c(eta = p, xi = xi, omega = omega, alpha = alpha)
+dist <- "skew_normal"
 
-mix = mixture(params, dist = dist, range = c(-2,10))
+mix <- mixture(params, dist = dist, range = c(-2, 10))
 
 # summary(mix)
 # plot(mix)
 
 # Example with an arbitrary distribution ===================================
-mu = c(0,6)
-omega = c(1,2)
-xi = c(0,0)
-nu = c(3,100)
-p = c(0.8,0.2)
-params = c(eta = p, mu = mu, sigma = omega, xi = xi, nu = nu)
+mu <- c(0, 6)
+omega <- c(1, 2)
+xi <- c(0, 0)
+nu <- c(3, 100)
+p <- c(0.8, 0.2)
+params <- c(eta = p, mu = mu, sigma = omega, xi = xi, nu = nu)
 
 pdf_func <- function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 }
 
 
-mix = mixture(params, pdf_func = pdf_func,
-dist_type = "continuous", loc = "mu", range = c(-2,10))
+mix <- mixture(params,
+  pdf_func = pdf_func,
+  dist_type = "continuous", loc = "mu", range = c(-2, 10)
+)
 
 # summary(mix)
 # plot(mix, from = -4, to = 4)

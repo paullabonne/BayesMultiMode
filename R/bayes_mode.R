@@ -1,9 +1,9 @@
 #' Bayesian mode inference
-#' 
+#'
 #' Bayesian inference on the modes in a univariate mixture estimated with MCMC methods, see \insertCite{Cross2024;textual}{BayesMultiMode}.
 #' Provides posterior probabilities of the number of modes and their locations.
 #' Under the hood it calls the function [mix_mode()] to find the modes in each MCMC draw.
-#' 
+#'
 #' @param BayesMix An object of class `bayes_mixture` generated with either [bayes_fit()] or [bayes_mixture()].
 #' @param rd (for continuous mixtures) Integer indicating the number of decimal places when rounding the distribution's support.
 #' It is necessary to compute posterior probabilities of mode locations.
@@ -17,7 +17,7 @@
 #' @param inside_range Should modes outside of `range` be discarded? Default is `TRUE`.
 #' @param range limits of the support where modes are saved (if `inside_range` is `TRUE`);
 #' default is `c(min(BayesMix$data), max(BayesMix$data))`.
-#' This sometimes occurs with very small components when K is large.  
+#' This sometimes occurs with very small components when K is large.
 #' @return A list of class `bayes_mode` containing:
 #'  \item{data}{From `BayesMix`.}
 #'  \item{dist}{From `BayesMix`.}
@@ -31,16 +31,16 @@
 #'  \item{algo}{Algorithm used for mode estimation.}
 #'  \item{range}{Range outside which modes are discarded if `inside_range` is `TRUE`.}
 #'  \item{BayesMix}{`BayesMix`.}
-#' 
+#'
 #' @details
 #' Each draw from the MCMC output after burnin, \eqn{\theta^{(d)}, \quad d = 1,...,D}, leads to a posterior predictive probability
-#' density/mass function: 
+#' density/mass function:
 #' \deqn{p(y | \theta^{(d)}) =\sum_{k=1}^{K} \pi_k^{(d)} p(y | \theta_k^{(d)}).}
 #' Using this function, the mode in draw \eqn{d} \eqn{y_{m}^{(d)}}, \eqn{m = 1,..., M^{(d)}},
 #' where \eqn{M^{(d)}} is the number of modes, are estimated using the algorithm mentioned
 #' in the description above.
-#' 
-#' After running this procedure across all retained posterior draws, 
+#'
+#' After running this procedure across all retained posterior draws,
 #' we compute the posterior probability for the number of modes being \eqn{M} as:
 #' \deqn{P(\#\text{modes}=M)=\frac{1}{D}\sum_{d=1}^{D}1(M^{(d)} = M).}
 #' Similarly, posterior probabilities for locations of the modes are given by:
@@ -48,220 +48,243 @@
 #' for each location \eqn{y} in the range \eqn{[\min(y),\max(y)]}. Obviously,
 #' continuous data are not defined on a discrete support;
 #' it is therefore necessary to choose a rounding decimal to discretize their support (with the \code{rd} argument).
-#' 
+#'
 #' @references
 #' \insertAllCited{}
 #
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.scalar
 #' @importFrom tidyr as_tibble
-#' 
+#'
 #' @examples
 #' # Example with galaxy data ================================================
-#' set.seed(123) 
-#' 
+#' set.seed(123)
+#'
 #' # retrieve galaxy data
-#' y = galaxy
+#' y <- galaxy
 #'
 #' # estimation
-#' bayesmix = bayes_fit(data = y,
-#'                            K = 5, #not many to run the example rapidly
-#'                            dist = "normal",
-#'                            nb_iter = 500, #not many to run the example rapidly
-#'                            burnin = 100)
-#' 
-#' # mode estimation
-#' BayesMode = bayes_mode(bayesmix)
+#' bayesmix <- bayes_fit(
+#'   data = y,
+#'   K = 5, # not many to run the example rapidly
+#'   dist = "normal",
+#'   nb_iter = 500, # not many to run the example rapidly
+#'   burnin = 100
+#' )
 #'
-#' # plot 
+#' # mode estimation
+#' BayesMode <- bayes_mode(bayesmix)
+#'
+#' # plot
 #' # plot(BayesMode, max_size = 200)
 #'
-#' # summary 
+#' # summary
 #' # summary(BayesMode)
-#' 
+#'
 #' # Example with DNA data ================================================
-#' set.seed(123) 
-#' 
+#' set.seed(123)
+#'
 #' # retrieve DNA data
-#' y = d4z4
+#' y <- d4z4
 #'
 #' # estimation
-#' bayesmix = bayes_fit(data = y,
-#'                            K = 5, #not many to run the example rapidly
-#'                            dist = "shifted_poisson",
-#'                            nb_iter = 500, #not many to run the example rapidly
-#'                            burnin = 100)
-#' 
-#' # mode estimation
-#' BayesMode = bayes_mode(bayesmix)
+#' bayesmix <- bayes_fit(
+#'   data = y,
+#'   K = 5, # not many to run the example rapidly
+#'   dist = "shifted_poisson",
+#'   nb_iter = 500, # not many to run the example rapidly
+#'   burnin = 100
+#' )
 #'
-#' # plot 
+#' # mode estimation
+#' BayesMode <- bayes_mode(bayesmix)
+#'
+#' # plot
 #' # plot(BayesMode, max_size = 200)
 #'
-#' # summary 
+#' # summary
 #' # summary(BayesMode)
-#' 
-#' # Example with a Student t ================================================
-#' mu = c(0.5,6)
-#' sigma = c(1,2)
-#' nu = c(5,5)
-#' p = c(0.8,0.2)#'
-#' data = c(sn::rst(p[1]*1000, mu[1], sigma[1], nu = nu[1]),
-#'          sn::rst(p[2]*1000, mu[2], sigma[2], nu = nu[2]))
 #'
-#' fit = c(eta = p, mu = mu, sigma = sigma, nu = nu, xi = c(0,0))
-#' fit = rbind(fit, fit)
-#' 
-#' pdf_func = function(x, pars) {
+#' # Example with a Student t ================================================
+#' mu <- c(0.5, 6)
+#' sigma <- c(1, 2)
+#' nu <- c(5, 5)
+#' p <- c(0.8, 0.2) #'
+#' data <- c(
+#'   sn::rst(p[1] * 1000, mu[1], sigma[1], nu = nu[1]),
+#'   sn::rst(p[2] * 1000, mu[2], sigma[2], nu = nu[2])
+#' )
+#'
+#' fit <- c(eta = p, mu = mu, sigma = sigma, nu = nu, xi = c(0, 0))
+#' fit <- rbind(fit, fit)
+#'
+#' pdf_func <- function(x, pars) {
 #'   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 #' }
-#' 
-#' dist_type = "continuous"
-#' 
-#' bayesmix = bayes_mixture(fit, data, burnin = 1, 
-#' pdf_func = pdf_func, dist_type = dist_type, loc = "mu")
-#' 
-#' BayesMode = bayes_mode(bayesmix)
-#' 
-#' # plot 
+#'
+#' dist_type <- "continuous"
+#'
+#' bayesmix <- bayes_mixture(fit, data,
+#'   burnin = 1,
+#'   pdf_func = pdf_func, dist_type = dist_type, loc = "mu"
+#' )
+#'
+#' BayesMode <- bayes_mode(bayesmix)
+#'
+#' # plot
 #' # plot(BayesMode, max_size = 200)
 #'
-#' # summary 
+#' # summary
 #' # summary(BayesMode)
 #'
 #' @export
-bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)/10, tol_conv = 1e-8, inside_range = TRUE, range = c(min(BayesMix$data), max(BayesMix$data))) {
+bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data) / 10, tol_conv = 1e-8, inside_range = TRUE, range = c(min(BayesMix$data), max(BayesMix$data))) {
   assert_that(inherits(BayesMix, "bayes_mixture"), msg = "BayesMix should be an object of class bayes_mixture")
-  assert_that(all(c("data", "mcmc", "mcmc_all",
-                    "loglik", "K", "dist",
-                    "dist_type", "pdf_func", "pars_names",
-                    "loc", "nb_var") %in% names(BayesMix)),
-              msg = "BayesMix is not a proper bayes_mixture object.") 
-  
+  assert_that(
+    all(c(
+      "data", "mcmc", "mcmc_all",
+      "loglik", "K", "dist",
+      "dist_type", "pdf_func", "pars_names",
+      "loc", "nb_var"
+    ) %in% names(BayesMix)),
+    msg = "BayesMix is not a proper bayes_mixture object."
+  )
+
   assert_that(is.scalar(rd), rd >= 0, round(rd) == rd, msg = "rd should be an integer greater or equal than zero")
   assert_that(is.scalar(tol_x) && tol_x > 0, msg = "tol_x should be a positive scalar")
   assert_that(is.scalar(tol_mixp) && tol_mixp >= 0 & tol_mixp < 1, msg = "tol_mixp should be a positive scalar between 0 and 1")
   assert_that(is.scalar(tol_conv) && tol_conv > 0, msg = "tol_conv should be a positive scalar")
-  
-  dist = BayesMix$dist
-  data = BayesMix$data
-  mcmc = BayesMix$mcmc
-  dist_type = BayesMix$dist_type
-  pdf_func = BayesMix$pdf_func
-  pars_names = BayesMix$pars_names
-  loc = BayesMix$loc
-  
-    assert_that(is.vector(range) && length(range) == 2,
-                msg = "range should be a vector of length 2")
-    assert_that(all(is.finite(range)),
-                msg = "lower and upper limits of range should be finite")
-    assert_that(range[2] > range[1],
-                msg = "upper limit of range not greater than lower limit")
-    
-    if (dist %in% c("poisson", "shifted_poisson")) {
-      assert_that(all(range>=0),
-                  msg = "lower limit should be greater or equal than zero when using the Poisson or shifted Poisson.")
-    }
-  
-  modes = t(apply(mcmc, 1, mix_mode_estimates, dist = dist,
-                  pdf_func = pdf_func, dist_type = dist_type,
-                  tol_mixp = tol_mixp, tol_x = tol_x, tol_conv = tol_conv,
-                  loc = loc, range = range,
-                  inside_range = inside_range))
 
-  # Number of modes 
-  n_modes = apply(!is.na(modes),1,sum) # number of modes in each MCMC draw
-  modes = matrix(modes[, 1:max(n_modes)], nrow = nrow(mcmc))
-  colnames(modes) = paste('mode',1:max(n_modes))
+  dist <- BayesMix$dist
+  data <- BayesMix$data
+  mcmc <- BayesMix$mcmc
+  dist_type <- BayesMix$dist_type
+  pdf_func <- BayesMix$pdf_func
+  pars_names <- BayesMix$pars_names
+  loc <- BayesMix$loc
 
-  vec_modes = as.vector(modes)
-  vec_modes = vec_modes[!is.na(vec_modes)]
-  
+  assert_that(is.vector(range) && length(range) == 2,
+    msg = "range should be a vector of length 2"
+  )
+  assert_that(all(is.finite(range)),
+    msg = "lower and upper limits of range should be finite"
+  )
+  assert_that(range[2] > range[1],
+    msg = "upper limit of range not greater than lower limit"
+  )
+
+  if (dist %in% c("poisson", "shifted_poisson")) {
+    assert_that(all(range >= 0),
+      msg = "lower limit should be greater or equal than zero when using the Poisson or shifted Poisson."
+    )
+  }
+
+  modes <- t(apply(mcmc, 1, mix_mode_estimates,
+    dist = dist,
+    pdf_func = pdf_func, dist_type = dist_type,
+    tol_mixp = tol_mixp, tol_x = tol_x, tol_conv = tol_conv,
+    loc = loc, range = range,
+    inside_range = inside_range
+  ))
+
+  # Number of modes
+  n_modes <- apply(!is.na(modes), 1, sum) # number of modes in each MCMC draw
+  modes <- matrix(modes[, 1:max(n_modes)], nrow = nrow(mcmc))
+  colnames(modes) <- paste("mode", 1:max(n_modes))
+
+  vec_modes <- as.vector(modes)
+  vec_modes <- vec_modes[!is.na(vec_modes)]
+
   if (dist_type == "continuous") {
     if (!is.na(dist) & dist == "normal") {
-      algo = "fixed-point"
+      algo <- "fixed-point"
     } else {
-      algo = "Modal Expectation-Maximization (MEM)"
+      algo <- "Modal Expectation-Maximization (MEM)"
     }
-    
-    vec_modes = round(vec_modes, rd)
-    mode_range = seq(min(vec_modes), max(vec_modes), by = 10^-rd)
+
+    vec_modes <- round(vec_modes, rd)
+    mode_range <- seq(min(vec_modes), max(vec_modes), by = 10^-rd)
   }
-  
+
   if (dist_type == "discrete") {
-    mode_range = min(vec_modes):max(vec_modes)
-    
+    mode_range <- min(vec_modes):max(vec_modes)
+
     # unique modes to calculate post probs of number of modes
-    modes <-  t(apply(mcmc,1,FUN = mix_mode_estimates,
-                      range = range,
-                      dist = dist,
-                      dist_type = dist_type,
-                      tol_mixp = tol_mixp,
-                      tol_x = tol_x,
-                      tol_conv = tol_conv,
-                      type = "unique",
-                      pdf_func = pdf_func,
-                      inside_range = inside_range))
-    
-    n_modes = apply(!is.na(modes),1,sum)
-    
-    algo = "discrete"
+    modes <- t(apply(mcmc, 1,
+      FUN = mix_mode_estimates,
+      range = range,
+      dist = dist,
+      dist_type = dist_type,
+      tol_mixp = tol_mixp,
+      tol_x = tol_x,
+      tol_conv = tol_conv,
+      type = "unique",
+      pdf_func = pdf_func,
+      inside_range = inside_range
+    ))
+
+    n_modes <- apply(!is.na(modes), 1, sum)
+
+    algo <- "discrete"
   }
-  
+
   ### Posterior probability of being a mode for each location
-  sum_modes = unlist(lapply(mode_range,
-                            FUN = counting,
-                            vec = vec_modes))
-  
-  probs_modes = sum_modes/nrow(mcmc)
-  
-  p_mode_loc = rbind(mode_range, probs_modes)
-  rownames(p_mode_loc) = c("mode location", "posterior probability")
-  
+  sum_modes <- unlist(lapply(mode_range,
+    FUN = counting,
+    vec = vec_modes
+  ))
+
+  probs_modes <- sum_modes / nrow(mcmc)
+
+  p_mode_loc <- rbind(mode_range, probs_modes)
+  rownames(p_mode_loc) <- c("mode location", "posterior probability")
+
   ##### testing unimodality
-  p1 = 0 # posterior probability of unimodality
-  
-  if(any(n_modes==1)){
-    p1 = length(n_modes[n_modes==1])/nrow(modes)
+  p1 <- 0 # posterior probability of unimodality
+
+  if (any(n_modes == 1)) {
+    p1 <- length(n_modes[n_modes == 1]) / nrow(modes)
   }
-  
+
   # Test for number of modes : number of modes and their posterior probability
-  unique_modes = unique(n_modes) #possible number of modes
-  prob_nb_modes = rep(NA_real_,length(unique_modes))
-  for (i in 1:length(unique_modes)){
-    prob_nb_modes[i] = length(n_modes[n_modes==unique_modes[i]])/nrow(modes)
+  unique_modes <- unique(n_modes) # possible number of modes
+  prob_nb_modes <- rep(NA_real_, length(unique_modes))
+  for (i in 1:length(unique_modes)) {
+    prob_nb_modes[i] <- length(n_modes[n_modes == unique_modes[i]]) / nrow(modes)
   }
-  p_nb_modes = rbind(unique_modes,prob_nb_modes)
-  rownames(p_nb_modes) = c("number of modes", "posterior probability")
+  p_nb_modes <- rbind(unique_modes, prob_nb_modes)
+  rownames(p_nb_modes) <- c("number of modes", "posterior probability")
   # ordering
-  p_nb_modes = p_nb_modes[, order(unique_modes)]
+  p_nb_modes <- p_nb_modes[, order(unique_modes)]
 
   # mixture density
-  mix_density = apply(mcmc,1, FUN = dmix, x = mode_range,
-         pars_names = pars_names,
-         pdf_func = pdf_func)
+  mix_density <- apply(mcmc, 1,
+    FUN = dmix, x = mode_range,
+    pars_names = pars_names,
+    pdf_func = pdf_func
+  )
 
-  mix_density = matrix(mix_density, nrow = length(mode_range))     
-  mix_density = cbind(mode_range, mix_density)
-  colnames(mix_density) = c("x", paste0("draw",1:nrow(mcmc)))
-  mix_density = as_tibble(mix_density)
-  
-  bayes_mode = list()
-  bayes_mode$data = data
-  bayes_mode$dist = dist
-  bayes_mode$dist_type = dist_type
-  bayes_mode$pars_names = pars_names
-  bayes_mode$modes = modes
-  bayes_mode$p1 = p1
-  bayes_mode$p_nb_modes = p_nb_modes
-  bayes_mode$p_mode_loc = p_mode_loc
-  bayes_mode$algo = algo
-  bayes_mode$BayesMix = BayesMix
-  bayes_mode$range = range
-  bayes_mode$mix_density = mix_density
-  
+  mix_density <- matrix(mix_density, nrow = length(mode_range))
+  mix_density <- cbind(mode_range, mix_density)
+  colnames(mix_density) <- c("x", paste0("draw", 1:nrow(mcmc)))
+  mix_density <- as_tibble(mix_density)
+
+  bayes_mode <- list()
+  bayes_mode$data <- data
+  bayes_mode$dist <- dist
+  bayes_mode$dist_type <- dist_type
+  bayes_mode$pars_names <- pars_names
+  bayes_mode$modes <- modes
+  bayes_mode$p1 <- p1
+  bayes_mode$p_nb_modes <- p_nb_modes
+  bayes_mode$p_mode_loc <- p_mode_loc
+  bayes_mode$algo <- algo
+  bayes_mode$BayesMix <- BayesMix
+  bayes_mode$range <- range
+  bayes_mode$mix_density <- mix_density
+
   class(bayes_mode) <- "bayes_mode"
-  
+
   return(bayes_mode)
 }
 
@@ -270,25 +293,27 @@ mix_mode_estimates <- function(mcmc, dist = NA_character_, dist_type = NA_charac
                                tol_mixp, tol_x, tol_conv,
                                pdf_func = NULL, type = "all", range = NULL,
                                loc = NA_character_, inside_range = TRUE) {
-  output = rep(NA_real_, length(mcmc))
-  
-  mix = mixture(mcmc, dist = dist, pdf_func = pdf_func,
-                    dist_type = dist_type, range = range, loc = loc)
+  output <- rep(NA_real_, length(mcmc))
 
-  modes = mix_mode(mix, tol_mixp, tol_x, tol_conv, type = type)$mode_estimates
-  output[1:length(modes)] = modes
-  
+  mix <- mixture(mcmc,
+    dist = dist, pdf_func = pdf_func,
+    dist_type = dist_type, range = range, loc = loc
+  )
+
+  modes <- mix_mode(mix, tol_mixp, tol_x, tol_conv, type = type)$mode_estimates
+  output[1:length(modes)] <- modes
+
   return(output)
 }
 
 #' @keywords internal
 dmix <- function(x, pars, pars_names, pdf_func) {
-  pars_mat = vec_to_mat(pars, pars_names)
-  pars_mat = na.omit(pars_mat) # when mcmc contains NA (i.e. BNPmix)
+  pars_mat <- vec_to_mat(pars, pars_names)
+  pars_mat <- na.omit(pars_mat) # when mcmc contains NA (i.e. BNPmix)
   pdf_func_mix(x, pars_mat, pdf_func)
 }
 
 #' @keywords internal
 counting <- function(x, vec) {
-  length(vec[vec==x])
+  length(vec[vec == x])
 }

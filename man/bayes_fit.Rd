@@ -118,54 +118,62 @@ where \eqn{\kappa_k} is a location or shift parameter with uniform prior, see \i
 }
 \examples{
 # Example with galaxy data ================================================
-set.seed(123) 
+set.seed(123)
 
 # retrieve galaxy data
-y = galaxy
+y <- galaxy
 
 # estimation
-bayesmix = bayes_fit(data = y,
-                           K = 5, #not many to run the example rapidly
-                           dist = "normal",
-                           nb_iter = 500, #not many to run the example rapidly
-                           burnin = 100)
-                           
+bayesmix <- bayes_fit(
+  data = y,
+  K = 5, # not many to run the example rapidly
+  dist = "normal",
+  nb_iter = 500, # not many to run the example rapidly
+  burnin = 100
+)
+
 # plot estimated mixture
 # plot(bayesmix, max_size = 200)
 
 # Changing priors ================================================
-set.seed(123) 
+set.seed(123)
 
 # retrieve galaxy data
-y = galaxy
+y <- galaxy
 
 # estimation
-K = 5
-bayesmix = bayes_fit(data = y,
-                           K = K, #not many to run the example rapidly
-                           dist = "normal",
-                           priors = list(a0 = 10,
-                                         A0 = 10*K),
-                           nb_iter = 500, #not many to run the example rapidly
-                           burnin = 100)
-                           
+K <- 5
+bayesmix <- bayes_fit(
+  data = y,
+  K = K, # not many to run the example rapidly
+  dist = "normal",
+  priors = list(
+    a0 = 10,
+    A0 = 10 * K
+  ),
+  nb_iter = 500, # not many to run the example rapidly
+  burnin = 100
+)
+
 # plot estimated mixture
 # plot(bayesmix, max_size = 200)
 
 # Example with DNA data =====================================================
 \donttest{
-set.seed(123) 
+set.seed(123)
 
 # retrieve DNA data
-y = d4z4
+y <- d4z4
 
 # estimation
-bayesmix = bayes_fit(data = y,
-                           K = 5, #not many to run the example rapidly
-                           dist = "shifted_poisson",
-                           nb_iter = 500, #not many to run the example rapidly
-                           burnin = 100)
-                           
+bayesmix <- bayes_fit(
+  data = y,
+  K = 5, # not many to run the example rapidly
+  dist = "shifted_poisson",
+  nb_iter = 500, # not many to run the example rapidly
+  burnin = 100
+)
+
 # plot estimated mixture
 # plot(bayesmix, max_size = 200)
 }

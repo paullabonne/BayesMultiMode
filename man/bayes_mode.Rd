@@ -46,7 +46,7 @@ A list of class \code{bayes_mode} containing:
 \item{p1}{Posterior probability of unimodality.}
 \item{p_nb_modes}{Matrix showing posterior probabilities for the number of modes.}
 \item{p_mode_loc}{Matrix showing posterior probabilities for mode locations.}
-\item{mix_density}{Mixture density at all locations in each draw.}
+\item{mix_density}{Mixture density at all mode locations in each draw.}
 \item{algo}{Algorithm used for mode estimation.}
 \item{range}{Range outside which modes are discarded if \code{inside_range} is \code{TRUE}.}
 \item{BayesMix}{\code{BayesMix}.}
@@ -75,75 +75,83 @@ it is therefore necessary to choose a rounding decimal to discretize their suppo
 }
 \examples{
 # Example with galaxy data ================================================
-set.seed(123) 
+set.seed(123)
 
 # retrieve galaxy data
-y = galaxy
+y <- galaxy
 
 # estimation
-bayesmix = bayes_fit(data = y,
-                           K = 5, #not many to run the example rapidly
-                           dist = "normal",
-                           nb_iter = 500, #not many to run the example rapidly
-                           burnin = 100)
+bayesmix <- bayes_fit(
+  data = y,
+  K = 5, # not many to run the example rapidly
+  dist = "normal",
+  nb_iter = 500, # not many to run the example rapidly
+  burnin = 100
+)
 
 # mode estimation
-BayesMode = bayes_mode(bayesmix)
+BayesMode <- bayes_mode(bayesmix)
 
-# plot 
+# plot
 # plot(BayesMode, max_size = 200)
 
-# summary 
+# summary
 # summary(BayesMode)
 
 # Example with DNA data ================================================
-set.seed(123) 
+set.seed(123)
 
 # retrieve DNA data
-y = d4z4
+y <- d4z4
 
 # estimation
-bayesmix = bayes_fit(data = y,
-                           K = 5, #not many to run the example rapidly
-                           dist = "shifted_poisson",
-                           nb_iter = 500, #not many to run the example rapidly
-                           burnin = 100)
+bayesmix <- bayes_fit(
+  data = y,
+  K = 5, # not many to run the example rapidly
+  dist = "shifted_poisson",
+  nb_iter = 500, # not many to run the example rapidly
+  burnin = 100
+)
 
 # mode estimation
-BayesMode = bayes_mode(bayesmix)
+BayesMode <- bayes_mode(bayesmix)
 
-# plot 
+# plot
 # plot(BayesMode, max_size = 200)
 
-# summary 
+# summary
 # summary(BayesMode)
 
 # Example with a Student t ================================================
-mu = c(0.5,6)
-sigma = c(1,2)
-nu = c(5,5)
-p = c(0.8,0.2)#'
-data = c(sn::rst(p[1]*1000, mu[1], sigma[1], nu = nu[1]),
-         sn::rst(p[2]*1000, mu[2], sigma[2], nu = nu[2]))
+mu <- c(0.5, 6)
+sigma <- c(1, 2)
+nu <- c(5, 5)
+p <- c(0.8, 0.2) #'
+data <- c(
+  sn::rst(p[1] * 1000, mu[1], sigma[1], nu = nu[1]),
+  sn::rst(p[2] * 1000, mu[2], sigma[2], nu = nu[2])
+)
 
-fit = c(eta = p, mu = mu, sigma = sigma, nu = nu, xi = c(0,0))
-fit = rbind(fit, fit)
+fit <- c(eta = p, mu = mu, sigma = sigma, nu = nu, xi = c(0, 0))
+fit <- rbind(fit, fit)
 
-pdf_func = function(x, pars) {
+pdf_func <- function(x, pars) {
   sn::dst(x, pars["mu"], pars["sigma"], pars["xi"], pars["nu"])
 }
 
-dist_type = "continuous"
+dist_type <- "continuous"
 
-bayesmix = bayes_mixture(fit, data, burnin = 1, 
-pdf_func = pdf_func, dist_type = dist_type, loc = "mu")
+bayesmix <- bayes_mixture(fit, data,
+  burnin = 1,
+  pdf_func = pdf_func, dist_type = dist_type, loc = "mu"
+)
 
-BayesMode = bayes_mode(bayesmix)
+BayesMode <- bayes_mode(bayesmix)
 
-# plot 
+# plot
 # plot(BayesMode, max_size = 200)
 
-# summary 
+# summary
 # summary(BayesMode)
 
 }

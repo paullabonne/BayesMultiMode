@@ -23,17 +23,19 @@ This is wrapper around the \code{\link[bayesplot:MCMC-traces]{bayesplot::mcmc_tr
 }
 \examples{
 # Example with galaxy data ================================================
-set.seed(123) 
+set.seed(123)
 
 # retrieve galaxy data
-y = galaxy
+y <- galaxy
 
 # estimation
-bayesmix = bayes_fit(data = y,
-                           K = 5, #not many to run the example rapidly
-                           dist = "normal",
-                           nb_iter = 500, #not many to run the example rapidly
-                           burnin = 100)
+bayesmix <- bayes_fit(
+  data = y,
+  K = 5, # not many to run the example rapidly
+  dist = "normal",
+  nb_iter = 500, # not many to run the example rapidly
+  burnin = 100
+)
 
 # trace plot
 # bayes_trace(bayesmix)

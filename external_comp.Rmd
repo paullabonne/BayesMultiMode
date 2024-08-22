@@ -25,7 +25,7 @@ library(rjags)
 
 # Assuming you have your data in 'data_vector'
 # Specify the model
-model_string = "
+model_string <- "
   model {
     for (i in 1:N) {
       data_vector[i] ~ dnorm(mu[component[i]], tau[component[i]])
@@ -41,42 +41,50 @@ model_string = "
   }
 "
 
-K = 2
+K <- 2
 # Data for JAGS
-y = c(rnorm(100,0,1),
-      rnorm(100,5,1))
+y <- c(
+  rnorm(100, 0, 1),
+  rnorm(100, 5, 1)
+)
 
-data_jags = list(data_vector = y, N = length(y), K = K)
+data_jags <- list(data_vector = y, N = length(y), K = K)
 
 # Initialize parameters
-inits = function() {
-  list(mu = rnorm(K, 0, 10),
-       tau = rgamma(K, 1, 1),
-       theta = rep(1 / K, K))
+inits <- function() {
+  list(
+    mu = rnorm(K, 0, 10),
+    tau = rgamma(K, 1, 1),
+    theta = rep(1 / K, K)
+  )
 }
 
 # Run the model
-model = jags.model(textConnection(model_string), data = data_jags, inits = inits)
-update(model, 1000)  # Burn-in
-fit = coda.samples(model, variable.names = c("mu", "tau", "theta"), n.iter = 2000)
+model <- jags.model(textConnection(model_string), data = data_jags, inits = inits)
+update(model, 1000) # Burn-in
+fit <- coda.samples(model, variable.names = c("mu", "tau", "theta"), n.iter = 2000)
 ```
 
 #### Create a BayesMixture object
 ```{r}
-fit_mat = posterior::as_draws_matrix(fit)
-bmix = bayes_mixture(mcmc = fit_mat,
-                        data = y,
-                        burnin = 0, # the burnin has already been discarded
-                        dist = "normal",
-                        vars_to_keep = c("theta", "mu", "tau"),
-                        vars_to_rename = c("eta" = "theta",
-                                           "sigma" = "tau"))
+fit_mat <- posterior::as_draws_matrix(fit)
+bmix <- bayes_mixture(
+  mcmc = fit_mat,
+  data = y,
+  burnin = 0, # the burnin has already been discarded
+  dist = "normal",
+  vars_to_keep = c("theta", "mu", "tau"),
+  vars_to_rename = c(
+    "eta" = "theta",
+    "sigma" = "tau"
+  )
+)
 
 # plot the mixture
 plot(bmix)
 
 # mode estimation
-bayesmode = bayes_mode(bmix)
+bayesmode <- bayes_mode(bmix)
 
 # plot mode inference
 plot(bayesmode)
@@ -106,7 +114,7 @@ parameters {
 
 model {
   vector[K] log_theta = log(theta); // cache log calculation
-  
+
   // Priors
   mu ~ normal(0, 10);
   sigma ~ cauchy(0, 5);
@@ -122,13 +130,15 @@ model {
 }
 "
 
-y = c(rnorm(100,0,1),
-      rnorm(100,5,1))
+y <- c(
+  rnorm(100, 0, 1),
+  rnorm(100, 5, 1)
+)
 
 data_list <- list(
   N = length(y),
   y = y,
-  K = 2  # Assuming a two-component mixture
+  K = 2 # Assuming a two-component mixture
 )
 
 fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, chains = 1)
@@ -136,19 +146,21 @@ fit <- stan(model_code = normal_mixture_model, data = data_list, iter = 2000, ch
 
 #### Create a BayesMixture object
 ```{r}
-fit_mat = posterior::as_draws_matrix(fit)
-bmix = bayes_mixture(mcmc = fit_mat,
-                        data = y,
-                        burnin = 0, # the burnin has already been discarded
-                        dist = "normal",
-                        vars_to_keep = c("theta", "mu", "sigma"),
-                        vars_to_rename = c("eta" = "theta"))
+fit_mat <- posterior::as_draws_matrix(fit)
+bmix <- bayes_mixture(
+  mcmc = fit_mat,
+  data = y,
+  burnin = 0, # the burnin has already been discarded
+  dist = "normal",
+  vars_to_keep = c("theta", "mu", "sigma"),
+  vars_to_rename = c("eta" = "theta")
+)
 
 # plot the mixture
 plot(bmix)
 
 # mode estimation
-bayesmode = bayes_mode(bmix)
+bayesmode <- bayes_mode(bmix)
 
 # plot mode inference
 plot(bayesmode)
@@ -165,18 +177,24 @@ library(bayesmix)
 
 ## taken from the examples of JAGSrun()
 data("fish", package = "bayesmix")
-y = unlist(fish)
+y <- unlist(fish)
 prefix <- "fish"
-variables <- c("mu","tau","eta")
+variables <- c("mu", "tau", "eta")
 k <- 3
-modelFish <- BMMmodel(k = k, priors = list(kind = "independence",
-                                           parameter = "priorsFish", hierarchical = "tau"))
-controlFish <- JAGScontrol(variables = c(variables, "S"),
-                           n.iter = 2000, burn.in = 1000)
-z1 <- JAGSrun(fish, prefix, model = modelFish, initialValues = list(S0 = 2),
-              control = controlFish, cleanup = TRUE, tmp = FALSE)
+modelFish <- BMMmodel(k = k, priors = list(
+  kind = "independence",
+  parameter = "priorsFish", hierarchical = "tau"
+))
+controlFish <- JAGScontrol(
+  variables = c(variables, "S"),
+  n.iter = 2000, burn.in = 1000
+)
+z1 <- JAGSrun(fish, prefix,
+  model = modelFish, initialValues = list(S0 = 2),
+  control = controlFish, cleanup = TRUE, tmp = FALSE
+)
 
-fit = z1$results
+fit <- z1$results
 ```
 
 #### Create a BayesMixture object
@@ -186,19 +204,21 @@ pdf_func <- function(x, pars) {
   dnorm(x, pars["mu"], sqrt(pars["sigma"]))
 }
 
-bmix = bayes_mixture(mcmc = fit,
-                        data = y,
-                        burnin = 1000, 
-                        pdf_func = pdf_func,
-                        dist_type = "continuous",
-                        loc = "mu",
-                        vars_to_keep = c("eta", "mu", "sigma")) #vars_to_keep ignore numbers
+bmix <- bayes_mixture(
+  mcmc = fit,
+  data = y,
+  burnin = 1000,
+  pdf_func = pdf_func,
+  dist_type = "continuous",
+  loc = "mu",
+  vars_to_keep = c("eta", "mu", "sigma")
+) # vars_to_keep ignore numbers
 
 # plot the mixture
 plot(bmix)
 
 # mode estimation
-bayesmode = bayes_mode(bmix)
+bayesmode <- bayes_mode(bmix)
 
 # plot mode inference
 plot(bayesmode)
@@ -215,53 +235,62 @@ set.seed(123)
 library(BNPmix)
 library(dplyr)
 
-y = c(rnorm(100,0,1),
-      rnorm(100,5,1))
+y <- c(
+  rnorm(100, 0, 1),
+  rnorm(100, 5, 1)
+)
 
 ## estimation
-fit = PYdensity(y,
-                mcmc = list(niter = 2000,
-                            nburn = 1000,
-                            print_message = FALSE),
-                output = list(out_param = TRUE))
+fit <- PYdensity(y,
+  mcmc = list(
+    niter = 2000,
+    nburn = 1000,
+    print_message = FALSE
+  ),
+  output = list(out_param = TRUE)
+)
 ```
 
 #### Transforming the output into a mcmc matrix with one column per variable
 ```{r, message = FALSE}
-fit_mat = list()
+fit_mat <- list()
 
 for (i in 1:length(fit$p)) {
-  k = length(fit$p[[i]][, 1])
-  
-  draw = c(fit$p[[i]][, 1],
-           fit$mean[[i]][, 1],
-           sqrt(fit$sigma2[[i]][, 1]),
-           i)
-  
-  names(draw)[1:k] = paste0("eta", 1:k)
-  names(draw)[(k+1):(2*k)] = paste0("mu", 1:k)
-  names(draw)[(2*k+1):(3*k)] = paste0("sigma", 1:k)
-  names(draw)[3*k + 1] = "draw"
-  
-  fit_mat[[i]] = draw
+  k <- length(fit$p[[i]][, 1])
+
+  draw <- c(
+    fit$p[[i]][, 1],
+    fit$mean[[i]][, 1],
+    sqrt(fit$sigma2[[i]][, 1]),
+    i
+  )
+
+  names(draw)[1:k] <- paste0("eta", 1:k)
+  names(draw)[(k + 1):(2 * k)] <- paste0("mu", 1:k)
+  names(draw)[(2 * k + 1):(3 * k)] <- paste0("sigma", 1:k)
+  names(draw)[3 * k + 1] <- "draw"
+
+  fit_mat[[i]] <- draw
 }
 
-fit_mat = as.matrix(bind_rows(fit_mat))
+fit_mat <- as.matrix(bind_rows(fit_mat))
 ```
 
 #### Create a BayesMixture object
 ```{r}
-bmix = bayes_mixture(mcmc = fit_mat,
-                        data = y,
-                        burnin = 0, # the burnin has already been discarded
-                        dist = "normal",
-                        vars_to_keep = c("eta", "mu", "sigma"))
+bmix <- bayes_mixture(
+  mcmc = fit_mat,
+  data = y,
+  burnin = 0, # the burnin has already been discarded
+  dist = "normal",
+  vars_to_keep = c("eta", "mu", "sigma")
+)
 
 # plot the mixture
 plot(bmix)
 
 # mode estimation
-bayesmode = bayes_mode(bmix)
+bayesmode <- bayes_mode(bmix)
 
 # plot mode inference
 plot(bayesmode)
@@ -279,15 +308,17 @@ In the examples presented below external R package are used for estimating mixtu
 set.seed(123)
 library(mixtools)
 
-y = c(rnorm(100,0,1),
-      rnorm(100,3.5,1.5))
+y <- c(
+  rnorm(100, 0, 1),
+  rnorm(100, 3.5, 1.5)
+)
 
-fit = normalmixEM(y)
+fit <- normalmixEM(y)
 
-pars = c(eta = fit$lambda, mu = fit$mu, sigma = fit$sigma)
+pars <- c(eta = fit$lambda, mu = fit$mu, sigma = fit$sigma)
 
-mix = mixture(pars, dist = "normal", range = c(min(y), max(y))) # create a new object of class Mixture
-modes = mix_mode(mix) # estimate modes and create an object of class Mode
+mix <- mixture(pars, dist = "normal", range = c(min(y), max(y))) # create a new object of class Mixture
+modes <- mix_mode(mix) # estimate modes and create an object of class Mode
 
 summary(modes)
 
@@ -301,22 +332,26 @@ summary(modes)
 set.seed(123)
 library(mclust)
 
-y = c(rnorm(100,0,1),
-      rnorm(100,3.5,1.5))
+y <- c(
+  rnorm(100, 0, 1),
+  rnorm(100, 3.5, 1.5)
+)
 
-fit = Mclust(y)
+fit <- Mclust(y)
 
-pars = c(eta = fit$parameters$pro,
-         mu = fit$parameters$mean,
-         sigma = sqrt(fit$parameters$variance$sigmasq))
+pars <- c(
+  eta = fit$parameters$pro,
+  mu = fit$parameters$mean,
+  sigma = sqrt(fit$parameters$variance$sigmasq)
+)
 
-mix = mixture(pars, dist = "normal", range = c(min(y), max(y))) # creates a new object of class Mixture
+mix <- mixture(pars, dist = "normal", range = c(min(y), max(y))) # creates a new object of class Mixture
 
 summary(mix)
 
 
 # mode inference
-modes = mix_mode(mix) # estimates modes and creates an object of class Mode
+modes <- mix_mode(mix) # estimates modes and creates an object of class Mode
 
 plot(modes)
 summary(modes)
