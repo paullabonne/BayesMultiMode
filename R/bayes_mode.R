@@ -235,11 +235,13 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   rownames(p_nb_modes) = c("number of modes", "posterior probability")
   # ordering
   p_nb_modes = p_nb_modes[, order(unique_modes)]
-  
+
   # mixture density
   mix_density = apply(mcmc,1, FUN = dmix, x = mode_range,
          pars_names = pars_names,
          pdf_func = pdf_func)
+
+  mix_density = matrix(mix_density, nrow = length(mode_range))     
   mix_density = cbind(mode_range, mix_density)
   colnames(mix_density) = c("x", paste0("draw",1:nrow(mcmc)))
   mix_density = as_tibble(mix_density)
