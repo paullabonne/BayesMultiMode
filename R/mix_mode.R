@@ -367,7 +367,7 @@ discrete_MF <- function(pars, pdf_func, range, type = "all"){
   py = pdf_func_mix(x, pars, pdf_func)
   
   # change in the pdf
-  d_py = diff(py)
+  d_py = c(diff(py), 0)
   
   # where does the pdf decrease ?
   x_decrease = x[d_py<0]
