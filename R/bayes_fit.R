@@ -192,6 +192,9 @@ bayes_fit <- function(data,
     msg = "nb_iter should be a positive integer lower than burnin"
   )
   assert_that(is.scalar(K), round(K) == K, K > 0, msg = "K should be a positive integer")
+  assert_that(length(unique(y)) >= K,
+    msg = "K cannot be greater than the number of unique observations"
+  )
   assert_that(is.logical(print), msg = "print should be either TRUE or FALSE")
 
   if (dist %in% c("poisson", "shifted_poisson")) {
