@@ -40,8 +40,13 @@ bayes_info <- function(BayesMix) {
 
   # outputs
   BIC <- -2 * ll + k * log(n)
-  mean_BIC <- mean(BIC)
-  sd_BIC <- sd(BIC)
+  AIC <- -2 * ll + 2 * k
 
-  return(list(BIC = BIC, mean_BIC = mean_BIC, sd_BIC = sd_BIC))
+  IC = cbind(BIC, AIC)
+  colnames(IC) = c("BIC", "AIC")
+
+  mean_IC <- apply(IC, 2, mean)
+  sd_IC <- apply(IC, 2, sd)
+
+  return(list(IC = IC, mean_IC = mean_IC, sd_IC = sd_IC))
 }
