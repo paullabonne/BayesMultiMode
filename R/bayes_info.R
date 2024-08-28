@@ -33,20 +33,37 @@
 bayes_info <- function(BayesMix) {
   assert_that(inherits(BayesMix, "bayes_mixture"), msg = "BayesMix should be an object of class bayes_mixture")
 
-  # inputs
-  ll <- BayesMix$loglik
-  n <- length(BayesMix$data)
-  k <- BayesMix$nb_var
+  mcmc <- BayesMix$mcmc
 
-  # outputs
-  BIC <- -2 * ll + k * log(n)
-  AIC <- -2 * ll + 2 * k
+  ll_full <- 0 # Initialize log_predictive_density to zero
+  nb_draw <- nrow(mcmc) # Number of MCMC draws
+  data = BayesMix$data
+  n <- length(data) # Number of data points
+  K <- BayesMix$K # Number of components in the mixture
+  pdf_func = BayesMix$pdf_func
+  pars_names = BayesMix$pars_names
 
-  IC = cbind(BIC, AIC)
-  colnames(IC) = c("BIC", "AIC")
+  ll_full = rep(NA, nb_draw)
 
-  mean_IC <- apply(IC, 2, mean)
-  sd_IC <- apply(IC, 2, sd)
+  # Loop over each MCMC sample
+  for (i in 1:nb_draw) {
+    # Get the parameters
+    pars_i <- mcmc[i, ] # parameters
 
-  return(list(IC = IC, mean_IC = mean_IC, sd_IC = sd_IC))
+    pars_mat = vec_to_mat(pars_i, pars_names)
+    pars_mat = na.omit(pars_mat)
+
+    density_i = pdf_func_mix(data, pars_mat, pdf_func)
+
+    density_i[density_i == 0] = 1e-100
+
+    ######
+    ll_full[i] = sum(log(density_i))
+    ######
+  }
+
+  # Average over all MCMC draws
+  mean_mll <- mean(ll_full)
+  sd_mll <- sd(ll_full)
+  return(list(mean_mll = mean_mll, sd_mll = sd_mll))
 }
