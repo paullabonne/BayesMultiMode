@@ -132,7 +132,7 @@ gibbs_SFM_normal <- function(y,
     e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
-    lp[m] = sum(probs)
+    lp[m] = log(sum(probs))
     
     ## counter
     if(print){
@@ -229,7 +229,7 @@ gibbs_SFM_poisson <- function(y,
     e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
-    lp[m] = sum(probs)
+    lp[m] = log(sum(probs))
     
     ## counter
     if(print){
@@ -380,7 +380,7 @@ gibbs_SFM_skew_n <- function(y,
     e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
-    lp[m] = sum(probs)
+    lp[m] = log(sum(probs))
     
     ## counter
     if(print){
@@ -493,7 +493,7 @@ gibbs_SFM_shifted_poisson <- function(y,
     e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
-    lp[m] = sum(probs)
+    lp[m] = log(sum(probs))
     
     # storing
     lambda[m,] = lambda_m
@@ -605,7 +605,7 @@ gibbs_SFM_neg_binomial <- function(y,
     e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
-    lp[m] = sum(probs)
+    lp[m] = log(sum(probs))
 
     # storing
     mu[m,] = mu_m
@@ -746,7 +746,7 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
     e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
-    lp[m] = sum(probs)
+    lp[m] = log(sum(probs))
     
     # storing
     mu[m,] = mu_m
