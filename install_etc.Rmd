@@ -41,7 +41,7 @@ y = cyclone %>%
   select(max_wind) %>%
   unlist()
 
-mix = bayes_fit(y, 2, "skew_normal")
+mix = bayes_fit(y, 1, "skew_normal")
 plot(mix)
 ```
 
