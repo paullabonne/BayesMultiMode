@@ -298,7 +298,8 @@ gibbs_SFM_skew_n <- function(y,
   for (k in 1:K) {
     xi[1, k] <- mean(y[S[, k] == 1])
   }
-  sigma2 <- rep(max(y)^2, K)
+
+  sigma2 <- rep(1 / rgamma(1, c0, C0), K) # rep(max(y)^2, K)
   beta <- cbind(xi[1, ], 0)
 
   zk <- matrix(0, n_obs, 1)
@@ -338,20 +339,22 @@ gibbs_SFM_skew_n <- function(y,
         Xk <- matrix(c(rep(1, N[k]), zk), nrow = N[k])
       }
 
+     
       ## a.1 sample Sigma
       if (!empty) {
         eps <- yk - Xk %*% beta[k, ]
-        Ck <- C0 + 0.5 * sum(eps^2)
+        Ck <- C0 + 0.5 * (sum(eps^2) + diag(B0_inv) %*% (bk - b0)^2) # C0 + 0.5 * sum(eps^2)
         ck <- c0 + N[k] / 2
       }
+     
       sigma2[k] <- 1 / rgamma(1, ck, Ck)
 
       ## a.2 sample xi and psi jointly
       if (!empty) {
-        Bk <- solve(crossprod(Xk) / sigma2[k] + B0_inv)
-        bk <- Bk %*% (crossprod(Xk, yk) / sigma2[k] + B0_inv %*% b0)
+        Bk <- solve(crossprod(Xk) + B0_inv)
+        bk <-  Bk %*% (crossprod(Xk, yk) + B0_inv %*% b0) # Bk %*% (crossprod(Xk, yk) / sigma2[k] + B0_inv %*% b0)
       }
-      beta[k, ] <- rmvnorm(1, bk, Bk)
+      beta[k, ] <- rmvnorm(1, bk, Bk * sigma2[k])
 
       # storing
       xi[m, k] <- beta[k, 1]
