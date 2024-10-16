@@ -138,7 +138,10 @@
 #' # summary(BayesMode)
 #'
 #' @export
-bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data) / 10, tol_conv = 1e-8, inside_range = TRUE, range = c(min(BayesMix$data), max(BayesMix$data))) {
+bayes_mode <- function(
+    BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data) / 10, tol_conv = 1e-8,
+    inside_range = TRUE, range = c(min(BayesMix$data), max(BayesMix$data)),
+    conditional_nb_mode = NULL) {
   assert_that(inherits(BayesMix, "bayes_mixture"), msg = "BayesMix should be an object of class bayes_mixture")
   assert_that(
     all(c(
@@ -192,6 +195,17 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   modes <- matrix(modes[, 1:max(n_modes)], nrow = nrow(mcmc))
   colnames(modes) <- paste("mode", 1:max(n_modes))
 
+  if (!is.null(conditional_nb_mode)) {
+    assert_that(is.scalar(conditional_nb_mode),
+      conditional_nb_mode > 0,
+      round(conditional_nb_mode) == conditional_nb_mode,
+      msg = "conditional_nb_mode should be an integer greater than zero"
+    )
+    assert_that(conditional_nb_mode %in% n_modes, msg = "The number of modes is never equal to conditional_nb_mode")
+
+    modes <- modes[n_modes == conditional_nb_mode, ]
+  }
+
   vec_modes <- as.vector(modes)
   vec_modes <- vec_modes[!is.na(vec_modes)]
 
@@ -225,7 +239,18 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
 
     n_modes <- apply(!is.na(modes), 1, sum)
 
+    if (!is.null(conditional_nb_mode)) {
+      modes <- modes[n_modes == conditional_nb_mode, ]
+    }
+
     algo <- "discrete"
+  }
+
+  # trim the mcmc matrix if the results should be conditional on a given number of mode
+  if (!is.null(conditional_nb_mode)) {
+    mcmc <- mcmc[n_modes == conditional_nb_mode, ]
+    BayesMix$mcmc <- mcmc
+    n_modes <- n_modes[n_modes == conditional_nb_mode]
   }
 
   ### Posterior probability of being a mode for each location
@@ -234,7 +259,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
     vec = vec_modes
   ))
 
-  probs_modes <- sum_modes / nrow(mcmc)
+  probs_modes <- sum_modes / nrow(modes)
 
   p_mode_loc <- rbind(mode_range, probs_modes)
   rownames(p_mode_loc) <- c("mode location", "posterior probability")
@@ -254,6 +279,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   }
   p_nb_modes <- rbind(unique_modes, prob_nb_modes)
   rownames(p_nb_modes) <- c("number of modes", "posterior probability")
+
   # ordering
   p_nb_modes <- p_nb_modes[, order(unique_modes)]
 
@@ -282,6 +308,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   bayes_mode$BayesMix <- BayesMix
   bayes_mode$range <- range
   bayes_mode$mix_density <- mix_density
+  bayes_mode$conditional <- conditional_nb_mode
 
   class(bayes_mode) <- "bayes_mode"
 
