@@ -36,7 +36,9 @@
     Code
       summary(bayesmode)
     Output
-      Posterior probability of multimodality is 1 
+      The posterior probability of multimodality is 1 
+      
+       The most likely number of modes is 2 
       
       Inference results on the number of modes:
         p_nb_modes (matrix, dim 1x2): 
@@ -88,7 +90,9 @@
     Code
       summary(bayesmode)
     Output
-      Posterior probability of multimodality is 1 
+      The posterior probability of multimodality is 1 
+      
+       The most likely number of modes is 2 
       
       Inference results on the number of modes:
         p_nb_modes (matrix, dim 1x2): 
@@ -120,16 +124,16 @@
       
       Summary of MCMC output after burnin:
       # A tibble: 8 x 10
-        variable   mean median     sd    mad     q5    q95  rhat ess_bulk ess_tail
-        <chr>     <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl> <dbl>    <dbl>    <dbl>
-      1 eta1      0.500  0.502 0.0366 0.0359  0.440  0.563  1.00    432.     326. 
-      2 eta2      0.500  0.498 0.0366 0.0359  0.437  0.560  1.00    432.     326. 
-      3 xi1       3.92   3.91  0.175  0.168   3.64   4.21   1.01     76.3    171. 
-      4 xi2      -4.31  -4.30  0.242  0.260  -4.73  -3.94   1.01     51.8    179. 
-      5 omega1    1.47   1.46  0.153  0.152   1.22   1.72   1.02     89.8    194. 
-      6 omega2    1.14   1.13  0.156  0.155   0.906  1.41   1.00     55.0    194. 
-      7 alpha1    2.14   2.11  0.573  0.498   1.28   3.16   1.03     49.5    116. 
-      8 alpha2   -1.10  -1.04  0.532  0.499  -2.10  -0.413  1.01     36.8     45.4
+        variable   mean median     sd    mad     q5      q95  rhat ess_bulk ess_tail
+        <chr>     <dbl>  <dbl>  <dbl>  <dbl>  <dbl>    <dbl> <dbl>    <dbl>    <dbl>
+      1 eta1      0.503  0.506 0.0357 0.0337  0.436  0.560    1.00    248.     332. 
+      2 eta2      0.497  0.494 0.0357 0.0337  0.440  0.564    1.00    248.     332. 
+      3 xi1       3.81   3.79  0.177  0.175   3.53   4.11     1.01     50.1    157. 
+      4 xi2      -4.51  -4.51  0.268  0.244  -4.96  -4.09     1.01     51.7     84.5
+      5 omega1    1.50   1.49  0.147  0.151   1.25   1.73     1.00     72.2    118. 
+      6 omega2    1.13   1.11  0.134  0.123   0.947  1.36     1.00     73.5    163. 
+      7 alpha1    2.33   2.30  0.647  0.665   1.32   3.48     1.01     27.4     97.8
+      8 alpha2   -0.599 -0.569 0.363  0.348  -1.22  -0.00928  1.01     45.7     72.2
       this table can be reproduced with: summarise_draws(bayesmix$mcmc)
       
       Note that label-switching might occur in the MCMC draws becayse BayesMultiMode does not carry out post-processing. 
@@ -142,7 +146,9 @@
     Code
       summary(bayesmode)
     Output
-      Posterior probability of multimodality is 1 
+      The posterior probability of multimodality is 1 
+      
+       The most likely number of modes is 2 
       
       Inference results on the number of modes:
         p_nb_modes (matrix, dim 1x2): 
@@ -152,12 +158,12 @@
       Inference results on mode locations:
         p_loc (matrix, dim 104x2): 
            mode location posterior probability
-      [1,]          -5.2                0.0025
+      [1,]          -5.2                0.0125
       [2,]          -5.1                0.0000
-      [3,]          -5.0                0.1875
-      [4,]          -4.9                0.3225
-      [5,]          -4.8                0.2750
-      [6,]          -4.7                0.1200
+      [3,]          -5.0                0.2775
+      [4,]          -4.9                0.3375
+      [5,]          -4.8                0.2200
+      [6,]          -4.7                0.0575
       ... (98 more rows)
 
 # bayes_mode works with shifted poisson mixture
@@ -194,7 +200,9 @@
     Code
       summary(bayesmode)
     Output
-      Posterior probability of multimodality is 0.9975 
+      The posterior probability of multimodality is 0.9975 
+      
+       The most likely number of modes is 2 
       
       Inference results on the number of modes:
         p_nb_modes (matrix, dim 2x2): 
@@ -245,7 +253,9 @@
     Code
       summary(bayesmode)
     Output
-      Posterior probability of multimodality is 1 
+      The posterior probability of multimodality is 1 
+      
+       The most likely number of modes is 2 
       
       Inference results on the number of modes:
         p_nb_modes (matrix, dim 1x2): 

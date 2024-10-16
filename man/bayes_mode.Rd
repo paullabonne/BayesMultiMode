@@ -11,7 +11,8 @@ bayes_mode(
   tol_x = sd(BayesMix$data)/10,
   tol_conv = 1e-08,
   inside_range = TRUE,
-  range = c(min(BayesMix$data), max(BayesMix$data))
+  range = c(min(BayesMix$data), max(BayesMix$data)),
+  conditional_nb_mode = NULL
 )
 }
 \arguments{
@@ -32,7 +33,9 @@ If two modes are closer than \code{tol_x}, only the first estimated mode is kept
 
 \item{inside_range}{Should modes outside of \code{range} be discarded? Default is \code{TRUE}.}
 
-\item{range}{limits of the support where modes are saved (if \code{inside_range} is \code{TRUE});
+\item{range}{limits of the support where modes are saved (if \code{inside_range} is \code{TRUE});}
+
+\item{conditional_nb_mode}{Mcmc draws are filtered to include those with only \code{conditional_nb_mode} number of modes;
 default is \code{c(min(BayesMix$data), max(BayesMix$data))}.
 This sometimes occurs with very small components when K is large.}
 }

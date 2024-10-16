@@ -7,12 +7,22 @@
 summary.bayes_mode <- function(object, ...) {
   modes <- object$modes
 
-  p1 <- object$p1
-  cat("Posterior probability of multimodality is", 1 - p1, "\n")
+  if (!is.null(object$conditional)) {
+    cat("\n", "These results are conditional on the number of modes being", object$conditional, "\n")
+  } else {
+    p1 <- object$p1
+    cat("The posterior probability of multimodality is", 1 - p1, "\n")
 
-  cat("\nInference results on the number of modes:")
-  cat("\n  p_nb_modes")
-  head_print(t(object$p_nb_modes))
+    cat(
+      "\n The most likely number of modes is",
+      t(object$p_nb_modes)[t(object$p_nb_modes)[, 2] == max(t(object$p_nb_modes)[, 2]), 1],
+      "\n"
+    )
+
+    cat("\nInference results on the number of modes:")
+    cat("\n  p_nb_modes")
+    head_print(t(object$p_nb_modes))
+  }
 
   cat("\nInference results on mode locations:")
   cat("\n  p_loc")

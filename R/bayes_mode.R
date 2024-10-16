@@ -16,6 +16,7 @@
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
 #' @param inside_range Should modes outside of `range` be discarded? Default is `TRUE`.
 #' @param range limits of the support where modes are saved (if `inside_range` is `TRUE`);
+#' @param conditional_nb_mode Mcmc draws are filtered to include those with only `conditional_nb_mode` number of modes;
 #' default is `c(min(BayesMix$data), max(BayesMix$data))`.
 #' This sometimes occurs with very small components when K is large.
 #' @return A list of class `bayes_mode` containing:
