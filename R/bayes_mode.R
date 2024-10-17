@@ -158,6 +158,7 @@ bayes_mode <- function(
   assert_that(is.scalar(tol_x) && tol_x > 0, msg = "tol_x should be a positive scalar")
   assert_that(is.scalar(tol_mixp) && tol_mixp >= 0 & tol_mixp < 1, msg = "tol_mixp should be a positive scalar between 0 and 1")
   assert_that(is.scalar(tol_conv) && tol_conv > 0, msg = "tol_conv should be a positive scalar")
+  assert_that(length(inside_range) == 1 && is.logical(inside_range), msg = "inside_range should be TRUE or FALSE")
 
   dist <- BayesMix$dist
   data <- BayesMix$data
@@ -328,7 +329,8 @@ mix_mode_estimates <- function(mcmc, dist = NA_character_, dist_type = NA_charac
     dist_type = dist_type, range = range, loc = loc
   )
 
-  modes <- mix_mode(mix, tol_mixp, tol_x, tol_conv, type = type)$mode_estimates
+  modes <- mix_mode(mix, tol_mixp, tol_x, tol_conv, type = type, inside_range = inside_range)$mode_estimates
+
   output[1:length(modes)] <- modes
 
   return(output)
