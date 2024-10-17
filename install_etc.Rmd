@@ -32,16 +32,6 @@ devtools::spell_check()
 #### Loading all functions for testing before installing
 ```{r, eval = FALSE}
 devtools::load_all()
-#devtools::test()
-
-library(dplyr)
-y = cyclone %>%
-  filter(BASIN == "EP",
-         SEASON > "1981") %>%
-  select(max_wind) %>%
-  unlist()
-
-mix = bayes_fit(y, 1, "skew_normal")
-plot(mix)
+devtools::test()
 ```
 
