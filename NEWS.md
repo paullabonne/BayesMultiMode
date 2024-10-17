@@ -1,4 +1,10 @@
 ## Version 0.7.1
+* Added conditional_nb_modes argument to bayes_mode()
+* Improved the gibbs algorithm for the skew normal
+* Fixed bug with inside_range
+* Added message for users to be aware of potential label-switching to summary and plot_trace functions.
+
+## Version 0.7.1
 * Range argument not optional any more when plotting mixtures
 * More details in summary methods
 * Added a df to the mode output showing the mixture density in each draw
