@@ -16,7 +16,7 @@
 #' @param tol_conv (for continuous mixtures) Tolerance parameter for convergence of the algorithm; default is `1e-8`.
 #' @param inside_range Should modes outside of `range` be discarded? Default is `TRUE`.
 #' @param range limits of the support where modes are saved (if `inside_range` is `TRUE`);
-#' @param conditional_nb_mode Mcmc draws are filtered to include those with only `conditional_nb_mode` number of modes;
+#' @param conditional_nb_modes Mcmc draws are filtered to include those with only `conditional_nb_modes` number of modes;
 #' default is `c(min(BayesMix$data), max(BayesMix$data))`.
 #' This sometimes occurs with very small components when K is large.
 #' @return A list of class `bayes_mode` containing:
@@ -31,7 +31,7 @@
 #'  \item{mix_density}{Mixture density at all mode locations in each draw.}
 #'  \item{algo}{Algorithm used for mode estimation.}
 #'  \item{range}{Range outside which modes are discarded if `inside_range` is `TRUE`.}
-#'  \item{conditional_nb_mode}{From `BayesMix`.}
+#'  \item{conditional_nb_modes}{From `BayesMix`.}
 #'  \item{BayesMix}{`BayesMix`.}
 #'
 #' @details
@@ -143,7 +143,7 @@
 bayes_mode <- function(
     BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data) / 10, tol_conv = 1e-8,
     inside_range = TRUE, range = c(min(BayesMix$data), max(BayesMix$data)),
-    conditional_nb_mode = NULL) {
+    conditional_nb_modes = NULL) {
   assert_that(inherits(BayesMix, "bayes_mixture"), msg = "BayesMix should be an object of class bayes_mixture")
   assert_that(
     all(c(
@@ -198,15 +198,15 @@ bayes_mode <- function(
   modes <- matrix(modes[, 1:max(n_modes)], nrow = nrow(mcmc))
   colnames(modes) <- paste("mode", 1:max(n_modes))
 
-  if (!is.null(conditional_nb_mode)) {
-    assert_that(is.scalar(conditional_nb_mode),
-      conditional_nb_mode > 0,
-      round(conditional_nb_mode) == conditional_nb_mode,
-      msg = "conditional_nb_mode should be an integer greater than zero"
+  if (!is.null(conditional_nb_modes)) {
+    assert_that(is.scalar(conditional_nb_modes),
+      conditional_nb_modes > 0,
+      round(conditional_nb_modes) == conditional_nb_modes,
+      msg = "conditional_nb_modes should be an integer greater than zero"
     )
-    assert_that(conditional_nb_mode %in% n_modes, msg = "The number of modes is never equal to conditional_nb_mode")
+    assert_that(conditional_nb_modes %in% n_modes, msg = "The number of modes is never equal to conditional_nb_modes")
 
-    modes <- modes[n_modes == conditional_nb_mode, ]
+    modes <- modes[n_modes == conditional_nb_modes, ]
   }
 
   vec_modes <- as.vector(modes)
@@ -242,18 +242,18 @@ bayes_mode <- function(
 
     n_modes <- apply(!is.na(modes), 1, sum)
 
-    if (!is.null(conditional_nb_mode)) {
-      modes <- modes[n_modes == conditional_nb_mode, ]
+    if (!is.null(conditional_nb_modes)) {
+      modes <- modes[n_modes == conditional_nb_modes, ]
     }
 
     algo <- "discrete"
   }
 
   # trim the mcmc matrix if the results should be conditional on a given number of mode
-  if (!is.null(conditional_nb_mode)) {
-    mcmc <- mcmc[n_modes == conditional_nb_mode, ]
+  if (!is.null(conditional_nb_modes)) {
+    mcmc <- mcmc[n_modes == conditional_nb_modes, ]
     BayesMix$mcmc <- mcmc
-    n_modes <- n_modes[n_modes == conditional_nb_mode]
+    n_modes <- n_modes[n_modes == conditional_nb_modes]
   }
 
   ### Posterior probability of being a mode for each location
@@ -311,7 +311,7 @@ bayes_mode <- function(
   bayes_mode$BayesMix <- BayesMix
   bayes_mode$range <- range
   bayes_mode$mix_density <- mix_density
-  bayes_mode$conditional_nb_mode <- conditional_nb_mode
+  bayes_mode$conditional_nb_modes <- conditional_nb_modes
 
   class(bayes_mode) <- "bayes_mode"
 

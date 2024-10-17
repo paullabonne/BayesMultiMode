@@ -8,7 +8,7 @@ summary.bayes_mode <- function(object, ...) {
   modes <- object$modes
 
   if (!is.null(object$conditional_nb_modes)) {
-    cat("\n", "These results are conditional on the number of modes being", object$conditional, "\n")
+    cat("\n", "These results are conditional on the number of modes being", object$conditional_nb_modes, "\n")
   } else {
     p1 <- object$p1
     cat("The posterior probability of multimodality is", 1 - p1, "\n")
