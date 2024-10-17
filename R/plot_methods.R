@@ -188,14 +188,14 @@ plot.bayes_mode <- function(x, graphs = c("p1", "number", "loc"), draw = NULL, .
     assert_that(sum(graphs %in% c("p1", "number", "loc")) >= 1,
       msg = "graphs should include at least p1, number or loc"
     )
-    
+
     if (!is.null(x$conditional)) {
-    assert_that("loc" %in% graphs,
-      msg = "Only posterior probabilities of location values being modes can be shown when conditional_nb_modes is provided."
-    )
+      assert_that("loc" %in% graphs,
+        msg = "Only posterior probabilities of location values being modes can be shown when conditional_nb_modes is provided."
+      )
       graphs <- "loc"
     }
-   
+
     modes <- x$modes
     p1 <- x$p1
     p_nb_modes <- x$p_nb_modes
