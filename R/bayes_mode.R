@@ -31,6 +31,7 @@
 #'  \item{mix_density}{Mixture density at all mode locations in each draw.}
 #'  \item{algo}{Algorithm used for mode estimation.}
 #'  \item{range}{Range outside which modes are discarded if `inside_range` is `TRUE`.}
+#'  \item{conditional_nb_mode}{From `BayesMix`.}
 #'  \item{BayesMix}{`BayesMix`.}
 #'
 #' @details
@@ -310,7 +311,7 @@ bayes_mode <- function(
   bayes_mode$BayesMix <- BayesMix
   bayes_mode$range <- range
   bayes_mode$mix_density <- mix_density
-  bayes_mode$conditional <- conditional_nb_mode
+  bayes_mode$conditional_nb_mode <- conditional_nb_mode
 
   class(bayes_mode) <- "bayes_mode"
 
