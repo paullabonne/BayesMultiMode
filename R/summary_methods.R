@@ -7,7 +7,7 @@
 summary.bayes_mode <- function(object, ...) {
   modes <- object$modes
 
-  if (!is.null(object$conditional)) {
+  if (!is.null(object$conditional_nb_modes)) {
     cat("\n", "These results are conditional on the number of modes being", object$conditional, "\n")
   } else {
     p1 <- object$p1
