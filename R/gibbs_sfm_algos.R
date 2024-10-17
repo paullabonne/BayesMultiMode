@@ -291,7 +291,7 @@ gibbs_SFM_skew_n <- function(y,
     S[cl_y$cluster == k, k] <- 1
   }
 
-  b0 <- matrix(c(b0, 0), nrow = 2)
+  b0 <- matrix(b0, nrow = 2)
   B0_inv <- diag(1 / c(D_xi, D_psi))
   e0 <- a0 / A0
 
@@ -339,20 +339,20 @@ gibbs_SFM_skew_n <- function(y,
         Xk <- matrix(c(rep(1, N[k]), zk), nrow = N[k])
       }
 
-     
+
       ## a.1 sample Sigma
       if (!empty) {
         eps <- yk - Xk %*% beta[k, ]
         Ck <- C0 + 0.5 * (sum(eps^2) + diag(B0_inv) %*% (bk - b0)^2) # C0 + 0.5 * sum(eps^2)
         ck <- c0 + N[k] / 2
       }
-     
+
       sigma2[k] <- 1 / rgamma(1, ck, Ck)
 
       ## a.2 sample xi and psi jointly
       if (!empty) {
         Bk <- solve(crossprod(Xk) + B0_inv)
-        bk <-  Bk %*% (crossprod(Xk, yk) + B0_inv %*% b0) # Bk %*% (crossprod(Xk, yk) / sigma2[k] + B0_inv %*% b0)
+        bk <- Bk %*% (crossprod(Xk, yk) + B0_inv %*% b0) # Bk %*% (crossprod(Xk, yk) / sigma2[k] + B0_inv %*% b0)
       }
       beta[k, ] <- rmvnorm(1, bk, Bk * sigma2[k])
 
@@ -590,7 +590,11 @@ check_priors <- function(priors, dist, data) {
   if (dist == "skew_normal") {
     priors_labels <- c("a0", "A0", "b0", "c0", "C0", "g0", "G0", "D_xi", "D_psi")
 
-    priors$b0 <- ifelse(is.null(priors$b0), median(data), priors$b0)
+    if (is.null(priors$b0)) {
+      priors$b0 <- c(mean(data), 0)
+    } else {
+      priors$b0
+    }
     priors$c0 <- ifelse(is.null(priors$c0), 2.5, priors$c0)
     priors$C0 <- ifelse(is.null(priors$C0), 0.5 * var(data), priors$C0)
     priors$g0 <- ifelse(is.null(priors$g0), 0.5, priors$g0)
@@ -598,7 +602,7 @@ check_priors <- function(priors, dist, data) {
     priors$D_xi <- ifelse(is.null(priors$D_xi), 1, priors$D_xi)
     priors$D_psi <- ifelse(is.null(priors$D_psi), 1, priors$D_psi)
 
-    assert_that(is.scalar(priors$b0), msg = "prior b0 should be a scalar")
+    assert_that(length(priors$b0) == 2, msg = "prior b0 should be a vector of size 2")
     assert_that(is.scalar(priors$D_xi), priors$D_xi > 0, msg = "prior D_xi should be a positive scalar")
     assert_that(is.scalar(priors$D_psi), priors$D_psi > 0, msg = "prior D_psi should be a positive scalar")
     assert_that(is.scalar(priors$c0), priors$c0 > 0, msg = "prior c0 should be a positive scalar")
