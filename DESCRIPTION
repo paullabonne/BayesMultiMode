@@ -23,7 +23,7 @@ Imports:
     assertthat,
     bayesplot,
     dplyr,
-    ggplot2,
+    ggplot2 (>= 3.3.4),
     ggpubr,
     gtools,
     magrittr,
