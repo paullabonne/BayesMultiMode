@@ -6,7 +6,7 @@ Authors@R: c(person(given = "Nalan", family = "Baştürk", role = "aut"),
   person(given = "Jamie", family = "Cross", role = "aut"),
   person(given = "Peter", family = "de Knijff", role = "aut"),
   person(given = "Lennart", family = "Hoogerheide", role = "aut"),
-  person(given = "Paul", family = "Labonne", email= "paul.labonne@bi.no", role = c("aut", "cre")),
+  person(given = "Paul", family = "Labonne", email= "labonnepaul@gmail.com", role = c("aut", "cre")),
   person(given = "Herman", family = "van Dijk", role = "aut"))
 Description: A two-step Bayesian approach for mode inference following 
       Cross, Hoogerheide, Labonne and van Dijk (2024) <doi:10.1016/j.econlet.2024.111579>).
