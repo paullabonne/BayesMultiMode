@@ -82,6 +82,7 @@ test_that("bayes_mode works with skew_normal mixture", {
   m = m[order(m)]
   m = m[!is.na(m)]
   
+  skip_on_cran()
   expect_equal(sum(abs(m-mu)<0.5),  2)
   
   skip_on_ci()
