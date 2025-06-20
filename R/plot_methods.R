@@ -384,8 +384,8 @@ new_theme_gg <- function() {
     legend.title = element_blank(),
     legend.text = element_text(size = 11),
     axis.text = element_text(size = 11),
-    axis.line.y = element_line(colour = "grey", size = 0.5, linetype = "solid"),
-    axis.line.x = element_line(colour = "grey", size = 0.5, linetype = "solid"),
+    axis.line.y = element_line(colour = "grey", linewidth = 0.5, linetype = "solid"),
+    axis.line.x = element_line(colour = "grey", linewidth = 0.5, linetype = "solid"),
     plot.title = element_text(hjust = 0.5, size = 12, face = "bold")
   )
 }
