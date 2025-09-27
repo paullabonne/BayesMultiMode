@@ -122,14 +122,14 @@
       # A tibble: 8 x 10
         variable   mean median     sd    mad     q5    q95  rhat ess_bulk ess_tail
         <chr>     <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl> <dbl>    <dbl>    <dbl>
-      1 eta1      0.500  0.502 0.0366 0.0359  0.440  0.563  1.00    432.     326. 
-      2 eta2      0.500  0.498 0.0366 0.0359  0.437  0.560  1.00    432.     326. 
-      3 xi1       3.92   3.91  0.175  0.168   3.64   4.21   1.01     76.3    171. 
-      4 xi2      -4.31  -4.30  0.242  0.260  -4.73  -3.94   1.01     51.8    179. 
-      5 omega1    1.47   1.46  0.153  0.152   1.22   1.72   1.02     89.8    194. 
-      6 omega2    1.14   1.13  0.156  0.155   0.906  1.41   1.00     55.0    194. 
-      7 alpha1    2.14   2.11  0.573  0.498   1.28   3.16   1.03     49.5    116. 
-      8 alpha2   -1.10  -1.04  0.532  0.499  -2.10  -0.413  1.01     36.8     45.4
+      1 eta1      0.502  0.503 0.0350 0.0343  0.442  0.557 1.01     318.     363. 
+      2 eta2      0.498  0.497 0.0350 0.0343  0.443  0.558 1.01     318.     363. 
+      3 xi1       3.91   3.91  0.153  0.153   3.64   4.17  0.999     93.2    190. 
+      4 xi2      -4.20  -4.17  0.245  0.233  -4.66  -3.87  1.02      42.2     80.2
+      5 omega1    1.46   1.46  0.150  0.161   1.25   1.72  0.999    108.     121. 
+      6 omega2    1.22   1.22  0.170  0.178   0.932  1.49  1.02      63.7    109. 
+      7 alpha1    2.16   2.11  0.540  0.491   1.46   3.19  1.00      54.1     78.9
+      8 alpha2   -1.39  -1.41  0.565  0.583  -2.34  -0.434 1.04      32.5     51.5
       this table can be reproduced with: summarise_draws(bayesmix$mcmc)
       
       Note that label-switching might occur in the MCMC draws becayse BayesMultiMode does not carry out post-processing. 
@@ -150,15 +150,15 @@
       [1,]               2                     1
       
       Inference results on mode locations:
-        p_loc (matrix, dim 104x2): 
+        p_loc (matrix, dim 103x2): 
            mode location posterior probability
       [1,]          -5.2                0.0025
       [2,]          -5.1                0.0000
-      [3,]          -5.0                0.1875
-      [4,]          -4.9                0.3225
-      [5,]          -4.8                0.2750
-      [6,]          -4.7                0.1200
-      ... (98 more rows)
+      [3,]          -5.0                0.1325
+      [4,]          -4.9                0.2750
+      [5,]          -4.8                0.2675
+      [6,]          -4.7                0.1900
+      ... (97 more rows)
 
 # bayes_mode works with shifted poisson mixture
 
