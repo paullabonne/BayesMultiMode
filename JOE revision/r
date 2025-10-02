@@ -1,0 +1,38 @@
+# load package
+devtools::load_all()
+
+# set seed for replication
+set.seed(123)
+
+N = 1000
+J = 2
+p = c(0.5, 0.5)
+
+true_Mu = c(5, 1)
+true_R = c(2, 2)
+true_r_tilde = 1 / (1 + true_R)
+true_P = true_Mu / (true_Mu + true_R)
+P_R = 1 - true_P
+
+Y1 = rnbinom(round(p[1] * N), size = true_R[1], prob = P_R[1])
+Y2 = rnbinom(round(p[2] * N), size = true_R[2], prob = P_R[2])
+
+Y = c(0 + Y1, 20+Y2)
+hist(Y, breaks = 50, main = "Histogram of Simulated Data", xlab = "Counts")
+
+## ============================================================
+
+# estimation
+bayesmix = bayes_fit(data = Y,
+                     K = 2,
+                     dist = "shifted_neg_binomial",
+                     nb_iter = 5000,
+                     burnin = 4000,
+                     print = T)
+
+plot(bayesmix, draws = 200)
+apply(bayesmix$mcmc, 2, mean)
+bayesplot::mcmc_trace(bayesmix$mcmc[, c("mu1", "mu2")])
+bayesmode = bayes_mode(bayesmix)
+bayesmode$p_mode_loc
+plot(bayesmode)

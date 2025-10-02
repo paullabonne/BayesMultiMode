@@ -530,6 +530,10 @@ gibbs_SFM_neg_binomial <- function(y,
                               priors = list(),
                               print = TRUE){
   
+  # p in the code is the probability of failure
+  # rtilde needs to be between 0 and 0.5
+  # this implies r > 1
+
   # unpacking priors
   # priors for the negative binomial are implicit
   a0 = priors$a0
@@ -580,8 +584,7 @@ gibbs_SFM_neg_binomial <- function(y,
       draw_pars = rneg_binom(yk, sig, mu_m[k], r_tilde_m[k])
       mu_m[k] = draw_pars[1]
       r_tilde_m[k] = draw_pars[2]
-      
-      # transform parameters
+     # transform parameters
       r = (1-r_tilde_m[k])/r_tilde_m[k]
       p = mu_m[k] / (r + mu_m[k])
       
@@ -673,8 +676,8 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
   # initial value for the parameters
   kappa_m = rep(0, K)
   mu_m <- cbind(t(cl_y$centers))
-  r_tilde_m <- rep(0.09, K)
-  
+  r_tilde_m <- rep(0.4, K)
+  accept = rep(0, K)
   ## Sample lamda and S for each component, k=1,...,k
   for(m in 1:nb_iter){
     
@@ -691,35 +694,26 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
         yk = y[S[, k] == 1]
       }
 
-      # Sample kappa using MH Step
-      #if (length(yk) == 0) { # Set to zero if component is empty
-      #  kappa_m[k] = 0
-      #} else {
-      #  pars_m = c(kappa_m[k], r_tilde_m[k], mu_m[k])
-      #  temp = draw_kap(yk, pars_m, kaplb = 0, kapub = min(yk), dist = "shifted_neg_binomial") # Draw kappa from MH step
-      #  kappa_m[k] = temp[[1]]
-      #}
-
       kapub = min(yk)
       if (length(kapub) == 0) {# Set to zero if component is empty
         kappa_m[k] = 0; 
       } else if (kapub < kappa_m[k]) {# Set to upper bound if outside boudary
-        kappa_m[k] = kapub
       } else {
         pars_m = c(kappa_m[k], r_tilde_m[k], mu_m[k])
-        temp = draw_kap(yk, pars_m, kaplb = 0, kapub = min(yk), dist = "shifted_neg_binomial") # Draw kappa from MH step
+        temp = draw_kap(yk, pars_m, kaplb = 0, kapub = kapub, dist = "shifted_neg_binomial") # Draw kappa from MH step
         kappa_m[k] = temp[[1]]
       }
 
-      # if component not empy or only zero
-      #if (length(yk) == 0 | sum(yk) == 0) {
-       # mu_m[k] = 1
-        #r_tilde_m[k] = 1
-      #} else {
         # Sample r tilde and mu
+        if (any(yk - kappa_m[k] < 0)) {
+          kappa_m[k] = yk
+        }
         draw_pars = rneg_binom(yk - kappa_m[k], sig, mu_m[k], r_tilde_m[k])
         mu_m[k] = draw_pars[1]
         r_tilde_m[k] = draw_pars[2]
+        mu_m[k] = draw_pars[1]
+        r_tilde_m[k] = draw_pars[2]
+        accept[k] = accept[k] + draw_pars[3]
       # }
 
       # transform parameters
@@ -728,7 +722,17 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
       
       #
       probs[,k]  = eta[m,k] * dnbinom(y - kappa_m[k], r, 1 - p)
+      # Order the components based on kappa
+
     }
+
+    # Ordering
+    order_k = order(kappa_m)
+    kappa_m = kappa_m[order_k]
+    mu_m = mu_m[order_k]
+    r_tilde_m = r_tilde_m[order_k]
+    eta[m, ] = eta[m, order_k]
+    probs = probs[, order_k]
     
     # 2. classification
     pnorm = probs/rowSums(probs)
@@ -774,7 +778,7 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
     )
   }
   colnames(mcmc)[ncol(mcmc)] = "loglik"
-  
+  print(accept/nb_iter)
   # Return output   
   return(mcmc)
 }
@@ -905,36 +909,51 @@ rneg_binom <- function(Y, d_stdev_candidate, d_mu, d_rtilde) {
   d_u <- d_cdf_at_1_over_m + (1 - d_cdf_at_1_over_m) * runif(1)
   # Invert Gamma CDF and compute inverse mu = 1 / (1 / mu)
   d_mu <- 1 / qgamma(d_u, shape = d_a, scale = d_b)
-
-   if (d_mu == 0) d_mu <- 1e-8
+  
+  if (d_mu == 0) d_mu <- 1e-8
   
   # Update value of d_p and compute loglikelihood (excluding the term 
   # -sum log(y_i!) that only depends on the data) of current draw (mu, r~)
   d_p <- d_mu / (d_r + d_mu)
-  d_log_l <- d_r * N * log(1 - d_p) - N * lgamma(d_r) + sum(lgamma(Y + d_r) + Y * log(d_p))
+  #d_log_l <- d_r * N * log(1 - d_p) - N * lgamma(d_r) + sum(lgamma(Y + d_r) + Y * log(d_p))
   
+  d_log_l = sum(dnbinom(Y, size = d_r, prob = 1 - d_p, log = TRUE))
   # Simulate r~ using a random-walk Metropolis(-Hastings) step
-  d_rtilde_candidate <- rnorm(1, mean = d_rtilde, sd = d_stdev_candidate)
-  
+  #d_rtilde_candidate <- rnorm(1, mean = d_rtilde, sd = d_stdev_candidate)
+  if (accept_rate < 0.1) {
+    accept_rate = accept_rate * 0.5
+  }
+  ad = ad + jump
+  mean = d_rtilde#0.2
+  std = ad# 0.1
+  shape_param <- (mean / std)^2
+  rate_param <- mean / (std^2)
+  d_rtilde_candidate = rgamma(1, shape = shape_param, rate = rate_param)
+  #d_rtilde_candidate = 0.33
+  #d_rtilde_candidate <- rgamma(1, shape = shape_param, rate = rate_param)
+  #d_rtilde_candidate = rgamma(1, shape = 0.25, rate = 1)
   # If the candidate draw r~ < 0 or r~ > 0.5, then 
   # it is rejected without the need to evaluate a loglikelihood
-  if (d_rtilde_candidate >= 0 & d_rtilde_candidate <= 0.5) {
+  accept = 0
+  if (d_rtilde_candidate > 0 & d_rtilde_candidate < 0.5) {
     d_r_candidate <- (1 - d_rtilde_candidate) / d_rtilde_candidate
     d_p_candidate <- d_mu / (d_r_candidate + d_mu)
-    d_log_l_candidate <- d_r_candidate * N * log(1 - d_p_candidate) -
-      N * lgamma(d_r_candidate) + sum(lgamma(Y + d_r_candidate) + Y * log(d_p_candidate))
-    
+    #d_log_l_candidate <- d_r_candidate * N * log(1 - d_p_candidate) -
+    #  N * lgamma(d_r_candidate) + sum(lgamma(Y + d_r_candidate) + Y * log(d_p_candidate))
+    d_log_l_candidate = sum(dnbinom(Y, size = d_r_candidate, prob = 1 - d_p_candidate, log = TRUE))
+    #browser()
     d_acceptance_probability <- min(exp(d_log_l_candidate - d_log_l), 1)
-  
+    
     d_u_rw_mh <- runif(1)
     if (d_u_rw_mh < d_acceptance_probability) {
+      accept = 1
       d_r <- d_r_candidate
       d_rtilde <- d_rtilde_candidate
       d_p <- d_p_candidate
     }
   }
   
-  return(c(d_mu,d_rtilde))
+  return(c(d_mu,d_rtilde,accept))
 }
 
 # Posterior of kappa 
@@ -957,7 +976,8 @@ post_kap <- function(x, pars, dist){
     r = (1-r_tilde)/r_tilde
     p = mu / (r + mu)
     
-    result = neg_binom_ll(x - kappa, r, p)
+    result = sum(dnbinom(x - kappa, r, 1 - p, log=TRUE))
+    #result = neg_binom_ll(x - kappa, r, p)
     #result = exp(sum(lgamma(x - kappa + r) - lfactorial(x - kappa)) + sum(x - kappa) * log(p))
   }
 
@@ -969,7 +989,8 @@ post_kap <- function(x, pars, dist){
 draw_kap <- function(x,pars,kaplb,kapub, dist) {
   KAPPA = pars[1]
   n = length(x) # Number of elements in the component
-  KAPPAhat = sample(kaplb:kapub, 1) # Draw candidate from uniform proposal
+  #KAPPAhat = sample(kaplb:kapub, 1) # Draw candidate from uniform proposal
+  KAPPAhat = KAPPA + sample(c(-1,0,1), 1)
   pars_hat = c(KAPPAhat, pars[-1])
 
   accratio = exp(post_kap(x, pars_hat, dist) - post_kap(x, pars, dist)) # Acceptance ratio
@@ -991,7 +1012,7 @@ draw_kap <- function(x,pars,kaplb,kapub, dist) {
   if (KAPPA > kapub) { # Set to upper bound if outside boudary
       KAPPA = kapub
   } 
- 
+  
   out <- list(KAPPA, acc) # Store output in list
   return(out)           # Return output
 }
@@ -1053,6 +1074,7 @@ neg_binom_ll <- function(y, r, p) {
     term3 <- y * log(1 - p)
 
     logLikelihood <- sum(term1 + term2 + term3)
+
   }
 
   return(logLikelihood)
