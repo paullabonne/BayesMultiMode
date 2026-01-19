@@ -12,6 +12,7 @@
 gibbs_SFM <- function(y,
                       K,
                       nb_iter,
+                      nb_burnin,
                       priors = list(),
                       print = TRUE,
                       dist) {
@@ -33,11 +34,11 @@ gibbs_SFM <- function(y,
   }
 
   if (dist == "neg_binomial") {
-    mcmc = gibbs_SFM_neg_binomial(y, K, nb_iter, priors, print)
+    mcmc = gibbs_SFM_neg_binomial(y, K, nb_iter, nb_burnin, priors, print)
   }
 
   if (dist == "shifted_neg_binomial") {
-    mcmc = gibbs_SFM_shifted_neg_binomial(y, K, nb_iter, priors, print)
+    mcmc = gibbs_SFM_shifted_neg_binomial(y, K, nb_iter, nb_burnin, priors, print)
   }
   
   return(mcmc)
@@ -527,6 +528,7 @@ gibbs_SFM_shifted_poisson <- function(y,
 gibbs_SFM_neg_binomial <- function(y,
                               K,
                               nb_iter,
+                              nb_burnin,
                               priors = list(),
                               print = TRUE){
   
@@ -538,7 +540,7 @@ gibbs_SFM_neg_binomial <- function(y,
   # priors for the negative binomial are implicit
   a0 = priors$a0
   A0 = priors$A0
-  sig = priors$sig # default 0.1
+  std_mh = priors$sig # default 0.1
 
   n_obs <- length(y)
 
@@ -551,7 +553,8 @@ gibbs_SFM_neg_binomial <- function(y,
   
   # Initial conditions
   cl_y <- kmeans(y, centers = K, nstart = 30)
-  
+  accept_ratio = 0
+
   S <- matrix(0,length(y),K)
   
   for (k in 1:K) {
@@ -581,9 +584,11 @@ gibbs_SFM_neg_binomial <- function(y,
         yk = y[S[, k]==1]
       }
      
-      draw_pars = rneg_binom(yk, sig, mu_m[k], r_tilde_m[k])
+      draw_pars = rneg_binom(yk, std_mh, mu_m[k], r_tilde_m[k], accept_ratio, burnin)
       mu_m[k] = draw_pars[1]
       r_tilde_m[k] = draw_pars[2]
+      accept[k] = draw_pars[3]
+      std_mh = draw_pars[4]
      # transform parameters
       r = (1-r_tilde_m[k])/r_tilde_m[k]
       p = mu_m[k] / (r + mu_m[k])
@@ -645,13 +650,14 @@ gibbs_SFM_neg_binomial <- function(y,
 gibbs_SFM_shifted_neg_binomial <- function(y,
                          K,
                          nb_iter,
+                         nb_burnin,
                          priors = list(),
                          print = TRUE){
   
   # unpacking priors
   a0 = priors$a0
   A0 = priors$A0
-  sig = priors$sig
+  std_mh = rep(priors$sig, K)
   
   n_obs <- length(y)
   
@@ -665,7 +671,8 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
   
   # Initial conditions
   cl_y <- kmeans(y, centers = K, nstart = 30)
-  
+  accept_ratio = rep(0, K)
+
   S <- matrix(0,length(y),K)
   for (k in 1:K) {
     S[cl_y$cluster==k ,k] = 1
@@ -680,12 +687,18 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
   accept = rep(0, K)
   ## Sample lamda and S for each component, k=1,...,k
   for(m in 1:nb_iter){
+
+    if (m <= nb_burnin){
+      burnin = TRUE
+    } else {
+      burnin = FALSE
+    }
     
     # Compute number of observations allocated in each component
     N = colSums(S)
     
     ## sample component proportion
-    eta[m, ] = rdirichlet(1, e0 + N) 
+    eta[m, ] = rdirichlet(1, e0 + N)
 
     for (k in 1:K){      
       if (N[k]==0) {
@@ -704,17 +717,22 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
         kappa_m[k] = temp[[1]]
       }
 
-        # Sample r tilde and mu
-        if (any(yk - kappa_m[k] < 0)) {
-          kappa_m[k] = yk
-        }
-        draw_pars = rneg_binom(yk - kappa_m[k], sig, mu_m[k], r_tilde_m[k])
-        mu_m[k] = draw_pars[1]
-        r_tilde_m[k] = draw_pars[2]
-        mu_m[k] = draw_pars[1]
-        r_tilde_m[k] = draw_pars[2]
-        accept[k] = accept[k] + draw_pars[3]
-      # }
+      # Sample r tilde and mu
+      if (any(yk - kappa_m[k] < 0)) {
+        kappa_m[k] = yk
+      }
+
+      draw_pars = rneg_binom(yk - kappa_m[k], std_mh[k], mu_m[k], r_tilde_m[k], accept_ratio[k], burnin)
+
+      mu_m[k] = draw_pars[1]
+      r_tilde_m[k] = draw_pars[2]
+      mu_m[k] = draw_pars[1]
+      r_tilde_m[k] = draw_pars[2]
+      accept[k] = accept[k] + draw_pars[3]
+      
+      # adaptive step
+      std_mh[k] = draw_pars[4]
+      accept_ratio[k] = mean(accept[k]/m)
 
       # transform parameters
       r = (1-r_tilde_m[k])/r_tilde_m[k]
@@ -869,13 +887,13 @@ check_priors <- function(priors, dist, data) {
 ## functions used in the SFM MCMC algorithm
 
 #' @keywords internal
-rneg_binom <- function(Y, d_stdev_candidate, d_mu, d_rtilde) {
+rneg_binom <- function(Y, std, d_mu, d_rtilde, accept_ratio, burnin = FALSE) {
 
   #Y = Y[Y >= 0]
   
   # Inputs
   # Y: Nx1 vector of observations
-  # d_stdev_candidate: scalar valued std dev for MH step 
+  # std: scalar valued std dev for MH step 
   # Initial values of:
   #   d_mu: scalar valued mean
   #   d_rtilde: scalar valued rtilde
@@ -920,15 +938,20 @@ rneg_binom <- function(Y, d_stdev_candidate, d_mu, d_rtilde) {
   d_log_l = sum(dnbinom(Y, size = d_r, prob = 1 - d_p, log = TRUE))
   # Simulate r~ using a random-walk Metropolis(-Hastings) step
   #d_rtilde_candidate <- rnorm(1, mean = d_rtilde, sd = d_stdev_candidate)
-  if (accept_rate < 0.1) {
-    accept_rate = accept_rate * 0.5
+
+  if (burnin) {
+    if (accept_ratio < 0.1) {
+      std = max(std * 0.8, 0.01)
+    } else if (accept_ratio > 0.4) {
+      std = std * 1.2
+    }
   }
-  ad = ad + jump
-  mean = d_rtilde#0.2
-  std = ad# 0.1
+
+  mean = d_rtilde #0.2
   shape_param <- (mean / std)^2
-  rate_param <- mean / (std^2)
-  d_rtilde_candidate = rgamma(1, shape = shape_param, rate = rate_param)
+  rate_param <- mean / std^2
+  
+  d_rtilde_candidate = max(rgamma(1, shape = shape_param, rate = rate_param), 0.01)
   #d_rtilde_candidate = 0.33
   #d_rtilde_candidate <- rgamma(1, shape = shape_param, rate = rate_param)
   #d_rtilde_candidate = rgamma(1, shape = 0.25, rate = 1)
@@ -941,7 +964,7 @@ rneg_binom <- function(Y, d_stdev_candidate, d_mu, d_rtilde) {
     #d_log_l_candidate <- d_r_candidate * N * log(1 - d_p_candidate) -
     #  N * lgamma(d_r_candidate) + sum(lgamma(Y + d_r_candidate) + Y * log(d_p_candidate))
     d_log_l_candidate = sum(dnbinom(Y, size = d_r_candidate, prob = 1 - d_p_candidate, log = TRUE))
-    #browser()
+
     d_acceptance_probability <- min(exp(d_log_l_candidate - d_log_l), 1)
     
     d_u_rw_mh <- runif(1)
@@ -953,7 +976,7 @@ rneg_binom <- function(Y, d_stdev_candidate, d_mu, d_rtilde) {
     }
   }
   
-  return(c(d_mu,d_rtilde,accept))
+  return(c(d_mu, d_rtilde, accept, std))
 }
 
 # Posterior of kappa 
@@ -990,7 +1013,7 @@ draw_kap <- function(x,pars,kaplb,kapub, dist) {
   KAPPA = pars[1]
   n = length(x) # Number of elements in the component
   #KAPPAhat = sample(kaplb:kapub, 1) # Draw candidate from uniform proposal
-  KAPPAhat = KAPPA + sample(c(-1,0,1), 1)
+  KAPPAhat = max(KAPPA + sample(c(-1,0,1), 1), 0)
   pars_hat = c(KAPPAhat, pars[-1])
 
   accratio = exp(post_kap(x, pars_hat, dist) - post_kap(x, pars, dist)) # Acceptance ratio

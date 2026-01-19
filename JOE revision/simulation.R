@@ -39,11 +39,11 @@ hist(Y, breaks = 50, main = "Histogram of Simulated Data", xlab = "Counts")
 ## ============================================================
 
 # estimation
-burnin = 4000
+burnin = 9000
 bayesmix = bayes_fit(data = Y,
                      K = 2,
-                     dist = "shifted_poisson",
-                     nb_iter = 5000,
+                     dist = "shifted_neg_binomial",
+                     nb_iter = 10000,
                      burnin = burnin,
                      print = T)
 
@@ -52,7 +52,7 @@ bayesplot::mcmc_trace(bayesmix$mcmc[, c("kappa1", "kappa2")])
 bayesmode = bayes_mode(bayesmix)
 bayesmode$p_mode_loc
 plot(bayesmode)
-
+apply(bayesmix$mcmc, 2, mean)
 average_ll = mean(bayesmix$loglik[burnin:5000])
 sd_ll = sd(bayesmix$loglik[burnin:5000])
 

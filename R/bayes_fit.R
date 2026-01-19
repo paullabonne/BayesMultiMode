@@ -196,6 +196,7 @@ bayes_fit <- function(data,
   mcmc <- gibbs_SFM(y = data,
                     K = K,
                     nb_iter = nb_iter,
+                    nb_burnin = burnin,
                     priors = priors,
                     print = print,
                     dist = dist)
