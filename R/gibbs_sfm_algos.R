@@ -116,7 +116,7 @@ gibbs_SFM_normal <- function(y,
 
     # Sample cluster index for each row
     row_indices = 1:nrow(pnorm)
-    col_indices <- apply(pnorm, 1, function(x) sample(1:nrow(pnorm), size = 1, prob = x))
+    col_indices <- apply(pnorm, 1, function(x) sample(1:K, size = 1, prob = x))
     
     # Create the one-hot encoded matrix S
     S <- matrix(0, nrow = length(y), ncol = K)
