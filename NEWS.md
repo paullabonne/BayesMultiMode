@@ -1,6 +1,8 @@
-## Version 0.7.4
+## Version 0.7.5
 * Fixed issue with cross-platform reproducibility.
 
+## Version 0.7.4
+* Updated following following ggplot new version.
 
 ## Version 0.7.2
 * Added conditional_nb_modes argument to bayes_mode()

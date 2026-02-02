@@ -29,7 +29,7 @@ install.packages("BayesMultiMode")
 ### Or installing the development version from GitHub
 
 ``` r
-# install.packages("devtools") # if devtools is not installed 
+# install.packages("devtools") # if devtools is not installed
 devtools::install_github("paullabonne/BayesMultiMode")
 ```
 
@@ -43,9 +43,9 @@ library(BayesMultiMode)
 
 `BayesMultiMode` provides a very flexible and efficient MCMC estimation
 approach : it handles mixtures with unknown number of components through
-the sparse finite mixture approach of Malsiner-Walli,
-Fruhwirth-Schnatter, and Grun (2016) and supports a comprehensive range
-of mixture distributions, both continuous and discrete.
+the sparse finite mixture approach of Malsiner-Walli et al. (2016) and
+supports a comprehensive range of mixture distributions, both continuous
+and discrete.
 
 #### Estimation
 
@@ -53,55 +53,59 @@ of mixture distributions, both continuous and discrete.
 set.seed(123)
 
 # retrieve galaxy data
-y = galaxy
+y <- galaxy
 
 # estimation
-bayesmix = bayes_fit(data = y,
-                     K = 10,
-                     dist = "normal",
-                     nb_iter = 2000,
-                     burnin = 1000,
-                     print = F)
+bayesmix <- bayes_fit(
+  data = y,
+  K = 10,
+  dist = "normal",
+  nb_iter = 2000,
+  burnin = 1000,
+  print = F
+)
 
 plot(bayesmix, draws = 200)
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" alt="" width="70%" style="display: block; margin: auto;" />
 
 #### Mode inference
 
 ``` r
 # mode estimation
-bayesmode = bayes_mode(bayesmix)
+bayesmode <- bayes_mode(bayesmix)
 
 plot(bayesmode)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" alt="" width="70%" style="display: block; margin: auto;" />
 
 ``` r
 summary(bayesmode)
 ```
 
-    ## Posterior probability of multimodality is 0.993 
+    ## The posterior probability of multimodality is 0.988 
+    ## 
+    ##  The most likely number of modes is 3 
     ## 
     ## Inference results on the number of modes:
     ##   p_nb_modes (matrix, dim 4x2): 
     ##      number of modes posterior probability
-    ## [1,]               1                 0.007
-    ## [2,]               2                 0.133
-    ## [3,]               3                 0.840
-    ## [4,]               4                 0.020
+    ## [1,]               1                 0.012
+    ## [2,]               2                 0.149
+    ## [3,]               3                 0.818
+    ## [4,]               4                 0.021
     ## 
     ## Inference results on mode locations:
     ##   p_loc (matrix, dim 252x2): 
     ##      mode location posterior probability
-    ## [1,]           9.2                 0.021
+    ## [1,]           9.2                 0.028
     ## [2,]           9.3                 0.000
     ## [3,]           9.4                 0.000
-    ## [4,]           9.5                 0.083
-    ## [5,]           9.6                 0.132
-    ## [6,]           9.7                 0.117
+    ## [4,]           9.5                 0.089
+    ## [5,]           9.6                 0.114
+    ## [6,]           9.7                 0.108
     ## ... (246 more rows)
 
 ### BayesMultiMode for mode inference with external MCMC output
@@ -118,52 +122,61 @@ examples can be found
 library(BNPmix)
 library(dplyr)
 
-y = cyclone %>%
-  filter(BASIN == "SI",
-         SEASON > "1981") %>%
+y <- cyclone %>%
+  filter(
+    BASIN == "SI",
+    SEASON > "1981"
+  ) %>%
   dplyr::select(max_wind) %>%
   unlist()
 
 ## estimation
-PY_result = PYdensity(y,
-                      mcmc = list(niter = 2000,
-                                  nburn = 1000,
-                                  print_message = FALSE),
-                      output = list(out_param = TRUE))
+PY_result <- PYdensity(y,
+  mcmc = list(
+    niter = 2000,
+    nburn = 1000,
+    print_message = FALSE
+  ),
+  output = list(out_param = TRUE)
+)
 ```
 
 #### Transforming the output into a mcmc matrix with one column per variable
 
 ``` r
-mcmc_py = list()
+mcmc_py <- list()
 
 for (i in 1:length(PY_result$p)) {
-  k = length(PY_result$p[[i]][, 1])
-  
-  draw = c(PY_result$p[[i]][, 1],
-           PY_result$mean[[i]][, 1],
-           sqrt(PY_result$sigma2[[i]][, 1]),
-           i)
-  
-  names(draw)[1:k] = paste0("eta", 1:k)
-  names(draw)[(k+1):(2*k)] = paste0("mu", 1:k)
-  names(draw)[(2*k+1):(3*k)] = paste0("sigma", 1:k)
-  names(draw)[3*k + 1] = "draw"
-  
-  mcmc_py[[i]] = draw
+  k <- length(PY_result$p[[i]][, 1])
+
+  draw <- c(
+    PY_result$p[[i]][, 1],
+    PY_result$mean[[i]][, 1],
+    sqrt(PY_result$sigma2[[i]][, 1]),
+    i
+  )
+
+  names(draw)[1:k] <- paste0("eta", 1:k)
+  names(draw)[(k + 1):(2 * k)] <- paste0("mu", 1:k)
+  names(draw)[(2 * k + 1):(3 * k)] <- paste0("sigma", 1:k)
+  names(draw)[3 * k + 1] <- "draw"
+
+  mcmc_py[[i]] <- draw
 }
 
-mcmc_py = as.matrix(bind_rows(mcmc_py))
+mcmc_py <- as.matrix(bind_rows(mcmc_py))
 ```
 
 #### Creating an object of class `bayes_mixture`
 
 ``` r
-py_BayesMix = bayes_mixture(mcmc = mcmc_py,
-                            data = y,
-                            burnin = 0, # the burnin has already been discarded
-                            dist = "normal",
-                            vars_to_keep = c("eta", "mu", "sigma"))
+py_BayesMix <- bayes_mixture(
+  mcmc = mcmc_py,
+  data = y,
+  burnin = 0, # the burnin has already been discarded
+  dist = "normal",
+  vars_to_keep = c("eta", "mu", "sigma")
+)
 ```
 
 #### Plotting the mixture
@@ -172,43 +185,45 @@ py_BayesMix = bayes_mixture(mcmc = mcmc_py,
 plot(py_BayesMix)
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" alt="" width="70%" style="display: block; margin: auto;" />
 
 #### Mode inference
 
 ``` r
 # mode estimation
-bayesmode = bayes_mode(py_BayesMix)
+bayesmode <- bayes_mode(py_BayesMix)
 
 # plot
 plot(bayesmode)
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-11-1.png" alt="" width="70%" style="display: block; margin: auto;" />
 
 ``` r
-# Summary 
+# Summary
 summary(bayesmode)
 ```
 
-    ## Posterior probability of multimodality is 1 
+    ## The posterior probability of multimodality is 1 
+    ## 
+    ##  The most likely number of modes is 2 
     ## 
     ## Inference results on the number of modes:
     ##   p_nb_modes (matrix, dim 2x2): 
     ##      number of modes posterior probability
-    ## [1,]               2                 0.897
-    ## [2,]               3                 0.103
+    ## [1,]               2                 0.889
+    ## [2,]               3                 0.111
     ## 
     ## Inference results on mode locations:
-    ##   p_loc (matrix, dim 793x2): 
+    ##   p_loc (matrix, dim 787x2): 
     ##      mode location posterior probability
-    ## [1,]          40.2                 0.001
-    ## [2,]          40.3                 0.000
-    ## [3,]          40.4                 0.000
-    ## [4,]          40.5                 0.001
-    ## [5,]          40.6                 0.000
-    ## [6,]          40.7                 0.000
-    ## ... (787 more rows)
+    ## [1,]          40.6                 0.001
+    ## [2,]          40.7                 0.000
+    ## [3,]          40.8                 0.000
+    ## [4,]          40.9                 0.002
+    ## [5,]          41.0                 0.000
+    ## [6,]          41.1                 0.001
+    ## ... (781 more rows)
 
 ### BayesMultiMode for mode estimation in mixtures estimated with ML
 
@@ -221,25 +236,34 @@ example using the popular package `mclust`. More examples can be found
 set.seed(123)
 library(mclust)
 
-y = cyclone %>%
-  filter(BASIN == "SI",
-         SEASON > "1981") %>%
+y <- cyclone %>%
+  filter(
+    BASIN == "SI",
+    SEASON > "1981"
+  ) %>%
   dplyr::select(max_wind) %>%
   unlist()
 
-fit = Mclust(y)
+fit <- Mclust(y)
+```
 
-pars = c(eta = fit$parameters$pro,
-         mu = fit$parameters$mean,
-         sigma = sqrt(fit$parameters$variance$sigmasq))
+    ## fitting ...
+    ##   |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   5%  |                                                                              |=======                                                               |  11%  |                                                                              |===========                                                           |  16%  |                                                                              |===============                                                       |  21%  |                                                                              |==================                                                    |  26%  |                                                                              |======================                                                |  32%  |                                                                              |==========================                                            |  37%  |                                                                              |=============================                                         |  42%  |                                                                              |=================================                                     |  47%  |                                                                              |=====================================                                 |  53%  |                                                                              |=========================================                             |  58%  |                                                                              |============================================                          |  63%  |                                                                              |================================================                      |  68%  |                                                                              |====================================================                  |  74%  |                                                                              |=======================================================               |  79%  |                                                                              |===========================================================           |  84%  |                                                                              |===============================================================       |  89%  |                                                                              |==================================================================    |  95%  |                                                                              |======================================================================| 100%
 
-mix = mixture(pars, dist = "normal", range = c(min(y), max(y))) # create new object of class Mixture
-modes = mix_mode(mix) # estimate modes
+``` r
+pars <- c(
+  eta = fit$parameters$pro,
+  mu = fit$parameters$mean,
+  sigma = sqrt(fit$parameters$variance$sigmasq)
+)
+
+mix <- mixture(pars, dist = "normal", range = c(min(y), max(y))) # create new object of class Mixture
+modes <- mix_mode(mix) # estimate modes
 
 plot(modes)
 ```
 
-<img src="man/figures/README-unnamed-chunk-12-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-12-1.png" alt="" width="50%" style="display: block; margin: auto;" />
 
 ``` r
 summary(modes)
@@ -279,7 +303,8 @@ Economics and Finance.” *Economics Letters* 235 (February): 111579.
 Knapp, Kenneth R., Howard J. Diamond, Kossin J. P., Michael C. Kruk, and
 C. J. Schreck. 2018. “International Best Track Archive for Climate
 Stewardship (IBTrACS) Project, Version 4.” *NOAA National Centers for
-Environmental Information*. <https://doi.org/10.1175/2009BAMS2755.1>.
+Environmental Information*, ahead of print.
+<https://doi.org/10.1175/2009BAMS2755.1>.
 
 </div>
 
