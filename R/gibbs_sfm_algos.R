@@ -2,7 +2,7 @@
 #'
 #' @importFrom gtools rdirichlet
 #' @importFrom Rdpack reprompt
-#' @importFrom stats median kmeans rgamma rmultinom rnorm density dgamma dpois runif
+#' @importFrom stats median kmeans rgamma rnorm density dgamma dpois runif
 #' @importFrom MCMCglmm rtnorm
 #' @importFrom mvtnorm rmvnorm
 #' @importFrom sn dsn
@@ -59,6 +59,11 @@ gibbs_SFM_normal <- function(y,
   # initialisation
   cl_y <- kmeans(y, centers = K, nstart = 30)
 
+  # reorder clusters by ascending centers (necessary for cross-platform consistency)
+  ord <- order(cl_y$centers)
+  cl_y$centers <- cl_y$centers[ord, , drop = FALSE]
+  cl_y$cluster <- match(cl_y$cluster, ord)
+
   S <- matrix(0, length(y), K)
   for (k in 1:K) {
     S[cl_y$cluster == k, k] <- 1
@@ -109,7 +114,13 @@ gibbs_SFM_normal <- function(y,
     NA_id <- which(is.na(pnorm[, 1]))
     pnorm[NA_id, ] <- 1 / ncol(pnorm)
 
-    S <- t(apply(pnorm, 1, function(x) rmultinom(n = 1, size = 1, prob = x)))
+    # Sample cluster index for each row
+    row_indices = 1:nrow(pnorm)
+    col_indices <- apply(pnorm, 1, function(x) sample(1:K, size = 1, prob = x))
+    
+    # Create the one-hot encoded matrix S
+    S <- matrix(0, nrow = length(y), ncol = K)
+    S[cbind(row_indices, col_indices)] <- 1
 
     # The dimmension of S is not right if K =1
     if (K == 1) {
@@ -126,8 +137,8 @@ gibbs_SFM_normal <- function(y,
     e0 <- draw_e0(e0, a0, 1 / A0, eta[m, ])[[1]]
 
     # compute log lik
-    lp[m] <- sum(probs)
-
+    lp[m] <- log(sum(probs))
+  
     ## counter
     if (print) {
       if (m %% (round(nb_iter / 10)) == 0) {
@@ -168,6 +179,11 @@ gibbs_SFM_poisson <- function(y,
 
   # Initial conditions
   cl_y <- kmeans(y, centers = K, nstart = 30)
+
+  # reorder clusters by ascending centers (necessary for cross-platform consistency)
+  ord <- order(cl_y$centers)
+  cl_y$centers <- cl_y$centers[ord, , drop = FALSE]
+  cl_y$cluster <- match(cl_y$cluster, ord)
 
   S <- matrix(0, length(y), K)
 
@@ -218,7 +234,13 @@ gibbs_SFM_poisson <- function(y,
     NA_id <- which(is.na(pnorm[, 1]))
     pnorm[NA_id, ] <- 1 / ncol(pnorm)
 
-    S <- t(apply(pnorm, 1, function(x) rmultinom(n = 1, size = 1, prob = x)))
+    # Sample cluster index for each row
+    row_indices = 1:nrow(pnorm)
+    col_indices <- apply(pnorm, 1, function(x) sample(1:K, size = 1, prob = x))
+    
+    # Create the one-hot encoded matrix S
+    S <- matrix(0, nrow = length(y), ncol = K)
+    S[cbind(row_indices, col_indices)] <- 1
 
     # The dimmension of S is not right if K =1
     if (K == 1) {
@@ -285,6 +307,11 @@ gibbs_SFM_skew_n <- function(y,
 
   # initialisation
   cl_y <- kmeans(y, centers = K, nstart = 30)
+
+  # reorder clusters by ascending centers (necessary for cross-platform consistency)
+  ord <- order(cl_y$centers)
+  cl_y$centers <- cl_y$centers[ord, , drop = FALSE]
+  cl_y$cluster <- match(cl_y$cluster, ord)
 
   S <- matrix(0, n_obs, K)
   for (k in 1:K) {
@@ -373,8 +400,14 @@ gibbs_SFM_skew_n <- function(y,
     NA_id <- which(is.na(pnorm[, 1]))
     pnorm[NA_id, ] <- 1 / ncol(pnorm)
 
-    S <- t(apply(pnorm, 1, function(x) rmultinom(n = 1, size = 1, prob = x)))
-
+    # Sample cluster index for each row
+    row_indices = 1:nrow(pnorm)
+    col_indices <- apply(pnorm, 1, function(x) sample(1:K, size = 1, prob = x))
+    
+    # Create the one-hot encoded matrix S
+    S <- matrix(0, nrow = length(y), ncol = K)
+    S[cbind(row_indices, col_indices)] <- 1
+    
     # The dimmension of S is not right if K =1
     if (K == 1) {
       S <- matrix(S, ncol = 1)
@@ -432,6 +465,11 @@ gibbs_SFM_sp <- function(y,
 
   # Initial conditions
   cl_y <- kmeans(y, centers = K, nstart = 30)
+
+  # reorder clusters by ascending centers (necessary for cross-platform consistency)
+  ord <- order(cl_y$centers)
+  cl_y$centers <- cl_y$centers[ord, , drop = FALSE]
+  cl_y$cluster <- match(cl_y$cluster, ord)
 
   S <- matrix(0, length(y), K)
   for (k in 1:K) {
@@ -496,7 +534,13 @@ gibbs_SFM_sp <- function(y,
     NA_id <- which(is.na(pnorm[, 1]))
     pnorm[NA_id, ] <- 1 / ncol(pnorm)
 
-    S <- t(apply(pnorm, 1, function(x) rmultinom(n = 1, size = 1, prob = x)))
+    # Sample cluster index for each row
+    row_indices = 1:nrow(pnorm)
+    col_indices <- apply(pnorm, 1, function(x) sample(1:K, size = 1, prob = x))
+    
+    # Create the one-hot encoded matrix S
+    S <- matrix(0, nrow = length(y), ncol = K)
+    S[cbind(row_indices, col_indices)] <- 1
 
     # The dimmension of S is not right if K =1
     if (K == 1) {

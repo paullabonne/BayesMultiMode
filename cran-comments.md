@@ -1,1 +1,1 @@
-* Fixed compatibility issue with ggplot
+Updated version
