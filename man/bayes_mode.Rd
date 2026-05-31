@@ -59,6 +59,7 @@ A list of class \code{bayes_mode} containing:
 Bayesian inference on the modes in a univariate mixture estimated with MCMC methods, see \insertCite{Cross2024;textual}{BayesMultiMode}.
 Provides posterior probabilities of the number of modes and their locations.
 Under the hood it calls the function \code{\link[=mix_mode]{mix_mode()}} to find the modes in each MCMC draw.
+See \insertCite{basturk_2026;textual}{BayesMultiMode} for a detailed description of the methodology and the package.
 }
 \details{
 Each draw from the MCMC output after burnin, \eqn{\theta^{(d)}, \quad d = 1,...,D}, leads to a posterior predictive probability

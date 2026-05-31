@@ -51,6 +51,7 @@ A list of class \code{bayes_mixture} containing:
 }
 \description{
 Estimation of a univariate mixture with unknown number of components using a sparse finite mixture Markov chain Monte Carlo (SFM MCMC) algorithm.
+See \insertCite{basturk_2026;textual}{BayesMultiMode} for a detailed description of the methodology and the package.
 }
 \details{
 Let \eqn{y_i}, \eqn{i=1,\dots,n} denote observations.

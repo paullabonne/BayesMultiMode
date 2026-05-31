@@ -1,15 +1,15 @@
 Package: BayesMultiMode
 Type: Package
 Title: Bayesian Mode Inference
-Version: 0.7.5
+Version: 1.0.0
 Authors@R: c(person(given = "Nalan", family = "Baştürk", role = "aut"),
   person(given = "Jamie", family = "Cross", role = "aut"),
   person(given = "Peter", family = "de Knijff", role = "aut"),
   person(given = "Lennart", family = "Hoogerheide", role = "aut"),
   person(given = "Paul", family = "Labonne", email= "labonnepaul@gmail.com", role = c("aut", "cre")),
   person(given = "Herman", family = "van Dijk", role = "aut"))
-Description: A two-step Bayesian approach for mode inference following 
-      Cross, Hoogerheide, Labonne and van Dijk (2024) <doi:10.1016/j.econlet.2024.111579>).
+Description: A two-step Bayesian approach for mode inference  
+      (Baştürk et al., 2026) <doi:10.18637/jss.v116.i03>.
       First, a mixture distribution is fitted on the data using a sparse finite
       mixture (SFM) Markov chain Monte Carlo (MCMC) algorithm. The number of
       mixture components does not have to be known; the size of the mixture is

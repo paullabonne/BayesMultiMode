@@ -1,6 +1,7 @@
 #' Bayesian estimation of mixture distributions
 #'
 #' Estimation of a univariate mixture with unknown number of components using a sparse finite mixture Markov chain Monte Carlo (SFM MCMC) algorithm.
+#' See \insertCite{basturk_2026;textual}{BayesMultiMode} for a detailed description of the methodology and the package.
 #'
 #' @param data Vector of observations.
 #' @param K Maximum number of mixture components.

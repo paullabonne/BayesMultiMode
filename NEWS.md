@@ -1,3 +1,8 @@
+## Version 1.0.0
+* Companion release to the Journal of Statistical Software publication: Baştürk et al. (2026), "BayesMultiMode: Bayesian Mode Inference in R", JSS 116(3), <doi:10.18637/jss.v116.i03>.
+* Added inst/CITATION pointing to the JSS article.
+* Added the JSS reference to the DESCRIPTION and to the bayes_fit() and bayes_mode() documentation.
+
 ## Version 0.7.5
 * Fixed issue with cross-platform reproducibility.
 

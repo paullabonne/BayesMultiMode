@@ -3,6 +3,7 @@
 #' Bayesian inference on the modes in a univariate mixture estimated with MCMC methods, see \insertCite{Cross2024;textual}{BayesMultiMode}.
 #' Provides posterior probabilities of the number of modes and their locations.
 #' Under the hood it calls the function [mix_mode()] to find the modes in each MCMC draw.
+#' See \insertCite{basturk_2026;textual}{BayesMultiMode} for a detailed description of the methodology and the package.
 #'
 #' @param BayesMix An object of class `bayes_mixture` generated with either [bayes_fit()] or [bayes_mixture()].
 #' @param rd (for continuous mixtures) Integer indicating the number of decimal places when rounding the distribution's support.

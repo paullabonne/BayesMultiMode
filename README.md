@@ -17,7 +17,7 @@ modes of the estimated mixture in each MCMC draw are retrieved using
 algorithms specifically tailored for mode detection. These estimates are
 then used to construct posterior probabilities for the number of modes,
 their locations and uncertainties, providing a powerful tool for mode
-inference. See Basturk et al. (2023) and Cross et al. (2024) for more
+inference. See Basturk et al. (2026) and Cross et al. (2024) for more
 details.
 
 ### Installing BayesMultiMode from CRAN
@@ -245,12 +245,7 @@ y <- cyclone %>%
   unlist()
 
 fit <- Mclust(y)
-```
 
-    ## fitting ...
-    ##   |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   5%  |                                                                              |=======                                                               |  11%  |                                                                              |===========                                                           |  16%  |                                                                              |===============                                                       |  21%  |                                                                              |==================                                                    |  26%  |                                                                              |======================                                                |  32%  |                                                                              |==========================                                            |  37%  |                                                                              |=============================                                         |  42%  |                                                                              |=================================                                     |  47%  |                                                                              |=====================================                                 |  53%  |                                                                              |=========================================                             |  58%  |                                                                              |============================================                          |  63%  |                                                                              |================================================                      |  68%  |                                                                              |====================================================                  |  74%  |                                                                              |=======================================================               |  79%  |                                                                              |===========================================================           |  84%  |                                                                              |===============================================================       |  89%  |                                                                              |==================================================================    |  95%  |                                                                              |======================================================================| 100%
-
-``` r
 pars <- c(
   eta = fit$parameters$pro,
   mu = fit$parameters$mean,
@@ -280,12 +275,12 @@ summary(modes)
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
-<div id="ref-basturk_2023" class="csl-entry">
+<div id="ref-basturk_2026" class="csl-entry">
 
 Basturk, Nalan, Jamie L. Cross, Peter de Knijff, Lennart Hoogerheide,
-Paul Labonne, and Herman K. van Dijk. 2023. “BayesMultiMode: Bayesian
-Mode Inference in r.” *Tinbergen Institute Discussion Paper TI
-2023-041/III*.
+Paul Labonne, and Herman K. van Dijk. 2026. “BayesMultiMode: Bayesian
+Mode Inference in R.” *Journal of Statistical Software* 116 (3): 1–33.
+<https://doi.org/10.18637/jss.v116.i03>.
 
 </div>
 
