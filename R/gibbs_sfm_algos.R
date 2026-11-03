@@ -540,9 +540,13 @@ gibbs_SFM_neg_binomial <- function(y,
   # priors for the negative binomial are implicit
   a0 = priors$a0
   A0 = priors$A0
-  std_mh = priors$sig # default 0.1
+  std_mh = rep(priors$sig, K)
 
   n_obs <- length(y)
+  mu_max = max(y)
+  if (mu_max <= 0) {
+    stop("The negative binomial mean prior requires a positive full-data maximum.")
+  }
 
   # storage matrices
   r_tilde = matrix(data=NA,nrow=nb_iter,ncol=K)
@@ -553,7 +557,8 @@ gibbs_SFM_neg_binomial <- function(y,
   
   # Initial conditions
   cl_y <- kmeans(y, centers = K, nstart = 30)
-  accept_ratio = 0
+  accept_ratio = rep(0, K)
+  accept = rep(0, K)
 
   S <- matrix(0,length(y),K)
   
@@ -565,6 +570,7 @@ gibbs_SFM_neg_binomial <- function(y,
   
   # initial value for the parameters
   mu_m <- cbind(t(cl_y$centers))
+  mu_m[mu_m == 0] = mu_max / 2
   r_tilde_m <- rep(0.09, K)
   
   ## Sample lamda and S for each component, k=1,...,k
@@ -578,17 +584,14 @@ gibbs_SFM_neg_binomial <- function(y,
     
     for (k in 1:K){
       
-      if (N[k]==0) {
-        yk = 0
-      } else {
-        yk = y[S[, k]==1]
-      }
+      yk = y[S[, k]==1]
      
-      draw_pars = rneg_binom(yk, std_mh, mu_m[k], r_tilde_m[k], accept_ratio, burnin)
+      draw_pars = rneg_binom(yk, std_mh[k], mu_m[k], r_tilde_m[k], accept_ratio[k], m <= nb_burnin, mu_max = mu_max)
       mu_m[k] = draw_pars[1]
       r_tilde_m[k] = draw_pars[2]
-      accept[k] = draw_pars[3]
-      std_mh = draw_pars[4]
+      accept[k] = accept[k] + draw_pars[3]
+      std_mh[k] = draw_pars[4]
+      accept_ratio[k] = accept[k] / m
      # transform parameters
       r = (1-r_tilde_m[k])/r_tilde_m[k]
       p = mu_m[k] / (r + mu_m[k])
@@ -660,6 +663,10 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
   std_mh = rep(priors$sig, K)
   
   n_obs <- length(y)
+  mu_max = max(y)
+  if (mu_max <= 0) {
+    stop("The negative binomial mean prior requires a positive full-data maximum.")
+  }
   
   # storage matrices
   kappa = matrix(data=NA,nrow=nb_iter,ncol=K) 
@@ -683,6 +690,7 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
   # initial value for the parameters
   kappa_m = rep(0, K)
   mu_m <- cbind(t(cl_y$centers))
+  mu_m[mu_m == 0] = mu_max / 2
   r_tilde_m <- rep(0.4, K)
   accept = rep(0, K)
   ## Sample lamda and S for each component, k=1,...,k
@@ -700,29 +708,24 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
     ## sample component proportion
     eta[m, ] = rdirichlet(1, e0 + N)
 
-    for (k in 1:K){      
+    for (k in 1:K){
+      yk = y[S[, k] == 1]
       if (N[k]==0) {
-        yk = 0
+        kappa_m[k] = sample.int(mu_max + 1, 1) - 1
       } else {
-        yk = y[S[, k] == 1]
+        kapub = min(yk)
+        if (kapub >= kappa_m[k]) {
+          pars_m = c(kappa_m[k], r_tilde_m[k], mu_m[k])
+          temp = draw_kap(yk, pars_m, kaplb = 0, kapub = kapub, dist = "shifted_neg_binomial") # Draw kappa from MH step
+          kappa_m[k] = temp[[1]]
+        }
+
+        if (any(yk - kappa_m[k] < 0)) {
+          kappa_m[k] = yk
+        }
       }
 
-      kapub = min(yk)
-      if (length(kapub) == 0) {# Set to zero if component is empty
-        kappa_m[k] = 0; 
-      } else if (kapub < kappa_m[k]) {# Set to upper bound if outside boudary
-      } else {
-        pars_m = c(kappa_m[k], r_tilde_m[k], mu_m[k])
-        temp = draw_kap(yk, pars_m, kaplb = 0, kapub = kapub, dist = "shifted_neg_binomial") # Draw kappa from MH step
-        kappa_m[k] = temp[[1]]
-      }
-
-      # Sample r tilde and mu
-      if (any(yk - kappa_m[k] < 0)) {
-        kappa_m[k] = yk
-      }
-
-      draw_pars = rneg_binom(yk - kappa_m[k], std_mh[k], mu_m[k], r_tilde_m[k], accept_ratio[k], burnin)
+      draw_pars = rneg_binom(yk - kappa_m[k], std_mh[k], mu_m[k], r_tilde_m[k], accept_ratio[k], burnin, mu_max = mu_max)
 
       mu_m[k] = draw_pars[1]
       r_tilde_m[k] = draw_pars[2]
@@ -887,7 +890,7 @@ check_priors <- function(priors, dist, data) {
 ## functions used in the SFM MCMC algorithm
 
 #' @keywords internal
-rneg_binom <- function(Y, std, d_mu, d_rtilde, accept_ratio, burnin = FALSE) {
+rneg_binom <- function(Y, std, d_mu, d_rtilde, accept_ratio, burnin = FALSE, mu_max) {
 
   #Y = Y[Y >= 0]
   
@@ -906,7 +909,12 @@ rneg_binom <- function(Y, std, d_mu, d_rtilde, accept_ratio, burnin = FALSE) {
   # Sample
   # Define useful terms
   N <- length(Y) # Sample size
-  max_y <- max(Y) # max Y
+  if (length(mu_max) != 1 || !is.finite(mu_max) || mu_max <= 0) {
+    stop("mu_max must be a positive finite scalar.")
+  }
+  if (N == 0) {
+    return(c(runif(1, 0, mu_max), runif(1, 0, 0.5), 0, std))
+  }
   
   # Define NB terms
   d_r <- (1 - d_rtilde) / d_rtilde
@@ -921,12 +929,12 @@ rneg_binom <- function(Y, std, d_mu, d_rtilde, accept_ratio, burnin = FALSE) {
   # Gamma(alpha = rn - 1, beta = r * sum(lambda_i))
   d_a <- d_r * N - 1
   d_b <- 1 / (d_r * sum(v_lambda))
-  d_cdf_at_1_over_m <- pgamma(1 / max_y, shape = d_a, scale = d_b)
+  d_log_tail_at_1_over_m <- pgamma(1 / mu_max, shape = d_a, scale = d_b,
+                                  lower.tail = FALSE, log.p = TRUE)
 
-  # Simulate U on (CDF(1 / m), 1 = CDF(infinity))
-  d_u <- d_cdf_at_1_over_m + (1 - d_cdf_at_1_over_m) * runif(1)
-  # Invert Gamma CDF and compute inverse mu = 1 / (1 / mu)
-  d_mu <- 1 / qgamma(d_u, shape = d_a, scale = d_b)
+  d_log_u <- d_log_tail_at_1_over_m + log(runif(1))
+  d_mu <- 1 / qgamma(d_log_u, shape = d_a, scale = d_b,
+                     lower.tail = FALSE, log.p = TRUE)
   
   if (d_mu == 0) d_mu <- 1e-8
   
