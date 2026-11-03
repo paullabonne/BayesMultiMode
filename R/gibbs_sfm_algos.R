@@ -936,8 +936,6 @@ rneg_binom <- function(Y, std, d_mu, d_rtilde, accept_ratio, burnin = FALSE) {
   #d_log_l <- d_r * N * log(1 - d_p) - N * lgamma(d_r) + sum(lgamma(Y + d_r) + Y * log(d_p))
   
   d_log_l = sum(dnbinom(Y, size = d_r, prob = 1 - d_p, log = TRUE))
-  # Simulate r~ using a random-walk Metropolis(-Hastings) step
-  #d_rtilde_candidate <- rnorm(1, mean = d_rtilde, sd = d_stdev_candidate)
 
   if (burnin) {
     if (accept_ratio < 0.1) {
@@ -947,16 +945,7 @@ rneg_binom <- function(Y, std, d_mu, d_rtilde, accept_ratio, burnin = FALSE) {
     }
   }
 
-  mean = d_rtilde #0.2
-  shape_param <- (mean / std)^2
-  rate_param <- mean / std^2
-  
-  d_rtilde_candidate = max(rgamma(1, shape = shape_param, rate = rate_param), 0.01)
-  #d_rtilde_candidate = 0.33
-  #d_rtilde_candidate <- rgamma(1, shape = shape_param, rate = rate_param)
-  #d_rtilde_candidate = rgamma(1, shape = 0.25, rate = 1)
-  # If the candidate draw r~ < 0 or r~ > 0.5, then 
-  # it is rejected without the need to evaluate a loglikelihood
+  d_rtilde_candidate = rnorm(1, mean = d_rtilde, sd = std)
   accept = 0
   if (d_rtilde_candidate > 0 & d_rtilde_candidate < 0.5) {
     d_r_candidate <- (1 - d_rtilde_candidate) / d_rtilde_candidate
@@ -965,10 +954,10 @@ rneg_binom <- function(Y, std, d_mu, d_rtilde, accept_ratio, burnin = FALSE) {
     #  N * lgamma(d_r_candidate) + sum(lgamma(Y + d_r_candidate) + Y * log(d_p_candidate))
     d_log_l_candidate = sum(dnbinom(Y, size = d_r_candidate, prob = 1 - d_p_candidate, log = TRUE))
 
-    d_acceptance_probability <- min(exp(d_log_l_candidate - d_log_l), 1)
+    d_log_acceptance_probability <- min(d_log_l_candidate - d_log_l, 0)
     
     d_u_rw_mh <- runif(1)
-    if (d_u_rw_mh < d_acceptance_probability) {
+    if (log(d_u_rw_mh) < d_log_acceptance_probability) {
       accept = 1
       d_r <- d_r_candidate
       d_rtilde <- d_rtilde_candidate
