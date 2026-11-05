@@ -1,3 +1,37 @@
+test_that("samplers sum log mixture probabilities over observations", {
+  samplers = list(gibbs_SFM_normal, gibbs_SFM_skew_n, gibbs_SFM_poisson,
+                  gibbs_SFM_shifted_poisson, gibbs_SFM_neg_binomial,
+                  gibbs_SFM_shifted_neg_binomial)
+  observations = rep(0:5, 2)
+  expected_loglik = sum(dpois(observations, lambda = 3, log = TRUE))
+  priors = list(a0 = 1, A0 = 200, b0 = 2, B0 = 25, c0 = 2.5,
+                g0 = 0.5, G0 = 1, C0 = 1, D_xi = 1, D_psi = 1,
+                l0 = 1.1, L0 = 1, sig = 0.1)
+
+  for (sampler in samplers) {
+    set.seed(123)
+    sampler_env = new.env(parent = environment(sampler))
+    environment(sampler) = sampler_env
+    sampler_env$rdirichlet = function(count, alpha) matrix(c(0.6, 0.4), nrow = 1)
+    sampler_env$draw_e0 = function(e0, ...) list(e0, 0)
+    sampler_env$draw_kap = function(...) list(0, 0)
+    sampler_env$rtnorm = function(count, ...) rep(0, count)
+    sampler_env$rmvnorm = function(count, mean, ...) matrix(mean, nrow = count)
+    fixed_density = function(observations, ...) dpois(observations, lambda = 3)
+    sampler_env$dnorm = fixed_density
+    sampler_env$dsn = fixed_density
+    sampler_env$dpois = fixed_density
+    sampler_env$dnbinom = fixed_density
+
+    arguments = list(y = observations, K = 2, nb_iter = 3, nb_burnin = 0,
+                     priors = priors, print = FALSE)
+    arguments = arguments[names(arguments) %in% names(formals(sampler))]
+    result = do.call(sampler, arguments)
+
+    expect_equal(unname(result[2:3, "loglik"]), rep(expected_loglik, 2))
+  }
+})
+
 test_that("negative binomial Gaussian proposals are rejected outside support", {
   update = rneg_binom
   update_env = new.env(parent = environment(update))
