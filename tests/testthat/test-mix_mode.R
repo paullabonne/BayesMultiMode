@@ -1,3 +1,13 @@
+test_that("discrete modes exclude unrelated points with the same height", {
+  pars = matrix(1, nrow = 1, dimnames = list(NULL, "eta"))
+  pmf_func = function(x, pars) c(4, 3, 1, 2, 3, 2)[x + 1] / 15
+
+  for (type in c("all", "unique")) {
+    expect_warning(modes <- discrete_MF(pars, pmf_func, c(0, 5), type), NA)
+    expect_equal(modes, c(0, 4))
+  }
+})
+
 test_that("mix_mode() returns expected results with dist = shifted_poisson and flat modes", {
   set.seed(1)
   lambda = c(0.1,1)

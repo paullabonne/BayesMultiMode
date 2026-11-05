@@ -380,11 +380,11 @@ discrete_MF <- function(pars, pdf_func, range, type = "all"){
   d2_py = c(0, x_decrease[-1] - x_decrease[-length(x_decrease)])
   x_decrease = x_decrease[which(d2_py!=1)]
   
-  # get pdf at these modes 
-  pdf_modes = py[x %in% x_decrease]
+  # get consecutive equal-height runs
+  run_id = cumsum(c(TRUE, diff(py) != 0))
   
   # get all the points at these peaks (there might be flat modes) 
-  loc_modes = x[which(py %in% pdf_modes)]
+  loc_modes = x[run_id %in% run_id[x %in% x_decrease]]
   
   if (length(loc_modes) != length(x_decrease)) {
     warning("Some modes are flat.")
@@ -393,7 +393,7 @@ discrete_MF <- function(pars, pdf_func, range, type = "all"){
   modes = rep(NA_real_, length(x))
 
   if (type == "unique") {
-    modes[1:length(loc_modes)] = x_decrease
+    modes[1:length(x_decrease)] = x_decrease
   }
   
   if (type == "all") {
