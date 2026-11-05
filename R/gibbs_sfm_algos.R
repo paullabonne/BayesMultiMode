@@ -196,6 +196,7 @@ gibbs_SFM_poisson <- function(y,
     N = colSums(S)
     
     ## sample component proportion
+    e0 = draw_e0(e0, a0, 1/A0, counts = N)[[1]]
     eta[m, ] = rdirichlet(1, e0 + N) 
     
     for (k in 1:K){
@@ -217,17 +218,11 @@ gibbs_SFM_poisson <- function(y,
     # 2. classification
     pnorm = probs/rowSums(probs) 
     
-    ## if the initial classification is bad then some data points won't be 
-    # allocated to any components and some rows will be 
-    # NAs (because if dividing by zero). We correct this by replacing NAs with
-    # equal probabilities
-    NA_id = which(is.na(pnorm[,1]))
-    pnorm[NA_id, ] = 1/ncol(pnorm)
+    if (any(!is.finite(pnorm))) {
+      stop("Non-finite count allocation probabilities; check support or numerical underflow.")
+    }
     
     S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
-    
-    ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
-    e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -448,25 +443,18 @@ gibbs_SFM_shifted_poisson <- function(y,
     N = colSums(S)
     
     ## sample component proportion
+    e0 = draw_e0(e0, a0, 1/A0, counts = N)[[1]]
     eta[m, ] = rdirichlet(1, e0 + N) 
     
     for (k in 1:K){
       
-      if (N[k]==0) {
-        yk = 0
+      yk = y[S[, k]==1]
+      if (N[k] == 0) {
+        kappa_m[k] = sample.int(max(y) + 1, 1) - 1
       } else {
-        yk = y[S[, k]==1]
-      }
-      
-      # Sample kappa using MH Step
-      kapub = min(yk)
-      if (length(kapub) == 0) {# Set to zero if component is empty
-        kappa_m[k] = 0; 
-      } else if (kapub < kappa_m[k]) {# Set to upper bound if outside boudary
-        kappa_m[k] = kapub
-      } else {
+        kapub = min(yk)
         pars_m = c(kappa_m[k], lambda_m[k])
-        temp = draw_kap(yk, pars_m, kaplb = 0, kapub, dist = "shifted_poisson") # Draw kappa from MH step
+        temp = draw_kap(yk, pars_m, kaplb = 0, kapub = kapub, dist = "shifted_poisson")
         kappa_m[k] = temp[[1]]
       }
       
@@ -481,17 +469,11 @@ gibbs_SFM_shifted_poisson <- function(y,
     # 2. classification
     pnorm = probs/rowSums(probs)
     
-    ## if the initial classification is bad then some data points won't be 
-    # allocated to any components and some rows will be 
-    # NAs (because if dividing by zero). We correct this by replacing NAs with
-    # equal probabilities
-    NA_id = which(is.na(pnorm[,1]))
-    pnorm[NA_id, ] = 1/ncol(pnorm)
+    if (any(!is.finite(pnorm))) {
+      stop("Non-finite count allocation probabilities; check support or numerical underflow.")
+    }
     
     S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
-    
-    ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
-    e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -580,6 +562,7 @@ gibbs_SFM_neg_binomial <- function(y,
     N = colSums(S)
     
     ## sample component proportion
+    e0 = draw_e0(e0, a0, 1/A0, counts = N)[[1]]
     eta[m, ] = rdirichlet(1, e0 + N) 
     
     for (k in 1:K){
@@ -603,17 +586,11 @@ gibbs_SFM_neg_binomial <- function(y,
     # 2. classification
     pnorm = probs/rowSums(probs) 
     
-    ## if the initial classification is bad then some data points won't be 
-    # allocated to any components and some rows will be 
-    # NAs (because if dividing by zero). We correct this by replacing NAs with
-    # equal probabilities
-    NA_id = which(is.na(pnorm[,1]))
-    pnorm[NA_id, ] = 1/ncol(pnorm)
+    if (any(!is.finite(pnorm))) {
+      stop("Non-finite count allocation probabilities; check support or numerical underflow.")
+    }
     
     S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
-    
-    ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
-    e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -706,6 +683,7 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
     N = colSums(S)
     
     ## sample component proportion
+    e0 = draw_e0(e0, a0, 1/A0, counts = N)[[1]]
     eta[m, ] = rdirichlet(1, e0 + N)
 
     for (k in 1:K){
@@ -758,17 +736,11 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
     # 2. classification
     pnorm = probs/rowSums(probs)
     
-    ## if the initial classification is bad then some data points won't be 
-    # allocated to any components and some rows will be 
-    # NAs (because if dividing by zero). We correct this by replacing NAs with
-    # equal probabilities
-    NA_id = which(is.na(pnorm[,1]))
-    pnorm[NA_id, ] = 1/ncol(pnorm)
+    if (any(!is.finite(pnorm))) {
+      stop("Non-finite count allocation probabilities; check support or numerical underflow.")
+    }
     
     S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
-    
-    ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
-    e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -984,8 +956,7 @@ post_kap <- function(x, pars, dist){
 
   if (dist == "shifted_poisson") {
     lambda = pars[2]
-    n = length(x) # Number of elements in the component
-    result <- log(exp(-lambda) * (lambda^(sum(x) - n * kappa)) / prod(factorial(x - kappa)))
+    result = sum(dpois(x - kappa, lambda = lambda, log = TRUE))
   }
 
   if (dist == "shifted_neg_binomial") {
@@ -1008,20 +979,19 @@ post_kap <- function(x, pars, dist){
 #' @keywords internal
 draw_kap <- function(x,pars,kaplb,kapub, dist) {
   KAPPA = pars[1]
-  n = length(x) # Number of elements in the component
-  #KAPPAhat = sample(kaplb:kapub, 1) # Draw candidate from uniform proposal
-  KAPPAhat = max(KAPPA + sample(c(-1,0,1), 1), 0)
+  if (KAPPA < kaplb || KAPPA > kapub) {
+    stop("Current shift is outside its conditional support.")
+  }
+  KAPPAhat = KAPPA + sample(c(-1,0,1), 1)
+  if (KAPPAhat < kaplb || KAPPAhat > kapub) {
+    return(list(KAPPA, 0))
+  }
   pars_hat = c(KAPPAhat, pars[-1])
 
-  accratio = exp(post_kap(x, pars_hat, dist) - post_kap(x, pars, dist)) # Acceptance ratio
-  #accratio = post_kap(x, pars_hat, dist)/post_kap(x, pars, dist) # Acceptance ratio
-  if(is.na(accratio)){
-    accprob = 1 # Acceptance probability if denominator = inf (numerical error due to large number) 
-  } else {
-    accprob = min(c(accratio,1)) # Acceptance probability if denominator not 0
-  }
+  log_ratio = post_kap(x, pars_hat, dist) - post_kap(x, pars, dist)
+  if (!is.finite(log_ratio)) stop("Non-finite shift log acceptance ratio.")
   rand = runif(1, min = 0, max = 1) # Random draw from unifrom (0,1)
-  if (rand < accprob) {
+  if (log(rand) < min(0, log_ratio)) {
     KAPPA = KAPPAhat # update
     acc = 1 # indicate update
   } else {
@@ -1029,36 +999,48 @@ draw_kap <- function(x,pars,kaplb,kapub, dist) {
     acc = 0 # indicate failure to update
   }
   
-  if (KAPPA > kapub) { # Set to upper bound if outside boudary
-      KAPPA = kapub
-  } 
-  
   out <- list(KAPPA, acc) # Store output in list
   return(out)           # Return output
 }
 
 # Posterior of e0 - Unnormalized target pdf
 #' @keywords internal
-post_e0 <- function(e0,nu0_p,S0_p,p) {
+post_e0 <- function(e0,nu0_p,S0_p,p = NULL, log = FALSE, counts = NULL) {
+  if (!is.finite(e0) || e0 <= 0) {
+    return(if (log) -Inf else 0)
+  }
+  if (!is.null(counts)) {
+    if (!length(counts) || any(!is.finite(counts)) || any(counts < 0 | counts %% 1 != 0)) {
+      stop("Allocation counts must be non-negative finite integers.")
+    }
+    result = dgamma(e0, shape = nu0_p, scale = S0_p, log = TRUE) +
+      lgamma(length(counts) * e0) - lgamma(sum(counts) + length(counts) * e0) +
+      sum(lgamma(counts + e0) - lgamma(e0))
+    return(if (log) result else exp(result))
+  }
+  if (any(!is.finite(p)) || any(p <= 0)) {
+    stop("Concentration updates require strictly positive finite mixture weights.")
+  }
   K = length(p) # Number of components
-  result <-  dgamma(e0,shape = nu0_p, scale = S0_p)*gamma(K*e0)/(gamma(e0)^K)*((prod(p))^(e0-1))
+  result = dgamma(e0, shape = nu0_p, scale = S0_p, log = TRUE) +
+    lgamma(K * e0) - K * lgamma(e0) + (e0 - 1) * sum(log(p))
+  return(if (log) result else exp(result))
 }
 
 # Draw from the unnormalized target pdf for hyperparameter e0
 #' @keywords internal
-draw_e0 <- function(e0,nu0,S0,p){
+draw_e0 <- function(e0,nu0,S0,p = NULL, counts = NULL){
   # Define terms
   e0hat = e0 + rnorm(1, 0, 0.1) # Draw a candidate from Random walk proposal
-  #accratio = exp(log(post_e0(e0hat,nu0,S0,p)) - log(post_e0(e0,nu0,S0,p)))
-  accratio = post_e0(e0hat,nu0,S0,p)/post_e0(e0,nu0,S0,p) # Acceptance ratio
-  if(is.na(accratio)){
-    accprob = 0 # Acceptance probability if denominator = 0 
-  } else {
-    accprob = min(c(accratio,1)) # Acceptance probability if denominator not 0
+  if (!is.finite(e0hat) || e0hat <= 0) {
+    return(list(e0, 0))
   }
+  log_ratio = post_e0(e0hat, nu0, S0, p, log = TRUE, counts = counts) -
+    post_e0(e0, nu0, S0, p, log = TRUE, counts = counts)
+  if (!is.finite(log_ratio)) stop("Non-finite concentration log acceptance ratio.")
   # MH Step
   rand = runif(1, min = 0, max = 1) # Random draw from unifrom (0,1)
-  if (rand < accprob) {
+  if (log(rand) < min(0, log_ratio)) {
     e0 = e0hat; # update
     acc = 1; # indicate update
   } else{

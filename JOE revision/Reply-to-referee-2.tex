@@ -1,0 +1,279 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+%\usepackage{endfloat}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{authblk}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage[figtopcap]{subfigure}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=blue,
+    filecolor=blue,
+    urlcolor=black,
+}
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{epsfig}%
+\usepackage{epstopdf}
+\usepackage{subfigure}
+\def\M{\mathcal{M}}
+\def\S{\mathcal{S}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bN{\mathbf{N}}
+\def\N{\mbox{N}}
+\def\NID{\mbox{NID}}
+\def\I{\mbox{I}}
+\def\IG{\mbox{IG}}
+\def\C{\mbox{C}}
+\def\Q{\mbox{Q}}
+\def\1{\mbox{1}}
+\def\F{\mbox{F}}
+\def\Var{\mbox{Var}}
+\def\E{\mbox{E}}
+\def\iW{\mbox{iW}}
+\def\T{\mbox{T}}
+\def\Y{\mbox{Y}}
+\def\R{\mbox{R}}
+\def\K{\mbox{K}}
+\def\C{\mbox{C}}
+\def\G{\mbox{G}}
+\def\W{\mbox{W}}
+\def\H{\mbox{H}}
+\def\V{\mbox{V}}
+\def\f{\mathbf{f}}
+\def\bI{\mathbf{I}}
+\def\bf{\mbox{\boldmath $\f$}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\by{\mbox{\boldmath $y$}}
+\def\bepsilon{\mbox{\boldmath $\epsilon$}}
+\def\bvarepsilon{\mbox{\boldmath $\varepsilon$}}
+\def\bbeta{\mbox{\boldmath $\beta$}}
+\def\betaa{\mbox{\boldmath $\eta$}}
+\def\be{\mbox{\boldmath $e$}}
+\def\bzeta{\mbox{\boldmath $\zeta$}}
+\def\bmu{\mbox{\boldmath $\mu$}}
+\def\bC{\mbox{\boldmath $C$}}
+\def\vec{\mbox{vec}}
+\def\diag{\mbox{diag}}
+\def\IID{\mbox{IID}}
+\def\M{\mathcal{M}}
+\def\S{\mathcal{S}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bN{\mathbf{N}}
+\def\N{\mbox{N}}
+\def\NID{\mbox{NID}}
+\def\I{\mbox{I}}
+\def\IG{\mbox{IG}}
+\def\C{\mbox{C}}
+\def\Q{\mbox{Q}}
+\def\1{\mbox{1}}
+\def\F{\mbox{F}}
+\def\E{\mbox{E}}
+\def\iW{\mbox{iW}}
+\def\T{\mbox{T}}
+\def\Y{\mbox{Y}}
+\def\y{\mbox{y}}
+\def\f{\mbox{f}}
+\def\R{\mbox{R}}
+\def\L{\mbox{L}}
+\def\K{\mbox{K}}
+\def\C{\mbox{C}}
+\def\U{\mbox{U}}
+\def\G{\mbox{G}}
+\def\H{\mbox{H}}
+\def\CV{\mbox{CV}}
+\def\V{\mbox{V}}
+\def\f{\mathbf{f}}
+\def\bI{\mathbf{I}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bepsilon{\mbox{\boldmath $\epsilon$}}
+\def\bvarepsilon{\mbox{\boldmath $\varepsilon$}}
+\def\bbeta{\mbox{\boldmath $\beta$}}
+\def\betaa{\mbox{\boldmath $\eta$}}
+\def\be{\mbox{\boldmath $e$}}
+\def\bzeta{\mbox{\boldmath $\zeta$}}
+\def\bmu{\boldmath{$\mu$}}
+\def\bu{\mbox{\boldmath $u$}}
+\def\bC{\mbox{\boldmath $C$}}
+\def\vec{\mbox{vec}}
+\def\diag{\mbox{diag}}
+\def\IID{\mbox{IID}}
+\def\balpha{\mbox{\boldmath $\alpha$}}
+\def\bveps{\mbox{\boldmath $\varepsilon$}}
+\def\by{\mathbf{y}}
+\def\bx{\mathbf{x}}
+\def\bf{\mathbf{f}}
+\def\bet{\mbox{\boldmath $\eta$}}
+\def\bPhi{\mathbf{\Phi}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bh{\mathbf{h}}
+\def\bk{\mathbf{k}}
+\def\s{\mathbf{s}}
+\def\bpsi{\mathbf{\psi}}
+\def\bmu{\mathbf{\mu}}
+\usepackage[margin=10pt,font=small,labelfont=bf]{caption}
+\oddsidemargin 0.18cm \textwidth 16.17cm \textheight 21.06cm
+\topmargin -0.5cm
+\captionsetup{font={default,footnotesize, it}}
+
+% new table column width specification
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+
+
+\singlespacing
+
+%\begin{document}
+
+
+
+
+\begin{document}
+
+\section*{Response to referee}
+
+Thank you very much for reviewing our paper: \\
+
+\textit{Flexible Negative Binomial Mixtures for Credible Mode Inference in Heterogeneous Count Data from Finance, Economics and Bioinformatics.}\\
+
+
+We copy and paste your comments below (in italics) to which we then provide our response.\\
+
+
+\noindent 
+
+
+\textit{Summary
+This paper introduces a new parameterization of negative binomial distribution,
+converting the r parameter to one variable with limits for easier inference. In addition
+the authors propose a mixture of negative binomial distribution model for counting
+process with multiple modes. Overall this paper clearly introduces the research question
+and methodology, although with some details about the MCMC missing. My
+comments are listed below.}\\
+
+\textbf{Reply}\\
+
+\textbf{Comments}\\
+
+\textit{Comment 1. Connection between multimodality and mixture of distributions
+In the introduction, the paper claims to address the problem of testing multimodality
+by fitting a mixture of negative binomial distributions and determining
+the number of components. However, this claim may be overstated, as not all
+multimodal distributions can be adequately represented as mixtures. For example,
+a simple Beta(0.5, 0.5) distribution exhibits two modes at 0 and 1, approaching
+infinity at these points, but it cannot be expressed as a mixture of other distributions.
+For discrete distribution, it is not very clear about such connection as
+well. Therefore, the authors should be cautious about the scope of their claimed contribution.
+While proposing a mixture of negative binomial distributions has its own
+merits, the applicability of this model for testing multimodality is not straight-
+forward. The authors should provide further theoretical justification, which can
+significantly improves the quality of this paper.}\\
+
+\textbf{Reply} JC to adjust writing - no theory\\
+
+
+\textit{Comment 2. Contribution of this paper:
+This paper combines several elements: expressing the negative binomial distribution
+through data augmentation, introducing a new parameterization, and
+fitting a mixture of negative binomial distributions for count data. However,
+data augmentation itself is not new in the literature, and the MCMC sampling
+process follows Fruhwirth-Schnatter (2006). The primary novelty lies in the proposed
+parameterization, which raises the question of whether this contribution
+alone meets the high standards of the Journal of Econometrics.
+I encourage the authors to explore ways to deepen their contribution through the
+new parameterization. Potential avenues include, but are not limited to:
+• Developing a new data augmentation strategy tailored to the new parameterization,
+rather than simply reparameterizing the existing approach for
+the negative binomial distribution, as described in the paper.
+• Proposing a novel and more efficientMCMCalgorithm specific to this model.
+Incorporating additional innovative results would significantly strengthen the
+paper’s contribution and better justify its publication.}\\
+
+\textbf{Reply}  JC to adjust writing\\\\
+
+
+\textit{Comment 3. MCMC algorithm:
+When fitting the mixture of negative binomial model, the paper refers directly
+to Fruhwirth-Schnatter (2006) for the MCMC algorithm without much details.
+Specifically, there are a few issues should be address for this specfici model setting.
+• This method is developed to detect number of modes in the distribution.
+Thus the number of mixture is critical since it directly relates to number
+of modes. However, the model assumes a fixed J initially, and assume a
+Dirichlet prior for the mixture weight vector π, as in Equation (22) in the paper.
+Notably, the Dirichlet prior cannot generate sparse represetation of the
+number of mixtures, thus sampling conditional on J will always give fixed
+number of mixtures. The paper refers to Fruhwirth-Schnatter (2006) for the
+algorithm of sparse estimation, but without any detail states in Section 3.1
+Specifically, how the J can be sampled in between of MCMC iterations.
+• A more popular approach for handling varying numbers of mixture components
+in sampling algorithms is Reversible Jump MCMC (RJ-MCMC).
+This method eliminates the need to assume a specific prior distribution for
+the mixture probability vector π. While the authors argue that the Dirichlet
+prior is conjugate, it is not strictly necessary in this context. RJ-MCMC can
+efficiently explore the parameter posterior distribution across model spaces
+with varying dimensions.
+The authors should provide a more detailed justification for their use of
+the method from Fr uhwirth-Schnatter (2006). Specifically, they should elaborate
+on the advantages of this approach compared to the more standard
+RJ-MCMC, and address the technical details that make their choice preferable.
+This would help clarify the benefits and trade-offs, as mentioned in
+my earlier point.}\\
+
+\textbf{Reply} JC to adjust writing - no theory\\\\
+
+
+\textit{Comment 4. Comparison with Alternative Models:
+While the introduction highlights the challenges with multimodal count data
+and existing frequentist tests, it could provide a more comprehensive review
+of alternative modeling approaches commonly used for overdispersed and zeroinflated
+count data, such as zero-inflated models, hurdle models, and other Bayesian
+mixture models (Harris and Zhao, 2007).}\\
+
+\textbf{Reply} JC to adjust writing\\\\\\
+
+\textit{Comment 5. Simulation Evidence:
+As a new method is proposed, the paper needs to provide more specific simulations
+to enhance the methods importance. For example, calibrate data with the features like zero-inflated, and multimodal and give the simulation evidence that the proposed model has some advantages. This paper lacks simulation evidence to support the claimed contribution: testing multimodality. Since this application is hard to verify in the empirical data, a solid simulation with convincing data generating process is necessary.}\\
+
+\textbf{Reply} JC \& Paul \\
+
+
+\textit{ Comment 6. Prior Specification:
+The choice of priors (uniform for ?, r, ? and Dirichlet for π) stands for uninformative prior, but for some data, there may be some chance to consider some meaningful prior, such as the case of loan data in finance. Its better to discuss some (weakly) informative prior for this kind of data (Meager, 2022).}\\
+
+\textbf{Reply} Lennart\\
+
+
+\textit{Comment 7. Algorithm Efficiency:
+Include details on how convergence was assessed (e.g., trace plots) may be better. Provide information on the computational resources required (e.g., processing time, hardware used) to give readers an idea of the methods scalability, which would be useful for readers interested in implementing the method.}\\
+
+\textbf{Reply} Paul to report these into the appendix of the paper\\
+
+
+\textit{Comment 8. Empirical Applications:
+For each dataset, provide more detailed descriptions, including any preprocessing steps, summary statistics, and why these datasets are representative of the challenges addressed by the model. Consider fitting alternative models (e.g., zero-inflated negative binomial, hurdle models) to the datasets and compare the results. This would provide stronger evidence of the proposed methods advantages.}\\
+
+\textbf{Reply} We can add zero-inflated negative binomial \& hurdle models in a financial application - electricity prices? - consider Harris, M. N. and X. Zhao (2007) model - ask ask Lennart to write up a model\\
+
+References\\
+Fruhwirth-Schnatter, S. (2006). Finite mixture and Markov switching models. Springer.\\
+
+Harris, M. N. and X. Zhao (2007). A zero-inflated ordered probit model, with an application to
+modelling tobacco consumption. Journal of Econometrics 141(2), 1073–1099.\\
+
+Meager, R. (2022). Aggregating distributional treatment effects: A bayesian hierarchical analysis
+of the microcredit literature. American Economic Review 112(6), 1818–1847.
+ 
+
+\bibliography{BiblioPaper}
+\end{document}

@@ -1,0 +1,333 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+%\usepackage{endfloat}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{authblk}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage[figtopcap]{subfigure}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=blue,
+    filecolor=blue,
+    urlcolor=black,
+}
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{epsfig}%
+\usepackage{epstopdf}
+\usepackage{subfigure}
+\def\M{\mathcal{M}}
+\def\S{\mathcal{S}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bN{\mathbf{N}}
+\def\N{\mbox{N}}
+\def\NID{\mbox{NID}}
+\def\I{\mbox{I}}
+\def\IG{\mbox{IG}}
+\def\C{\mbox{C}}
+\def\Q{\mbox{Q}}
+\def\1{\mbox{1}}
+\def\F{\mbox{F}}
+\def\Var{\mbox{Var}}
+\def\E{\mbox{E}}
+\def\iW{\mbox{iW}}
+\def\T{\mbox{T}}
+\def\Y{\mbox{Y}}
+\def\R{\mbox{R}}
+\def\K{\mbox{K}}
+\def\C{\mbox{C}}
+\def\G{\mbox{G}}
+\def\W{\mbox{W}}
+\def\H{\mbox{H}}
+\def\V{\mbox{V}}
+\def\f{\mathbf{f}}
+\def\bI{\mathbf{I}}
+\def\bf{\mbox{\boldmath $\f$}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\by{\mbox{\boldmath $y$}}
+\def\bepsilon{\mbox{\boldmath $\epsilon$}}
+\def\bvarepsilon{\mbox{\boldmath $\varepsilon$}}
+\def\bbeta{\mbox{\boldmath $\beta$}}
+\def\betaa{\mbox{\boldmath $\eta$}}
+\def\be{\mbox{\boldmath $e$}}
+\def\bzeta{\mbox{\boldmath $\zeta$}}
+\def\bmu{\mbox{\boldmath $\mu$}}
+\def\bC{\mbox{\boldmath $C$}}
+\def\vec{\mbox{vec}}
+\def\diag{\mbox{diag}}
+\def\IID{\mbox{IID}}
+\def\M{\mathcal{M}}
+\def\S{\mathcal{S}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bN{\mathbf{N}}
+\def\N{\mbox{N}}
+\def\NID{\mbox{NID}}
+\def\I{\mbox{I}}
+\def\IG{\mbox{IG}}
+\def\C{\mbox{C}}
+\def\Q{\mbox{Q}}
+\def\1{\mbox{1}}
+\def\F{\mbox{F}}
+\def\E{\mbox{E}}
+\def\iW{\mbox{iW}}
+\def\T{\mbox{T}}
+\def\Y{\mbox{Y}}
+\def\y{\mbox{y}}
+\def\f{\mbox{f}}
+\def\R{\mbox{R}}
+\def\L{\mbox{L}}
+\def\K{\mbox{K}}
+\def\C{\mbox{C}}
+\def\U{\mbox{U}}
+\def\G{\mbox{G}}
+\def\H{\mbox{H}}
+\def\CV{\mbox{CV}}
+\def\V{\mbox{V}}
+\def\f{\mathbf{f}}
+\def\bI{\mathbf{I}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bepsilon{\mbox{\boldmath $\epsilon$}}
+\def\bvarepsilon{\mbox{\boldmath $\varepsilon$}}
+\def\bbeta{\mbox{\boldmath $\beta$}}
+\def\betaa{\mbox{\boldmath $\eta$}}
+\def\be{\mbox{\boldmath $e$}}
+\def\bzeta{\mbox{\boldmath $\zeta$}}
+\def\bmu{\boldmath{$\mu$}}
+\def\bu{\mbox{\boldmath $u$}}
+\def\bC{\mbox{\boldmath $C$}}
+\def\vec{\mbox{vec}}
+\def\diag{\mbox{diag}}
+\def\IID{\mbox{IID}}
+\def\balpha{\mbox{\boldmath $\alpha$}}
+\def\bveps{\mbox{\boldmath $\varepsilon$}}
+\def\by{\mathbf{y}}
+\def\bx{\mathbf{x}}
+\def\bf{\mathbf{f}}
+\def\bet{\mbox{\boldmath $\eta$}}
+\def\bPhi{\mathbf{\Phi}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bh{\mathbf{h}}
+\def\bk{\mathbf{k}}
+\def\s{\mathbf{s}}
+\def\bpsi{\mathbf{\psi}}
+\def\bmu{\mathbf{\mu}}
+\usepackage[margin=10pt,font=small,labelfont=bf]{caption}
+\oddsidemargin 0.18cm \textwidth 16.17cm \textheight 21.06cm
+\topmargin -0.5cm
+\captionsetup{font={default,footnotesize, it}}
+
+% new table column width specification
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+
+
+\singlespacing
+
+%\begin{document}
+
+
+
+
+\begin{document}
+
+\section*{Response to referee 1}
+
+Thank you very much for reviewing  our manuscript. We copy and paste your comments from you below (in italics) to which we then provide our response.\\
+
+
+\textit{General comment: This paper proposes a mixture of shifted negative binomial distributions for the identification of multimodality in observed count data. In contrast to the traditional testing procedure, the proposed Bayesian approach allows for quantification of uncertainty. From a computational perspective, a new parametrisation of the negative binomial is proposed to enhance the mixing of the MCMC algorithm, then the number of components in the mixture is estimated adopting the sparse finite mixture approach of [2, 1]. The proposed method is applied to three datasets related to defaulted payments, inflation expectations, and DNA sequences, highlighting the ability of the method to identify multimodality. Moreover, although I appreciate the idea and the computational strategy proposed, I find the connections between the contribution and the fields of econometrics and/or economics (core of this journal) to be rather weak.}\\
+
+ \textbf{Reply.}  \\
+
+\textbf{Major Comments}\\
+
+
+\textit{Comment 1. There are some issues with the Introduction.}
+\begin{itemize}
+\item[a] \textit{What is the theoretical and/or empirical relevance of the proposed method? On p.5, it
+is claimed that the benefit of our approach is shown in the application; however, it is
+unclear (1) the need for a novel approach and (2) what is the method doing that the
+existing approaches are not.}
+
+\textbf{Reply}: We thank the referee for raising this important point. We have revised the paper to better articulate both the theoretical and empirical relevance of our proposed method. Specifically:
+\begin{enumerate}
+	\item \textbf{Theoretical relevance and need for a novel approach.} 
+	Existing frequentist approaches to multimodality---such as the Silverman test or the dip test---are hypothesis tests that are designed for continuous random variables, as opposed to discrete ones. This calls for the need to develop methods tailored for discrete distributions.
+	
+	\item \textbf{Bayesian Approach}
+	Frequentist $p$-values are useful for hypothesis testing, but remain silent on two aspects that are central for inference: (i) the \emph{location of modes} and (ii) the \emph{uncertainty surrounding them}. In practice, knowing not only whether multimodality exists but also \emph{where} the modes are and \emph{how credible} they are is crucial (e.g., categorizing default behavior in credit data, assessing disagreement in inflation expectations, or identifying genetic anomalies). Our Bayesian framework directly produces posterior distributions over both the number and the location of modes, thus offering richer and more interpretable information than existing tests.
+	
+	From a modeling perspective, the negative binomial mixture is also theoretically more flexible than the commonly used Poisson mixture. It accommodates overdispersion and fat tails, both of which are ubiquitous in finance, economics, and bioinformatics count data. The addition of a shift parameter further broadens applicability to datasets where support does not start at zero. These features cannot be addressed simultaneously by existing approaches.
+	
+	\item \textbf{Empirical relevance and value added.} 
+	Our applications demonstrate that relying on existing methods can yield misleading or conflicting conclusions. For example:
+	\begin{itemize}
+		\item In the loan repayment data, standard tests disagree on whether multimodality is present, whereas our approach consistently identifies a bimodal distribution with well-defined locations at 0 and 4 missed payments.
+		\item In the inflation expectations data, frequentist tests provide conflicting evidence about multimodality, while our approach credibly identifies two distinct modes corresponding to ``anchored'' versus ``unanchored'' beliefs.
+		\item In the DNA tandem repeat data, our method avoids spurious modes produced by Poisson mixtures and provides posterior support for a unimodal but fat-tailed distribution, which is biologically more plausible.
+	\end{itemize}
+	Thus, the empirical benefit of our method lies in producing \emph{coherent, probabilistic statements about multimodality and mode locations}, in contrast with either (i) hypothesis tests that provide only yes/no answers, or (ii) standard mixtures (e.g., Poisson) that tend to mischaracterize tails and generate spurious modes.
+\end{enumerate}
+
+We have revised page~5 and the introduction to make these contributions explicit.
+
+\item[b] \textit{From p.4 it might seems that the introduction of a novel shift parameter is a contribution of the manuscript. However, shifting a probability distribution is a change of
+variable and it has been already used in the context of Poisson and negative binomial
+distributions, e.g., see (4, 3, 5). Thus, what in the Authors approach should be novel?}
+
+\textbf{Reply}: JC\\
+
+\end{itemize}
+
+
+
+
+
+
+\textit{Comment 2. Section 3.1. Is the model with a known number of non-empty components J ever used? Using
+the sparse finite mixture approach to estimate J makes Section 3.1 not useful and it should
+be removed.}\\
+
+\textbf{Reply} JC\\
+
+
+\textit{Comment 3. MCMC algorithm.}
+\begin{itemize}
+\item[a] \textit{Sampling ?. It is claimed that, if rjnj ? 1 0, then the posterior full conditional of ? is no longer a truncated inverse gamma distribution. How is that possible? It seems that the uniform prior on [0,M] imposes a truncation to the support of the posterior irrespective of the other parameters.}
+\item[b] \textit{Sampling rj . What is the acceptance rate and mixing of the random walk Metropolis-
+Hastings step? What about introducing an adaptive version of this step?}\\
+\item[c] \textit{Sampling ?. What are the values of the hyperparameters a?, b?? What are the details
+of the Metropolis-Hastings algorithm used to sample from its full conditional posterior?
+And what are its acceptance rate and mixing?}
+\item[d] \textit{The sampling step for the allocation variable ? is missing.}\\
+\item[e] \textit{p.17: could the Authors provide more details and a clearer explanation of the claim
+that simulation-based mode inference can be done efficiently with parallel Monte Carlo
+methods? Are they referring to a procedure to be carried along the MCMC iterations or
+at the end of the MCMC algorithm?}\\
+\end{itemize}
+
+
+\textbf{Reply} Lennart to do theory, Paul to do code - can't do parallel MCMC\\
+
+\textit{Comment 4. Simulations. No simulation study is provided to investigate the properties of the model.}
+\begin{itemize}
+\item[a)] \textit{The claim that distributions without a shift parameter may fail to approximate count data of type of interest to the paper should be backed by numerical evidence from a simulation study.}
+
+
+\item[b] \textit{Another important point that should be emphasised in a simulation study concerns the advantages of the new parametrisation in terms of simpler and better mixing MCMC compared to more traditional parametrisations.}
+
+
+\item[c] \textit{It would be profitable to also compare the proposed model to the mixture of shifted Poisson on synthetic data from different data generating processed. The comparison should consider (i) model performance (e.g., in sample or out of sample), and (ii) number of estimated modes. The current comparison on real data shows the performance of the models, but it does not provide sufficient evidence suggesting when the proposed method should be preferred over competitors.}
+
+
+\item[d] \textit{If the goal of the manuscript is to be intended as mainly computational (related to the new parametrisation), I also suggest adding to the previous point a comparison of the models in terms of MCMC efficiency (effective sample size or similar measures).}
+
+
+\end{itemize}
+
+
+\textbf{Reply} Paul and I can think about this\\
+
+
+\textit{Comment 5. Figure 8-9-10. How is it possible to interpret mode locations (rightmost plot)? Is it representing
+the probability of what? For instance, suppose the posterior number of modes has mass around 2 and 3. How is it possible
+(if any) to distinguish the locations in the two cases (i.e., the probability of the location
+of the two modes in the J = 2 case and the analogue for the case J = 3?}\\
+
+\textbf{Reply} JC: add a simple example in the paper - similar to slides - make sharper the distinction between components and modes, e.g., two components and one mode\\
+
+\textit{Comment 6. This is linked to point 1 above. The empirical applications, and the entire manuscript more generally, are pinned to the estimation of the number of modes of a count distribution. A more compelling motivation for focusing the interest (from an economic or financial point of view) in the estimation of the number of modes should be provided.
+More important, this is a feature that simple statistical tools like histograms and density plots
+often can reveal. Therefore, why is it necessary a new method like the one proposed?}\\
+
+\textbf{Reply} JC\\
+
+\textit{Comment 7. Sections 4.2 and 4.3 seem copies of Section 4.1, except that the dataset are different. Moreover, the results in Section 4.3 align with a simple frequentist testing procedure, further questioning the purpose (and advantage) of applying the proposed model.}\\
+
+\textbf{Reply} JC to improve exposition of applications.\\
+
+
+\textit{Comment 8. Conclusions. This section should be deeply revised. First, it is repetitive in listing the findings of the three applications. Second, more emphasis should be put in summarizing the novelty of the proposed approach. Third, a proper final discussion of the findings and issues with the current modelling framework, together with future lines of research are just briefly mentioned.}\\
+
+\textbf{Reply} JC\\
+
+
+\textit{Comment 9. The paper mentions in the Abstract and Conclusions that forecasting/prediction and policy analysis would benefit from applying the proposed model. I recognise that both aspects are considered in Section 4, but I believe the empirical relevance of the model is not clearly demonstrated. In more detail:
+\begin{itemize}
+\item[a] Based on the claim made at the beginning of the manuscript, a more thorough forecasting
+exercise was expected. This requires a more detailed study than using cross-validation
+density for computing the log-predictive likelihood.
+\item[b] I believe that implications for policy analysis can be derived only for the application to inflation expectations. However, even in this subsection it is unclear what are the actual
+implications and benefits of the proposed method.
+\item[c] Finally, given the journals focus on the fields of economics and finance, the application to DNA data may be moved to the appendix, leaving room for a more detailed simulation
+study and detailed explanation of the economics and financial applications.\\
+\end{itemize}}
+
+\textbf{Minor Comments} JC - no forecasting with cross-section data, sharpen policy analysis for inflation expectations, remove DNA application\\
+
+\textit{1. The parameter ? in the reparametrised version of the negative binomial distribution corresponds to its mean. However, once a nonzero shift ?j is introduced, it can be interpreted
+only as a location parameter. This should be made clear in the manuscript (e.g., via a short
+remark/note).}\\
+
+\textbf{Reply} Lennart\\
+
+\textit{2. p.3, last paragraph (We start....) seems irrelevant and I suggest removing it. I think Figures 2-3-4 are standard and do not seem to contribute significantly to the discussion, therefore they shall be removed. Figures 5-6-7: I suggest increasing the font size of all axis labels and also increase the thickness of the lines to improve readability. Figure 7: I think removing the black grid would allow a better understanding of the plot.}\\
+
+\textbf{reply} Paul\\
+
+\textit{3. p.12, there is a typo in the definition of ? and I suggest moving the definition of pj right after eq. (12). Moreover, the parametrisation is not homogeneous, as (p, r) and (r, ?) appear alternating throughout the equations in the manuscript. To improve the clarity of exposition, I suggest keeping fixed the notation (r, ?) once it is introduced.}\\
+
+\textbf{Reply} Lennart\\
+
+\textit{4. p.15, Eq. (19)-(20)-(21), I suggest to explicitly introduce the support of the variables via the indicator variable (e.g., p(?|?) ? f(?) ? I[?min,?max]).}\\
+
+\textbf{Reply} Lennart\\
+
+\textit{5. p.16, from a formal point of view, (Gibbs) sampling from a discrete posterior distribution is not equivalent to a griddy Gibbs sampler, since the latter is more general and can have a user-specified, non-integer spaced, and adaptive grid.}\\
+
+\textbf{Reply} Lennart\\
+
+\textit{6. Figure 8-9-10: what are the red lines representing? Moreover, the histogram for number of modes is hard to read: consider using at least 3 values on the horizontal axis and adopting the same grid for both models. Also, in general, make sure that each figure's caption clearly describes all the elements of the associated plot.}\\
+
+\textbf{Reply} Paul\\
+
+\textit{7. The log-predictive likelihood is claimed to be used as a tool to assess a model's fitness (p. 5) and prediction (p. 18). Please, clarify which of the two cases apply.}\\
+
+\textbf{Reply} JC\\
+
+References\\
+
+ Fruhwirth-Schnatter S., and Malsiner-Walli G. (2019), From here to infinity: sparse finite
+versus Dirichlet process mixtures in model-based clustering, Advances in Data Analysis and
+Classification, 13, 33-64.\\
+
+ Malsiner-Walli G., Fruhwirth-Schnatter S., and Grun B. (2016), Model-based clustering based
+on sparse finite Gaussian mixtures, Statistics and Computing, 26, 303-324.\\
+
+ Franzolini, B., Cremaschi, A., van den Boom, W., and De Iorio, M. (2023), Bayesian clustering
+of multiple zero-inflated outcomes, Philosophical Transactions of the Royal Society A,
+381(2247)\\
+
+ Snyder, Ralph D., Ord, J. Keith, and Beaumont, A. (2012), Forecasting the intermittent
+demand for slow-moving inventories. A modelling approach, International Journal of Forecasting
+28(2), 485-496.\\
+
+Treszoks, J., and Pal, S. (2024), A destructive shifted Poisson cure model for interval censored
+data and an efficient estimation algorithm, Communications in Statistics, 53(5), 2135-2149.
+
+\noindent 
+
+
+
+\bibliography{BiblioPaper}
+\end{document}

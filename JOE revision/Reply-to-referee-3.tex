@@ -1,0 +1,184 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+%\usepackage{endfloat}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{authblk}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage[figtopcap]{subfigure}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=blue,
+    filecolor=blue,
+    urlcolor=black,
+}
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{epsfig}%
+\usepackage{epstopdf}
+\usepackage{subfigure}
+\def\M{\mathcal{M}}
+\def\S{\mathcal{S}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bN{\mathbf{N}}
+\def\N{\mbox{N}}
+\def\NID{\mbox{NID}}
+\def\I{\mbox{I}}
+\def\IG{\mbox{IG}}
+\def\C{\mbox{C}}
+\def\Q{\mbox{Q}}
+\def\1{\mbox{1}}
+\def\F{\mbox{F}}
+\def\Var{\mbox{Var}}
+\def\E{\mbox{E}}
+\def\iW{\mbox{iW}}
+\def\T{\mbox{T}}
+\def\Y{\mbox{Y}}
+\def\R{\mbox{R}}
+\def\K{\mbox{K}}
+\def\C{\mbox{C}}
+\def\G{\mbox{G}}
+\def\W{\mbox{W}}
+\def\H{\mbox{H}}
+\def\V{\mbox{V}}
+\def\f{\mathbf{f}}
+\def\bI{\mathbf{I}}
+\def\bf{\mbox{\boldmath $\f$}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\by{\mbox{\boldmath $y$}}
+\def\bepsilon{\mbox{\boldmath $\epsilon$}}
+\def\bvarepsilon{\mbox{\boldmath $\varepsilon$}}
+\def\bbeta{\mbox{\boldmath $\beta$}}
+\def\betaa{\mbox{\boldmath $\eta$}}
+\def\be{\mbox{\boldmath $e$}}
+\def\bzeta{\mbox{\boldmath $\zeta$}}
+\def\bmu{\mbox{\boldmath $\mu$}}
+\def\bC{\mbox{\boldmath $C$}}
+\def\vec{\mbox{vec}}
+\def\diag{\mbox{diag}}
+\def\IID{\mbox{IID}}
+\def\M{\mathcal{M}}
+\def\S{\mathcal{S}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bN{\mathbf{N}}
+\def\N{\mbox{N}}
+\def\NID{\mbox{NID}}
+\def\I{\mbox{I}}
+\def\IG{\mbox{IG}}
+\def\C{\mbox{C}}
+\def\Q{\mbox{Q}}
+\def\1{\mbox{1}}
+\def\F{\mbox{F}}
+\def\E{\mbox{E}}
+\def\iW{\mbox{iW}}
+\def\T{\mbox{T}}
+\def\Y{\mbox{Y}}
+\def\y{\mbox{y}}
+\def\f{\mbox{f}}
+\def\R{\mbox{R}}
+\def\L{\mbox{L}}
+\def\K{\mbox{K}}
+\def\C{\mbox{C}}
+\def\U{\mbox{U}}
+\def\G{\mbox{G}}
+\def\H{\mbox{H}}
+\def\CV{\mbox{CV}}
+\def\V{\mbox{V}}
+\def\f{\mathbf{f}}
+\def\bI{\mathbf{I}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bepsilon{\mbox{\boldmath $\epsilon$}}
+\def\bvarepsilon{\mbox{\boldmath $\varepsilon$}}
+\def\bbeta{\mbox{\boldmath $\beta$}}
+\def\betaa{\mbox{\boldmath $\eta$}}
+\def\be{\mbox{\boldmath $e$}}
+\def\bzeta{\mbox{\boldmath $\zeta$}}
+\def\bmu{\boldmath{$\mu$}}
+\def\bu{\mbox{\boldmath $u$}}
+\def\bC{\mbox{\boldmath $C$}}
+\def\vec{\mbox{vec}}
+\def\diag{\mbox{diag}}
+\def\IID{\mbox{IID}}
+\def\balpha{\mbox{\boldmath $\alpha$}}
+\def\bveps{\mbox{\boldmath $\varepsilon$}}
+\def\by{\mathbf{y}}
+\def\bx{\mathbf{x}}
+\def\bf{\mathbf{f}}
+\def\bet{\mbox{\boldmath $\eta$}}
+\def\bPhi{\mathbf{\Phi}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bh{\mathbf{h}}
+\def\bk{\mathbf{k}}
+\def\s{\mathbf{s}}
+\def\bpsi{\mathbf{\psi}}
+\def\bmu{\mathbf{\mu}}
+\usepackage[margin=10pt,font=small,labelfont=bf]{caption}
+\oddsidemargin 0.18cm \textwidth 16.17cm \textheight 21.06cm
+\topmargin -0.5cm
+\captionsetup{font={default,footnotesize, it}}
+
+% new table column width specification
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+
+
+\singlespacing
+
+%\begin{document}
+
+
+
+
+\begin{document}
+
+\section*{Response to referee 3}
+
+Thank you very much for reviewing our paper: \\
+
+\textit{Flexible Negative Binomial Mixtures for Credible Mode Inference in Heterogeneous Count Data from Finance, Economics and Bioinformatics} \\
+
+
+We copy and paste your comments  below (in italics) to which we then provide our response.\\
+
+
+\textit{General description: A method for estimating mixtures of negative binomial distributions using MCMC is proposed and applied to three datasets. The novelty in the proposed model lies in the use of a shifted distribution and a reparameterisation that facilitates estimation. Three applications to bank defaults, inflation expectations and DNA are covered.}\\
+
+\textbf{Reply}\\
+
+\textit{Comment 1. Mixtures of negative binomial distributions are very well covered ground, and in light of this, the literature review is not comprehensive. There are multiple papers on using mixtures of negative binomial distributions in a regression setting [e.g. Li, Cassese, Guindani, and Vannucci (2019) in Biometrics, Neelon (2019) in Bayesian Analysis]. The manuscript does not cover regression, which is arguably a simpler setting that that covered by many other papers in the literature. The paper could be improved by a fuller comparison against existing methods that deal with negative binomial mixtures.}\\
+
+\textbf{Reply} True that negative binomial distributions in a regression setting but don't think people have done it in standard NB without regressors - Ask Lennart\\
+
+\textit{Comment 2. The number of mixture components is dealt with by saturating the number of components and then carrying out shrinkage. It is unclear how over-saturated the number of components needs to be. This could be easily studies in a simulation, for instance data could be simulated with 5 components and then results could be compared when 5, 10, 15 components are selected. Also, a Bayesian non-parametric approach based on Dirichlet process priors would also be another natural comparison to make.}\\
+
+\textbf{Reply} JC and Paul to add - develop a rule of thumb here\\
+
+\textit{Comment 3. Regarding inference, while SFM MCMC seems a logical choice, the benefits of the approach could be made more convincing if compared to alternatives, whether they be more conventional MCMC approaches, Hamiltonian Monte Carlo or even variational approximations. Also, although the statement is made that label switching is "less of an issue here", this is quite a bold statement to make since in all the applications there may be reasons to interpret the mixture components themselves.}\\
+
+\textbf{Reply} JC - Label switching is not relevant for fitting the density - only when identifying component membership...\\
+
+\textit{Comment 4. The empirical studies are interesting however the only other benchmark considered here is a mixture of Poisson distributions. The empirical studies could be used to investigate whether the contributions of the paper are worthwhile. E.g. how does performance vary with different reparametrisations and prior assumptions? Otherwise the evidence in favor of the proposed method is a visual inspection of the Figure on page 11, which is lacking in rigor (the figure is useful, but without further analysis of the effect of the reparameterisation, the paper is incomplete).}\\
+
+\textbf{Reply} JC and Paul - Address through simulations\\
+
+\textit{Comment 5. Finally, the modelling of the inflation expectations data could benefit from an alternative approach. It is well known for such data, that many respondents "round" to multiples of 5, e.g. 5, 10, 15, 20. In this case, rather than mixtures, allowing for a point mass at these values (in the spirit of zero inflation models) would seem to make more sense.}\\
+
+\textbf{Reply} Not sure about this...\\
+
+
+\noindent 
+
+
+
+\bibliography{BiblioPaper}
+\end{document}
+

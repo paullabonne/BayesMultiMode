@@ -1,0 +1,170 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+%\usepackage{endfloat}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{authblk}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage[figtopcap]{subfigure}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=blue,
+    filecolor=blue,
+    urlcolor=black,
+}
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{epsfig}%
+\usepackage{epstopdf}
+\usepackage{subfigure}
+\def\M{\mathcal{M}}
+\def\S{\mathcal{S}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bN{\mathbf{N}}
+\def\N{\mbox{N}}
+\def\NID{\mbox{NID}}
+\def\I{\mbox{I}}
+\def\IG{\mbox{IG}}
+\def\C{\mbox{C}}
+\def\Q{\mbox{Q}}
+\def\1{\mbox{1}}
+\def\F{\mbox{F}}
+\def\Var{\mbox{Var}}
+\def\E{\mbox{E}}
+\def\iW{\mbox{iW}}
+\def\T{\mbox{T}}
+\def\Y{\mbox{Y}}
+\def\R{\mbox{R}}
+\def\K{\mbox{K}}
+\def\C{\mbox{C}}
+\def\G{\mbox{G}}
+\def\W{\mbox{W}}
+\def\H{\mbox{H}}
+\def\V{\mbox{V}}
+\def\f{\mathbf{f}}
+\def\bI{\mathbf{I}}
+\def\bf{\mbox{\boldmath $\f$}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\by{\mbox{\boldmath $y$}}
+\def\bepsilon{\mbox{\boldmath $\epsilon$}}
+\def\bvarepsilon{\mbox{\boldmath $\varepsilon$}}
+\def\bbeta{\mbox{\boldmath $\beta$}}
+\def\betaa{\mbox{\boldmath $\eta$}}
+\def\be{\mbox{\boldmath $e$}}
+\def\bzeta{\mbox{\boldmath $\zeta$}}
+\def\bmu{\mbox{\boldmath $\mu$}}
+\def\bC{\mbox{\boldmath $C$}}
+\def\vec{\mbox{vec}}
+\def\diag{\mbox{diag}}
+\def\IID{\mbox{IID}}
+\def\M{\mathcal{M}}
+\def\S{\mathcal{S}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bN{\mathbf{N}}
+\def\N{\mbox{N}}
+\def\NID{\mbox{NID}}
+\def\I{\mbox{I}}
+\def\IG{\mbox{IG}}
+\def\C{\mbox{C}}
+\def\Q{\mbox{Q}}
+\def\1{\mbox{1}}
+\def\F{\mbox{F}}
+\def\E{\mbox{E}}
+\def\iW{\mbox{iW}}
+\def\T{\mbox{T}}
+\def\Y{\mbox{Y}}
+\def\y{\mbox{y}}
+\def\f{\mbox{f}}
+\def\R{\mbox{R}}
+\def\L{\mbox{L}}
+\def\K{\mbox{K}}
+\def\C{\mbox{C}}
+\def\U{\mbox{U}}
+\def\G{\mbox{G}}
+\def\H{\mbox{H}}
+\def\CV{\mbox{CV}}
+\def\V{\mbox{V}}
+\def\f{\mathbf{f}}
+\def\bI{\mathbf{I}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bepsilon{\mbox{\boldmath $\epsilon$}}
+\def\bvarepsilon{\mbox{\boldmath $\varepsilon$}}
+\def\bbeta{\mbox{\boldmath $\beta$}}
+\def\betaa{\mbox{\boldmath $\eta$}}
+\def\be{\mbox{\boldmath $e$}}
+\def\bzeta{\mbox{\boldmath $\zeta$}}
+\def\bmu{\boldmath{$\mu$}}
+\def\bu{\mbox{\boldmath $u$}}
+\def\bC{\mbox{\boldmath $C$}}
+\def\vec{\mbox{vec}}
+\def\diag{\mbox{diag}}
+\def\IID{\mbox{IID}}
+\def\balpha{\mbox{\boldmath $\alpha$}}
+\def\bveps{\mbox{\boldmath $\varepsilon$}}
+\def\by{\mathbf{y}}
+\def\bx{\mathbf{x}}
+\def\bf{\mathbf{f}}
+\def\bet{\mbox{\boldmath $\eta$}}
+\def\bPhi{\mathbf{\Phi}}
+\def\bnu{\mbox{\boldmath $\nu$}}
+\def\bh{\mathbf{h}}
+\def\bk{\mathbf{k}}
+\def\s{\mathbf{s}}
+\def\bpsi{\mathbf{\psi}}
+\def\bmu{\mathbf{\mu}}
+\usepackage[margin=10pt,font=small,labelfont=bf]{caption}
+\oddsidemargin 0.18cm \textwidth 16.17cm \textheight 21.06cm
+\topmargin -0.5cm
+\captionsetup{font={default,footnotesize, it}}
+
+% new table column width specification
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+
+
+\singlespacing
+
+%\begin{document}
+
+
+
+
+\begin{document}
+
+\section*{Response to Editor}
+
+Thank you very much for having our paper: \\
+
+\textit{Flexible Negative Binomial Mixtures for Credible Mode Inference in Heterogeneous Count Data from Finance, Economics and Bioinformatics} \\
+
+reviewed and giving us the opportunity  to submit a revision. 
+
+We copy and paste two important comments from you below (in italics) to which we then provide our response.\\
+
+
+\noindent 
+
+
+ \textit{Comment 1: From a methodological perspective, the main novelty and contribution is the new parameterization of the negative binomial distribution. The reviewers point out that the contribution of the manuscript is mostly computational and limited to the new parameterization determining the number of modes but it lacks proper economic/financial motivation - could they be linked to multiple equilibria in economic theory? Please make it relevant for applied researchers in terms of usefulness of multimodality that can help bring out new insights. }\\
+ 
+ 
+ \textbf{Reply.}   \\
+  
+  
+\noindent 
+\textit{Comment 2: The reviewers also point out that the MCMC algorithm is not a novel part of this paper. The referees require you to do a lot more work and rewrite the paper completely to make it innovative which is beyond the scope}\\
+
+
+  \textbf{Reply.} \\
+
+\bibliography{BiblioPaper}
+\end{document}

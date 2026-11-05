@@ -1,0 +1,1802 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+%\usepackage{endfloat}
+\usepackage{amssymb}
+\usepackage[title,titletoc,toc]{appendix}
+\renewcommand\appendixname{APPENDIX}
+\usepackage{natbib}
+\usepackage{epstopdf}
+\epstopdfsetup{update} % only regenerate pdf files when eps file is newer
+\usepackage{color}
+
+\usepackage{hyperref}
+\hypersetup{  
+	colorlinks = true,  
+	allcolors = {blue},
+}
+
+%% CHANGING THE 'AND' IN THE HARVARD BIBLIOGRAPHY PACKAGE TO WHAT IT OUGHT TO BE
+%\renewcommand{\harvardand}{and}
+\usepackage{setspace}
+%\usepackage{multirow}
+%\usepackage{dcolumn}
+\usepackage[centertags,reqno]{amsmath}
+\usepackage{amssymb}
+%\usepackage{graphics,subfigure}
+%\usepackage[dvips]{graphicx}
+%\usepackage{natbib}
+\usepackage{authblk}
+\usepackage{adjustbox}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{booktabs}
+\usepackage{comment}
+
+\usepackage{url}
+
+
+\usepackage{color}
+
+\usepackage{xcolor}
+
+\usepackage{graphicx}
+\usepackage{rotating}
+
+\usepackage{amsmath}
+
+
+\usepackage{epsf}
+\usepackage{epsfig}
+
+\usepackage{float} % for [H] option with figures
+
+\newcommand{\ScaleFactorFigures}{0.23}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MARGINS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage[includeheadfoot,margin=3cm]{geometry}  % added by Pinar
+\oddsidemargin 0.3cm \textwidth 16.04cm \textheight 23.04cm
+\topmargin -1cm
+%\singlespacing
+\doublespacing
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%\title{Flexible Negative-Binomial Mixtures for Credible Multi-Mode Inference in Heterogeneous Data\thanks{The present paper should not be reported as representing the views of Norges Bank. The views expressed are those of the authors and do not necessarily reflect those of Norges Bank.}}
+
+
+\title{Flexible Negative Binomial Mixtures for Credible Mode Inference in Heterogeneous Count Data from Finance, Economics and Bioinformatics\thanks{This paper is part of the research activities at the Centre for Applied Macroeconomics and commodity Prices (CAMP) at BI Norwegian Business School. The present paper should not be reported as representing the views of Norges Bank. The views expressed are those of the authors and do not necessarily reflect those of Norges Bank.}}
+
+%\author[1]{Nalan Basturk}
+\author[1,2]{Jamie L. Cross}
+\author[3,4]{Lennart Hoogerheide}
+\author[2]{Paul Labonne}
+\author[4,5]{Herman K. van Dijk}
+
+\vspace{-0.5cm}
+%\affil[1]{\small\emph{Department of Quantitative Economics, Maastricht University}}
+\affil[1]{\small\emph{Melbourne Business School, University of Melbourne}}
+\affil[2]{\small\emph{BI Norwegian Business School}}
+\affil[3]{\small\emph{Department of Econometrics, VU University Amsterdam}}
+\affil[4]{\small\emph{Tinbergen Institute}}
+\affil[5]{\small\emph{Erasmus University Rotterdam and Norges Bank}}
+
+\date{August 29, 2024}
+\begin{document}
+\maketitle
+\begin{abstract}
+In several scientific fields, such as finance, economics and bioinformatics, important theoretical and practical issues exist involving multimodal and asymmetric count data distributions due to heterogeneity of the underlying population. For accurate approximation of such distributions we introduce a novel class of flexible mixtures consisting of shifted negative binomial distributions, which accommodates a wide range of  shapes that are commonly seen in these data. We further introduce a convenient reparameterization which is more closely related to a moment interpretation and facilitates the specification of prior information and the Monte Carlo simulation of the posterior.  This mixture process is estimated by the sparse finite mixture Markov chain Monte Carlo method since it can handle a flexible number of non-empty components. Given loan payment, inflation expectation and DNA count data, we find coherent evidence on number and location of modes, fat tails and implied uncertainty measures, in contrast to conflicting evidence obtained from well-known frequentist  tests. The proposed methodology may lead to more accurate measures of uncertainty and risk which improves prediction and policy analysis using multimodal and asymmetric count data.
+
+%\textcolor{red}{JC suggestion to shorten by deleting sentence: `This mixture process is estimated by applying the Sparse Finite Mixture Markov Chain Monte Carlo method due to \citet{Mal:SFS:2016} and \citet{Malsiner-Walli:FS:Grun:2017}  to our case since it can handle a flexible number of non-empty components.'. Also, we do not supply any measures of `risk', so I suggest deleting that word.}
+\end{abstract}
+
+\par\noindent\textit{JEL codes}: C11, C14, C63.
+
+\par\noindent\textit{Keywords}: Count data, multimodality, mixtures, shifted negative binomial,  Markov chain Monte Carlo, Bayesian inference, sparse finite mixture.
+
+
+\section{Introduction}
+In several scientific fields important theoretical and practical issues exist involving multimodal and/or asymmetric count data distributions due to heterogeneity of the underlying population. To determine the existence of multiple modes, statistical testing procedures are used on a regular basis.
+%To determine whether such distributions credibly determine number and location of modes, statistical testing procedures are used on a regular basis. 
+Two common examples are the dip test \citep{Hartigan1985dip,Hartigan1985computation} and the Silverman test and its extensions \citep{silverman1981using,FischerMammenMarron_1994_CSDA}.
+%\textcolor{red}{JC comment: as you know, these tests do not determine the number and location of modes. To me the second sentence suggests that they do. I therefore suggest changing this to the following: `To determine the existence of multiple modes, statistical testing procedures are used on a regular basis.'}
+As an illustrative example we show count data in Figure \ref{fig:data} on repayment details of clients obtaining a loan (panel (a)), inflation expectations from survey responses (panel (b)), and repetitive DNA tandem repeat sequences from human genome (panel (c)). We later show that the 
+frequentist tests give conflicting evidence on the existence of a single mode at the 5\% level of significance for two of three datasets. Moreover, it is important to note that these tests also remain silent on the mode locations and the probability that a given point is in fact a mode as opposed to noise in the data.\footnote{We emphasize that when the number of modes is estimated, most existing methods also do not provide uncertainty metrics around these values \citep{FischerMammenMarron_1994_CSDA,hall2004attributing}, with a few exceptions based on nonparametric density estimates \citep{MillerWernerSawitzki_1991_JASA,Minnote_1997_AnnStat,ChaudhuriMarron1999_JASA}. We refer to \cite{mclachlan2004finite} for an extensive summary of frequentist and Bayesian methods for determining the number of modes.} This is relevant since in financial economics information on multimodality may be used to categorize clients according to their defaulted installment behavior, which has direct policy relevance. Similarly, multimodality in the distribution of inflation expectations is linked with unanchored expectations, which is relevant for formulating an effective inflation policy. Deviations in the configurations in the D4Z4 count data may indicate genetic diseases; see, e.g., \cite{Bruceetal2009} and \cite{Balogetal2012} among several others.
+
+\begin{figure}[t]
+	\centering
+	\begin{minipage}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[height = 6cm, width=\linewidth]{Figures/Updated/data_default.pdf}
+		\caption*{(a) Default data}	\label{fig:Data_Default}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[height = 6cm, width=\linewidth]{Figures/Updated/hist_infl_23.pdf}
+		\caption*{(b) Inflation Expectations}\label{fig:Data_IE}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[height = 6cm, width=\linewidth]{Figures/Updated/Data_d4z4.pdf}
+		\caption*{(c) DNA tandem repeat sequence D4Z4}\label{fig:Data_DNA}
+	\end{minipage}
+
+	\caption{Examples of Count Data in Finance, Economics and Bioinformatics \label{fig:data} }
+	
+\end{figure}
+
+To deal with these problems, we introduce a simulation-based Bayesian approach using a flexible mixture of shifted negative binomial distributions. Our proposed framework provides a posterior probability of multimodality, estimates the number of modes and reveals their location in the distribution, and produces an model consistent measure of uncertainty around these values.
+
+We start by discussing a number of features of the negative binomial distribution and consider its interpretation as the marginal of a continuous Poisson-gamma mixture. This implies adding an extra latent variable to a Poisson distribution which allows -- in a Markov chain Monte Carlo (MCMC) simulation method -- to make use of the well-known conditional augmented data likelihood and posterior in a Gibbs step for the mean parameter of the negative binomial distribution.
+
+%%\textcolor{red}{JC: The final sentence may be misleading since we still require a metropolis step to sample $\tilde{r}$ (see equation (21) on page 16).}
+
+In terms of methodology we present three contributions. First, we introduce a convenient reparameterization of the negative binomial distribution which is more closely related to a moment interpretation. It is well-known that Bayesian estimation of the dispersion parameter of the negative binomial is notoriously difficult. Consider the usual parameterization with the dispersion and probability parameters, see section \ref{sec:mixturemodels} for details, then posterior inference of the probability parameter is straightforward due to conjugacy between the beta and negative binomial distributions. However, inference about the dispersion parameter is more difficult because there is no conjugate prior. Our experience with various simulations revealed that specifying a random walk Metropolis(-Hastings) step over this parameter is unreliable due to extremely poor mixing of the simulated draws and it leads to a lack of convergence to the true posterior. Existing literature on estimating this dispersion parameter is also surprisingly sparse. \cite{zhou2013negative} provide a detailed discussion of this literature and associated problems on identifying and estimating the dispersion parameter. Theses authors note that while the maximum likelihood estimator has been used to provide point estimates of the dispersion parameter, it is often not robust with respect to initial conditions. It can be biased or even fail to converge in small samples. The authors also note that while Bayesian approaches are able to model estimation uncertainty and incorporate prior information in small samples, the estimation is difficult as it relies on approximating the ratio of two gamma functions. In contrast, our reparameterization facilitates relatively simple and reliable estimation of these parameters.
+
+%\textcolor{red}{JC: I think this undersells our contribution. My understanding is that Bayesian estimation of the dispersion parameter is notoriously difficult. If we consider the usual parameterization with $p$ and $r$, then posterior inference of the NB probability parameter p is straightforward due to conjugacy between the Beta and negative binomial distributions. However inference about the dispersion parameter r is more difficult because there is no conjugate prior. Our experience with various simulations revealed that specifying a random walk Metropolis Hastings step over this parameter is practically unreliable due to extremely poor mixing of the draws leads to a lack of convergence to the true posterior. Existing literature on estimating this parameter is also surprisingly sparse. \cite{zhou2013negative} provide a detailed discussion of this literature and associated problems with identifying the dispersion parameter. They note that while the maximum likelihood estimator has been used to provide point estimates of r, it is often not robust to initial conditions, and can be biased or even fail to converge in small samples. They also note that while Bayesian approaches are able to model estimation uncertainty and incorporate prior information in small samples, the estimation is difficult as it relies on approximating the ratio of two gamma functions. In contrast, our reparameterization facilitates relatively simple and reliable estimation of these parameters. I think that this should be emphasized...}
+
+Second, we introduce a novel shift parameter which is useful for cases where the distribution's support need not begin at zero, making it well suited for modeling data that are concentrated around certain non-zero values, such as the aforementioned DNA tandem repeat data. Moreover, allowing the shift parameter to be zero preserves all properties of the regular negative binomial distribution and allowing it, for instance, to deal with zero inflated count data. Finally, we specify a finite mixture of this general class of distributions which accommodates a wide range of distributional shapes that are commonly seen in many multimodal count data sets across the physical and social sciences, in particular, it allows for credible estimation of number of modes, their locations, and implied uncertainty of these features. Another advantage of using a negative binomial mixture, as opposed to say a mixture of Poisson distributions, is that the negative binomial distribution can account for fat tails, which are characteristic of overdispersion in count data.
+
+
+%\textcolor{red}{JC: The term `possibly fat tails' in the final sentence above looks a bit out of place to me. I think we should move it to after the sentence, and elaborate a bit more. E.g., `Another advantage of using a negative binomial mixture, as opposed to say a mixture of Poisson distributions, is that the negative binomial distribution can account for fat tails, which are characteristic of overdispersion in count data.'}
+
+In terms of computational efficiency, we apply the sparse finite mixture Markov chain Monte Carlo (SFM MCMC) method  due to \cite{Mal:SFS:2016},  see also \cite{SFS:Mal:2019}, to our class of flexible mixtures in order to estimate the number of (non-empty) components of the mixture. This MCMC approach consists of initially overfitting the number of mixture components by selecting a larger number of components than is expected to describe the data and then using a sparse hierarchical prior on the mixture weights to shrink the model space to a credible number of components with substantial posterior probability. Estimating the number of (non-empty) components in this way has the practical benefit of reducing the computational burden when the number of alternatives is large, and reduces the probability of model misspecification when conducting inference under model specification uncertainty. 
+
+%\textcolor{red}{JC: I wonder if we should only cite \cite{Mal:SFS:2016}  here as citing three articles makes it look less novel...}
+
+%A second contribution in computational efficiency is the introduction of a  simulation-based optimization procedure for multimode determination using MC algorithms. Since the modes are treated as random variables highest credibility regions around the estimated modes are automatically obtained without extra computational effort. 
+
+%The advantages of using parallel software and hardware in this context are discussed.
+
+
+%\textbf{\textcolor{blue}{JC: I don't think we need/use parallelization here.}}
+
+
+
+In terms of empirical analysis, the benefit of our approach is shown in the application using the three  count data sets in Figure \ref{fig:data}. First, using  lending data from a Spanish bank, see \cite{dionne1996count},  the probability that a client of a bank is able to repay a loan is shown to depend on the uncertainty that exists with respect to the number of defaulted payments.  Results from fitting the mixture of shifted negative binomials leads to credible evidence about a bimodal distribution with accurate location of modes including their uncertainty. Such information may be used for the institution's risk policy of granting loans. 
+
+Using count data from survey responses to the question ``By what percentage do you expect prices to go up, on average, during the next 12 months?'', from the University of Michigan's Surveys of Consumers yields evidence about a bimodal mixture, which is suggestive of unanchored expectations, alternative learning \citep{pfajfar2010heterogeneity}, and possible lack  of economic literacy \citep{burke2014economic}.  
+
+The data of DNA tandem repeats from \cite{DNA_leiden} show that applying the proposed class of flexible mixtures and the MCMC method provides substantial support with high posterior probability for a distinct unimodal distribution with a very fat right tail instead of some spurious modes.
+
+In all three datasets, results from log-predictive likelihood analyses suggest that the mixture of shifted negative binomial distributions provides a good or better fit of the data compared to a corresponding mixture of shifted Poisson distributions. This empirical evidence reinforces the theoretical merits of our proposed shifted negative binomial mixture.
+
+%\textcolor{red}{JC suggested addition: In all three datasets, results from log-predictive likelihood analyses suggest that the mixture of shifted negative binomial distributions provides a better fit of the data compared to a corresponding mixture of shifted Poisson distributions. This empirical evidence reinforces the theoretical merits of our proposed shifted negative binomial mixture.}
+
+These results should be of interest to academics, policy makers and practitioners, who rely on such tests when making both inference and predictions.
+
+The contents of this paper are organized as follows: Section~\ref{sec:mixturemodels} presents the class of mixtures of shifted negative binomials and the convenient reparameterization.
+Section~\ref{MCMCmethod} presents the SFM MCMC algorithm. 
+Section~\ref{sec:applications} presents empirical results for three count data sets. Section~\ref{sec:conclusion} concludes. 
+
+
+%%We emphasize that the R computer package BayesMultimode \citep{BCDHLVD2023} accompanies the present paper. 
+%% \textcolor{red}{JC: The R package currently does not have the SNB, so not sure we want to reference it here...I leave it up to you.}
+
+% -----------------------------------------------------------------------------------------------
+
+
+\section{A flexible mixture of shifted negative binomials  \label{sec:mixturemodels} }
+
+
+
+\subsection{A class of flexible mixtures based on the negative binomial distribution \label{subsection_mixture_shifted_NB} } 
+
+The negative binomial distribution was introduced by \cite{Pascal:1679} and subsequently studied by \cite{Montmort:1713}.
+There exist several parameterizations of this distribution.
+We make use of the specification that is defined as the number of failures
+before the $r$-th success. % so that for $r=1$ it reduces to the geometric distribution.
+In order to illustrate the flexibility of the negative binomial distribution
+Figure \ref{Pmf_NB} shows examples of the shape of the Probability Mass Function (PMF) of the negative binomial distribution
+for a given value $p = 0.5$ and for $r=1,5,10$. The extreme value $r = 1$ leads to a geometric distribution, shown in Figure \ref{Pmf_Geometric}.
+The other extreme case $r \rightarrow \infty$ (while holding the mean $\mu = \frac{r(1-p)}{p}$ constant, so that $p= \frac{r}{r+\mu} \rightarrow 1$) leads to a Poisson distribution, see  Figure \ref{Pmf_Poisson}.
+So, the interval $1 < r < \infty$ allows for flexible shapes. 
+For example, for the negative binomial distributions with $p = 0.5$ in Figure \ref{Pmf_NB}
+as $r$ increases from 1 to 5 and 10,
+we observe a decreasing right skewness (with skewness equal to 2.12, 0.95 and 0.67, where the means 1, 5 and 10 are larger than the modes 0, 4 and 9) and a decreasing kurtosis (9.50, 4.30 and 3.65);
+see Table~\ref{Characteristics_NB_Geom_Poi}.
+The kurtosis of the negative binomial distribution increases for decreasing values of $r$
+and increasing values of $p$: it tends to $\infty$ if $r \rightarrow 0$ or $p \rightarrow 1$.
+On the other hand, if $r \rightarrow \infty$, then the skewness and kurtosis tend to well known values for the Gaussian distribution, 0 and 3, respectively. 
+Summarizing, the class of negative binomial distributions includes
+both heavily right-skewed, fat-tailed distributions, and 
+almost symmetric, thin-tailed distributions.
+
+In Figure \ref{Comparison_NB_Poisson} we illustrate the difference between a Poisson distribution
+(with mean $\lambda=5$ and kurtosis 3.20) and three negative binomial distributions for $r=1,5,50$ with the same mean but different kurtosis 9.03, 4.30 and 3.30.
+Although the PMF and kurtosis look similar for the Poisson distribution and the negative
+binomial distribution with large parameter $r=50$,
+there is still a considerable difference in the far right tail.
+Figure \ref{Comparison_NB_Poisson_ratio} shows that the ratio of the Poisson and negative binomial PMF
+tends to 0, also for $r=50$,
+so that extreme outliers are relatively much more likely for the negative binomial PMF. 
+
+
+
+% -------------
+\begin{figure}[p]
+\begin{center}
+\includegraphics[scale=0.23]{Figures/figure_NB_dist_aug2024} 
+%%\includegraphics[scale=0.7]{Figures/PMF_NB} 
+\end{center}
+\caption{\label{Pmf_NB} Probability mass function  $p_{NB(p,r)}(y_i) = 
+\frac{\Gamma(r+y_i)}{\Gamma(r) y_i!} (1-p)^{y_i} p^r$
+with $p=0.5$ for different values of the parameter $r$}
+\end{figure}
+
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[scale=0.23]{Figures/figure_Geom_dist_aug2024} 
+%\includegraphics[scale=0.7]{Figures/PMF_GEOMETRIC} 
+\end{center}
+\caption{\label{Pmf_Geometric} Probability mass function $p_{Geom(p)}(y_i) = (1-p)^{y_i} p$ for different values of parameter $p$}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[scale=0.23]{Figures/figure_Poi_dist_aug2024} 
+%\includegraphics[scale=0.7]{Figures/PMF_POISSON} 
+\end{center}
+\caption{\label{Pmf_Poisson} Probability mass function $p_{Poisson(\lambda)}(y_i) = \frac{\lambda^{y_i}e^{-\lambda}}{y_i!}$ for different values of the mean parameter $\lambda$}
+\end{figure}
+
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[scale=0.23]{Figures/figure_NB_vs_Poi_dist_aug2024} 
+%%\includegraphics[scale=0.7]{Figures/Comparison_NB_Poisson} 
+\end{center}
+\caption{\label{Comparison_NB_Poisson} Comparison of probability mass functions of  negative binomial distributions and Poisson distribution
+(all with mean 5)}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[scale=0.23]{Figures/figure_ratio_Poi_vs_NB_dist_aug2024} 
+%%\includegraphics[scale=0.7]{Figures/Comparison_NB_Poisson} 
+\end{center}
+\caption{\label{Comparison_NB_Poisson_ratio} Ratio of probability mass functions of   Poisson distribution and negative binomial distributions
+(all with mean 5)}
+\end{figure}
+
+
+\begin{table}
+\caption{\label{Characteristics_NB_Geom_Poi} Characteristics of negative binomial, geometric and Poisson distributions}
+\begin{tabular}{llll}
+\hline  
+& negative binomial & geometric & Poisson \\
+\hline
+pmf & $p_{NB}(y_i|p,r) = \frac{\Gamma(r+y_i)}{\Gamma(r) y_i!} (1-p)^{y_i} p^r$ &
+$p_{Geom}(y_i|p) = (1-p)^{y_i} p$ & 
+$p_{Poi}(y_i|\lambda) = \frac{ \lambda^{y_i} e^{-\lambda} }{y_i!} $ \\
+\\
+mean & $\frac{r(1-p)}{p}$ & $\frac{1-p}{p}$  & $\lambda$  \\
+\\
+mode & $\lfloor \frac{(r-1)(1-p)}{p} \rfloor$ if $r>1$, 0 if $r \le 1$ & 
+0  & 
+$\lfloor \lambda \rfloor$ (\& $\lambda-1$ if $\lambda$ integer) \\
+\\
+variance & $\frac{r(1-p)}{p^2}$ & $\frac{(1-p)}{p^2}$  & $\lambda$ \\
+\\
+skewness & $\frac{2-p}{\sqrt{(1-p)r}}$ & $\frac{2-p}{\sqrt{(1-p)}}$ & $\frac{1}{\sqrt{\lambda}}$ \\
+\\
+kurtosis   &  $3 + \frac{6}{r} + \frac{p^2}{(1-p)r}$ & $9 + \frac{p^2}{(1-p)}$ & 
+$3 + \frac{1}{\lambda}$\\
+\hline
+\end{tabular}
+\end{table}
+
+
+%%\textcolor{red}{Should we use a `subsubsection' title here? E.g., }
+
+\subsubsection{A Poisson-Gamma mixture representation}
+
+The negative binomial distribution can also be specified as the marginal of a Poisson($\lambda$) distribution, where $\lambda > 0$ is a random variable having a gamma distribution with shape parameter $r$ $(r > 1)$ and rate parameter $\frac{p}{1-p}$ $(0<p<1)$:
+\begin{eqnarray}\label{Poisson-gamma}
+p_{NB}(y_i|r,p) 
+&=& \int_{0}^{\infty} p_{Poisson(\lambda_i)}(y_i)  \; p_{Gamma\left(r,\frac{p}{1-p}\right)}(\lambda_i) \; d\lambda_i, 
+\end{eqnarray} 
+see Appendix \ref{appendix:derivations}. 
+
+%\textcolor{red}{I've seen some authors cite the paper by \href{https://www.jstor.org/stable/2341080}{Greenwood and Yule (1920)} as developing this representation, but am not 100\% sure if this is valid. I looked at that paper and do not see the representation (however for me it's very complicated).}
+
+So, we have as the joint probability mass/density function of $(y_i, \lambda_i)$:
+\begin{equation}\label{augmented_pmf_pdf}
+p(y_i, \lambda_i|r,p) =  p(y_i|\lambda_i) p(\lambda_i|r,p) = 
+\frac{\lambda_i^{y_i} \exp(-\lambda_i)}{y_i!}  \; 
+\frac{\left(\frac{p}{1-p}\right)^{r} \lambda_i^{r-1} \exp \left(-\lambda_i  \frac{p}{1-p}\right)}{\Gamma(r)}.
+\end{equation}
+We note the analogue between the negative binomial and the Student-t distribution. The former is  the marginal of a Poisson-gamma mixture for count data while the latter is the marginal of a normal-gamma mixture for continuous data, where the negative binomial and Student-t distributions tend to
+the Poisson and normal distribution, respectively, if the shape parameter tends to infinity.  
+
+%\textcolor{red}{JC: Should we make the following contribution more explicit? E.g., `In this paper, we contribute by introducing a reparameterization ...'}
+In this paper, we contribute by introducing a reparameterization that connects the parameters $r$ and $p$ of the negative binomial with the mean of this distribution. Moreover, this reparameterization facilitates the simulation-based Bayesian estimation of the model. It is given as:
+\begin{eqnarray}
+\mu     &=& \frac{r (1-p)}{p}, \\
+\nonumber \\
+\tilde r &=& \frac{1}{1+r}, 
+\end{eqnarray}
+with inverse transformation 
+\begin{eqnarray}
+r &=& \frac{1-\tilde r}{\tilde r}, \label{eq:reparam_r} \\
+\nonumber \\
+p &=& \frac{r}{r+\mu} = \frac{1-\tilde r}{ 1-\tilde r + \mu \tilde r}.  \label{eq:reparam_p}
+\end{eqnarray}
+This reparametrization has multiple advantages. First, it is easily interpreted as the mean of the negative binomial distribution.
+Second, the conditional augmented data posterior distribution of $\mu$ is a well-known distribution:
+ a truncated version of the inverse gamma distribution, as discussed below.
+Third, the transformed shape parameter $\tilde r$ takes its values in the \textit{finite} interval $(0,\frac{1}{2})$, which facilitates the specification of a (non-informative) prior
+and the Monte Carlo simulation of the posterior. 
+The possibly fat right tail of the distribution of the original, untransformed parameter $r$ may harm the efficiency of the MCMC method -- for example, due to long sequences of relatively high values of $r$ and/or because it is difficult to tune an appropriate standard deviation of the candidate steps in a random walk Metropolis(-Hastings) step for $r$. The simulation of the transformed parameter $\tilde r$ does not suffer from these problems.
+\begin{figure}
+	\centering
+	\begin{minipage}{0.45\textwidth}
+		\centering
+	    \includegraphics[height = 6cm, width=8cm]{Figures/Updated/LL_param_2.png}
+		% \caption{first figure}
+	\end{minipage}\hfill
+	\begin{minipage}{0.45\textwidth}
+		\centering
+	    \includegraphics[height = 6cm, width=8cm]{Figures/Updated/LL_param_3.png} 
+		% \caption{second figure}
+	\end{minipage}
+		\caption{Log-Likelihood Surface for Negative Binomial Model \label{fig:llike} }
+		
+		\vspace*{0.5cm}
+		
+		\footnotesize{True parameter values: $p = 0.375$, $r=3.00$, $\mu = 5.00$ and $\tilde{r}=0.25$.}
+\end{figure}
+
+%\textcolor{red}{JC: Looking at Figure 7 makes me wonder if we can somehow prove that the reparameterized distribution has a great degree of curvature than the original one...leave this for a revision.}
+
+Using a set of simulated data from the negative binomial distribution with $p=3/8$ and $r=1$ (or equivalently $\mu = 5$ and $\tilde r = 1/4$), we show in Figure \ref{fig:llike} the shape of the likelihood for the parameters  $r$ and $p$ and compare it with the likelihood shape using the transformed parameters $\mu$  and  $\tilde r$. Clearly  the latter shape shows more curvature than the former which is an indication that the resulting shape of the posterior is more well-behaved. This usually helps the mixing properties and computational efficiency of the MCMC procedure.
+
+
+Using this reparameterization we have
+\begin{eqnarray}\label{likelihood2}
+%p_{NB}(y_i|\tilde r,\mu) 
+%&=& \frac{\Gamma(y_i+ \frac{1-\tilde r}{\tilde r}  )}{y_i! \; 
+%\Gamma\left( \frac{1-\tilde r}{\tilde r} \right) } \left( \frac{(1-\tilde r)}{(1-\tilde r) + \mu \tilde r} \right)^{\left( \frac{1 + \tilde r (y_i-1)}{\tilde r} \right) } 
+%\left(\frac{\tilde r \mu}{1-\tilde r}\right)^{y_i}  \\
+%
+p_{NB}(y_i|\tilde r,\mu) 
+&=& \frac{\Gamma(y_i+ \frac{1-\tilde r}{\tilde r}  )}{y_i! \; 
+\Gamma\left( \frac{1-\tilde r}{\tilde r} \right) } 
+\left(\frac{\mu \tilde r}{1-\tilde r + \mu \tilde r}\right)^{y_i} 
+\left( \frac{ 1-\tilde r}{ 1-\tilde r + \mu \tilde r} \right)^{\left( \frac{1-\tilde r}{\tilde r} \right) } 
+\\
+\nonumber \\
+p(y_i, \lambda_i|\tilde r, \mu) 
+&=& 
+\frac{\lambda_i^{y_i} \exp(-\lambda_i)}{y_i!}  \; 
+\frac{ r^{r} \mu^{-r} \lambda_i^{r-1} \exp \left(- \frac{\lambda_i \; r}{\mu}  \right)}{\Gamma(r)}
+ \label{augmented_likelihood2} 
+\end{eqnarray}
+with $r =\frac{1-\tilde r}{\tilde r}$, where
+(\ref{likelihood2}) is the reparameterized version of the PMF in Table \ref{Characteristics_NB_Geom_Poi}
+and where (\ref{augmented_likelihood2}) is the reparameterized, more convenient version of (\ref{augmented_pmf_pdf}).
+
+%% \textcolor{red}{JC: Does (7) come form (1)? Perhaps we should be explicit about this.}
+
+This representation implies that we can make use, in a Monte Carlo simulation procedure, of a known conditional augmented data likelihood/posterior of the mean parameter $\mu$  instead of facing a non-standard conditional likelihood/posterior where a Metropolis step has to be used instead 
+of a Gibbs step for the mean parameter $\mu$. 
+
+%% \textcolor{red}{JC: Perhaps we should modify this as we still use a Metropolis step.}
+
+%\footnote{Note the similarity with nonlinear time series analysis where, for instance, in the local level model the conditional likelihood of the latent parameter $\mu$ is such that a Monte Carlo simulation procedure can make use of known densities instead of a Metropolis step, SEE FOR INSTANCE WEST TEXTBOOK CHAPTER ???} 
+
+
+
+
+%% \textcolor{red}{Should we use a `subsubsection' title here? E.g., A mixture of shifted negative binomials}
+
+\subsubsection{A mixture of shifted negative binomial distributions}
+
+%\textbf{Mixture of shifted-negative Binomials} 
+We now specify the class of a finite
+mixture of shifted negative binomial distributions.
+Let $y_i$ for $i=1,\ldots,n$ be independent realizations from a mixture of $J$ shifted negative binomial distributions:
+\begin{align}
+\label{eq:mixtureNB1}
+    y_i-\kappa_j \sim \mbox{NB}(\mu_j,\tilde r_j)\:\:\mbox{if }z_{ij}=1\;\; \mbox{for}\:\:i=1,\ldots,n;j=1,\ldots,J,
+\end{align}
+where $z_{ij}=1$ if $y_{i}$ belongs to component $j$, and $0$ otherwise and the latent variable distribution is defined as $\Pr[z_{ij}=1]=\pi_j, \:\:\mbox{for}\:\:i=1,\ldots,n;j=1,\ldots,J,$ 
+with $\pi_j\ge0$ for $j=1,\ldots,J$ and $\sum_{j=1}^J\pi_j=1$,
+and where the shift parameter $\kappa_j$ is a non-negative integer.
+That is,
+\begin{eqnarray}\label{eq:pyi_mixtureNB}
+p(y_i|\theta) &=& \sum_{j=1}^{J} \pi_j  \;
+\frac{\Gamma \left(y_i-\kappa_j+ \left( \frac{1-\tilde r_j}{\tilde r_j} \right) \right)}{(y_i-\kappa_j)! \; 
+\Gamma\left( \frac{1-\tilde r_j}{\tilde r_j} \right) } \left( \frac{(1-\tilde r_j)}{(1-\tilde r_j) + \mu_j \tilde r_j} \right)^{\left( \frac{1 + \tilde r_j (y_i-\kappa_j-1)}{\tilde r_j} \right) } 
+\left(\frac{\tilde r_j \mu_j}{1-\tilde r_j}\right)^{y_i-\kappa_j} \\
+\nonumber \\
+p(y_i, \lambda_i|\theta) &=& \sum_{j=1}^{J} \pi_j  \;
+\frac{\lambda_i^{y_i-\kappa_j} \exp(-\lambda_i)}{(y_i-\kappa_j)!}  \; 
+\frac{ r_j^{r_j} \mu_j^{-r_j} \lambda_i^{r_j-1} \exp \left(- \frac{\lambda_i \; r_j}{\mu_j}  \right)}{\Gamma(r_j)}
+\label{eq:pyi_lambdai_mixtureNB}
+\end{eqnarray}
+with 
+$\theta  =\left\{\mu,\tilde r,\kappa,\pi\right\}$,
+$\mu    = \left\{\kappa_1,\ldots, \kappa_J\right\}$,
+$\tilde r = \left\{\tilde r_1,\ldots, \tilde r_J\right\}$,
+$\kappa = \left\{\kappa_1,\ldots, \kappa_J\right\}$ and
+ $\pi=\left\{\pi_1,\ldots,\pi_J\right\}$.
+This class of a finite mixture of shifted negative binomial distributions is a very flexible class of distributions for
+non-negative integer data that allows for multimodality, underdispersion and overdispersion. In Section~\ref{sec:applications} we show the usefulness of the added flexibility in three sets of empirical data from different scientific fields.
+
+
+\subsection{Likelihood and prior}
+
+
+
+Given data $y=\left\{y_1,\ldots,y_n\right\}$ and latent variables
+$z_i=\left\{z_{i1},\ldots,z_{iJ}\right\}$,
+$z = \left\{z_{1},\ldots,z_n\right\}$ and 
+$\lambda = \left\{\lambda_{1},\ldots,\lambda_n\right\}$,
+the augmented likelihood for the parameters $\theta$ of model \eqref{eq:mixtureNB1} (where the latent variables $\lambda$ are integrated out) follows directly from subsection \ref{subsection_mixture_shifted_NB}:
+%%
+%%\textcolor{red}{JC: Should we explicitly define $y$ and $z$ as vectors here? We do so after (13).}
+%%
+\begin{equation}
+   % p\left(y,z|\theta\right)
+  l\left(\theta\right|y, z)
+      =\left\{
+            \begin{array}{ll}
+              \prod_{i=1}^{n}\prod_{j=1}^{J}
+                \left[
+\frac{\Gamma(y_i-\kappa_j+r_j)}{(y_i-\kappa_j)! \; \Gamma(r_j)} (1-p_j)^{r_j} p_j^{y_i-\kappa_j}
+                \right]^{z_{ij}}
+                \pi_j^{z_{ij}},
+                          & y_i = \kappa_j, \kappa_j + 1, \ldots, \:\: \forall i,j\mbox{ with }z_{ij}=1 \\
+            0,  &\mbox{otherwise,}
+            \end{array},
+         \right.
+\end{equation}
+and the augmented likelihood for $\theta$ given data $y$, latent variables $z$ and $\lambda$ is:
+\begin{eqnarray}
+  %& & p\left(y,z,\lambda|\theta\right) =  \\
+    & & l\left(\theta |y,z,\lambda\right) =  \\
+      & & \left\{
+            \begin{array}{ll}
+              \prod_{i=1}^{n}\prod_{j=1}^{J}
+                \left[
+\frac{\lambda_i^{y_i-\kappa_j} \exp(-\lambda_i)}{(y_i-\kappa_j)!}  \; 
+\frac{ r_j^{r_j} \mu_j^{-r_j} \lambda_i^{r_j-1} \exp \left(- \frac{\lambda_i \; r_j}{\mu_j}  \right)}{\Gamma(r_j)}
+                \right]^{z_{ij}}
+                \pi_j^{z_{ij}},
+                          & y_i = \kappa_j, \kappa_j + 1, \ldots, \:\: \forall i,j\mbox{ with }z_{ij}=1 \\
+            0,  &\mbox{otherwise,}
+            \end{array}
+         \right.  \nonumber
+\end{eqnarray}
+where $r_j = \frac{1 - \tilde r_j}{\tilde r_j}$ and
+$p_j = \frac{r_j}{r_j+\mu_j}$, $j=1,2,\ldots,J$. 
+
+%\textcolor{red}{JC: Should these be vectors or sets? Usually I use vectorsfor time series, but I suppose that's because they're ordered, thus the vector doubles as an ordered-tuple. I'm not sure of the convention for cross-sections. Also, should we drop the () around $(j=1,2,\ldots,J)$, and write: $j=1,2,\ldots,J$? It's more consistent with previous notation, but perhaps there's a reason for writing it like this here that I'm not aware of.}
+
+
+%\paragraph{Prior} 
+Given the specification of the flexible class of distributions and the implied likelihood, we discuss our motivation and specification of the prior. It is relevant to distinguish between experimental sciences like medicine where data on treatment and control groups are collected and non-experimental sciences, that we deal with, where data are given and a diagnostic data step is usually taken to determine a plausible class of models and priors, implying that the latter are typically data dependent. We take the point of view that in the scientific fields where we analyze data, it is of interest to let the information in the likelihood dominate the information in the prior. Therefore, we make use of uninformative but proper priors for the parameters. Specifically, we make use of continuous and discrete
+uniform priors defined on bounded regions for $\mu_j$, $\tilde r_j$ and $\kappa_j$ and a symmetric Dirichlet prior for the weight parameters $\pi_j$:
+%
+\begin{align}
+	\label{eq:mixtureNBPrior1}
+   \mu_j&\sim \mbox{Unif}(\mu_{\min},\mu_{\max}), \\
+    \label{eq:mixtureNBPrior2}
+   \tilde r_j&\sim \mbox{Unif} \left(0,\frac{1}{2} \right), \\
+	\label{eq:mixtureNBPrior3}
+   \kappa_j&\sim \mbox{DiscUnif}(\kappa_{\min},\kappa_{\max}), \\
+	\label{eq:mixtureNBPrior4}
+   (\pi_1,\ldots,\pi_J) &\sim \mbox{Dirichlet}(\alpha,\ldots,\alpha).
+ \end{align}
+where Unif and DiscUnif denote the continuous and discrete uniform distributions,
+respectively.
+We set $[\mu_{\min},\mu_{\max}] = [\kappa_{\min},\kappa_{\max}] = [0,M]$
+with $M$ equal to the maximum of the data sample, $M = \max(y_i |y_i=1,\ldots,n)$.
+Similar results are obtained for different large values of $M$, so that the prior does not need to be data-dependent. Note that $\tilde r_j < \frac{1}{2}$ and $r_j>1$ imply that 
+we have $r_j n_j-1>0$ (even if $n_j$, the number of observations belonging to component $j$, is equal to 1),
+so that the conditional posterior distribution of $\mu_j$
+is a truncated version of an inverse gamma distribution (from which one easily 
+simulates using inverse transform sampling).
+For $0< r_j \le 1$ it would be possible that $r_j n_j - 1 \le 0$,
+in which case the conditional posterior distribution of $\mu_j$ would still be proper,
+but no longer a truncated version of an inverse gamma distribution.
+Then its properness would only stem from the fact that $\mu_j$ takes its values on the finite interval $[0,M]$,
+since on the infinite interval $[0,\infty)$ the right tail of the conditional posterior of $\mu_j$ would not have a finite integral. 
+The assumption that $r_j>1$ does not seem very restrictive. 
+In literature it is sometimes assumed that the parameter $r$ of the negative binomial distribution
+is a positive integer, in which case one has $r \ge 1$.
+The geometric distribution (corresponding to $r=1$) allows for infinite right skewness  
+and kurtosis (for $p \rightarrow 1$).
+%\textcolor{red}{JC: Notation here is a bit inconsistent because (15) is open on the interval (0,1/2), while (14) and (15) are closed on the intervals $[\mu_{min},\mu_{xmax}]$ and $[\kappa_{min},\kappa_{max}]$. I'm not sure how to fix this...} 
+
+\section{Markov chain Monte Carlo method \label{MCMCmethod} }
+
+Alternative MCMC methods exist for the estimation of the model parameters and number of components of a mixture process. We apply the SFM MCMC algorithm, see \cite{Mal:SFS:2016} and \cite{Malsiner-Walli:FS:Grun:2017}. This method consists of initially overfitting the number of mixture components  by choosing a number that is larger than the number of components expected to describe the data. Next, a sparse hierarchical prior on the mixture weights is applied to shrink the model space to a credible number of components. The authors show that the SFM approach is more reliable than Dirichlet process mixtures which are known to overfit the number of components \citep{miller2013simple}, and that the SFM approach is conceptually simpler and substantially easier to implement than the Reversible Jump MCMC, see \citet{green1995reversible,Richardson_Green_1997_RJMCMC}. 
+
+We note that, to the best of our knowledge, for the case of a set of non-experimental multimodal data there does not exist a theorem that shows which MCMC method, simulating draws from posterior distributions of mixture processes, is uniformly superior in terms of convergence properties and robustness. Different information content between model, prior information and data play an important role in choosing which MCMC method is most suitable in a certain case. The choice of the SFM MCMC method turns out to be easy to implement and seems efficient in our applications.
+
+
+Two practical issues are important for the implementation of the SFM MCMC method. First, its mixing quality is an important indication for the (speed of) convergence of the algorithm, no matter the application of the model.  Since data in the non-experimental sciences are usually given, an initial visual data inspection, as discussed earlier for the default data, inflation expectations data and DNA data, is a very common sense strategy in order to obtain a good guess on the prior for the parameters, see \cite{fru:dea}, in particular, a plausible value and range of the shift parameter is useful. This may have a substantial effect on the speed of convergence of the SFM procedure. Second, in this study we are interested in the predictive distribution of the observable variables of our datasets in order to credibly determine the number and location of modes. We are not interested in the identification of the mixture structure. Therefore, label switching is less of an issue here. 
+
+\subsection{Sparse Finite Mixture Markov Chain Monte Carlo}
+For ease of exposition, we start to present the proposed MCMC procedure for the case of  \textit{known} number of non-empty components (with fixed Dirichlet prior for $(\pi_1,\ldots,\pi_J)$). For background on the case of a given number of components, $J$, we refer to \cite{fruhwirth2006finite}, Chapter 3. After that, we extend this to the case of \textit{unknown} number of non-empty components (with hierarchical prior for $(\pi_1,\ldots,\pi_J)$), the case of the sparse finite mixture. We make use of the  priors \eqref{eq:mixtureNBPrior1}--\eqref{eq:mixtureNBPrior4} which yield in combination with the likelihood the following conditional posteriors:
+%
+%\textcolor{red}{JC: There is such a large amount of white space here. We can remove it by stating equations one-at-a-time, however then we will lose the alignment with the distribution and proportionality symbols...}
+%
+\begin{eqnarray}
+\lambda_i | y_i, z_i,\theta  & 
+\sim & \mbox{Gamma} \left( y_i + \sum_{j=1}^{J} z_{ij}(-\kappa_j + r_j), \frac{1}{\sum_{j=1}^{J} z_{ij} p_j} \right)  \\
+\nonumber \\
+p(\kappa_j|y,z,\theta_{-\kappa})
+      & \propto &
+\prod_{i|z_{ij=1}} 
+\frac{\Gamma(y_i-\kappa_j+r_j)}{(y_i-\kappa_j)!} \times p_j^{\sum_{i|z_{ij=1}} (y_i-\kappa_j)}
+\\
+\nonumber \\
+\left. \frac{1}{\mu_j} \right| y,z,\lambda,\theta_{-\mu}
+& \sim &
+\mbox{Gamma}_{\left[\frac{1}{M}, \infty \right)} \left(r_j n_j-1, r_j \sum_{i|z_{ij}=1} \lambda_i \right) \\
+\nonumber \\
+p(\tilde r_j| y, z, \theta_{-\tilde r}) &
+\propto &
+\left( \Gamma \left( \frac{1-\tilde r_j}{\tilde r_j} \right)\right)^{-n_j} \times \\
+&  &
+\prod_{i|z_{ij}=1} \Gamma \left(y_i - \sum_{j=1}^{J} z_{ij} \kappa_j + \left( \frac{1-\tilde r_j}{\tilde r_j} \right) \right) 
+\times \nonumber \\
+& & \hspace{1.0cm} \left( \frac{(1-\tilde r_j)}{(1-\tilde r_j) + \mu_j \tilde r_j} \right)^{\left( \frac{1 + \tilde r_j (y_i - \sum_{j=1}^{J} z_{ij} \kappa_j -1)}{\tilde r_j} \right) } 
+\left(\frac{\tilde r_j \mu_j}{1-\tilde r_j}\right)^{y_i - \sum_{j=1}^{J} z_{ij} \kappa_j} \nonumber \\
+\nonumber \\
+\pi|z & \sim & \mbox{Dirichlet}\left(n_1 + \alpha, \ldots, n_J + \alpha \right),
+\end{eqnarray}
+where $r_j = \frac{1 - \tilde r_j}{\tilde r_j}$ and $p_j = \frac{r_j}{r_j+\mu_j}$ $(j=1,2,\ldots,J)$,
+and where $n_j=\sum_{i=1}^n z_{ij}$ is the number of observations in component $j$ and $\kappa_j$ is an integer in
+$[\kappa_{\mbox{min}}, \min\{  \min_{i|z_{ij}=1}\left(y_i\right), \kappa_{\max} \}]$.
+%$\mbox{Gamma}_{[a,b)}$ denotes the truncated gamma distribution
+%on the interval $[a,b)$. 
+
+That is,  $\lambda_i$ ($i=1,\ldots,n$), $\mu_j$ ($j=1,\ldots,J$) and $\pi$ are simulated from their conditional
+posterior distributions -- Gamma, truncated inverse Gamma and Dirichlet distributions. $\kappa_j$ $(j=1,\ldots,J)$ are simulated from their conditional posterior distributions on the grids of integer values in $[\kappa_{\mbox{min}}, \min\{  \min_{i|z_{ij}=1}\left(y_i\right), \kappa_{\max} \}]$, so that in this specific case of a discrete conditional posterior distribution a Griddy-Gibbs step is equivalent with a Gibbs step. The parameters $\tilde r_j$ ($j=1,\ldots,J$) are simulated using a random walk Metropolis(-Hastings) step using a Gaussian candidate distribution with standard deviation 0.1.
+
+%\textcolor{red}{JC: Should we provide details about the exact Gaussian candidate distribution used? The code for this came from Lennart so he will know better than me.}
+
+%We conclude that for the case of a known number of components the MCMC method consists of a Random %walk Metropolis(-Hastings) step for $\tilde r_j$ within a Gibbs procedure.
+
+This procedure is extended to the case of  an \textit{unknown} number of non-empty components by applying the SFM MCMC algorithm. As noted earlier, this method consists of initially overfitting the number of mixture components  and next use a sparse hierarchical prior on the mixture weights is to shrink the model space to a credible number of components.  
+
+To learn from the information set (data, likelihood and prior) how much sparsity is needed, the concentration parameter in the Dirichlet distribution $ \alpha $ has a Gamma hyperprior of the form:
+\begin{equation}
+	\alpha \sim Gamma(a_{\alpha}, b_{\alpha}),
+\end{equation}
+where $E(\alpha) = a_{\alpha}/b_{\alpha}=\frac{1}{200}$ strongly favors small values. By Bayes theorem the conditional posterior distribution of $\alpha$ given the partition $\mathcal{P}$ of components across observations, $p( \alpha  |  \mathcal{P} )  \propto p(\alpha) p( \mathcal{P} | \alpha )$, is given by
+\begin{eqnarray}
+	p(\alpha) & \propto &  \alpha^{ a_{ \alpha} - 1 }  \exp(-b_{ \alpha}  \alpha), \\
+	p( \mathcal{P} | \alpha ) & \propto & \frac{ \Gamma( J \alpha ) }{ \Gamma( n + J \alpha) }  
+	\prod_{k = 1}^{K} \frac{ \Gamma( n_k + \alpha ) }{ \Gamma(\alpha )}.
+\end{eqnarray}
+Sampling from this distribution is done with a Metropolis-Hastings step.
+
+%For technical details on the implementation we refer to \cite{BCDHLVD2023}. % Basturk:Cross:DeKnijff:Hoogerheide:Labonne:VanDijk:2023}.
+%
+%\textcolor{red}{JC: Should we remove the sentence: For technical details on the implementation we refer to \cite{BCDHLVD2023}? That paper doesn't have SNB mixture, so it may diminish the perceived contribution here.}
+
+
+\subsection{Simulation-based mode inference for multimodal and asymmetric count data}
+\label{appsec:modeestimation}
+
+%We summarize the simulation-based multi-mode inference procedure, see \cite{cross2024bayesian}, and emphasize that such a method is theoretically superior to nonlinear optimization. That is, nonlinear optimization determines a local mode while simulation-based optimization integrates over the complete parameter space and finds the global mode.  Due to the recent advances  in parallel and fast MC algorithms,  simulation-based optimization has become numerically very efficient.
+
+The simulation-based procedure proceeds as follows. 
+One generates draws $\theta^{(m)} = \{ \mu^{(m)}, \tilde r^{(m)}, \kappa^{(m)}, \pi^{(m)} \}$ 
+$(m=1,\ldots,M)$, each defining a mixture of $J^{(m)}$ non-empty components of shifted negative binomial distributions. We emphasize that draws of parameters $r^{(m)}$ and $p^{(m)}$ can be easily recovered from $\mu^{(m)}$ and $\tilde{r}^{(m)}$ using \eqref{eq:reparam_r} and \eqref{eq:reparam_p}. The number of modes is treated as an unknown parameter and for each draw $\theta^{(m)}$ the number of modes $L^{(m)}$ and their location is calculated. Each draw $\theta^{(m)}$ leads to a probability mass function
+\begin{align}
+ p(\tilde y | \theta^{(m)})
+      =\sum_{j=1}^{J^{(m)}} \pi_j^{(m)}
+p_{NB(\tilde r_j^{(m)}, \, \mu_j^{(m)})}\left(\tilde y -\kappa_j^{(m)}\right),
+\end{align}
+where $p_{NB(\tilde r_j^{(m)}, \, \mu_j^{(m)})}(.)$ is the 
+probability mass function of the negative binomial distribution with mean $\mu_j^{(m)}$ and transformed shape parameter $\tilde r_j^{(m)}$.
+
+
+The modes $y_m$ must satisfy either:
+\begin{enumerate}
+	\item $p(y_{m}-1) < p(y_{m}) > p(y_{m}+1)$, or
+	\item $p(y_{m}-1) < p(y_{m}) = p(y_{m}+1) = \ldots =p(y_{m}+l-1) > p(y_{m}+l)$.
+\end{enumerate}
+Case 1 is a unique mode which is clearly identified. Case 2 is a mode in which $l$ consecutive values of the posterior predictive probability mass function are of equal value. We count this as a single mode, but keep track of each location.
+At the leftmost boundary 0 we count a mode if $p(0) > p(1)$, and at the rightmost boundary $M$ we count a mode if $p(M-1) < p(M)$.
+We note that simulation-based mode inference can be done efficiently with parallel Monte Carlo methods, see, e.g., \cite{BGHVD2016}.
+
+%\textcolor{red}{I don't know why we have a subscript k here in $p_k$. Also, should we distinguish between points at the boundary and in the interior (I recall this was a referee comment for Economics Letters)? E.g., `at the leftmost boundary we count a mode if $ p(y_{m}) > p(y_{m}+1)$, e.g., $p(0) > p(1)$, and at the right most boundary we count a mode if $ p(y_{m}) < p(y_{m}+1)$.'}
+
+ % and \textbf{[AND ALSO REFERENCE TO JAMIE'S RECENT JE PAPER}.
+% In terms of parallel software development,  Graphics Processing Units (GPUs)  are nowadays a standard part of the current personal computers. This software is imbedded in Mathematica, R and MATLAB. %An important method is Importance Sampling (IS) since it makes use of independent draws from an approximate density which can be easily parallelised.  This is in contrast to Markov Chain Monte Carlo methods like random walk Metropolis-Hastings (MH) or the Gibbs sampler which are sequential methods where the next draw depends on the previous one. 
+%In this context, one may generate sequences of MCMC methods. Apart from using parallel software, MCMC sequences can also be obtained in a speedy way from multiple-core processors or computer clusters. Massively parallel use of GPU software and multiple core hardware stimulated the handling of more complex economic and econometric models and massive sets of data.
+
+%MAKE HERE A RECENT FIGURE Figure 1 reports the evolution in GigaFLOPS (i.e., billions of floating point operations per second in single and double precision) between GPUs and CPUs. 
+%
+%\begin{center}
+%\textbf{Possibly INSERT FIGURE ABOUT MODES HERE}
+%\end{center}
+
+
+
+% \clearpage
+
+\section{Empirical results for Financial, Economic and DNA Count Data}
+We report results on the accuracy of the approximation of the PMF mixture of shifted negative binomial distributions to the count data of Figure \ref{fig:data} including 
+a comparison of the results from our Bayesian method with frequentist testing methods.
+Next, credible evidence on locations of modes with their implied uncertainty is shown.
+
+%However, for the predictive distribution of the data, where we are only interested in the number and location of modes, label switching is not an issue. 
+%
+%TWO ISSUES: (1) MIXING QUALITY OF ALGORITHM, WHICH IS RELEVANT FOR US.
+%(2) LABEL SWITCHING, WHICH IS ONLY RELEVANT IF INTERESTED IN PARAMETERS THEMSELVES, HOWEVER
+%WE ARE INTERESTED IN PREDICTIVE DISTRIBUTION OF DATA Y AND ITS NUMBER AND LOCATION OF MODES.
+
+\label{sec:applications}
+
+
+\subsection{Defaulted payment installments}
+In finance, the probability that a client of a bank is able to repay a loan may depend on the number of defaulted payments and the uncertainty around it.  Given the heterogeneity of the population of bank clients, analysis of this issue may involve multimodal data characteristics of the distribution of repayments. Knowledge about these modal features is useful for risk management. Using data from \cite{dionne1996count} repayment details of clients obtaining a loan from a financial institution in Spain in 1990 are studied. This dataset consists of 4,691 count observations ranging from from 0 to 34 defaulted loan payment installments which have been used to study the expected costs of risk misclassification in credit scoring.  Since then they have been analyzed by, among others, \cite{KarlisXekalaki_2001robust} and \cite{Woo20074379}. 
+%\footnote{In the boxplot the box represents the interquartile range, the whiskers represent 1.5 times above/below the interquartile rage, and observations beyond the whiskers are clasified as outliers.}
+We note that these data are a typical example of `zero inflated count data' and show a high degree of `overdispersion'. Moreover, the possible multimodality suggests that a single negative binomial or a mixture of these distributions without the $\textit{shift}$ parameter may fail to approximate this data distribution given the large mass at zero and the fat tail.
+%We find evidence that the data distribution is bimodal and has a fat tail. 
+%This implies that a standard negative binomial or Poission distribution or a mixture of these distributions  is not sufficient to approximate that data feature.
+
+%We now apply our methodology to the number of defaulted instalments on loans in a Spanish bank \citep{dionne1996count}. 
+%\begin{figure}[htbp]
+%\begin{center}
+%\includegraphics[width=1\linewidth]{Figures/default.pdf}
+%\end{center}
+%\caption{Default data}\label{fig:defaultdensity_modes}
+%\end{figure}
+
+%\paragraph{MCMC Results}
+
+The estimated PMF of the mixture of shifted negative binomial distributions is shown in Panel (a) of Figure~\ref{fig:Default}. It leads to reasonably accurate estimates from a visual diagnostic point of view.  For comparison, we also provide a fitted mixture of shifted Poisson distributions in Panel (b). The shifted Poisson mixture puts quite a bit of mass at zero, around 4-5, and in the far right tail of the distribution around 10-20 while the shifted negative binomial mixture has a tighter fit around counts of 0 and 4, without categorizing the observations in the right tail as modes. This indicates a better ability of the shifted negative binomial mixture to capture the multimodality and the tail behavior. The overdispersion parameter in the shifted negative binomial distribution permits it to put relatively less weight on the observations in the right tail of the distribution, which implies that the estimation results are more robust
+in case of outliers. This prevents finding spurious modes.
+However it is still difficult to determine visually from a figure whether this is a feature of the data or the model. 
+
+In order to analyze which model is preferred by the data we consider the log-predictive likelihoods of each model in Table~\ref{tab:ML}. These predictive likelihoods were computed using the cross-validation density (see \cite{eklund2007forecast} and references therein).  
+%%
+%% The numbers in parenthesis are standard deviations from the simulation procedure. 
+%%
+For the default data, we find that the log-predictive likelihood of the mixture of shifted negative binomial distributions is larger than the associated value for the mixture of shifted Poisson distributions. This suggests that the mixture of shifted negative binomial distributions does a better job at predicting the data. 
+%
+%The standard deviation for the shifted negative binomial distribution is also smaller than the associated value for the shifted Poisson distribution, thereby corroborating the mean results.
+
+
+
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[height = 6cm, width=\textwidth]{Figures/Updated/default_SNB.pdf}
+		\caption{Shifted Negative Binomial Mixture}
+		\label{fig:Default_a}
+	\end{subfigure}
+	
+	\vspace{1em} % Space between the subfigures
+	
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[height = 6cm, width=\textwidth]{Figures/Updated/default_SP.pdf}
+		\caption{Shifted Poisson Mixture}
+		\label{fig:Default_b}
+	\end{subfigure}
+	
+	\caption{Default Data, Fitted Mixtures and Modal Inference}
+	\label{fig:Default}
+\end{figure}
+
+
+%%\textbf{\textcolor{red}{Need to reformat figure}}
+
+The results so far motivate us to look at a more substantive analysis of the empirical results.
+The first issue is the basic question whether the PMF of the data is unimodal or multimodal which can be addressed through a straightforward hypothesis test procedure. Results from the \cite{silverman1981using} test, the \cite{hall2001calibration} test, the \cite{cheng1998calibrating} test and the \cite{Hartigan1985dip} test are provided in the top row of Table~\ref{tab:tests} together with the results using our proposed Bayesian procedure. For the frequentist test results, we find that while the Cheng and Hall test rejects the null hypothesis at the 5\% level of significance, the remaining three tests all fail to reject the null. The Bayesian results from the shifted negative binomial mixture suggest that the posterior probability of uni-modality is 0\%. This implies that the posterior probability of multimodality is 100\%. This is further illustrated in Panel (a) of Figure~\ref{fig:Default}, which provides strong evidence in favor of a multimodal mixture distribution.
+
+
+\begin{table}[H]
+	\caption{Hypothesis test results}\label{tab:tests}
+\begin{tabular}{@{\extracolsep{5pt}} c|ccccc}
+\toprule
+Data set & Silverman & Hall and York & Cheng and Hall & Hartigan and Hartigan & Bayesian \\ \hline
+Default & 0.51 & 0.09 & 0.01 & 0.48 & 0.00  \\
+Inflation & 0.73 & 0.42  & 0.00 & 0.00 & 0.02 \\
+DNA & 0.69  & 0.41 & 0.49 & 0.96 & 1.00 \\
+\bottomrule
+\end{tabular}
+%	\begin{tabular}{@{\extracolsep{5pt}} c|ccccc}
+%		\toprule
+%		Data set & Silverman & Hall and York & Cheng and Hall & Hartigan and Hartigan & Bayesian \\ \hline 
+%		Default & 0.46 & 0.10 & 0.44 & 0.02 & 0.00  \\ 
+%		Inflation & 0.28 & 0.01 & \textbf{\textcolor{red}{Update}} & 0.00 & \textbf{\textcolor{red}{Update}} \\ 
+%		DNA & 0.64 & 0.40 & 0.99 & 0.65 & 1.00 \\ 
+%		\bottomrule
+%	\end{tabular}
+
+\vspace*{0.5cm}
+
+
+
+
+\footnotesize{Hypothesis test results for $H_0: N_{modes} = 1$, $H_1: N_{modes} \ge 2$, with $N_{modes}$ the number of modes of the data distribution. Results for Frequentist tests are p-values associated with the null hypothesis. Result for the Bayesian test is the posterior probability of uni-modality.}
+
+\end{table}
+
+We re-emphasize that a key advantage of our proposed Bayesian procedure is the direct obtained information about the number of modes, their locations and the degree of uncertainty surrounding them. The central column of Panel (a) in Figure~\ref{fig:Default} shows the number of modes for the shifted negative binomial mixture along with their posterior probabilities. There is credible posterior support for a total of two modes, with 100\% posterior probability for two modes with a fat right tail. The right column of Panel (a) in Figure~\ref{fig:Default} shows the location of the modes along with their posterior probabilities. We observe that there are modes at values 0 and 4. The results for the shifted Poisson mixture indicate however more than two modes (albeit with low probability) where the third mode appears to be  a spurious one.
+
+
+% For completeness, we also compute implied posterior probability for multimodality, along with the number and location of modes from the alternative discrete mixtures in Panels (b)-(d) of Figure~\ref{fig:Default}. In line with the intuition from comparing the relative fit of the mixture models in Figure~\ref{fig:Default}, results in Panel (d) show that the Poisson mixture captures the mode at zero, but places no mass on observations within the second cluster of counts around 4. The posterior probability of multimodality in this distribution is therefore zero percent. The shifted Poisson mixture in Panel (c) better captures this second cluster of observations, indicating a posterior probability of multimodality of around 90 percent. However the shifted Poisson mixture also places substantial non-zero probability of modal locations in the far right tail of the distribution. In contrast, the overdispersion parameter in two types of negative binomial mixture models permits them to put substantially less weight on these observations. Indeed, results in both Panels (a) and (b) classify these tail observations as noise as oppose to modes. However there is a stark difference between the two types of negative binomial mixtures. The negative binomial mixture in Panel (b) indicates relatively small posterior probability of multimodality at around 25 percent. This is caused by detecting a mode at zero with 100 percent posterior probability, and a 25 percent cumulative posterior probability of a second modal location at either three or four. In contrast, the shifted negative binomial mixture has a posterior probability of of multimodality equal to 100 percent, with modes located at zero and four. The results here therefore highlights the importance of introducing the shift parameter in addition to accounting for overdispersion.
+
+
+
+
+\begin{table}[H]
+	\caption{Log-predictive Likelihood Results \label{tab:ML} }
+	\centering
+	\begin{tabular}{@{\extracolsep{5pt}} c|cc}
+		\toprule
+		Data set & Shifted Negative Binomial & Shifted Poisson \\ \hline 
+		Default & -6984  & -7015 \\     % (2.10)   (10.40)
+		Inflation & -1373  & -1374 \\   %  (1.93)  (9.39)
+		DNA &  -1674 & -1773 \\        % (1.15) (41.90)
+		\bottomrule
+	\end{tabular}
+	
+	\vspace*{0.5cm}
+	
+	\footnotesize{Notes: Average log-predictive likelihoods of all observations, computed using the cross-validation density approach (see \cite{eklund2007forecast} and references therein).}
+	
+\end{table}
+
+In conclusion, our analysis using a mixture of shifted negative binomial distributions with financial count data leads to credible estimates of number and locations of modes which may be used for the institution's policy of granting loans. Our results could be used by a risk manager to categorize clients according to their defaulted installment behavior. For each client, it is typically the case that information is provided regarding their individual characteristics, e.g., income, profession, etc, at the beginning of the contract. In further research such micro-data could be used within our methodology as explanatory variables to develop more detailed risk management profiles and quantify the expected costs of risk misclassification in credit scoring.
+
+
+\subsection{Inflation Expectations}
+We consider count data from survey responses to the question ``By what percentage do you expect prices to go up, on average, during the next 12 months?'', from the University of Michigan's Surveys of Consumers, which are shown in  Figure \ref{fig:data}. The right panel in Figure \ref{fig:data} contains response data in 2023 with a total of 480 observations.  It is notable that many respondents select round numbers 10\%, 20\% or even 30\% which suggests that such behavior is indicative of high uncertainty. Visually, there are two lower modes at 0\% and 3-4\%, suggesting a de-anchoring of inflation expectations away from the central bank's target of 2\% and a mode at 30\%.  This suggests that inflation expectations have widespread disagreement,  both within the subgroup with `credible' expectations and the subgroup with `incredible' expectations. Heterogeneity within the joint distribution of private agents' inflation expectations has been linked with alternative learning \citep{pfajfar2010heterogeneity} and economic (il)literacy \citep{burke2014economic}. In these studies multimodality is typically ``eyeballed" from the data but our flexible class of shifted negative binomial mixtures can be used to formally detect and explore this phenomenon to which we now turn.
+
+
+The estimated PMF of the mixture of shifted negative binomial distributions is shown in Panel (a) of Figure~\ref{fig:Inflation}. For comparison, the fitted mixture of shifted Poisson distributions is shown in Panel (b). It is seen that both mixtures have a similar distribution of mass in the center but that the shifted Poisson mixture also puts some mass for a mode in the far right tail of the distribution  while the shifted negative binomial mixture does not categorize these observations as modes. This again indicates a better ability of the shifted negative binomial mixture to capture the tail behavior. The overdispersion parameter in the shifted negative binomial distribution permits it to put relatively less weight on the observations in the right tail of the distribution, which implies that the estimation results are more robust in case of outliers. This prevents finding spurious modes. The log-predictive likelihoods of each model are shown in the middle row of Table~\ref{tab:ML}. It is seen that in terms of this measure of fit both mixtures do not differ much.
+
+
+Results from the frequentist and Bayesian test procedures about the existence of multiple modes  are shown in the middle row of Table~\ref{tab:tests}.  For the frequentist test results we find conflicting evidence on  the existence of multiple mode: two test do not reject the null hypothesis of a single mode at the 5\% level of significance while two tests reject the null. The Bayesian result from the shifted negative binomial mixture suggest that the posterior probability of unimodality is 2\%.  
+
+The central column of Panel (a) in Figure~\ref{fig:Inflation} shows that both mixtures give evidence about more than one mode. However, the shifted negative binomial mixture gives substantial support for two modes while the mixture of Poissons gives some posterior probability to three modes. The right column of Panel (a) in Figure~\ref{fig:Inflation} shows the location of the modes along with their posterior probabilities. The third mode of the Poisson mixture seems to be  a spurious one.
+
+We conclude that the evidence about the location of modes from the shifted binomial mixture is more credible than the shifted Poisson mixture from an economic perspective. 
+
+%%  than the evidence from the mixture of shifted Poissons.
+
+
+
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[height = 4cm, width=\textwidth]{Figures/Updated/infl_23_SNB.pdf}
+		\caption{Shifted Negative Binomial Mixture}
+		\label{fig:Inflation_a}
+	\end{subfigure}
+	
+	\vspace{1em} % Space between the subfigures
+	
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[height = 4cm, width=\textwidth]{Figures/Updated/infl_23_SP.pdf}
+		\caption{Shifted Poisson Mixture}
+		\label{fig:Inflation_b}
+	\end{subfigure}
+	
+	\caption{Inflation Expectations Data, Fitted Mixtures and Modal Inference}
+	\label{fig:Inflation}
+\end{figure}
+
+%\color{red}
+%[Results somewhat similar to subsection 4.1: Again 2 modes for mixture of shifted NB, again spurious modes for mixture of shifted Poisson, again better predictive likelihood.]
+%\color{black}
+
+%%\textbf{\textcolor{red}{Need to reformat figure}}
+
+\subsection{DNA tandem repeats data}
+In bioinformatics it is known that more than half of the human genome consists of repetitive DNA. Tandemly repeated DNA sequences comprise a substantial proportion thereof. In different populations one can identify commonalities and differences of so-called Macro-Satellite Repeats (MSRs) as a particular group of repetitive DNA sequences with evidence of multimodal size distributions. Estimating the number and location of modes in such distributions is important since observed deviations in the configurations of MSRs may indicate genetic diseases, see \cite{Bruceetal2009} and \cite{Balogetal2012} among several others. \cite{DNA_leiden} provide the first comprehensive study of MSRs in different human populations, using mixtures of shifted Poisson distributions with a given number of components -- based on the Bayesian Information Criterion (BIC). We construct a mixture of shifted negative binomial distributions to estimate posterior features using counts of DNA tandem repeat data for the case of D4Z4 illustrated in Figure~\ref{fig:DNA}. These data are obtained from 270 unrelated human DNA samples from Asian, African and Caucasian origin, see \cite{DNA_leiden}. It is of substantial interest to analyze the number and location of modes in the data, since differences in these values may next be linked to e.g. genetic diseases.
+
+
+The estimated PMF for the mixture of shifted negative binomial distributions is shown in panel (a) of Figure~\ref{fig:DNA}. For comparison in panel (b) gives the PMF of the estimated mixture of shifted Poissons. The shifted Poisson mixture indicates four modes while the shifted negative binomial mixture indicates unimodality without categorizing the observations in both tails as modes. We re-emphasize that the overdispersion parameter in the shifted negative binomial distribution makes the estimation of this
+distribution more robust in case of outliers. The  log-predictive likelihood of the shifted binomial mixture in Table~\ref{tab:ML} is substantially better than the shifted Poisson mixture. 
+
+
+
+%\begin{figure}[H]
+%   	\includegraphics[width=\linewidth]{Figures/Updated/dna_ct47.pdf}
+%	\caption{Mixture Models: DNA Data - ct47 }
+%\end{figure}
+
+%\begin{figure}[H]
+%	\includegraphics[width=\linewidth]{Figures/Updated/dna_d4z4.pdf}
+%	\caption{Mixture Models: DNA Data - d4z4 } \label{fig:DNA}
+%\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[height = 4cm, width=\textwidth]{Figures/Updated/d4z4_SNB.pdf}
+		\caption{Shifted Negative Binomial Mixture}
+		\label{fig:DNA_a}
+	\end{subfigure}
+	
+	\vspace{1em} % Space between the subfigures
+	
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[height = 4cm, width=\textwidth]{Figures/Updated/d4z4_SP.pdf}
+		\caption{Shifted Poisson Mixture}
+		\label{fig:DNA_b}
+	\end{subfigure}
+	
+	\caption{DNA Data, Fitted Mixtures and Modal Inference}
+	\label{fig:DNA}
+\end{figure}
+
+%%\textbf{\textcolor{red}{Need to reformat figure}}
+
+%\begin{figure}[H]
+%	\includegraphics[width=\linewidth]{Figures/Updated/dna_msr5p.pdf}
+%	\caption{Mixture Models: DNA Data - msr5p }
+%\end{figure}
+
+%\paragraph{Modality tests}
+Next, we explore the results of  the frequentist tests and  our Bayesian procedure about possible multimodality given in the bottom row of Table~\ref{tab:tests}.  All four frequentist tests do not reject the null hypothesis of unimodality  at the 5\% level of significance and the Bayesian procedure indicates that the posterior probability of unimodality is  100\%. 
+ 
+The second column of each sub-panel in Figure~\ref{fig:DNA} shows the possible number of modes along with their posterior probabilities. There we observe that the negative binomial mixture holds on to one mode but the shifted Poisson to four modes. The third column of each sub-panel in Figure~\ref{fig:DNA} shows the location of the modes along with their posterior probabilities. 
+%%It is up to the researchers, policy makers etc.  to determine whether the modes of the shifted Poisson mixture close to zero and the ones at 40 and 60 are credible or not. 
+We conclude that the statistical evidence about the number of modes from the mixture of shifted binomials is more credible than the results of the models of the mixture of shifted Poissons, based on the
+predictive likelihoods.
+
+
+
+
+\section{Conclusions}
+\label{sec:conclusion}
+
+We introduced a simulation-based Bayesian approach using a mixture of shifted negative binomial distributions in order to estimate multimodal and asymmetric distributions for count data sets and 
+determine the  number and location of modes with substantial posterior probability.
+%%
+For computational efficiency, we applied the sparse finite mixture Markov chain Monte Carlo method  from \citet{Mal:SFS:2016} in order to estimate the number of non-empty components of the mixture.
+
+%Our results are in  contrast to results obtained by applying two commonly used frequentist tests for multimodality, the Silverman \citep{silverman1981using} and dip tests \citep{Hartigan1985dip},  which often fail to reject the null of a single mode, thereby providing misleading results. 
+
+For empirical analysis we made use of three count data sets from finance, economics and bioinformatics. Analysis of the financial data about  repayment details of clients obtaining a loan from a financial institution in Spain in 1990 yields evidence that the data distribution is bimodal and has a fat right tail. A mixture of shifted negative binomial distributions leads to credible estimates of location of modes which may be useful information for the institution's policy of granting loans.  
+
+
+%% \textbf{\textcolor{red}{IN CONTRAST TO THE RESULTS FOR A MIXTURE OF SHIFTED POISSONS???}} 
+
+Using count data of inflation expectations, we again find evidence that the data distribution is bimodal and has a fat right tail, where the evidence about the location of modes from the shifted binomial mixture is more credible than the shifted Poisson mixture from an economic perspective. 
+
+Using count data of DNA tandem repeats from \cite{DNA_leiden} we found that applying the proposed model and method provides substantial posterior probability for a unimodal distribution
+in agreement with the frequentist tests. 
+
+More generally, our results indicate that the proposed methodology provides effective tools for quantification of accuracy and uncertainty  of the modes of multimodal data distributions which is useful for forecasting and policy analysis.
+
+In future research, we plan to compare the proposed method with other tests to detect multimodality and to estimate in more detail quantiles of non-standard distributions for risk analysis. The method can also be extended to multivariate (e.g.\ panel) data. 
+
+%%We finally note that an accompanying R-Package BayesMultiMode is available, see \cite{BCDHLVD2023}.
+
+% -------------------------------------------------------------------------
+\newpage
+\bibliographystyle{jae}
+\bibliography{Multimodality.bib}
+% -------------------------------------------------------------------------
+\newpage
+
+%\begin{center}
+%{\large\textbf{APPENDIX}}
+%\end{center}
+%\renewcommand\thetable{\thesection\arabic{table}}
+%\renewcommand\thefigure{\thesection\arabic{figure}}
+%\renewcommand{\theequation}{\thesection.\arabic{equation}}
+%\setcounter{table}{0}
+%\setcounter{figure}{0}
+%\setcounter{equation}{0}
+%\setcounter{section}{0}
+
+
+\appendix
+
+
+%\section{Appendix}
+
+
+\section{Specification of the negative binomial density as the marginal of a continuous mixture of Poisson densities \label{appendix:derivations} }
+
+The negative binomial density can be specified as the marginal density of a continuous mixture of Poisson densities, where the mixing distribution of the Poisson rate is a gamma distribution. Consider the negative binomial distribution
+as a Poisson($\lambda$) distribution, where $\lambda > 0$ is a random variable with a gamma distribution with shape parameter $r$ and rate parameter $\frac{p}{1-p}$:
+\begin{eqnarray}\label{Poisson-gamma_appendix}
+p(y_i|r,p) 
+&=& \int_{0}^{\infty} p_{Poisson(\lambda_i)}(y_i)  \; p_{Gamma(r,\frac{p}{1-p})}(\lambda_i) \; d\lambda_i \nonumber \\
+\nonumber \\
+&=& \int_{0}^{\infty} \frac{\lambda_i^{y_i} \exp(-\lambda_i)}{y_i!}  \; 
+\frac{\left(\frac{p}{1-p}\right)^{r} \lambda_i^{r-1} \exp \left(-\lambda_i  \frac{p}{1-p}\right)}{\Gamma(r)}
+\; d\lambda_i \nonumber \\
+\nonumber \\
+&=& \frac{\left(\frac{p}{1-p}\right)^{r}}{y_i! \; \Gamma(r)}
+\int_{0}^{\infty} \lambda_i^{y_i+r-1} \exp \left(- \frac{\lambda_i}{1-p} \right)  \; d\lambda_i \nonumber \\
+\nonumber \\
+&=& \frac{\left(\frac{p}{1-p}\right)^{r}}{y_i! \; \Gamma(r)} (1-p)^{y_i+r} \Gamma(y_i+r)\nonumber \\
+\nonumber \\
+&=& \frac{\Gamma(y_i+r)}{y_i! \; \Gamma(r)} (1-p)^{y_i} p^{r},
+\end{eqnarray} 
+where the fourth equality follows from the fact that for $a > -1$ and $b > 0$ we have
+\begin{equation}\label{integral_Gamma_density}
+\int_{0}^{\infty} \lambda^{a} \exp(-b \lambda) d\lambda = b^{-(a+1)} \Gamma(a+1)
+\end{equation}
+with $a = y_i + r-1$ and $b = \frac{1}{1-p}$.
+
+\end{document}
+
+
+
+
+
+
+
+
+% ------------------------------------
+\begin{comment}
+\clearpage
+
+
+\subsection{Some simulation results for the negative binomial distribution \label{appendix:NBexamples} }
+
+\textbf{This is not for the final version of the paper, just some results from Lennart's e-mail of September 21, 2022 
+ for the posterior distribution in case of a single negative binomial distribution (without shift and without a mixture).}
+
+Figure \ref{mu10r1} shows that for a simulated dataset of $n=1000$ observations
+the true parameter values ($\mu=10$ and $r=1$) are found.
+For $r=1$ ($\tilde r =\frac{1}{2}$) the negative binomial distribution reduces to the exponential
+distribution. The true probability mass function of the data $y_i$ lies largely in the 90\% posterior interval.
+
+For $r \rightarrow \infty$ the negative binomial distribution tends to the Poisson distribution
+(where for large $\mu$ the shape looks like a normal distribution). 
+If the shape parameter $r$ becomes large, then it becomes harder to estimate $r$ precisely
+(comparable with the degrees of freedom parameter of a Student-t distribution).
+This is illustrated by Figure \ref{mu10r100} for a simulated dataset ($n=1000$)
+with true parameter values $\mu=10$ and $r=100$.
+Note that $\tilde r = \frac{1}{1+r}$ is still estimated rather precisely, and that
+true probability mass function of the data $y_i$ lies in the 90\% posterior interval.
+
+For an intermediate value of $r$ the shape of the distribution lies between a geometric distribution
+ and a Poisson distribution. See Figure \ref{mu10r10} for a simulated dataset ($n=1000$)
+with true parameter values $\mu=10$ and $r=10$.
+
+If the mean $\mu$ becomes very small, then the outcome is almost always 0.
+Then it becomes harder to estimate the shape parameter $r$, and it also becomes harder to
+estimate $\tilde r = \frac{1}{1+r}$. The closer the true value of $\mu$ gets to 0,
+the more the posterior of $\tilde r$ tends to its uniform prior distribution on $(0, \frac{1}{2})$. 
+But that does not pose a problem: the posterior remains proper and the
+true probability mass function of the data $y_i$ lies in the 90\% posterior interval.
+Figures \ref{mu0_1r10}, \ref{mu0_01r10} and \ref{mu0_001r10}, 
+illustrate this convergence of the posterior of $\tilde r$ to its uniform prior,
+if $\mu$ gets closer to 0.
+ 
+So it appears that this negative binomial distribution can deal with (approximately) a point mass
+at $y=0$, so that a shifted negative binomial distribution (with shift parameter $\kappa$)
+should be able to deal with (approximately) a point mass
+at $y=\kappa$.
+
+Admitted, $n=1000$ is a rather large number of observations.
+For a smaller number of observations (in total, or for a component within a mixture)
+the posterior uncertainty will obviously be (much) larger.
+
+%
+%The extensions in the model and MCMC method
+%\begin{itemize}
+%\item from negative binomial distribution to shifted negative binomial distribution;
+%\item from shifted negative binomial distribution to mixture of shifted negative Binomial distributions
+%\item from `regular' mixture of shifted negative binomial distributions to SFMMCMC
+%\end{itemize} 
+%appear to be similar to the steps for the Poisson distributions,
+%where the step from the Poisson distribution to the negative binomial distribution
+%means that:
+%\begin{itemize}
+%\item $\tilde r$ needs to be simulated with a random walk Metropolis(-Hastings) step (per component);
+%for the Poisson model no such random walk Metropolis(-Hastings) step was needed,
+%as no shape parameter $r$ or $\tilde r$ existed;
+%
+%\item $\lambda_i$ must be simulated for each observation in a step of Gibbs sampling with data augmentation;
+%for the Poisson model we only had one parameter $\lambda$ per cluster (not for each individual observation).
+%\end{itemize}
+ 
+%%For the RJMCMC method the step for $\kappa$ (and for the probabilities of the components) may remain the same. However, for $\mu$ and $\tilde r$ the steps will be rather different than for $\lambda$.
+
+
+\clearpage
+
+%We introduce a class of very flexible Poisson mixtures in three steps. We start with introducing a shifted Poisson distribution and discuss its flexibility compared to the negative binomial distribution. Next, we show how a negative binomial can be written as a continuous Poisson-Gamma mixture which we extend to a shifted Poisson-Gamma mixture. Then we introduce the class of a finite mixture of a shifted Poisson-Gamma mixture. We describe its flexibility in approximating several features of multi-modal  data distribution, in particular, quantification of number of modes, their location, and their uncertainty.
+ 
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=\ScaleFactorFigures]{Figures/mu10r1} 
+\end{center}
+\caption{\label{mu10r1}Posterior draws from MCMC method for simulated data set of $n=1000$ observations
+(with true values $\mu=10$, $r=1$ and $\tilde r = \frac{1}{2}$):
+histograms of draws (after burn-in of 1000 draws; left), trace plots (right), 90\% posterior interval of probability mass function together with true probability mass function of the data $y_i$ (bottom),
+and acceptance percentage and first-order serial correlation in sequences of MCMC draws of $\tilde r$ and $\mu$ (header).}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=\ScaleFactorFigures]{Figures/mu10r10} 
+\end{center}
+\caption{\label{mu10r10}Posterior draws from MCMC method for simulated data set of $n=1000$ observations
+(with true values $\mu=10$, $r=10$ and $\tilde r = \frac{1}{11}$):
+histograms of draws (after burn-in of 1000 draws; left), trace plots (right)
+90\% posterior interval of probability mass function together with true probability mass function of the data $y_i$ (bottom),
+and acceptance percentage and first-order serial correlation in sequences of MCMC draws of $\tilde r$ and $\mu$ (header).}
+\end{figure}
+
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=\ScaleFactorFigures]{Figures/mu10r100} 
+\end{center}
+\caption{\label{mu10r100}Posterior draws from MCMC method for simulated data set of $n=1000$ observations
+(with true values $\mu=10$, $r=100$ and $\tilde r = \frac{1}{101}$):
+histograms of draws (after burn-in of 1000 draws; left), trace plots (right)
+90\% posterior interval of probability mass function together with true probability mass function of the data $y_i$ (bottom),
+and acceptance percentage and first-order serial correlation in sequences of MCMC draws of $\tilde r$ and $\mu$ (header).}
+\end{figure}
+
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=\ScaleFactorFigures]{Figures/mu0.1r10} 
+\end{center}
+\caption{\label{mu0_1r10}Posterior draws from MCMC method for simulated data set of $n=1000$ observations
+(with true values $\mu=0.1$, $r=10$ and $\tilde r = \frac{1}{11}$):
+histograms of draws (after burn-in of 1000 draws; left), trace plots (right),
+90\% posterior interval of probability mass function together with true probability mass function of the data $y_i$ (bottom),
+and acceptance percentage and first-order serial correlation in sequences of MCMC draws of $\tilde r$ and $\mu$ (header).}
+\end{figure}
+
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=\ScaleFactorFigures]{Figures/mu0.01r10} 
+\end{center}
+\caption{\label{mu0_01r10}Posterior draws from MCMC method for simulated data set of $n=1000$ observations
+(with true values $\mu=0.01$, $r=10$ and $\tilde r = \frac{1}{11}$):
+histograms of draws (after burn-in of 1000 draws; left), trace plots (right),
+90\% posterior interval of probability mass function together with true probability mass function of the data $y_i$ (bottom),
+and acceptance percentage and first-order serial correlation in sequences of MCMC draws of $\tilde r$ and $\mu$ (header).}
+\end{figure}
+
+
+
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=\ScaleFactorFigures]{Figures/mu0.001r10} 
+\end{center}
+\caption{\label{mu0_001r10}Posterior draws from MCMC method for simulated data set of $n=1000$ observations
+(with true values $\mu=0.001$, $r=10$ and $\tilde r = \frac{1}{11}$):
+histograms of draws (after burn-in of 1000 draws; left), trace plots (right),
+90\% posterior interval of probability mass function together with true probability mass function of the data $y_i$ (bottom),
+and acceptance percentage and first-order serial correlation in sequences of MCMC draws of $\tilde r$ and $\mu$ (header).}
+\end{figure}
+
+% -------------------------------------------------------------------------
+
+\clearpage
+
+\subsection{Results from mixture of shifted Poissons}
+
+\textbf{DNA Data results}
+
+\textbf{MCMC Results}
+Information on the estimation: Pre- and post-processed draws along with clustering and posterior probability of number of components, are displayed in Figures~\label{fig:DNA_trace}.
+
+
+\textbf{ADD CONVERGENCE TEST, TABLE FOR COMPONENTS \& SHADING FOR POSTERIOR UNCERTAINTY IN FIGURE - CHECK RESULTS FOR CT47}
+
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\toprule
+
+CT47 & D4Z4 & MSR5P\\
+\midrule
+\adjustimage{height=5cm,width=5cm}{Figures/trace_ct47.pdf} & \adjustimage{height=5cm,width=5cm}{Figures/trace_D4Z4.pdf} & \adjustimage{height=5cm,width=5cm}{Figures/trace_MSR5P.pdf}\\
+
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Posterior Analysis: DNA Data} \label{fig:DNA_trace}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\toprule
+
+CT47 & D4Z4 & MSR5P\\
+\midrule
+\adjustimage{height=5cm,width=5cm}{Figures/components_mixture_ct47.pdf} & \adjustimage{height=5cm,width=5cm}{Figures/components_mixture_D4Z4.pdf} & \adjustimage{height=5cm,width=5cm}{Figures/components_mixture_MSR5P.pdf}\\
+
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Mixture Models: DNA Data} \label{fig:DNA_mixture}
+\end{figure}
+
+\begin{comment}
+    \begin{figure}[htbp]
+    \caption{Posterior Analysis: CT47}
+    \label{fig:DNA_trace_CT47}
+    \begin{center}
+    	\includegraphics[width=0.45\linewidth]{Figures/trace_ct47.pdf}
+    \end{center}		
+    \end{figure}
+    
+    \begin{figure}[htbp]
+    \caption{Posterior Analysis: D4Z4}
+    \label{fig:DNA_trace_D4Z4}
+    \begin{center}
+    	\includegraphics[width=0.45\linewidth]{Figures/trace_d4z4.pdf}
+    \end{center}		
+    \end{figure}
+    
+    \begin{figure}[htbp]
+    \caption{Posterior Analysis: MSR5P}
+    \label{fig:DNA_trace_MSR5P}
+    \begin{center}
+    	\includegraphics[width=0.45\linewidth]{Figures/trace_msr5p.pdf}
+    \end{center}		
+    \end{figure}
+\end{comment}
+
+\begin{comment}
+    \begin{figure}[htbp]
+    \caption{Mixture model: CT47}
+    \label{fig:DNA_posteriors}
+    \begin{center}
+    	\includegraphics[width=0.45\linewidth]{Figures/components_mixture_CT47.pdf}
+    \end{center}		
+    \end{figure}
+    
+    \begin{figure}[htbp]
+    \caption{Mixture model: MSR5}
+    \label{fig:DNA_posteriors}
+    \begin{center}
+    	\includegraphics[width=0.45\linewidth]{Figures/components_mixture_MSR5p.pdf}
+    \end{center}		
+    \end{figure}
+    
+    \begin{figure}[htbp]
+    \caption{Mixture model: D4Z4}
+    \label{fig:DNA_posteriors}
+    \begin{center}
+    	\includegraphics[width=0.45\linewidth]{Figures/components_mixture_D4Z4.pdf}
+    \end{center}		
+    \end{figure}
+\end{comment}
+
+\paragraph{Modality tests}
+% Is the data distribution multimodal?
+
+\begin{table}[htbp]
+\caption{Hypothesis test results}\label{tab:DNA_tests}
+\begin{tabular}{@{\extracolsep{5pt}} c|ccccc}
+\toprule
+& Silverman & Hall and York & Cheng and Hall & Hartigan and Hartigan & Bayesian \\ \hline 
+CT47 & 0.75 & 0.59 & 0.96 & 0.88 & 0.00 \\ 
+D4Z4 & 0.64 & 0.40 & 0.99 & 0.65 & 0.00 \\ 
+MSR5P & 0.38 & 0.19 & 0.91 & 0.45 & 0.00 \\ 
+\bottomrule
+\end{tabular}
+
+\vspace*{0.5cm}
+
+\footnotesize{Hypothesis test results for H0:$ K = 1$, H1$: K > 1$, where K is the number of modes in the density. Results for frequentist tests are p-values associated with the null hypothesis. Result for the Bayesian test is the posterior probability of unimodality.}
+
+\end{table}
+
+% How many modes are there?
+To that end, the second column of each sub-panel in Figure~\ref{fig:DNA_modes_probs} shows the possible number of modes along with their posterior probabilities. There we observe that 
+
+% Where are the modes located \& certainty?
+Finally, the third column of each sub-panel in Figure~\ref{fig:DNA_modes_probs} shows the location of the modes along with their posterior probabilities. We observe that 
+
+% \paragraph{Policy implications}
+
+\begin{figure}[htbp]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\toprule
+
+CT47 & D4Z4 & MSR5P\\
+\midrule
+\adjustimage{height=5cm,width=5cm}{Figures/posterior_probabilities_ct47.pdf} & \adjustimage{height=5cm,width=5cm}{Figures/posterior_probabilities_D4Z4.pdf} & \adjustimage{height=5cm,width=5cm}{Figures/posterior_probabilities_MSR5P.pdf}\\
+
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Posterior probabilities: DNA Data} \label{fig:DNA_modes_probs}
+\end{figure}
+
+\begin{comment}
+    \begin{figure}[h]
+    \caption{Posterior probabilities: CT47}\label{fig:DNA_modes_probs_CT47}
+    \begin{center}
+    \includegraphics[width=\linewidth]{Figures/posterior_probabilities_ct47.pdf}
+    \end{center}
+    \end{figure}
+    
+    \begin{figure}[h]
+    \caption{Posterior probabilities: CT47}\label{fig:DNA_modes_probs_D4Z4}
+    \begin{center}
+    \includegraphics[width=\linewidth]{Figures/posterior_probabilities_D4Z4.pdf}
+    \end{center}
+    \end{figure}
+    
+    \begin{figure}[h]
+    \caption{Posterior probabilities: CT47}\label{fig:DNA_modes_probs_MSR5P}
+    \begin{center}
+    \includegraphics[width=\linewidth]{Figures/posterior_probabilities_MSR5P.pdf}
+    \end{center}
+    \end{figure}
+\end{comment}
+
+
+\textbf{Defaulted payment instalments}
+
+
+
+\textbf{MCMC Results}
+
+
+\begin{figure}[htbp]
+\begin{center}
+	\includegraphics[width=0.6\linewidth]{Figures/trace.pdf}
+\end{center}
+\caption{Default data - posterior draws}\label{fig:default_trace}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{center}
+	\includegraphics[width=0.6\linewidth]{Figures/components_mixture.pdf}
+\end{center}		
+\caption{Default data - estimated mixture model}\label{fig:default_mixture}
+\end{figure}
+
+\textbf{ADD CONVERGENCE TEST, TABLE FOR COMPONENTS \& SHADING FOR POSTERIOR UNCERTAINTY IN FIGURE: Prior propbability of unimodality!}
+
+\paragraph{Modality tests}
+
+
+\begin{table}[h] \centering
+  \caption{Hypothesis test results}
+  \label{tab:default_tests}
+\begin{tabular}{@{\extracolsep{5pt}} ccccc}
+\\[-1.8ex]\hline
+\hline \\[-1.8ex]
+Silverman & Hall and York & Cheng and Hall & Hartigan and Hartigan & Bayesian \\
+0.46 & 0.096 & 0.436 & 0.016 & 0.058 \\
+\hline \\[-1.8ex]
+\end{tabular}
+
+\vspace*{0.5cm}
+
+\footnotesize{Hypothesis test results for H0:$ K = 1$, H1$: K > 1$, where K is the number of modes in the density. Results for Frequentist tests are p-values associated with the null hypothesis. Result for the Bayesian test is the posterior probability of unimodality.}
+
+\end{table}
+
+
+
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=\linewidth]{Figures/posterior_probabilities.pdf}
+\end{center}
+\caption{Posterior probabilities}\label{fig:default_modes_probs}
+\end{figure}
+		
+% HERMAN: CAN WE DO HERE ALSO A MODE MEMBERSHIP VERSUS A COMPONENT MEMBERSHIP? THE FORMER IS USED IN THE BANKING WORLD , WE COULD ARGUE. HERMAN THIS MAYBE ENOUGH???
+
+
+\end{comment}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% -------------------------------------------------------------------------
+\section{Simulation Exercise}
+\label{sec:simdata}
+We focus on the fit of Poisson mixtures for count data and on such features as the determination of the correct number of modes for the case of bi- and tri-modal distributions. The simulation study we consider is similar to  \cite{Woo20074379} and \cite{Umashanger2009}, with the extension of using a shifted Poisson distribution in part of the simulations. 
+
+For the simulation setup, the following choices have been made, see Table~\ref{tab:simdataparametersPoisson}.  Standard and shifted Poisson distributions are selected with 2 and 3 components and with  model weights close to being equal and very unequal. The true parameter values of the simulated data set are denoted by $\theta^{(j)} = (p_j, \lambda_j, \kappa_j) = (p_j, \lambda_j, 0)$ for $j\in\{1,\ldots, J\}$ for a $J$-component mixture of standard Poisson distributions, and by  $\theta_s^{(j)} = (p_j, \lambda_j, \kappa_j)$ for a $J$-component mixture of shifted Poisson distributions. For the parameter specifications, we make use of the equivalence property between standard and shifted Poisson distributions with the value of shift parameter chosen as $\kappa=0$. Sample sizes are taken as small (100) and large (1000). The exercise is repeated across 150 simulated data. Posterior results are based on a chain of 15000 total number of draws, in which the first 5000 draws are disregarded as a burn-in. We perform simulation from standard Poisson and shifted Poisson mixtures.
+
+\begin{table}
+	\caption{Parameters of simulated data from mixtures of standard and shifted Poisson distributions
+		\label{tab:simdataparametersPoisson}}
+	\begin{center}
+		\begin{tabular}{lccccc}
+			\\\hline
+			&\multicolumn{5}{c}{Parameters definitions for simulated datasets}\\[-0em]
+			&$J$		& $\theta_{(s)}^{(1)}$ & $\theta_{(s)}^{(2)}$ &  $\theta_{(s)}^{(3)}$ \\\hline
+			\multicolumn{6}{l}{\textit{Mixture of standard Poisson distributions}}\\[-0em]
+			dataset 1
+			&$2$		& $(0.50, 1, 0)$	& $(0.50, 9, 0)$	&$-$\\[-0em]
+			dataset 2
+			&$2$		& $(0.80, 1, 0)$	& $(0.20, 9, 0)$	&$-$\\[-0em]
+			dataset 3
+			&$3$		& $(0.45, 1, 0)$	& $(0.45, 5, 0)$	& $(0.10, 10, 0)$	\\\hline
+			\multicolumn{6}{l}{\textit{Mixture of shifted Poisson distributions}}\\[-0em]
+			dataset 4
+			&$2$		& $(0.50, 1, 1)$		& $(0.50, 9, 2)$		&$-$\\[-0em]
+			dataset 5
+			&$2$		& $(0.80, 1, 1)$		& $(0.20, 9, 2)$		&$-$\\[-0em]
+			dataset 6
+			&$3$		& $(0.45, 1, 1)$		& $(0.45, 5, 2)$		& $(0.10, 10, 3)$	\\\hline
+			%\multicolumn{6}{l}{\textit{Mixture of zero-inflated Poisson distributions}}\\[-0em]
+			%	&$2$ 		&$(0.30, 3, 2)$			&$(0.20, 9, 4)$			&$-$\\\hline	
+		\end{tabular}
+	\end{center}
+	\footnotesize
+	\emph{Note: }The table presents true parameters for each simulated dataset from mixture of standard and shifted Poisson distributions. $J$ denotes the number of mixture components for each dataset. Parameters of each component are defined as $\theta^{(J)} = (p_j, \lambda_j, 0)$ for $j \in \{1,\ldots,J\}$ for mixtures of standard Poisson distributions and $\theta_s^{(J)} = (p_j, \lambda_j, \kappa_j)$ for $j \in \{1,\ldots,J\}$ for mixtures of shifted Poisson distributions.  %For the zero-inflated Poisson distribution, the point probability at $0$ is 0.5.
+\end{table}
+
+
+% ---------------------------------------------------------------------------------------------
+\paragraph{OLD STUFF}
+
+Using simulated data, we show the results of several experiments dealing with issues that one encounters during the estimation of mixture distributions: label switching, mixture complexity, level of prior information and mode membership versus component membership.   We also compare the computational efficiency of the SFMMCMC and RJMCMC methods. Finally, we show how our Bayesian procedure for determining the correct number of modes compares with results obtained by applying two well-known frequentist tests: the Silverman test \citep{silverman1981using} and the dip test \citep{Hartigan1985dip}.
+
+
+%\paragraph{\textbf{Label switching, mixture complexity and level of prior information.}} 
+
+Label switching between mixture components refers to  the feature that the posterior distribution may be invariant to switching between components. This is due to weak or no identification of individual components and can be tackled through parameter restrictions defined by flexible priors. In our case one can make use of restrictions on means, variances or probabilities of each component that are defined in a flexible way through the prior, see e.g.\ \cite*{Mal:SFS:2016}.  We  note that in the case of the shifted Poisson, one of the following label switching constraints  can be imposed:
+$ \kappa_l < \kappa_j, \mbox{ for }l<j$, (based on the shift parameter),
+$ \kappa_l + \lambda_l < \kappa_j+ \lambda_k, \mbox{ for }l<j$, (based on the mean),
+or $ \pi_l <\pi_j,  \mbox{ for }l<j$, (based on the component probabilities). We emphasise that these constraints are not needed to analyse such features as accuracy of the estimated distribution in relation to the data distribution and determining the number of estimated modes of the distributions.  A further methodological and practical issue is the relation between prior parameters and mixture complexity, \textit{i.e.\ }a posterior density with a large number of components. In the applications with very weak or flat but proper priors and a relatively small number of observations in some of the large set of components,  over-fitting or lack of sparsity may lead to finding a spurious number of modes, and the method may also be sensitive to outliers. This issue is referred to as determining `genuine multimodality' in situations where the danger is that minor modes are captured by a mixture model, see e.g., \cite{Gruen2009851,fru:dea}.
+
+For RJMCMC methods, the issue of over-fitting is analysed in several papers. The behaviour of parameters in models with spurious modes can be linked to the specification of uniform priors for Dirichlet parameters, see \cite{Nobile2014AoS}. For symmetric Dirichlet priors, as in equation (5), %\eqref{eq:mixturenormalspriors1}--\eqref{eq:mixturenormalspriors3}, %quations now in supplementary material
+overfitting is likely to occur with (near) empty mixture components or with mixture components which are `identical' in parameter values. The former is shown to be the case when the Dirichlet parameter $\alpha$ is small with $\alpha < d/2$ where $d$ denotes the number of parameters in each mixture component. For symmetric Dirichlet priors with a relatively high parameter, $\alpha > d/2$, identical clusters are likely, see \cite{rousseau2011asymptotic}. We follow \cite{fru:dea} and take $\alpha = 4$ in the reminder of this paper. 
+
+We focus on the fit of Poisson mixtures for count data and on such features as the determination of the correct number of modes for the case of bi- and tri-modal distributions. The simulation study we consider is similar to  \cite{Woo20074379} and \cite{Umashanger2009}, with the extension of using a shifted Poisson distribution in part of the simulations. 
+
+For the simulation setup, the following choices have been made, see Table~\ref{tab:simdataparametersPoisson}.  Standard and shifted Poisson distributions are selected with 2 and 3 components  and with  model weights close to being equal and very unequal.  Sample sizes are taken as small (100) and large (1000). The true parameter values of the simulated data set are denoted by $\theta^{(j)} = (p_j, \lambda_j, \kappa_j) = (p_j, \lambda_j, 0)$ for $j\in\{1,\ldots, J\}$ for a $J$-component mixture of standard Poisson distributions, and by  $\theta_s^{(j)} = (p_j, \lambda_j, \kappa_j)$ for a $J$-component mixture of shifted Poisson distributions. For the parameter specifications, we make use of the equivalence property between standard and shifted Poisson distributions with the value of shift parameter chosen as $\kappa=0$.
+
+\begin{table}
+\caption{Parameters of simulated data from mixtures of standard and shifted Poisson distributions
+\label{tab:simdataparametersPoisson}}
+\begin{center}
+\begin{tabular}{lccccc}
+\\\hline
+	&\multicolumn{5}{c}{Parameters definitions for simulated datasets}\\[-0em]
+	&$J$		& $\theta_{(s)}^{(1)}$ & $\theta_{(s)}^{(2)}$ &  $\theta_{(s)}^{(3)}$ \\\hline
+\multicolumn{6}{l}{\textit{Mixture of standard Poisson distributions}}\\[-0em]
+dataset 1
+	&$2$		& $(0.50, 1, 0)$	& $(0.50, 9, 0)$	&$-$\\[-0em]
+dataset 2
+	&$2$		& $(0.80, 1, 0)$	& $(0.20, 9, 0)$	&$-$\\[-0em]
+dataset 3
+	&$3$		& $(0.45, 1, 0)$	& $(0.45, 5, 0)$	& $(0.10, 10, 0)$	\\\hline
+\multicolumn{6}{l}{\textit{Mixture of shifted Poisson distributions}}\\[-0em]
+dataset 4
+	&$2$		& $(0.50, 1, 1)$		& $(0.50, 9, 2)$		&$-$\\[-0em]
+dataset 5
+	&$2$		& $(0.80, 1, 1)$		& $(0.20, 9, 2)$		&$-$\\[-0em]
+dataset 6
+	&$3$		& $(0.45, 1, 1)$		& $(0.45, 5, 2)$		& $(0.10, 10, 3)$	\\\hline
+%\multicolumn{6}{l}{\textit{Mixture of zero-inflated Poisson distributions}}\\[-0em]
+%	&$2$ 		&$(0.30, 3, 2)$			&$(0.20, 9, 4)$			&$-$\\\hline	
+\end{tabular}
+\end{center}
+\footnotesize
+\emph{Note: }The table presents true parameters for each simulated dataset from mixture of standard and shifted Poisson distributions. $J\in\{1,\ldots, 2\}$ denotes the number of mixture components for each dataset. Parameters of each component are defined as $\theta^{(J)} = (p_j, \lambda_j, 0)$ for $j \in \{1,\ldots,J\}$ for mixtures of standard Poisson distributions and $\theta_s^{(J)} = (p_j, \lambda_j, \kappa_j)$ for $j \in \{1,\ldots,J\}$ for mixtures of shifted Poisson distributions.  %For the zero-inflated Poisson distribution, the point probability at $0$ is 0.5.
+\end{table}
+
+
+%For the simulation setup, the following choices have been made: mixtures of standard and shifted Poisson densities with 2 and 3 components;  model weights close to equal and very unequal; sample size is small (100) and large (1000). We also consider a simulated dataset from a mixture of shifted Poisson distributions with a zero-inflation property. The true parameter values of the simulated data sets, presented in Table~\ref{tab:simdataparametersPoisson}, are denoted by $\theta^{(j)} = (p_j, \lambda_j, \kappa_j) = (p_j, \lambda_j, 0)$ for $j\in\{1,\ldots, J\}$ for a $J$-component mixture of standard Poisson distributions, and by  $\theta_s^{(j)} = (p_j, \lambda_j, \kappa_j)$ for a $J$-component mixture of shifted Poisson distributions. For these parameter specifications, we use the equivalence between standard and shifted Poisson distributions, where the former is a restricted version of the latter, with the shift parameter $\kappa=0$. 
+
+
+%Using Table~\ref{tab:simdataparametersPoisson} and considering Figure~\ref{fig:TrueDensities_SimulationMixPoisson}, one can see using simple visual inspection that for the two component mixture the true processes have clear bimodality. For the three component mixture and a small sample finding the correct number of modes is not so obvious from simply visual inspection. When the sample is large  bimodality is relatively easier to detect also for the case of the shifted Poisson. Clearly, it is for the borderline cases that our statistical method should be used in order to obtain accurate predictive results.\\
+
+%For a set of ten simulated data sets, the correct densities are shown in Figures \ref{fig:TrueDensities_SimulationMixPoisson}. As mentioned, these figures show that some of the data sets, such as data set 1 and 2, have distinct modes according to these densities; while majority of the data sets have modes which are not clearly separated as high peaks. Estimation of the number of modes is naturally linked to how well each mode is separated. 
+
+
+As mentioned before, we consider the case of an unknown number of mixture components for each simulated data set and report estimated density features that are particularly relevant for count data simulations.\footnote{Given a known number of components, results are more pertinent than for an unknown number of components due to the extra prior information. These results are omitted to save space but are available upon request.} To the best of our knowledge, theoretical approximation properties do not exist in the literature for this case. Model parameters are estimated together with the number of modes for each simulated data set using posterior samplers from Section~\ref{sec:mixturemodels}. %We exclude the zero-inflated Poisson distributions for this simulation study, as it does not correspond to a proper mixture distribution with a specific number of components. 
+The Dirichlet prior parameter  $\alpha = 4$ and posterior results are based on 10000 total number of draws, and 5000 draws are disregarded as burn-in draws.
+We perform simulation from standard Poisson and shifted Poisson mixtures. For each distribution type, different parameter settings are considered with $J\in\{1,2,3,4\}$ mixture components. Each sample consists of $n=100$ observations and the simulation study is repeated 150 times.
+%HERMAN: SHOULD WE NOT INCREASE THIS NUMBER LIKE IN THE CASE OF THE KNOWN NUMBER OF MIXTURE COMPONENTS times for each data set.  Simulation number is increased. 
+
+%HERMAN: SHOULD WE ALSO INCLUDE A FIGURE HERE AS FIGURE 1. 
+%\textcolor{blue}{NB: these results are added gradually in \ref{fig:RJMCMCDensities_SimulationMixPoisson}.}
+
+\begin{figure}[htbp]
+	\caption{RJMCMC estimates and true modes for simulated data. In each plot, simulation study is replicated 150 times. Vertical lines are the theoretical modes of the true pdf.	
+\label{fig:RJMCMCDensities_SimulationMixPoisson}}
+\centering
+	\begin{tabular}{ccc}
+	\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_100obs_noshift1_150_rep.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_100obs_noshift2_150_rep.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_100obs_noshift5_150_rep.eps}
+\\ dataset 1 & dataset 2 & dataset 3
+\\ \multicolumn{3}{c}{Mixture of standard Poisson distributions, 100 observations}
+\\
+%	\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_1000obs_noshift1_150_rep.eps}
+&%	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_1000obs_noshift2_150_rep.eps}
+&%	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_1000obs_noshift5_150_rep.eps}
+%\\ dataset 4 & dataset 5 & dataset 6
+%\\ \multicolumn{3}{c}{Mixture of standard Poisson distributions, 1000 observations}
+\\
+	\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_100obs_shift1_150_rep.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_100obs_shift2_150_rep.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_100obs_shift5_150_rep.eps}
+\\ dataset 4 & dataset 5 & dataset 6
+\\ \multicolumn{3}{c}{Mixture of shifted Poisson distributions, 100 observations}
+\\
+	\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_1000obs_shift1_150_rep.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_1000obs_shift2_150_rep.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_1000obs_shift5_150_rep.eps}
+\\ dataset 4 & dataset 5 & dataset 6
+\\ \multicolumn{3}{c}{Mixture of shifted Poisson distributions, 1000 observations}
+	\end{tabular}
+
+\centering
+\begin{tabular}{cc}
+%	\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_1000obs_shift5_150_rep.eps}
+%	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/RJMCMCEstimate_simset_1000obs_shift5_150_rep.eps}
+%\\ 100 observations & 1000 observations
+%\\ \multicolumn{2}{c}{Mixture of zero inflated Poisson distributions}
+\end{tabular}
+\end{figure}
+
+
+
+Table~\ref{tab:simdata_mixPois_unknownJ} contains estimation results for data simulated from standard and shifted mixtures of Poisson distributions. The true number of modes, the estimated mode with the highest posterior probability and the corresponding probability  are reported for each data set. The number of modes with the highest posterior probability correspond to the true number of modes in each data set we consider. Furthermore, the posterior probability associated with the true number of modes is higher than 0.5 in all simulated data sets. 
+%In a few cases, reported in the additional material, this posterior probability is not close to 1, although the number of modes with maximum posterior probability does correspond to the true number of modes. We refer to the additional material appendix for more details.
+
+
+\begin{table}
+\caption{True and estimated number of modes from simulated count data
+\label{tab:simdata_mixPois_unknownJ}}
+\centering
+\begin{tabular}{lccccccc}
+  \hline
+ & true value & value (max.\ pr.) & post. prob. & std.dev. 
+ 	& $p_{\mbox{S}}$  & $p_{\mbox{dip}}$ & $p_{\mbox{HY}}$  \\ 
+  \hline
+ \multicolumn{8}{l}{\textit{Mixture of standard Poisson distributions}}\\
+ \hline
+%  data 1 & 2 & 2.00 & 0.98 & 0.12 & 0.01 (0.02) & 0.00 (0.00) \\ 
+%  data 2 & 2 & 2.00 & 0.99 & 0.07 & 0.07 (0.04) & 0.00 (0.00) \\ 
+%  data 3 & 2 & 2.00 & 0.74 & 0.46 & 0.15 (0.11) & 0.00 (0.00) \\ 
+  data 1 & 2 & 2.00 & 0.98 & 0.12 & 0.23 (0.12) & 0.23 (0.27) & 0.06 (0.08) \\ 
+  data 2 & 2 & 2.00 & 0.99 & 0.07 & 0.43 (0.20) & 0.73 (0.26) & 0.16 (0.15) \\ 
+  data 3 & 2 & 2.00 & 0.74 & 0.46 & 0.65 (0.20) & 0.75 (0.26) & 0.40 (0.24) \\ 
+  \hline
+ \multicolumn{8}{l}{\textit{Mixture of shifted Poisson distributions}}\\
+%  data 4 &2 &2 &0.97 &0.05 &0.15 (0.08) &0.07 (0.14) &0.02 (0.03) \\
+%  data 5 &2 &2 &0.99 &0.02 &0.34 (0.19) &0.69 (0.26) &0.10 (0.13) \\ 
+%  data 6 &2 &2 &0.75 &0.18 &0.60 (0.21) &0.58 (0.32) &0.34 (0.24)\\
+% New freq. results 2022 Feb
+  data 4 &2 &2 &0.97 &0.05 & 0.15 (0.07) & 0.08 (0.14) & 0.02 (0.03) \\
+  data 5 &2 &2 &0.99 &0.02 & 0.43 (0.20) & 0.73 (0.26) & 0.16 (0.15) \\ 
+  data 6 &2 &2 &0.75 &0.18 & 0.65 (0.20) & 0.75 (0.26) & 0.40 (0.24) \\
+ \hline
+% \multicolumn{8}{l}{\textit{Zero inflated mixture of shifted Poisson distributions}}\\  
+% example with shift
+%	&3 &3 &0.85 &0.13 &0.34 (0.19) &0.69 (0.26) &0.10 (0.13)  \\   \hline
+\end{tabular}
+
+{Estimation results are based on 10000 draws (5000 burn-in draws) and averages from 10 simulation replications reported. Number of mixture components $J$ is estimated together with the rest of the model parameters. $p_{\mbox{S}}$ and $p_{\mbox{dip}}$ denote average p-values from Silverman  and dip tests for 150 simulation replications, with standard deviations of p-values in parentheses.}
+\end{table}
+
+
+\color{blue}
+Frequentist test results for 100 and 1000 observations - to be added in Table~\ref{tab:simdata_mixPois_unknownJ}
+
+100 observations, std Poisson \\
+\begin{tabular}{lccc}
+       &  P\_S       &  P\_dip     &  P\_HY      \\   
+data 1 &0.23 (0.12)  &0.23 (0.27)  &0.06 (0.08) \\
+data 2 &0.43 (0.2)   &0.73 (0.26)  &0.16 (0.15) \\
+data 3 &0.65 (0.2)   &0.75 (0.26)  &0.4 (0.24)  \\
+\end{tabular}
+
+1000 observations, std Poisson\\
+\begin{tabular}{lccc}
+       &  P\_S       &  P\_dip     &  P\_HY      \\   
+data 1 &0 (0.01)     &0 (0)        &0 (0)       \\
+data 2 &0.06 (0.1)   &0.65 (0.26)  &0.02 (0.04) \\
+data 3 &0.58 (0.22)  &0.9 (0.17)   &0.37 (0.23) 
+\end{tabular}
+
+100 observations, shifted Poisson \\
+\begin{tabular}{lccc}
+       &  P\_S       &  P\_dip     &  P\_HY      \\   
+data 4 &0.15 (0.07)  &0.08 (0.14)  &0.02 (0.03) \\
+data 5 &0.34 (0.19)  &0.7 (0.26)   &0.1 (0.13)  \\
+data 6 &0.6 (0.21)   &0.58 (0.3)   &0.35 (0.24) \\
+\end{tabular}
+
+1000 observations, shifted Poisson \\
+\begin{tabular}{lccc}
+       &  P\_S       &  P\_dip     &  P\_HY      \\   
+data 4 &0 (0)        &0 (0)        &0 (0)       \\
+data 5 &0.02 (0.04)  &0.26 (0.23)  &0 (0.02)    \\
+data 6 &0.26 (0.21)  &0.5 (0.32)   &0.12 (0.15) 
+\end{tabular}
+\color{black}
+
+
+
+%For convenience, we summarise the results from the simulation experiments as follows: 
+
+%\begin{itemize}
+%	\item Bayesian posterior probabilities have much better risk properties than the frequentist Silverman and dip test for determining the correct number of modes;
+
+%	\item A shifted Poisson distribution gives more accurate posterior results than a regular Poisson; 
+
+%	\item Detecting the correct number of modes using our proposed Bayesian estimation can be categorised as follows:  (i) with clear data multimodality the procedure works also at small samples; (ii) for data patterns with mild multimodality the procedures indicate substantial uncertainty with respect to the results. (iii) A large sample and/or more informative prior information  on the number of components in the mixture is very helpful for determining correct number of modes. 
+%\end{itemize}
+
+%\paragraph{\textbf{Mode versus component membership.}}
+
+
+Component membership, i.e.\ the classification of belonging to a particular mixture component, can be done in a simple practical manner using the K-means algorithm as in \cite[pp.\ 97]{fruhwirth2006finite} and \cite{fru:dea}. %Appendix~\ref{appsec:Kmeans}. 
+We apply the K-means algorithm to posterior draws from the RJMCMC algorithm applied to simulated data from a mixture of Poisson distributions. We consider two simulated data sets. In the first data set, parameters of the Poisson distribution are chosen to be clearly different between the mixture components and as a result the generated distribution of the data is clearly bimodal with two distinct modes. In the second simulated data set, parameters of the Poisson distribution do not lead to such clear set of modes. 
+%HERMAN: WHERE IS THIS SEEN?
+
+\textit{Re-labeled draws for simulated data with distinct modes: }
+We show that in the first simulated data set with $n=100$ observations with clearly distinct modes, the K-means algorithm is useful in \textit{a posteriori} relabeling of parameter draws. A histogram of the data, posterior draws from RJMCMC and posterior draws relabeled using the K-means algorithm are shown in Figure~\ref{simdata1_kmeans}. We summarize the results as follows.
+
+The top panel in Figure~\ref{simdata1_kmeans} shows the histogram of the simulated data, the true density and the density of each mixture component for $J=2$ components. With a relatively small number of draws, the data histogram is very similar to the true density, and two clear modes can be easily observed in the data.
+
+The bottom left panel in Figure~\ref{simdata1_kmeans} shows the subset of draws where the number of mixture components is $J^{\star} = 2$ and the number of mixture components with maximum posterior probability according to the RJMCMC method. Around 70\% of posterior draws lead to 2 mixture components, hence only 30\% of draws are `lost' at this step of the K-means algorithm.
+
+The bottom right panel in Figure~\ref{simdata1_kmeans} shows the re-labeled draws after application of the K-means algorithm. These draws correspond to a subset of draws where $J^{\star} = 2$, and K-means clustering of each parameter in the draws are permutations of $\{1,2\}$. Around 64\% of the initial number of posterior draws satisfy this condition.
+
+The bottom right panel in Figure~\ref{simdata1_kmeans} also shows that K-means algorithm is successful in this case: Clustering of draws are clear, for example compared to the `unlabelled' posterior draws on the bottom left panel of Figure~\ref{simdata1_kmeans}.
+
+Thus, the K-means algorithm is successful in this case: The effective number of draws from the algorithm is close to the actual number of draws, ie.\ $\bar M \approx \tilde M\approx M$. 
+
+\begin{figure}[htbp]
+\caption{Histogram of simulated data with distinct modes, posterior draws from RJMCMC and re-labelled posterior draws from RJMCMC\label{simdata1_kmeans}}
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.45\linewidth]{figures_simdata/simdata1_mPois_hist.pdf}
+&\includegraphics[width=0.45\linewidth]{figures_simdata/simdata1_mPois_Mdraws.pdf}\\
+histogram of simulated data
+& $M=5000$ posterior draws\\
+\includegraphics[width=0.45\linewidth]{figures_simdata/simdata1_mPois_Mbardraws.pdf}
+&\includegraphics[width=0.45\linewidth]{figures_simdata/simdata1_mPois_Mtildedraws.pdf}\\
+ $\bar M=3559$ posterior draws
+& $\tilde M=3175$ posterior draws\\
+\end{tabular}
+\end{figure}
+
+%\paragraph*{Re-labeled draws for simulated data without distinct modes: }
+We show that in the second simulated data set with $n=100$ observations, the K-means algorithm has the problem that only a small subset of draws are left after application of the algorithm. Furthermore, the label switching problem does not seem to be completely removed. The histogram of the data, posterior draws from RJMCMC and posterior draws labeled using the K-means algorithm are shown in Figure~\ref{simdata5_sPois_kmeans}. The results are as follows.
+
+\begin{figure}[htbp]
+\caption{Histogram of simulated data with `non-distinct' modes, posterior draws from RJMCMC and re-labelled posterior draws from RJMCMC\label{simdata5_sPois_kmeans}}
+\centering
+\begin{tabular}{cc}
+\includegraphics[width=0.45\linewidth]{figures_simdata/simdata5_smPois_hist.pdf}
+&\includegraphics[width=0.45\linewidth]{figures_simdata/simdata5_smPois_Mdraws.pdf}\\
+histogram of simulated data
+& $M=5000$ posterior draws\\
+\includegraphics[width=0.45\linewidth]{figures_simdata/simdata5_smPois_Mbardraws.pdf}
+&\includegraphics[width=0.45\linewidth]{figures_simdata/simdata5_smPois_Mtildedraws.pdf}\\
+ $\bar M=2368$ posterior draws
+& $\tilde M=307$ posterior draws\\
+\end{tabular}
+\end{figure}
+The top panel in Figure~\ref{simdata5_sPois_kmeans} shows the histogram of the simulated data, the true density and the density of each mixture component for $J=4$ components. With a relatively small number of draws, the data histogram is very different from the the true density. The actual modes of the distribution are hardly visual  in the figure.
+
+The bottom left panel in Figure~\ref{simdata5_sPois_kmeans} shows the subset of draws where the number of mixture components is $J^{\star} = 2$ which is the number of mixture components with maximum posterior probability in RJMCMC. Less than 50\% of posterior draws lead to 4 mixture components. More than half of the posterior draws are `disregarded' in this case, and label switching seems to be an important problem.
+
+The bottom right panel in Figure~\ref{simdata5_sPois_kmeans} shows the re-labeled draws after the K-means algorithm. These draws correspond to a subset of draws where $J^{\star} = 4$, and K-means clustering of each parameter in the draws are permutations of $\{1,2\}$. Only 307 draws satisfy these conditions. Furthermore, label switching problem is not eliminated completely particularly in the solid pink line in the figure. The K-means algorithm is not successful in this case: The effective number of draws from the algorithm are very small (for different random seeds, none of the draws satisfy K-means conditions). The bottom right panel in Figure~\ref{simdata5_sPois_kmeans} also shows that the K-means algorithm is not successful in this case: Clustering of draws still show label switching around draw 50.
+
+%\paragraph{Estimation of quantiles using simulated data}
+
+We report results on the estimation of quantiles of the posterior distributions of simulated data in Table~\ref{tab:simdata_mixPois_unknownJ}. Figure~\ref{fig:simdata_mixPois_Quantiles} summaries these quantile estimates and true quantiles. All 90\% intervals for quantile estimates include the true quantile value, hence data quantiles from mixture of Poisson distributions are accurately estimated from the density estimates. This is important when one uses such results for a risk analysis.  
+
+
+\begin{figure}[htbp]
+\caption{Quantile estimates for simulated count data\label{fig:simdata_mixPois_Quantiles}}
+\begin{center}
+\begin{tabular}{cc}
+	\includegraphics[width = 0.35\linewidth]{figures_simdata/quantilePoisson_allsimdata.eps}
+	&	\includegraphics[width = 0.35\linewidth]{figures_simdata/quantileNormal_simdata_.eps}\\
+unknown $J$
+&known $J$
+\end{tabular}
+
+{Averages from 20 simulation replications reported}
+\end{center}
+\end{figure}
+
+
+
+
+\begin{figure}[htbp]
+	\caption{True and estimated probability density functions for simulation experiments. In each plot, the simulation study is replicated 150 times. Solid lines are kernel density estimates for each simulation replication. Vertical lines are the theoretical modes of the true pdf.	
+\label{fig:TrueDensities_SimulationMixPoisson}}
+\centering
+	\begin{tabular}{ccc}
+	\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset1_noshift_nozeroinf100obs.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset1_noshift_nozeroinf100obs.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset1_noshift_nozeroinf100obs.eps}
+\\ dataset 1 & dataset 2 & dataset 3
+\\ \multicolumn{3}{c}{Mixture of standard Poisson densities, 100 observations}
+\\
+	\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset1_noshift_nozeroinf1000obs.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset1_noshift_nozeroinf1000obs.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset1_noshift_nozeroinf1000obs.eps}
+\\ dataset 1 & dataset 2 & dataset 3
+\\ \multicolumn{3}{c}{Mixture of standard Poisson densities, 1000 observations}
+\\
+	\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset1_shift_nozeroinf100obs.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset1_shift_nozeroinf100obs.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset1_shift_nozeroinf100obs.eps}
+\\ dataset 4 & dataset 5 & dataset 6
+\\ \multicolumn{3}{c}{Mixture of shifted Poisson densities, 100 observations}
+\\
+	\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset1_shift_nozeroinf1000obs.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset1_shift_nozeroinf1000obs.eps}
+	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset1_shift_nozeroinf1000obs.eps}
+\\ dataset 4 & dataset 5 & dataset 6
+\\ \multicolumn{3}{c}{Mixture of shifted Poisson densities, 1000 observations}
+	\end{tabular}
+
+%\centering
+%\begin{tabular}{cc}
+%	\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset5_noshift_zeroinf100obs.eps}
+%	&\includegraphics[height = 0.27\linewidth, angle = -90]{figures_simdata/DensityEstimate_simset5_noshift_zeroinf1000obs.eps}
+%\\ 100 observations & 1000 observations
+%\\ \multicolumn{2}{c}{Mixture of zero inflated Poisson distributions}
+%\end{tabular}
+\end{figure}
+
+In Figure~\ref{fig:TrueDensities_SimulationMixPoisson} kernel density estimates for simulated data and true modes of the distribution (in vertical lines) are shown for each simulation setup. For all simulation setups, the smaller dataset with $n=100$ has more uncertainty in density estimates compared to those with $n=1000$. However, the obtained density properties, such as the mean, mode or quantiles, are shown with reasonable accuracy even for small samples.
+
+
+\paragraph{Known number of mixture components: Herman shall we just mention these results and remove the explicit listing of Figure and Table? or we have to give results for the Silverman and dip tests}
+We first consider a known number of mixture components for each simulated data set and report estimated density features that are particularly relevant for count data simulations. To the best of our knowledge, theoretical approximation properties do not exist in the literature for this case.
+
+We estimate the model parameters together with the number of modes for each simulated data set using the model and the posterior sampler in Section~\ref{sec:mixturemodels}. %We exclude the zero-inflated Poisson distributions for this simulation study, as it does not correspond to a proper mixture distribution with a specific number of components. 
+The Dirichlet prior parameter  $\alpha = 4$ and posterior results are based on 10000 total number of draws, and 5000 draws are disregarded as burn-in draws. 
+
+%HERMAN: DISCUSS RESULTS OF FIGURE 1. THAT SEEMS TO BE MISSING NOW.
+
+%HERMAN: SHOULD TABLE 2 NOT HAVE THE SAME SET-UP AS TABLE  3, WHERE BOTH THE TRUE AND ESTIMATED VALUES ARE IN ONE TABLE?
+%\textcolor{blue}{NB: I still need to estimate models with known number of mixture components}
+
+Posterior results for the number of modes, together with the true number of modes for each simulated data are reported in Table~\ref{tab:simdataKnownJ}. In this table, a high probability value implies that the correct number of modes is found to be very likely according to the estimates. For most simulated data, the corresponding probability is very high (above 0.9). We conclude that the methodology is robust to alternative parameter specifications for the case where the number of mixture components is known. So, a preliminary conclusion is that prior knowledge on the number of components appears very helpful in order to obtain accurate results on density fit and features.\\
+ \begin{table}[ht]
+\caption{Posterior modes for simulated count data with known $J$ mixture components 
+\label{tab:simdataKnownJ}
+%\textcolor{red}{We need to include the case of zero inflated Poisson. The result for data set 5 needs to be checked }
+}
+\centering
+\begin{tabular}{lccc}
+  \hline
+ & number of components & number of modes & probability \\ 
+  \hline
+\multicolumn{4}{l}{\textit{Mixture of standard Poisson distributions}}\\\hline
+data 1 & 2 & 2 & 1.00 \\ 
+data   2 & 2 & 2 & 1.00 \\ 
+data   3 & 3 & 1 & 0.95 \\ 
+\multicolumn{4}{l}{\textit{Mixture of shifted Poisson distributions}}\\\hline
+data 4 & 2 & 2 & 1.00 \\ 
+data   5 & 2 & 2 & 1.00 \\ 
+data   6 & 3 & 2 & 0.94 \\ 
+\hline
+\end{tabular}
+
+\emph{Note: }The table reports the number of mixture components (column 1), true number of modes (column 2) and the posterior probability of true number of modes (column 3) for each simulated dataset. Posterior results are based on 10000 posterior draws (5000 burnaman bakalim, -in draws).
+\end{table}
+
+\begin{comment}
+\paragraph{Experiments}
+
+\section{Simulated data \label{sec:simul} }
+
+Figure \ref{MixtureExample} shows an example of a DGP for which the method can be applied to a simulated dataset.
+This is a mixture of two shifted negative binomial distributions with parameters
+$\mu_1 = 10,  r_1 = 100, \kappa_1 = 30, \pi_1 = 0.5, 
+  \mu_2 = 20,  r_2 = 2,    \kappa_2 = 50, \pi_2 = 0.5$.
+In order to appropriately describe this DGP, one needs a model that allows for
+(1) shifts as there are no observations between 0 and 30,
+(2) a mixture as there is clearly bimodality, (3) a shifted negative binomial distribution (instead of a shifted Poisson distributon) as the component with low shape parameter $r_2 = 2$ implies that the data distribution has a fat right tail.
+ 
+As an alternative/addition, one can also consider a DGP of a mixture of negative binomial distributions (with fixed number
+of components) estimated for the D4Z4 data (potentially with an even lower shape parameter $r$ for one or more of the components to make the distribution even more fat-tailed, to stress the usefulness of the shifted negative binomial distribution as compared with the shifted Poisson distribution). 
+
+Further, it is perhaps good to first tune any settings (e.g., the variance of the candidate distribution in random walk Metropolis-Hastings steps) of the MCMC method such that these work appropriately on the empirical data, and to apply the MCMC method with the same settings to simulated datasets.
+
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.5]{Figures/MixtureExample} 
+\end{center}
+\caption{\label{MixtureExample}Probability mass function of a mixture of two shifted negative binomial distributions
+with $\mu_1 = 10, r_1 = 100, \kappa_1 = 30, \pi_1 = 0.5, \mu_2 = 20, r_2 = 2, \kappa_2 = 50, \pi_2 = 0.5$.}
+\end{figure}
+
+
+\end{comment}
+
+

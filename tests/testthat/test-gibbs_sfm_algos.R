@@ -1,3 +1,123 @@
+test_that("collapsed concentration target integrates Dirichlet weights", {
+  for (concentration in c(0.005, 0.2, 2)) {
+    counts = c(2, 1)
+    integral = integrate(function(weight) {
+      weight^2 * (1 - weight) * dbeta(weight, concentration, concentration)
+    }, 0, 1, rel.tol = 1e-9)$value
+    expected = dgamma(concentration, 1, scale = 1/200, log = TRUE) + log(integral)
+    expect_equal(post_e0(concentration, 1, 1/200, log = TRUE, counts = counts),
+                 expected, tolerance = 1e-7)
+  }
+  expect_true(is.finite(post_e0(0.005, 1, 1/200, log = TRUE, counts = c(1000, 0, 0, 0, 0))))
+  expect_equal(post_e0(0.005, 1, 1/200, log = TRUE, counts = rep(0, 5)),
+               dgamma(0.005, 1, scale = 1/200, log = TRUE))
+})
+
+test_that("count samplers update collapsed concentration before refreshing weights", {
+  for (sampler in list(gibbs_SFM_poisson, gibbs_SFM_shifted_poisson,
+                       gibbs_SFM_neg_binomial, gibbs_SFM_shifted_neg_binomial)) {
+    sampler_env = new.env(parent = environment(sampler))
+    environment(sampler) = sampler_env
+    updates = character()
+    sampler_env$draw_e0 = function(e0, nu0, S0, p = NULL, counts = NULL) {
+      expect_null(p)
+      expect_equal(sum(counts), 6)
+      updates <<- c(updates, "concentration")
+      list(0.2, 1)
+    }
+    sampler_env$rdirichlet = function(n, alpha) {
+      updates <<- c(updates, "weights")
+      expect_equal(sum(alpha), 6.4)
+      matrix(alpha / sum(alpha), nrow = n)
+    }
+    arguments = list(y = 0:5, K = 2, nb_iter = 2, nb_burnin = 1,
+                     priors = list(a0 = 1, A0 = 200, l0 = 2, L0 = 1, sig = 0.1), print = FALSE)
+    arguments = arguments[names(arguments) %in% names(formals(sampler))]
+    set.seed(17)
+    do.call(sampler, arguments)
+    expect_equal(updates, rep(c("concentration", "weights"), 2))
+  }
+})
+
+test_that("shifted Poisson shift likelihood includes every observation", {
+  observations = c(3, 4, 6, 7)
+  parameters = c(2, 5)
+  expect_equal(post_kap(observations, parameters, "shifted_poisson"),
+               sum(dpois(observations - 2, lambda = 5, log = TRUE)))
+  expect_equal(post_kap(rep(1000, 20), c(0, 1000), "shifted_poisson"),
+               sum(dpois(rep(1000, 20), lambda = 1000, log = TRUE)))
+})
+
+test_that("concentration updates use a finite log ratio", {
+  update = draw_e0
+  update_env = new.env(parent = environment(update))
+  environment(update) = update_env
+  candidate = 0.3
+  update_env$rnorm = function(...) candidate - 0.2
+  update_env$runif = function(...) 0
+  weights = c(0.9, rep(0.1 / 999, 999))
+  result = update(0.2, 2, 0.5, weights)
+  expect_equal(result, list(0.3, 1))
+
+  candidate = -0.1
+  expect_equal(update(0.2, 2, 0.5, weights), list(0.2, 0))
+})
+
+test_that("shift updates reject candidates outside conditional support", {
+  update = draw_kap
+  update_env = new.env(parent = environment(update))
+  environment(update) = update_env
+  step = -1
+  update_env$sample = function(...) step
+  update_env$runif = function(...) 0
+  observations = c(2, 4, 5)
+  expect_equal(update(observations, c(0, 3), 0, 2, "shifted_poisson"), list(0, 0))
+  step = 1
+  expect_equal(update(observations, c(2, 3), 0, 2, "shifted_poisson"), list(2, 0))
+  expect_equal(update(observations, c(0, 3), 0, 2, "shifted_poisson"), list(1, 1))
+  expect_error(update(observations, c(3, 3), 0, 2, "shifted_poisson"),
+               "outside its conditional support")
+})
+
+test_that("empty shifted Poisson components refresh shifts from their prior", {
+  sampler = gibbs_SFM_shifted_poisson
+  sampler_env = new.env(parent = environment(sampler))
+  environment(sampler) = sampler_env
+  sampler_env$kmeans = function(y, ...) {
+    list(cluster = rep(1L, length(y)), centers = matrix(c(1, 3), ncol = 1))
+  }
+  sampler_env$rdirichlet = function(n, alpha) matrix(alpha / sum(alpha), nrow = n)
+  sampler_env$draw_e0 = function(e0, ...) list(e0, 0)
+  sampler_env$draw_kap = function(...) list(0, 0)
+  prior_bound = NA_real_
+  sampler_env$sample.int = function(n, size) {
+    prior_bound <<- n
+    n
+  }
+  result = sampler(0:5, 2, 1, list(a0 = 1, A0 = 200, l0 = 2, L0 = 1), FALSE)
+  expect_equal(prior_bound, 6)
+  expect_equal(unname(result[1, "kappa2"]), 5)
+  expect_true(all(is.finite(result)))
+})
+
+test_that("count samplers never replace invalid allocations with uniform draws", {
+  for (sampler in list(gibbs_SFM_poisson, gibbs_SFM_shifted_poisson,
+                       gibbs_SFM_neg_binomial, gibbs_SFM_shifted_neg_binomial)) {
+    sampler_env = new.env(parent = environment(sampler))
+    environment(sampler) = sampler_env
+    sampler_env$rdirichlet = function(n, alpha) matrix(c(0.5, 0.5), nrow = n)
+    sampler_env$draw_kap = function(...) list(0, 0)
+    sampler_env$rneg_binom = function(...) c(2, 0.2, 0, 0.1)
+    zero_density = function(observations, ...) rep(0, length(observations))
+    sampler_env$dpois = zero_density
+    sampler_env$dnbinom = zero_density
+    arguments = list(y = 0:5, K = 2, nb_iter = 2, nb_burnin = 1,
+                     priors = list(a0 = 10, A0 = 50, l0 = 2, L0 = 1, sig = 0.1), print = FALSE)
+    arguments = arguments[names(arguments) %in% names(formals(sampler))]
+    expect_error(do.call(sampler, arguments), "Non-finite count allocation")
+  }
+})
+
 test_that("samplers sum log mixture probabilities over observations", {
   samplers = list(gibbs_SFM_normal, gibbs_SFM_skew_n, gibbs_SFM_poisson,
                   gibbs_SFM_shifted_poisson, gibbs_SFM_neg_binomial,
