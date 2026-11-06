@@ -109,7 +109,8 @@ run_design <- function(name, nb_iter = 10000L, burnin = 5000L) {
     parameters <- aligned_parameters(fit$mcmc[draw, ], fit$K, length(design$weight))
     sum(parameters[, "weight"] * parameters[, "component_mean"])
   }, numeric(1))
-  list(name = name, design = design, fit = fit, nb_iter = nb_iter, burnin = burnin,
+    list(name = name, design = design, fit = fit, nb_iter = nb_iter, burnin = burnin,
+      shift_update = "Joint shift-mean update (kappa + mu held fixed during the shift step)",
        elapsed = elapsed, grid = grid, truth = truth, estimated = estimated,
        lower = apply(probability, 1, quantile, probs = 0.025),
        upper = apply(probability, 1, quantile, probs = 0.975),
@@ -149,7 +150,8 @@ plot_design <- function(result, path) {
   graphics::lines(grid, result$truth, col = "#202020", lwd = 2)
   graphics::points(grid, result$truth, col = "#202020", pch = 16, cex = 0.42)
   graphics::lines(grid, result$estimated, col = "#0072B2", lwd = 2, lty = 2)
-  graphics::legend("topright", c("True PMF", "Posterior mean PMF", "95% pointwise interval", "Simulated data"),
+  legend_position <- if (grid[which.max(result$truth)] > xmax / 2) "topleft" else "topright"
+  graphics::legend(legend_position, c("True PMF", "Posterior mean PMF", "95% pointwise interval", "Simulated data"),
                    col = c("#202020", "#0072B2", "#BDD9E9", "#CDD1D4"),
                    lty = c(1, 2, NA, NA), lwd = c(2, 2, NA, NA),
                    pch = c(16, NA, 15, 15), pt.cex = c(0.6, 1, 1.5, 1.5), bty = "n", cex = 0.85)
@@ -194,6 +196,9 @@ write_report <- function(results, directory) {
       sprintf("![%s true and estimated probability mass functions](%s)", result$name, image), "",
       sprintf("Data seed: `%d`. Chain seed: `%d`. PMF evaluation grid: 0-%d. Estimated mass beyond the grid: %.3g.",
         result$design$data_seed, result$design$chain_seed, max(result$grid), result$tail_mass))
+    if (!is.null(result$shift_update)) {
+      lines <- c(lines, "", paste0("Shift update: ", result$shift_update, "."))
+    }
     shifts <- subset(result$parameters, parameter == "shift" & component <= length(result$design$weight))
     missed <- shifts$component[shifts$truth < shifts$lower | shifts$truth > shifts$upper]
     if (length(missed)) {
@@ -227,8 +232,9 @@ write_report <- function(results, directory) {
     "To regenerate only the report and plots from saved chains, without running any new chains:", "",
     "```r", "write_report(readRDS(\"JOE revision/results.rds\"), \"JOE revision\")", "```", "",
     "The runner saves observations, full chains, retained draws, summaries, and R session details in [results.rds](results.rds). Seeds and settings are recorded above. It checks finite draws, normalized weights, PMF non-negativity and mass, and agreement between stored and independently recomputed log-likelihoods at ten retained draws per case. These numerical checks do not certify convergence.", "",
-    sprintf("Report generated: %s. %s. BayesMultiMode %s loaded from the local working tree, including uncommitted sampler changes.",
-      format(Sys.Date()), R.version.string, as.character(utils::packageVersion("BayesMultiMode"))))
+    sprintf("Report generated: %s. Sampling session: %s. BayesMultiMode %s loaded from the local working tree.",
+      format(Sys.Date()), results[[1]]$session$R.version$version.string,
+      results[[1]]$session$otherPkgs$BayesMultiMode$Version))
   writeLines(lines, file.path(directory, "results.md"))
 }
 

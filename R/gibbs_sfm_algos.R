@@ -688,16 +688,9 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
       if (N[k]==0) {
         kappa_m[k] = sample.int(mu_max + 1, 1) - 1
       } else {
-        kapub = min(yk)
-        if (kapub >= kappa_m[k]) {
-          pars_m = c(kappa_m[k], r_tilde_m[k], mu_m[k])
-          temp = draw_kap(yk, pars_m, kaplb = 0, kapub = kapub, dist = "shifted_neg_binomial") # Draw kappa from MH step
-          kappa_m[k] = temp[[1]]
-        }
-
-        if (any(yk - kappa_m[k] < 0)) {
-          kappa_m[k] = yk
-        }
+        draw_shift = draw_kap_mu(yk, kappa_m[k], mu_m[k], r_tilde_m[k], mu_max)
+        kappa_m[k] = draw_shift$kappa
+        mu_m[k] = draw_shift$mu
       }
 
       draw_pars = rneg_binom(yk - kappa_m[k], std_mh[k], mu_m[k], r_tilde_m[k], accept_ratio[k], burnin, mu_max = mu_max)
@@ -944,6 +937,31 @@ rneg_binom <- function(Y, std, d_mu, d_rtilde, accept_ratio, burnin = FALSE, mu_
   }
   
   return(c(d_mu, d_rtilde, accept, std))
+}
+
+draw_kap_mu <- function(x, kappa, mu, r_tilde, mu_max) {
+  component_mean = kappa + mu
+  shifts = seq.int(0, min(x, mu_max))
+  means = component_mean - shifts
+  supported = means > 0 & means <= mu_max
+  shifts = shifts[supported]
+  means = means[supported]
+  if (!length(shifts)) {
+    stop("Joint shift-mean update has no candidates within the conditional support.")
+  }
+
+  shape = (1 - r_tilde) / r_tilde
+  log_probabilities = vapply(seq_along(shifts), function(candidate) {
+    sum(dnbinom(x - shifts[candidate], size = shape, mu = means[candidate], log = TRUE))
+  }, numeric(1))
+  maximum = max(log_probabilities)
+  if (!is.finite(maximum)) {
+    stop("Non-finite joint shift-mean conditional probabilities.")
+  }
+  selected = if (length(shifts) == 1) 1L else {
+    sample.int(length(shifts), 1, prob = exp(log_probabilities - maximum))
+  }
+  list(kappa = shifts[selected], mu = means[selected])
 }
 
 # Posterior of kappa 

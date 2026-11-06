@@ -136,6 +136,121 @@ test_that("empty shifted Poisson components refresh shifts from their prior", {
   expect_true(all(is.finite(result)))
 })
 
+test_that("joint shift-mean draws preserve the mean and use the conditional likelihood", {
+  update = draw_kap_mu
+  update_env = new.env(parent = environment(update))
+  environment(update) = update_env
+  observations = c(4, 4, 6, 7)
+  shifts = 0:4
+  means = 6 - shifts
+  log_probabilities = vapply(seq_along(shifts), function(candidate) {
+    sum(dnbinom(observations - shifts[candidate], size = 3,
+                mu = means[candidate], log = TRUE))
+  }, numeric(1))
+  update_env$sample.int = function(n, size, prob) {
+    expect_equal(n, length(shifts))
+    expect_equal(size, 1)
+    expect_equal(prob / sum(prob), exp(log_probabilities - max(log_probabilities)) /
+                   sum(exp(log_probabilities - max(log_probabilities))))
+    n
+  }
+  result = update(observations, kappa = 1, mu = 5, r_tilde = 0.25, mu_max = 7)
+  expect_equal(result, list(kappa = 4, mu = 2))
+  expect_equal(result$kappa + result$mu, 6)
+})
+
+test_that("joint shift-mean draws respect both shift and mean support", {
+  update = draw_kap_mu
+  update_env = new.env(parent = environment(update))
+  environment(update) = update_env
+  update_env$sample.int = function(n, size, prob) {
+    expect_equal(n, 3)
+    1L
+  }
+  expect_equal(update(c(8, 9), 7, 9, 0.25, mu_max = 10), list(kappa = 6, mu = 10))
+
+  update_env$sample.int = function(n, size, prob) {
+    expect_equal(n, 4)
+    n
+  }
+  expect_equal(update(c(4, 5), 2, 2, 0.25, mu_max = 5), list(kappa = 3, mu = 1))
+
+  update_env$sample.int = function(...) stop("A singleton support needs no random draw.")
+  expect_equal(update(c(5, 6), 5, 6, 0.25, mu_max = 6), list(kappa = 5, mu = 6))
+  expect_equal(update(c(0, 1), 0, 2, 0.25, mu_max = 5), list(kappa = 0, mu = 2))
+  expect_error(update(c(0, 1), 0, 10, 0.25, mu_max = 5), "conditional support")
+})
+
+test_that("joint shift-mean probabilities remain stable for small likelihoods", {
+  update = draw_kap_mu
+  update_env = new.env(parent = environment(update))
+  environment(update) = update_env
+  observations = rep(c(4, 6, 7), 1000)
+  expect_equal(exp(sum(dnbinom(observations - 1, size = 3, mu = 5, log = TRUE))), 0)
+  update_env$sample.int = function(n, size, prob) {
+    expect_true(all(is.finite(prob)))
+    expect_equal(max(prob), 1)
+    which.max(prob)
+  }
+  result = update(observations, 1, 5, 0.25, mu_max = 7)
+  expect_equal(result$kappa + result$mu, 6)
+  update_env$dnbinom = function(x, ...) rep(-Inf, length(x))
+  expect_error(update(observations, 1, 5, 0.25, mu_max = 7), "Non-finite joint shift-mean")
+})
+
+test_that("shifted negative binomial sampler passes both joint draws to the next update", {
+  sampler = gibbs_SFM_shifted_neg_binomial
+  sampler_env = new.env(parent = environment(sampler))
+  environment(sampler) = sampler_env
+  sampler_env$kmeans = function(y, ...) {
+    list(cluster = rep(1L, length(y)), centers = matrix(6, ncol = 1))
+  }
+  sampler_env$draw_kap = function(...) stop("The shift-only update must not be used.")
+  sampler_env$draw_kap_mu = function(x, kappa, mu, r_tilde, mu_max) {
+    expect_equal(x, c(5, 6, 8))
+    expect_equal(c(kappa, mu, r_tilde, mu_max), c(0, 6, 0.4, 8))
+    list(kappa = 4, mu = 2)
+  }
+  sampler_env$rneg_binom = function(Y, std, d_mu, d_rtilde, accept_ratio, burnin, mu_max) {
+    expect_equal(Y, c(1, 2, 4))
+    expect_equal(d_mu, 2)
+    expect_equal(mu_max, 8)
+    c(d_mu, d_rtilde, 0, std)
+  }
+  result = sampler(c(5, 6, 8), 1, 1, 0, list(a0 = 1, A0 = 200, sig = 0.1), FALSE)
+  expect_equal(unname(result[1, c("kappa1", "mu1")]), c(4, 2))
+})
+
+test_that("joint shifted negative binomial fits retain valid draws and log likelihoods", {
+  set.seed(117)
+  observations = c(5 + rnbinom(80, size = 3, mu = 10),
+                    50 + rnbinom(80, size = 2, mu = 1))
+  fit = bayes_fit(observations, K = 2, dist = "shifted_neg_binomial",
+                  nb_iter = 40, burnin = 10, print = FALSE)
+  expect_equal(dim(fit$mcmc_all), c(40, 8))
+  expect_equal(nrow(fit$mcmc), 30)
+  expect_identical(colnames(fit$mcmc_all),
+                   c("eta1", "eta2", "kappa1", "kappa2", "mu1", "mu2", "rtilde1", "rtilde2"))
+  expect_true(all(is.finite(fit$mcmc_all)))
+  weights = fit$mcmc_all[, c("eta1", "eta2")]
+  shifts = fit$mcmc_all[, c("kappa1", "kappa2")]
+  means = fit$mcmc_all[, c("mu1", "mu2")]
+  shapes = fit$mcmc_all[, c("rtilde1", "rtilde2")]
+  expect_equal(unname(rowSums(weights)), rep(1, 40))
+  expect_true(all(weights >= 0))
+  expect_true(all(shifts >= 0 & shifts <= max(observations) & shifts %% 1 == 0))
+  expect_true(all(means > 0 & means <= max(observations)))
+  expect_true(all(shapes > 0 & shapes < 0.5))
+  expect_true(all(shifts[, 1] <= shifts[, 2]))
+  for (draw in c(1, 20, 40)) {
+    probabilities = vapply(1:2, function(component) {
+      weights[draw, component] * dnbinom(observations - shifts[draw, component],
+        size = 1 / shapes[draw, component] - 1, mu = means[draw, component])
+    }, numeric(length(observations)))
+    expect_equal(fit$loglik[draw], sum(log(rowSums(probabilities))), tolerance = 1e-8)
+  }
+})
+
 test_that("count samplers never replace invalid allocations with uniform draws", {
   for (sampler in list(gibbs_SFM_poisson, gibbs_SFM_shifted_poisson,
                        gibbs_SFM_neg_binomial, gibbs_SFM_shifted_neg_binomial)) {
@@ -143,6 +258,7 @@ test_that("count samplers never replace invalid allocations with uniform draws",
     environment(sampler) = sampler_env
     sampler_env$rdirichlet = function(n, alpha) matrix(c(0.5, 0.5), nrow = n)
     sampler_env$draw_kap = function(...) list(0, 0)
+    sampler_env$draw_kap_mu = function(x, kappa, mu, ...) list(kappa = 0, mu = mu)
     sampler_env$rneg_binom = function(...) c(2, 0.2, 0, 0.1)
     zero_density = function(observations, ...) rep(0, length(observations))
     sampler_env$dpois = zero_density
@@ -171,6 +287,7 @@ test_that("samplers sum log mixture probabilities over observations", {
     sampler_env$rdirichlet = function(count, alpha) matrix(c(0.6, 0.4), nrow = 1)
     sampler_env$draw_e0 = function(e0, ...) list(e0, 0)
     sampler_env$draw_kap = function(...) list(0, 0)
+    sampler_env$draw_kap_mu = function(x, kappa, mu, ...) list(kappa = 0, mu = mu)
     sampler_env$rtnorm = function(count, ...) rep(0, count)
     sampler_env$rmvnorm = function(count, mean, ...) matrix(mean, nrow = count)
     fixed_density = function(observations, ...) dpois(observations, lambda = 3)

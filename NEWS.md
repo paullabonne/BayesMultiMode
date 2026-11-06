@@ -1,3 +1,10 @@
+## Development version
+* Shifted negative binomial mixtures now jointly update the shift and mean of each
+	non-empty component. The update samples all valid integer shifts conditional on
+	`kappa + mu` and adjusts `mu` to preserve that sum, using the existing uniform
+	priors and fixed full-data bounds. The subsequent mean and shape updates are
+	unchanged; the component mean is not fixed across iterations.
+
 ## Version 0.7.1
 * Range argument not optional any more when plotting mixtures
 * More details in summary methods
