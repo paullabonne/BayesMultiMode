@@ -1,4 +1,10 @@
 ## Development version
+* Normal, skew-normal, Poisson, and shifted Poisson samplers now use the same
+	vectorized allocation routine as the negative binomial samplers. Poisson PMFs
+	are evaluated at distinct counts and mapped back to the observations, including
+	shift likelihoods. Priors, parameter updates, and output formats are unchanged;
+	vectorized allocation changes seeded draw sequences. Continuous densities are
+	not deduplicated.
 * Negative binomial and shifted negative binomial samplers now evaluate PMFs at
 	distinct counts and map values back to the original observations. Allocation
 	uses vectorized inverse-CDF sampling instead of per-observation multinomial

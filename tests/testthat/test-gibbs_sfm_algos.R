@@ -79,21 +79,96 @@ test_that("PMF deduplication preserves seeded negative binomial chains", {
   }
 })
 
-test_that("single-component count samplers preserve allocation matrix dimensions", {
-  for (distribution in c("poisson", "shifted_poisson", "neg_binomial", "shifted_neg_binomial")) {
-    set.seed(12)
-    priors = if (distribution %in% c("poisson", "shifted_poisson")) {
-      list(a0 = 1, A0 = 200, l0 = 2, L0 = 1)
-    } else list(a0 = 1, A0 = 200, sig = 0.1)
-    draws = gibbs_SFM(c(2, 3, 4, 5, 7, 10, 14), 1, 20, 10, priors, FALSE, distribution)
-    expect_equal(nrow(draws), 20)
-    expect_true(all(is.finite(draws)))
-    expect_equal(unname(draws[, "eta1"]), rep(1, 20))
+test_that("deduplicated Poisson PMFs preserve values and observation order", {
+  observations = c(5, 0, 5, -1, 2, 0)
+  for (log in c(FALSE, TRUE)) {
+    expect_identical(dpois_unique(observations, 3, log = log), dpois(observations, 3, log = log))
+    expect_identical(dpois_unique(numeric(0), 3, log = log), numeric(0))
+    expect_identical(dpois_unique(observations, 0, log = log), dpois(observations, 0, log = log))
+  }
+  expect_identical(dpois_unique(c(2, 2), c(1, 3)), dpois(c(2, 2), c(1, 3)))
+  evaluate = dpois_unique
+  evaluate_env = new.env(parent = environment(evaluate))
+  environment(evaluate) = evaluate_env
+  evaluate_env$dpois = function(x, ...) {
+    expect_identical(x, unique(observations))
+    dpois(x, ...)
+  }
+  expect_identical(evaluate(observations, 3), dpois(observations, 3))
+})
+
+test_that("Poisson PMF deduplication preserves seeded chains and shift updates", {
+  observations = rep(c(0, 1, 2, 4, 8, 15), c(8, 5, 12, 8, 5, 4))
+  for (name in c("gibbs_SFM_poisson", "gibbs_SFM_shifted_poisson")) {
+    sampler = get(name)
+    reference_env = new.env(parent = environment(sampler))
+    for (symbol in c(name, "draw_kap", "post_kap")) {
+      original = get(symbol, envir = environment(sampler))
+      environment(original) = reference_env
+      reference_env[[symbol]] = original
+    }
+    reference_env$dpois_unique = dpois
+    priors = list(a0 = 1, A0 = 200, l0 = 2, L0 = 1)
+    set.seed(185)
+    expected = reference_env[[name]](observations, 2, 80, priors, FALSE)
+    set.seed(185)
+    actual = sampler(observations, 2, 80, priors, FALSE)
+    expect_identical(actual, expected)
   }
 })
 
-test_that("negative binomial samplers use vectorized allocations with zero-weight components", {
-  for (sampler in list(gibbs_SFM_neg_binomial, gibbs_SFM_shifted_neg_binomial)) {
+test_that("optimized normal and Poisson fits retain data, dimensions, and likelihoods", {
+  for (distribution in c("normal", "skew_normal", "poisson", "shifted_poisson")) {
+    set.seed(112)
+    observations = switch(distribution,
+      normal = c(rnorm(50, -3), rnorm(50, 3)),
+      skew_normal = c(rnorm(50, -3), rnorm(50, 3)),
+      poisson = c(rpois(50, 2), rpois(50, 12)),
+      shifted_poisson = c(rpois(50, 2), 10 + rpois(50, 2)))
+    fit = bayes_fit(observations, 2, distribution, nb_iter = 40, burnin = 10, print = FALSE)
+    expected_columns = switch(distribution,
+      normal = c("eta1", "eta2", "mu1", "mu2", "sigma1", "sigma2"),
+      skew_normal = c("eta1", "eta2", "xi1", "xi2", "omega1", "omega2", "alpha1", "alpha2"),
+      poisson = c("eta1", "eta2", "lambda1", "lambda2"),
+      shifted_poisson = c("eta1", "eta2", "kappa1", "kappa2", "lambda1", "lambda2"))
+    expect_identical(fit$data, observations)
+    expect_identical(colnames(fit$mcmc), expected_columns)
+    expect_equal(dim(fit$mcmc_all), c(40, length(expected_columns)))
+    expect_equal(nrow(fit$mcmc), 30)
+    expect_true(all(is.finite(fit$mcmc)))
+    expect_equal(unname(rowSums(fit$mcmc[, c("eta1", "eta2")])), rep(1, 30))
+    for (draw in c(2, 20, 40)) {
+      probabilities = vapply(1:2, function(component) {
+        parameters = fit$mcmc_all[draw, paste0(fit$pars_names, component)]
+        names(parameters) = fit$pars_names
+        parameters[["eta"]] * fit$pdf_func(observations, parameters)
+      }, numeric(length(observations)))
+      expect_equal(fit$loglik[draw], sum(log(rowSums(probabilities))), tolerance = 1e-8)
+    }
+  }
+})
+
+test_that("single-component samplers preserve allocation matrix dimensions", {
+  for (distribution in c("normal", "skew_normal", "poisson", "shifted_poisson",
+                          "neg_binomial", "shifted_neg_binomial")) {
+    set.seed(12)
+    observations = c(2, 3, 4, 5, 7, 10, 14)
+    priors = check_priors(list(), distribution, observations)
+    draws = gibbs_SFM(observations, 1, 20, 10, priors, FALSE, distribution)
+    expect_equal(nrow(draws), 20)
+    retained = if (distribution == "normal") draws[-1, , drop = FALSE] else draws
+    expect_true(all(is.finite(retained)))
+    expect_equal(unname(retained[, "eta1"]), rep(1, nrow(retained)))
+  }
+})
+
+test_that("all samplers use vectorized allocations with zero-weight components", {
+  samplers = list(normal = gibbs_SFM_normal, skew_normal = gibbs_SFM_skew_n,
+                   poisson = gibbs_SFM_poisson, shifted_poisson = gibbs_SFM_shifted_poisson,
+                   neg_binomial = gibbs_SFM_neg_binomial,
+                   shifted_neg_binomial = gibbs_SFM_shifted_neg_binomial)
+  for (distribution in names(samplers)) {
+    sampler = samplers[[distribution]]
     sampler_env = new.env(parent = environment(sampler))
     environment(sampler) = sampler_env
     sampler_env$rmultinom = function(...) stop("Per-observation allocation must not be used.")
@@ -104,11 +179,16 @@ test_that("negative binomial samplers use vectorized allocations with zero-weigh
       list(e0, 0)
     }
     set.seed(231)
-    draws = sampler(rep(0:10, 3), 3, 60, 50, list(a0 = 1, A0 = 200, sig = 0.1), FALSE)
-    expect_equal(allocated_counts, rep(33, 60))
-    expect_true(all(is.finite(draws)))
-    weights = draws[, paste0("eta", 1:3)]
-    expect_equal(unname(rowSums(weights)), rep(1, 60))
+    observations = rep(0:10, 3)
+    arguments = list(y = observations, K = 3, nb_iter = 60, nb_burnin = 50,
+             priors = check_priors(list(), distribution, observations), print = FALSE)
+    arguments = arguments[names(arguments) %in% names(formals(sampler))]
+    draws = do.call(sampler, arguments)
+    retained = if (distribution == "normal") draws[-1, , drop = FALSE] else draws
+    expect_equal(allocated_counts, rep(33, nrow(retained)))
+    expect_true(all(is.finite(retained)))
+    weights = retained[, paste0("eta", 1:3)]
+    expect_equal(unname(rowSums(weights)), rep(1, nrow(retained)))
     expect_true(all(rowSums(weights > 0) == 1))
   }
 })
@@ -364,6 +444,7 @@ test_that("count samplers never replace invalid allocations with uniform draws",
     sampler_env$rneg_binom = function(...) c(2, 0.2, 0, 0.1)
     zero_density = function(observations, ...) rep(0, length(observations))
     sampler_env$dpois = zero_density
+    sampler_env$dpois_unique = zero_density
     sampler_env$dnbinom = zero_density
     sampler_env$dnbinom_unique = zero_density
     arguments = list(y = 0:5, K = 2, nb_iter = 2, nb_burnin = 1,
@@ -397,6 +478,7 @@ test_that("samplers sum log mixture probabilities over observations", {
     sampler_env$dnorm = fixed_density
     sampler_env$dsn = fixed_density
     sampler_env$dpois = fixed_density
+    sampler_env$dpois_unique = fixed_density
     sampler_env$dnbinom = fixed_density
     sampler_env$dnbinom_unique = fixed_density
 

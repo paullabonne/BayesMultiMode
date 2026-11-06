@@ -122,7 +122,7 @@ gibbs_SFM_normal <- function(y,
     NA_id = which(is.na(pnorm[,1]))
     pnorm[NA_id, ] = 1/ncol(pnorm)
     
-    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
+    S = draw_allocations(pnorm)
     
     # 3. sample hyperparameters
     
@@ -209,7 +209,7 @@ gibbs_SFM_poisson <- function(y,
                            rate = N[k] + L0)
       
       # 
-      probs[,k] = eta[m,k]*dpois(y,lambda[m,k])
+      probs[,k] = eta[m,k]*dpois_unique(y,lambda[m,k])
     }
     
     # 2. classification
@@ -219,8 +219,7 @@ gibbs_SFM_poisson <- function(y,
       stop("Non-finite count allocation probabilities; check support or numerical underflow.")
     }
     
-    S = matrix(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)),
-           nrow = n_obs, ncol = K, byrow = TRUE)
+    S = draw_allocations(pnorm)
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -364,7 +363,7 @@ gibbs_SFM_skew_n <- function(y,
     NA_id = which(is.na(pnorm[,1]))
     pnorm[NA_id, ] = 1/ncol(pnorm)
     
-    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1, size = 1, prob = x)))
+    S = draw_allocations(pnorm)
     
     # 3. sample hyperparameters
     ## a. sample C0
@@ -458,7 +457,7 @@ gibbs_SFM_shifted_poisson <- function(y,
                            scale = 1/(N[k] + L0))
       
       # 
-      probs[,k] = eta[m,k]*dpois(y - kappa_m[k], lambda_m[k])
+      probs[,k] = eta[m,k]*dpois_unique(y - kappa_m[k], lambda_m[k])
     }
     
     # 2. classification
@@ -468,8 +467,7 @@ gibbs_SFM_shifted_poisson <- function(y,
       stop("Non-finite count allocation probabilities; check support or numerical underflow.")
     }
     
-    S = matrix(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)),
-           nrow = n_obs, ncol = K, byrow = TRUE)
+    S = draw_allocations(pnorm)
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -900,6 +898,13 @@ draw_allocations <- function(probabilities) {
   allocations
 }
 
+dpois_unique <- function(x, lambda, log = FALSE) {
+  if (length(lambda) != 1L || length(log) != 1L) return(dpois(x, lambda, log = log))
+  values = unique(x)
+  probabilities = dpois(values, lambda, log = log)
+  probabilities[match(x, values)]
+}
+
 dnbinom_unique <- function(x, ...) {
   if (any(lengths(list(...)) != 1L)) return(dnbinom(x, ...))
   values = unique(x)
@@ -1026,7 +1031,7 @@ post_kap <- function(x, pars, dist){
 
   if (dist == "shifted_poisson") {
     lambda = pars[2]
-    result = sum(dpois(x - kappa, lambda = lambda, log = TRUE))
+    result = sum(dpois_unique(x - kappa, lambda = lambda, log = TRUE))
   }
 
   if (dist == "shifted_neg_binomial") {
