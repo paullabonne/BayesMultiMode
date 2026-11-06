@@ -1,3 +1,84 @@
+test_that("vectorized allocations respect zero probabilities and CDF boundaries", {
+  draw = draw_allocations
+  draw_env = new.env(parent = environment(draw))
+  environment(draw) = draw_env
+  uniforms = c(0, 0.249, 0.25, 0.999, 1)
+  draw_env$runif = function(n) {
+    expect_equal(n, length(uniforms))
+    uniforms
+  }
+  probabilities = matrix(rep(c(0, 0.25, 0, 0.75, 0), 5), ncol = 5, byrow = TRUE)
+  allocations = draw(probabilities)
+  expect_equal(max.col(allocations), c(2, 2, 4, 4, 4))
+  expect_equal(rowSums(allocations), rep(1, 5))
+  expect_true(all(allocations[, c(1, 3, 5)] == 0))
+  expect_type(allocations, "integer")
+
+  uniforms = (seq_len(1000) - 0.5) / 1000
+  allocations = draw(matrix(rep(c(2, 3, 5, 0), 1000), ncol = 4, byrow = TRUE))
+  expect_equal(colSums(allocations), c(200, 300, 500, 0))
+  uniforms = c(0.15, 0.25, 0.95)
+  probabilities = rbind(c(0.1, 0.9, 0), c(0, 0.2, 0.8), c(0.6, 0.4, 0))
+  expect_equal(max.col(draw(probabilities)), c(2, 3, 2))
+})
+
+test_that("vectorized allocations handle singleton dimensions and reject invalid rows", {
+  draw = draw_allocations
+  draw_env = new.env(parent = environment(draw))
+  environment(draw) = draw_env
+  draw_env$runif = function(...) stop("Deterministic allocations need no random draw.")
+  expect_identical(draw(matrix(1, 4, 1)), matrix(1L, 4, 1))
+  expect_identical(draw(matrix(numeric(0), 0, 3)), matrix(integer(0), 0, 3))
+  draw_env$runif = function(n) 0.9
+  expect_identical(draw(matrix(c(1, 0), 1, 2)), matrix(c(1L, 0L), 1, 2))
+  for (invalid in list(c(0.5, 0.5), matrix(numeric(0), 2, 0), matrix(c(NA, 1), 1),
+                       matrix(c(Inf, 1), 1), matrix(c(-0.1, 1.1), 1),
+                       matrix(c(0, 0), 1), matrix(c(1e308, 1e308), 1))) {
+    expect_error(draw(invalid), "Allocation probabilities")
+  }
+})
+
+test_that("deduplicated negative binomial PMFs preserve values and observation order", {
+  observations = c(5, 0, 5, -1, 2, 0)
+  for (log in c(FALSE, TRUE)) {
+    expect_identical(dnbinom_unique(observations, size = 3, mu = 5, log = log),
+                     dnbinom(observations, size = 3, mu = 5, log = log))
+    expect_identical(dnbinom_unique(observations, 3, 0.4, log = log),
+                     dnbinom(observations, 3, 0.4, log = log))
+    expect_identical(dnbinom_unique(numeric(0), 3, 0.4, log = log), numeric(0))
+  }
+  expect_identical(dnbinom_unique(c(2, 2), size = c(1, 3), mu = c(2, 5)),
+                   dnbinom(c(2, 2), size = c(1, 3), mu = c(2, 5)))
+  evaluate = dnbinom_unique
+  evaluate_env = new.env(parent = environment(evaluate))
+  environment(evaluate) = evaluate_env
+  evaluate_env$dnbinom = function(x, ...) {
+    expect_identical(x, unique(observations))
+    dnbinom(x, ...)
+  }
+  expect_identical(evaluate(observations, 3, 0.4), dnbinom(observations, 3, 0.4))
+})
+
+test_that("PMF deduplication preserves seeded negative binomial chains", {
+  observations = rep(c(0, 1, 2, 4, 8, 15), c(8, 5, 12, 8, 5, 4))
+  for (name in c("gibbs_SFM_neg_binomial", "gibbs_SFM_shifted_neg_binomial")) {
+    sampler = get(name)
+    reference_env = new.env(parent = environment(sampler))
+    for (symbol in c(name, "rneg_binom", "draw_kap_mu")) {
+      original = get(symbol, envir = environment(sampler))
+      environment(original) = reference_env
+      reference_env[[symbol]] = original
+    }
+    reference_env$dnbinom_unique = dnbinom
+    set.seed(183)
+    expected = reference_env[[name]](observations, 2, 80, 50,
+                                     list(a0 = 1, A0 = 200, sig = 0.1), FALSE)
+    set.seed(183)
+    actual = sampler(observations, 2, 80, 50, list(a0 = 1, A0 = 200, sig = 0.1), FALSE)
+    expect_identical(actual, expected)
+  }
+})
+
 test_that("single-component count samplers preserve allocation matrix dimensions", {
   for (distribution in c("poisson", "shifted_poisson", "neg_binomial", "shifted_neg_binomial")) {
     set.seed(12)
@@ -8,6 +89,27 @@ test_that("single-component count samplers preserve allocation matrix dimensions
     expect_equal(nrow(draws), 20)
     expect_true(all(is.finite(draws)))
     expect_equal(unname(draws[, "eta1"]), rep(1, 20))
+  }
+})
+
+test_that("negative binomial samplers use vectorized allocations with zero-weight components", {
+  for (sampler in list(gibbs_SFM_neg_binomial, gibbs_SFM_shifted_neg_binomial)) {
+    sampler_env = new.env(parent = environment(sampler))
+    environment(sampler) = sampler_env
+    sampler_env$rmultinom = function(...) stop("Per-observation allocation must not be used.")
+    sampler_env$rdirichlet = function(n, alpha) matrix(c(1, 0, 0), nrow = n)
+    allocated_counts = numeric(0)
+    sampler_env$draw_e0 = function(e0, nu0, S0, counts) {
+      allocated_counts <<- c(allocated_counts, sum(counts))
+      list(e0, 0)
+    }
+    set.seed(231)
+    draws = sampler(rep(0:10, 3), 3, 60, 50, list(a0 = 1, A0 = 200, sig = 0.1), FALSE)
+    expect_equal(allocated_counts, rep(33, 60))
+    expect_true(all(is.finite(draws)))
+    weights = draws[, paste0("eta", 1:3)]
+    expect_equal(unname(rowSums(weights)), rep(1, 60))
+    expect_true(all(rowSums(weights > 0) == 1))
   }
 })
 
@@ -194,7 +296,7 @@ test_that("joint shift-mean probabilities remain stable for small likelihoods", 
   }
   result = update(observations, 1, 5, 0.25, mu_max = 7)
   expect_equal(result$kappa + result$mu, 6)
-  update_env$dnbinom = function(x, ...) rep(-Inf, length(x))
+  update_env$dnbinom_unique = function(x, ...) rep(-Inf, length(x))
   expect_error(update(observations, 1, 5, 0.25, mu_max = 7), "Non-finite joint shift-mean")
 })
 
@@ -263,6 +365,7 @@ test_that("count samplers never replace invalid allocations with uniform draws",
     zero_density = function(observations, ...) rep(0, length(observations))
     sampler_env$dpois = zero_density
     sampler_env$dnbinom = zero_density
+    sampler_env$dnbinom_unique = zero_density
     arguments = list(y = 0:5, K = 2, nb_iter = 2, nb_burnin = 1,
                      priors = list(a0 = 10, A0 = 50, l0 = 2, L0 = 1, sig = 0.1), print = FALSE)
     arguments = arguments[names(arguments) %in% names(formals(sampler))]
@@ -295,6 +398,7 @@ test_that("samplers sum log mixture probabilities over observations", {
     sampler_env$dsn = fixed_density
     sampler_env$dpois = fixed_density
     sampler_env$dnbinom = fixed_density
+    sampler_env$dnbinom_unique = fixed_density
 
     arguments = list(y = observations, K = 2, nb_iter = 3, nb_burnin = 0,
                      priors = priors, print = FALSE)
@@ -433,10 +537,9 @@ test_that("shifted negative binomial sorting preserves proposal scales and batch
   }
   sampler_env$rdirichlet = function(n, alpha) matrix(c(0.5, 0.5), nrow = n)
   sampler_env$draw_e0 = function(e0, ...) list(e0, 0)
-  allocation = 0L
-  sampler_env$rmultinom = function(n, size, prob) {
-    allocation <<- allocation %% 4L + 1L
-    if (allocation <= 2L) c(1, 0) else c(0, 1)
+  sampler_env$draw_allocations = function(probabilities) {
+    expect_equal(dim(probabilities), c(4, 2))
+    cbind(c(1, 1, 0, 0), c(0, 0, 1, 1))
   }
   shift_calls = 0L
   records = list()

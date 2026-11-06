@@ -577,7 +577,7 @@ gibbs_SFM_neg_binomial <- function(y,
       p = mu_m[k] / (r + mu_m[k])
       
       #
-      probs[,k]  = eta[m,k] * dnbinom(y, r, 1 - p)
+      probs[,k]  = eta[m,k] * dnbinom_unique(y, r, 1 - p)
     }
 
     if (m <= nb_burnin && m %% 50 == 0) {
@@ -593,8 +593,7 @@ gibbs_SFM_neg_binomial <- function(y,
       stop("Non-finite count allocation probabilities; check support or numerical underflow.")
     }
     
-    S = matrix(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)),
-           nrow = n_obs, ncol = K, byrow = TRUE)
+    S = draw_allocations(pnorm)
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -718,7 +717,7 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
       p = mu_m[k] / (r + mu_m[k])
       
       #
-      probs[,k]  = eta[m,k] * dnbinom(y - kappa_m[k], r, 1 - p)
+      probs[,k]  = eta[m,k] * dnbinom_unique(y - kappa_m[k], r, 1 - p)
       # Order the components based on kappa
 
     }
@@ -748,8 +747,7 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
       stop("Non-finite count allocation probabilities; check support or numerical underflow.")
     }
     
-    S = matrix(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)),
-           nrow = n_obs, ncol = K, byrow = TRUE)
+    S = draw_allocations(pnorm)
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -870,6 +868,45 @@ check_priors <- function(priors, dist, data) {
 
 ## functions used in the SFM MCMC algorithm
 
+draw_allocations <- function(probabilities) {
+  if (!is.matrix(probabilities) || ncol(probabilities) == 0L ||
+      any(!is.finite(probabilities)) || any(probabilities < 0)) {
+    stop("Allocation probabilities must be a finite, non-negative matrix with at least one component.")
+  }
+  totals = rowSums(probabilities)
+  if (any(!is.finite(totals) | totals <= 0)) {
+    stop("Allocation probabilities must have positive finite row sums.")
+  }
+  count = nrow(probabilities)
+  components = ncol(probabilities)
+  allocations = matrix(0L, nrow = count, ncol = components)
+  if (count == 0L) return(allocations)
+  if (components == 1L) {
+    allocations[, 1] = 1L
+    return(allocations)
+  }
+  thresholds = runif(count) * totals
+  cumulative = numeric(count)
+  selected = integer(count)
+  last_positive = integer(count)
+  for (component in seq_len(components)) {
+    last_positive[probabilities[, component] > 0] = component
+    cumulative = cumulative + probabilities[, component]
+    selected[selected == 0L & thresholds < cumulative] = component
+  }
+  unresolved = selected == 0L
+  selected[unresolved] = last_positive[unresolved]
+  allocations[cbind(seq_len(count), selected)] = 1L
+  allocations
+}
+
+dnbinom_unique <- function(x, ...) {
+  if (any(lengths(list(...)) != 1L)) return(dnbinom(x, ...))
+  values = unique(x)
+  probabilities = dnbinom(values, ...)
+  probabilities[match(x, values)]
+}
+
 adapt_rtilde_proposals <- function(std, accepted, proposed, batch) {
   acceptance_rate = accepted / pmax(proposed, 1)
   direction = as.numeric(proposed > 0 & acceptance_rate > 0.4) -
@@ -931,7 +968,7 @@ rneg_binom <- function(Y, std, d_mu, d_rtilde, mu_max) {
   d_p <- d_mu / (d_r + d_mu)
   #d_log_l <- d_r * N * log(1 - d_p) - N * lgamma(d_r) + sum(lgamma(Y + d_r) + Y * log(d_p))
   
-  d_log_l = sum(dnbinom(Y, size = d_r, prob = 1 - d_p, log = TRUE))
+  d_log_l = sum(dnbinom_unique(Y, size = d_r, prob = 1 - d_p, log = TRUE))
 
   d_rtilde_candidate = rnorm(1, mean = d_rtilde, sd = std)
   accept = 0
@@ -940,7 +977,7 @@ rneg_binom <- function(Y, std, d_mu, d_rtilde, mu_max) {
     d_p_candidate <- d_mu / (d_r_candidate + d_mu)
     #d_log_l_candidate <- d_r_candidate * N * log(1 - d_p_candidate) -
     #  N * lgamma(d_r_candidate) + sum(lgamma(Y + d_r_candidate) + Y * log(d_p_candidate))
-    d_log_l_candidate = sum(dnbinom(Y, size = d_r_candidate, prob = 1 - d_p_candidate, log = TRUE))
+    d_log_l_candidate = sum(dnbinom_unique(Y, size = d_r_candidate, prob = 1 - d_p_candidate, log = TRUE))
 
     d_log_acceptance_probability <- min(d_log_l_candidate - d_log_l, 0)
     
@@ -969,7 +1006,7 @@ draw_kap_mu <- function(x, kappa, mu, r_tilde, mu_max) {
 
   shape = (1 - r_tilde) / r_tilde
   log_probabilities = vapply(seq_along(shifts), function(candidate) {
-    sum(dnbinom(x - shifts[candidate], size = shape, mu = means[candidate], log = TRUE))
+    sum(dnbinom_unique(x - shifts[candidate], size = shape, mu = means[candidate], log = TRUE))
   }, numeric(1))
   maximum = max(log_probabilities)
   if (!is.finite(maximum)) {

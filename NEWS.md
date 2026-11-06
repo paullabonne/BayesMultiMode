@@ -1,4 +1,10 @@
 ## Development version
+* Negative binomial and shifted negative binomial samplers now evaluate PMFs at
+	distinct counts and map values back to the original observations. Allocation
+	uses vectorized inverse-CDF sampling instead of per-observation multinomial
+	calls. Per-observation allocation state, priors, and output formats are unchanged.
+	PMF deduplication preserves seeded calculations; vectorized allocation changes
+	the random-number sequence while preserving the categorical probabilities.
 * Negative binomial and shifted negative binomial mixtures now tune `rtilde`
 	proposal scales every 50 burn-in iterations, targeting 30-40% acceptance with
 	diminishing adjustments. Empty components do not contribute to proposal counts,
