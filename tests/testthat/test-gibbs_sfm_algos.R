@@ -1,3 +1,16 @@
+test_that("single-component count samplers preserve allocation matrix dimensions", {
+  for (distribution in c("poisson", "shifted_poisson", "neg_binomial", "shifted_neg_binomial")) {
+    set.seed(12)
+    priors = if (distribution %in% c("poisson", "shifted_poisson")) {
+      list(a0 = 1, A0 = 200, l0 = 2, L0 = 1)
+    } else list(a0 = 1, A0 = 200, sig = 0.1)
+    draws = gibbs_SFM(c(2, 3, 4, 5, 7, 10, 14), 1, 20, 10, priors, FALSE, distribution)
+    expect_equal(nrow(draws), 20)
+    expect_true(all(is.finite(draws)))
+    expect_equal(unname(draws[, "eta1"]), rep(1, 20))
+  }
+})
+
 test_that("collapsed concentration target integrates Dirichlet weights", {
   for (concentration in c(0.005, 0.2, 2)) {
     counts = c(2, 1)
@@ -13,9 +26,13 @@ test_that("collapsed concentration target integrates Dirichlet weights", {
                dgamma(0.005, 1, scale = 1/200, log = TRUE))
 })
 
-test_that("count samplers update collapsed concentration before refreshing weights", {
-  for (sampler in list(gibbs_SFM_poisson, gibbs_SFM_shifted_poisson,
-                       gibbs_SFM_neg_binomial, gibbs_SFM_shifted_neg_binomial)) {
+test_that("all samplers update collapsed concentration before refreshing weights", {
+  samplers = list(normal = gibbs_SFM_normal, skew_normal = gibbs_SFM_skew_n,
+                   poisson = gibbs_SFM_poisson, shifted_poisson = gibbs_SFM_shifted_poisson,
+                   neg_binomial = gibbs_SFM_neg_binomial,
+                   shifted_neg_binomial = gibbs_SFM_shifted_neg_binomial)
+  for (distribution in names(samplers)) {
+    sampler = samplers[[distribution]]
     sampler_env = new.env(parent = environment(sampler))
     environment(sampler) = sampler_env
     updates = character()
@@ -30,12 +47,31 @@ test_that("count samplers update collapsed concentration before refreshing weigh
       expect_equal(sum(alpha), 6.4)
       matrix(alpha / sum(alpha), nrow = n)
     }
-    arguments = list(y = 0:5, K = 2, nb_iter = 2, nb_burnin = 1,
-                     priors = list(a0 = 1, A0 = 200, l0 = 2, L0 = 1, sig = 0.1), print = FALSE)
+    arguments = list(y = 0:5, K = 2, nb_iter = 3, nb_burnin = 1,
+             priors = check_priors(list(), distribution, 0:5), print = FALSE)
     arguments = arguments[names(arguments) %in% names(formals(sampler))]
     set.seed(17)
     do.call(sampler, arguments)
-    expect_equal(updates, rep(c("concentration", "weights"), 2))
+    expect_equal(updates, rep(c("concentration", "weights"), 3 - (distribution == "normal")))
+  }
+})
+
+test_that("continuous samplers tolerate underflowed weights for empty components", {
+  observations = rep(seq(-2, 2, length.out = 20), 2)
+  for (distribution in c("normal", "skew_normal")) {
+    sampler = if (distribution == "normal") gibbs_SFM_normal else gibbs_SFM_skew_n
+    sampler_env = new.env(parent = environment(sampler))
+    environment(sampler) = sampler_env
+    sampler_env$rdirichlet = function(n, alpha) {
+      matrix(c(1, rep(0, length(alpha) - 1)), nrow = n)
+    }
+    set.seed(123)
+    draws = sampler(observations, K = 10, nb_iter = 20,
+                    priors = check_priors(list(), distribution, observations), print = FALSE)
+    retained = draws[-1, , drop = FALSE]
+    expect_true(all(is.finite(retained)))
+    expect_true(all(retained[, "eta1"] == 1))
+    expect_true(all(retained[, paste0("eta", 2:10)] == 0))
   }
 })
 

@@ -87,6 +87,7 @@ gibbs_SFM_normal <- function(y,
     
     ## a. sample component proportion
     N = colSums(S)
+    e0 = draw_e0(e0, a0, 1/A0, counts = N)[[1]]
     eta[m, ] = rdirichlet(1, e0 + N) 
     
     probs = matrix(NA, length(y), K)
@@ -127,10 +128,6 @@ gibbs_SFM_normal <- function(y,
     
     ## a. sample C0
     C0 = rgamma(1, g0 + K*c0, G0 + sum(1/sigma2[m, ]))
-    
-    ## MH step for e0
-    ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
-    e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -222,7 +219,8 @@ gibbs_SFM_poisson <- function(y,
       stop("Non-finite count allocation probabilities; check support or numerical underflow.")
     }
     
-    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
+    S = matrix(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)),
+           nrow = n_obs, ncol = K, byrow = TRUE)
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -308,6 +306,7 @@ gibbs_SFM_skew_n <- function(y,
     
     ## a.1 sample component proportion
     N = colSums(S)
+    e0 = draw_e0(e0, a0, 1/A0, counts = N)[[1]]
     eta[m, ] = rdirichlet(1, e0 + N) 
     
     probs = matrix(NA, n_obs, K)
@@ -370,10 +369,6 @@ gibbs_SFM_skew_n <- function(y,
     # 3. sample hyperparameters
     ## a. sample C0
     C0 = rgamma(1, g0 + K*c0, G0 + sum(1/sigma2))
-    
-    ## SFM: MH step for e0
-    ## Sample component probabilities hyperparameters: alpha0, using RWMH step  
-    e0 = draw_e0(e0,a0,1/A0,eta[m, ])[[1]]
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -473,7 +468,8 @@ gibbs_SFM_shifted_poisson <- function(y,
       stop("Non-finite count allocation probabilities; check support or numerical underflow.")
     }
     
-    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
+    S = matrix(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)),
+           nrow = n_obs, ncol = K, byrow = TRUE)
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -590,7 +586,8 @@ gibbs_SFM_neg_binomial <- function(y,
       stop("Non-finite count allocation probabilities; check support or numerical underflow.")
     }
     
-    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
+    S = matrix(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)),
+           nrow = n_obs, ncol = K, byrow = TRUE)
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -731,7 +728,7 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
     mu_m = mu_m[order_k]
     r_tilde_m = r_tilde_m[order_k]
     eta[m, ] = eta[m, order_k]
-    probs = probs[, order_k]
+    probs = probs[, order_k, drop = FALSE]
     
     # 2. classification
     pnorm = probs/rowSums(probs)
@@ -740,7 +737,8 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
       stop("Non-finite count allocation probabilities; check support or numerical underflow.")
     }
     
-    S = t(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)))
+    S = matrix(apply(pnorm, 1, function(x) rmultinom(n = 1,size=1,prob=x)),
+           nrow = n_obs, ncol = K, byrow = TRUE)
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))

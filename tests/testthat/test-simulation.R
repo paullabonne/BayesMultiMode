@@ -1,0 +1,1 @@
+source(testthat::test_path("simulation", "test-estimation.R"), local = TRUE)
