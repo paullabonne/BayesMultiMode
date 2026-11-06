@@ -22,12 +22,28 @@ TV pools the probability above the evaluation grid into one tail bin; it is a lo
 
 | Case | n | K | True modes | Estimated modes | TV (tail pooled) | Max CDF error | Mean ESS | Log-likelihood ESS | Runtime (s) |
 |---|---:|---:|---|---|---:|---:|---:|---:|---:|
-| D1 | 2000 | 1 | 11 | 11 | 0.0024 | 0.0018 | 3288 | 807 | 75.3 |
+| D1 | 2000 | 1 | 11 | 11 | 0.0026 | 0.0020 | 3542 | 1435 | 129.6 |
 | D2 | 10000 | 2 | 13, 50 | 13, 50 | 0.0130 | 0.0108 | 3982 | 554 | 876.5 |
-| D3 | 2000 | 2 | 1, 13 | 1, 13 | 0.0208 | 0.0120 | 3619 | 2 | 89.0 |
-| D4 | 2000 | 6 | 1, 13 | 1, 13 | 0.0174 | 0.0106 | 4328 | 1045 | 103.1 |
+| D3 | 2000 | 2 | 1, 13 | 1, 14 | 0.0286 | 0.0149 | 3215 | 118 | 69.3 |
+| D4 | 2000 | 6 | 1, 13 | 1, 13 | 0.0173 | 0.0106 | 4112 | 1675 | 108.9 |
 
-D3 has the largest distribution error among these runs (TV 0.0208). The parameter tables below also show why a close distribution fit does not establish parameter recovery.
+D3 has the largest distribution error among these runs (TV 0.0286). The parameter tables below also show why a close distribution fit does not establish parameter recovery.
+
+## Batch adaptation comparison
+
+Before: joint shift-mean updates with cumulative acceptance-rate tuning. After: joint updates with batch adaptation and tuning state preserved during component sorting. Each pair uses identical observations, data and chain seeds, priors, and iteration counts. One chain per method and design cannot establish a general improvement or convergence.
+
+Lower TV and CDF error are better; higher log-likelihood bulk ESS indicates more effective draws for that quantity. Negative TV changes indicate improvement in this run.
+
+| Case | TV before | TV batch | TV change | CDF error before | CDF error batch | Log-likelihood ESS before | Log-likelihood ESS batch |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| D1 | 0.0024 | 0.0026 | +0.0002 | 0.0018 | 0.0020 | 807.2 | 1435.4 |
+| D3 | 0.0208 | 0.0286 | +0.0078 | 0.0120 | 0.0149 | 2.4 | 118.4 |
+| D4 | 0.0174 | 0.0173 | -0.0001 | 0.0106 | 0.0106 | 1045.1 | 1674.5 |
+
+**Not rerun with batch adaptation:** D2. Their rows in the distribution summary, plots, and parameter tables retain the previous joint-update results; they are excluded from the batch comparison above.
+
+The previous chains and summaries are preserved in [results-before-batch.rds](results-before-batch.rds).
 
 ## D1
 
@@ -37,15 +53,17 @@ Data seed: `202601`. Chain seed: `31001`. PMF evaluation grid: 0-200. Estimated 
 
 Shift update: Joint shift-mean update (kappa + mu held fixed during the shift step).
 
+Proposal adaptation: 50-iteration burn-in batches targeting 30-40% acceptance, with diminishing adjustments; tuning state follows component sorting.
+
 | Component | Parameter | True | Estimated mean | 95% credible interval |
 |---|---|---:|---:|---|
 | 1 | Weight pi | 1.0000 | 1.0000 | [1.0000, 1.0000] |
 | 1 | Shift kappa | 5.0000 | 5.0000 | [5.0000, 5.0000] |
-| 1 | NB mean mu | 10.0000 | 9.9968 | [9.7077, 10.2870] |
-| 1 | Shape r | 3.0000 | 2.9684 | [2.7522, 3.2083] |
-| 1 | rtilde | 0.2500 | 0.2522 | [0.2376, 0.2665] |
-| 1 | Success probability p | 0.2308 | 0.2289 | [0.2144, 0.2440] |
-| 1 | Component mean kappa + mu | 15.0000 | 14.9968 | [14.7077, 15.2870] |
+| 1 | NB mean mu | 10.0000 | 9.9957 | [9.7128, 10.2931] |
+| 1 | Shape r | 3.0000 | 2.9653 | [2.7249, 3.2240] |
+| 1 | rtilde | 0.2500 | 0.2524 | [0.2367, 0.2685] |
+| 1 | Success probability p | 0.2308 | 0.2287 | [0.2132, 0.2449] |
+| 1 | Component mean kappa + mu | 15.0000 | 14.9957 | [14.7128, 15.2931] |
 
 ## D2
 
@@ -54,6 +72,8 @@ Shift update: Joint shift-mean update (kappa + mu held fixed during the shift st
 Data seed: `202602`. Chain seed: `31002`. PMF evaluation grid: 0-200. Estimated mass beyond the grid: 0.
 
 Shift update: Joint shift-mean update (kappa + mu held fixed during the shift step).
+
+**Not rerun with batch adaptation.** These are the retained results from the previous joint-update run.
 
 | Component | Parameter | True | Estimated mean | 95% credible interval |
 |---|---|---:|---:|---|
@@ -80,79 +100,81 @@ Data seed: `202603`. Chain seed: `31003`. PMF evaluation grid: 0-200. Estimated 
 
 Shift update: Joint shift-mean update (kappa + mu held fixed during the shift step).
 
-**Mixing warning:** log-likelihood bulk ESS is only 2.4 out of 5000 retained draws. Treat the reported means and intervals as descriptions of this run, not reliable converged posterior summaries.
+Proposal adaptation: 50-iteration burn-in batches targeting 30-40% acceptance, with diminishing adjustments; tuning state follows component sorting.
 
 | Component | Parameter | True | Estimated mean | 95% credible interval |
 |---|---|---:|---:|---|
-| 1 | Weight pi | 0.6000 | 0.6103 | [0.5886, 0.6316] |
+| 1 | Weight pi | 0.6000 | 0.6092 | [0.5881, 0.6304] |
 | 1 | Shift kappa | 0.0000 | 0.0000 | [0.0000, 0.0000] |
-| 1 | NB mean mu | 2.0000 | 1.9993 | [1.9030, 2.1050] |
-| 1 | Shape r | 5.0000 | 4.5814 | [3.4403, 6.2593] |
-| 1 | rtilde | 0.1667 | 0.1820 | [0.1378, 0.2252] |
-| 1 | Success probability p | 0.7143 | 0.6927 | [0.6306, 0.7625] |
-| 1 | Component mean kappa + mu | 2.0000 | 1.9993 | [1.9030, 2.1050] |
-| 2 | Weight pi | 0.4000 | 0.3897 | [0.3684, 0.4114] |
-| 2 | Shift kappa | 10.0000 | 9.6794 | [9.0000, 10.0000] |
-| 2 | NB mean mu | 5.0000 | 5.5380 | [4.9887, 6.3924] |
-| 2 | Shape r | 3.0000 | 4.1085 | [2.8667, 6.6234] |
-| 2 | rtilde | 0.2500 | 0.2048 | [0.1312, 0.2586] |
-| 2 | Success probability p | 0.3750 | 0.4186 | [0.3525, 0.5150] |
-| 2 | Component mean kappa + mu | 15.0000 | 15.2174 | [14.9660, 15.4912] |
+| 1 | NB mean mu | 2.0000 | 1.9874 | [1.8941, 2.0832] |
+| 1 | Shape r | 5.0000 | 4.9235 | [3.5900, 6.7358] |
+| 1 | rtilde | 0.1667 | 0.1719 | [0.1293, 0.2179] |
+| 1 | Success probability p | 0.7143 | 0.7086 | [0.6418, 0.7742] |
+| 1 | Component mean kappa + mu | 2.0000 | 1.9874 | [1.8941, 2.0832] |
+| 2 | Weight pi | 0.4000 | 0.3908 | [0.3696, 0.4119] |
+| 2 | Shift kappa | 10.0000 | 9.0404 | [9.0000, 10.0000] |
+| 2 | NB mean mu | 5.0000 | 6.1592 | [5.2812, 6.4465] |
+| 2 | Shape r | 3.0000 | 5.5828 | [3.3172, 6.8141] |
+| 2 | rtilde | 0.2500 | 0.1541 | [0.1280, 0.2316] |
+| 2 | Success probability p | 0.3750 | 0.4734 | [0.3876, 0.5249] |
+| 2 | Component mean kappa + mu | 15.0000 | 15.1996 | [14.9411, 15.4505] |
 
 ## D4
 
 ![D4 true and estimated probability mass functions](results-D4.png)
 
-Data seed: `202603`. Chain seed: `31004`. PMF evaluation grid: 0-200. Estimated mass beyond the grid: 1.4e-09.
+Data seed: `202603`. Chain seed: `31004`. PMF evaluation grid: 0-200. Estimated mass beyond the grid: 1.68e-09.
 
 Shift update: Joint shift-mean update (kappa + mu held fixed during the shift step).
 
+Proposal adaptation: 50-iteration burn-in batches targeting 30-40% acceptance, with diminishing adjustments; tuning state follows component sorting.
+
 | Component | Parameter | True | Estimated mean | 95% credible interval |
 |---|---|---:|---:|---|
-| 1 | Weight pi | 0.6000 | 0.6107 | [0.5894, 0.6316] |
+| 1 | Weight pi | 0.6000 | 0.6107 | [0.5892, 0.6317] |
 | 1 | Shift kappa | 0.0000 | 0.0000 | [0.0000, 0.0000] |
-| 1 | NB mean mu | 2.0000 | 2.0104 | [1.9073, 2.1128] |
-| 1 | Shape r | 5.0000 | 4.5160 | [3.3782, 6.0163] |
-| 1 | rtilde | 0.1667 | 0.1840 | [0.1425, 0.2284] |
-| 1 | Success probability p | 0.7143 | 0.6887 | [0.6246, 0.7507] |
-| 1 | Component mean kappa + mu | 2.0000 | 2.0104 | [1.9073, 2.1128] |
-| 2 | Weight pi | 0.4000 | 0.3888 | [0.3673, 0.4102] |
+| 1 | NB mean mu | 2.0000 | 2.0109 | [1.9160, 2.1098] |
+| 1 | Shape r | 5.0000 | 4.5029 | [3.4110, 6.1473] |
+| 1 | rtilde | 0.1667 | 0.1843 | [0.1399, 0.2267] |
+| 1 | Success probability p | 0.7143 | 0.6882 | [0.6290, 0.7540] |
+| 1 | Component mean kappa + mu | 2.0000 | 2.0109 | [1.9160, 2.1098] |
+| 2 | Weight pi | 0.4000 | 0.3890 | [0.3678, 0.4103] |
 | 2 | Shift kappa | 10.0000 | 10.0000 | [10.0000, 10.0000] |
-| 2 | NB mean mu | 5.0000 | 5.2293 | [4.9679, 5.4989] |
-| 2 | Shape r | 3.0000 | 3.3622 | [2.8346, 3.9984] |
-| 2 | rtilde | 0.2500 | 0.2303 | [0.2001, 0.2608] |
-| 2 | Success probability p | 0.3750 | 0.3907 | [0.3497, 0.4351] |
-| 2 | Component mean kappa + mu | 15.0000 | 15.2293 | [14.9679, 15.4989] |
-| Extra 1 | Weight pi | 0.0000 | 0.0004 | [7.170e-168, 0.0038] |
-| Extra 1 | Shift kappa | N/A | 15.1136 | [0.0000, 30.0000] |
-| Extra 1 | NB mean mu | N/A | 15.5826 | [0.7619, 30.2043] |
-| Extra 1 | Shape r | N/A | 38.5772 | [1.0504, 76.0800] |
-| Extra 1 | rtilde | N/A | 0.2486 | [0.0130, 0.4877] |
-| Extra 1 | Success probability p | N/A | 0.3045 | [0.0435, 0.9296] |
-| Extra 1 | Component mean kappa + mu | N/A | 30.6962 | [6.9221, 55.5731] |
-| Extra 2 | Weight pi | 0.0000 | 1.977e-06 | [0.0000, 1.612e-06] |
-| Extra 2 | Shift kappa | N/A | 15.3114 | [0.0000, 31.0000] |
-| Extra 2 | NB mean mu | N/A | 15.6788 | [0.6882, 30.2669] |
-| Extra 2 | Shape r | N/A | 17.6568 | [1.0567, 85.2917] |
-| Extra 2 | rtilde | N/A | 0.2478 | [0.0116, 0.4862] |
-| Extra 2 | Success probability p | N/A | 0.3048 | [0.0429, 0.9445] |
-| Extra 2 | Component mean kappa + mu | N/A | 30.9902 | [6.0972, 55.4442] |
-| Extra 3 | Weight pi | 0.0000 | 5.741e-08 | [0.0000, 1.838e-11] |
-| Extra 3 | Shift kappa | N/A | 15.4236 | [0.0000, 31.0000] |
-| Extra 3 | NB mean mu | N/A | 15.6713 | [0.8428, 30.2639] |
-| Extra 3 | Shape r | N/A | 17.1730 | [1.0504, 68.1987] |
-| Extra 3 | rtilde | N/A | 0.2512 | [0.0145, 0.4877] |
-| Extra 3 | Success probability p | N/A | 0.2967 | [0.0432, 0.9189] |
-| Extra 3 | Component mean kappa + mu | N/A | 31.0949 | [6.6442, 55.5204] |
-| Extra 4 | Weight pi | 0.0000 | 1.123e-09 | [0.0000, 7.864e-21] |
-| Extra 4 | Shift kappa | N/A | 15.9920 | [0.0000, 31.0000] |
-| Extra 4 | NB mean mu | N/A | 15.4908 | [0.7975, 30.2513] |
-| Extra 4 | Shape r | N/A | 17.1726 | [1.0533, 83.3500] |
-| Extra 4 | rtilde | N/A | 0.2509 | [0.0119, 0.4870] |
-| Extra 4 | Success probability p | N/A | 0.3012 | [0.0430, 0.9385] |
-| Extra 4 | Component mean kappa + mu | N/A | 31.4828 | [6.7002, 55.5906] |
+| 2 | NB mean mu | 5.0000 | 5.2277 | [4.9701, 5.4955] |
+| 2 | Shape r | 3.0000 | 3.3639 | [2.8346, 4.0009] |
+| 2 | rtilde | 0.2500 | 0.2302 | [0.2000, 0.2608] |
+| 2 | Success probability p | 0.3750 | 0.3909 | [0.3494, 0.4352] |
+| 2 | Component mean kappa + mu | 15.0000 | 15.2277 | [14.9701, 15.4955] |
+| Extra 1 | Weight pi | 0.0000 | 0.0003 | [3.303e-100, 0.0029] |
+| Extra 1 | Shift kappa | N/A | 14.9292 | [0.0000, 30.0000] |
+| Extra 1 | NB mean mu | N/A | 15.2449 | [0.8337, 30.3127] |
+| Extra 1 | Shape r | N/A | 63.4101 | [1.0513, 82.3617] |
+| Extra 1 | rtilde | N/A | 0.2495 | [0.0120, 0.4875] |
+| Extra 1 | Success probability p | N/A | 0.3052 | [0.0434, 0.9336] |
+| Extra 1 | Component mean kappa + mu | N/A | 30.1741 | [6.6322, 55.1290] |
+| Extra 2 | Weight pi | 0.0000 | 2.297e-06 | [3.688e-198, 1.514e-06] |
+| Extra 2 | Shift kappa | N/A | 15.6556 | [0.0000, 31.0000] |
+| Extra 2 | NB mean mu | N/A | 15.3777 | [0.7078, 30.1844] |
+| Extra 2 | Shape r | N/A | 19.7358 | [1.0470, 78.8901] |
+| Extra 2 | rtilde | N/A | 0.2519 | [0.0125, 0.4885] |
+| Extra 2 | Success probability p | N/A | 0.3003 | [0.0433, 0.9523] |
+| Extra 2 | Component mean kappa + mu | N/A | 31.0333 | [6.6123, 55.7418] |
+| Extra 3 | Weight pi | 0.0000 | 4.624e-08 | [0.0000, 5.344e-11] |
+| Extra 3 | Shift kappa | N/A | 15.4364 | [0.0000, 31.0000] |
+| Extra 3 | NB mean mu | N/A | 15.4149 | [0.8102, 30.1456] |
+| Extra 3 | Shape r | N/A | 16.3932 | [1.0472, 88.7353] |
+| Extra 3 | rtilde | N/A | 0.2494 | [0.0111, 0.4885] |
+| Extra 3 | Success probability p | N/A | 0.3065 | [0.0429, 0.9368] |
+| Extra 3 | Component mean kappa + mu | N/A | 30.8513 | [5.7969, 55.3049] |
+| Extra 4 | Weight pi | 0.0000 | 1.471e-09 | [0.0000, 7.559e-21] |
+| Extra 4 | Shift kappa | N/A | 15.5568 | [0.0000, 31.0000] |
+| Extra 4 | NB mean mu | N/A | 15.4204 | [0.8005, 30.2916] |
+| Extra 4 | Shape r | N/A | 16.5053 | [1.0514, 81.2237] |
+| Extra 4 | rtilde | N/A | 0.2521 | [0.0122, 0.4875] |
+| Extra 4 | Success probability p | N/A | 0.3018 | [0.0434, 0.9480] |
+| Extra 4 | Component mean kappa + mu | N/A | 30.9772 | [6.0487, 55.4168] |
 
-Combined weight of the four extras: posterior mean 0.0004; 95% credible interval [7.170e-168, 0.0038]. Their individual parameter summaries describe weight-ranked slots, not persistent component identities.
+Combined weight of the four extras: posterior mean 0.0003; 95% credible interval [3.303e-100, 0.0029]. Their individual parameter summaries describe weight-ranked slots, not persistent component identities.
 
 ## Reproduction and checks
 
@@ -166,7 +188,8 @@ run_designs()
 To regenerate only the report and plots from saved chains, without running any new chains:
 
 ```r
-write_report(readRDS("JOE revision/results.rds"), "JOE revision")
+write_report(readRDS("JOE revision/results.rds"), "JOE revision",
+             baseline = readRDS("JOE revision/results-before-batch.rds"))
 ```
 
 The runner saves observations, full chains, retained draws, summaries, and R session details in [results.rds](results.rds). Seeds and settings are recorded above. It checks finite draws, normalized weights, PMF non-negativity and mass, and agreement between stored and independently recomputed log-likelihoods at ten retained draws per case. These numerical checks do not certify convergence.

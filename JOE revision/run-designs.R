@@ -111,6 +111,7 @@ run_design <- function(name, nb_iter = 10000L, burnin = 5000L) {
   }, numeric(1))
     list(name = name, design = design, fit = fit, nb_iter = nb_iter, burnin = burnin,
       shift_update = "Joint shift-mean update (kappa + mu held fixed during the shift step)",
+       proposal_adaptation = "50-iteration burn-in batches targeting 30-40% acceptance, with diminishing adjustments; tuning state follows component sorting",
        elapsed = elapsed, grid = grid, truth = truth, estimated = estimated,
        lower = apply(probability, 1, quantile, probs = 0.025),
        upper = apply(probability, 1, quantile, probs = 0.975),
@@ -163,7 +164,7 @@ format_estimate <- function(value) {
   sprintf("%.4f", value)
 }
 
-write_report <- function(results, directory) {
+write_report <- function(results, directory, baseline = NULL) {
   lines <- c("# D1-D4: single-chain simulation results", "",
     "One simulated dataset and one MCMC chain per design. D3 and D4 use the same observations.", "",
     "## Method", "",
@@ -187,6 +188,32 @@ write_report <- function(results, directory) {
   worst <- results[[which.max(vapply(results, function(result) result$tv, numeric(1)))]]
   lines <- c(lines, "", sprintf("%s has the largest distribution error among these runs (TV %.4f). The parameter tables below also show why a close distribution fit does not establish parameter recovery.",
     worst$name, worst$tv))
+  compared <- intersect(names(baseline), names(Filter(function(result) {
+    !is.null(result$proposal_adaptation)
+  }, results)))
+  if (length(compared)) {
+    lines <- c(lines, "", "## Batch adaptation comparison", "",
+      "Before: joint shift-mean updates with cumulative acceptance-rate tuning. After: joint updates with batch adaptation and tuning state preserved during component sorting. Each pair uses identical observations, data and chain seeds, priors, and iteration counts. One chain per method and design cannot establish a general improvement or convergence.", "",
+      "Lower TV and CDF error are better; higher log-likelihood bulk ESS indicates more effective draws for that quantity. Negative TV changes indicate improvement in this run.", "",
+      "| Case | TV before | TV batch | TV change | CDF error before | CDF error batch | Log-likelihood ESS before | Log-likelihood ESS batch |",
+      "|---|---:|---:|---:|---:|---:|---:|---:|")
+    for (name in compared) {
+      before <- baseline[[name]]
+      after <- results[[name]]
+      stopifnot(identical(before$design, after$design),
+                identical(before$fit$data, after$fit$data),
+                identical(before$nb_iter, after$nb_iter), identical(before$burnin, after$burnin))
+      lines <- c(lines, sprintf("| %s | %.4f | %.4f | %+.4f | %.4f | %.4f | %.1f | %.1f |",
+        name, before$tv, after$tv, after$tv - before$tv, before$cdf_error, after$cdf_error,
+        before$loglik_ess, after$loglik_ess))
+    }
+    not_rerun <- setdiff(names(results), compared)
+    if (length(not_rerun)) {
+      lines <- c(lines, "", sprintf("**Not rerun with batch adaptation:** %s. Their rows in the distribution summary, plots, and parameter tables retain the previous joint-update results; they are excluded from the batch comparison above.",
+        paste(not_rerun, collapse = ", ")))
+    }
+    lines <- c(lines, "", "The previous chains and summaries are preserved in [results-before-batch.rds](results-before-batch.rds).")
+  }
   labels <- c(weight = "Weight pi", shift = "Shift kappa", mu = "NB mean mu", shape = "Shape r",
               rtilde = "rtilde", p = "Success probability p", component_mean = "Component mean kappa + mu")
   for (result in results) {
@@ -198,6 +225,11 @@ write_report <- function(results, directory) {
         result$design$data_seed, result$design$chain_seed, max(result$grid), result$tail_mass))
     if (!is.null(result$shift_update)) {
       lines <- c(lines, "", paste0("Shift update: ", result$shift_update, "."))
+    }
+    if (!is.null(result$proposal_adaptation)) {
+      lines <- c(lines, "", paste0("Proposal adaptation: ", result$proposal_adaptation, "."))
+    } else if (!is.null(baseline)) {
+      lines <- c(lines, "", "**Not rerun with batch adaptation.** These are the retained results from the previous joint-update run.")
     }
     shifts <- subset(result$parameters, parameter == "shift" & component <= length(result$design$weight))
     missed <- shifts$component[shifts$truth < shifts$lower | shifts$truth > shifts$upper]
@@ -230,7 +262,8 @@ write_report <- function(results, directory) {
     "Run from the repository root:", "", "```r", "source(\"JOE revision/run-designs.R\")",
     "run_designs()", "```", "",
     "To regenerate only the report and plots from saved chains, without running any new chains:", "",
-    "```r", "write_report(readRDS(\"JOE revision/results.rds\"), \"JOE revision\")", "```", "",
+    "```r", "write_report(readRDS(\"JOE revision/results.rds\"), \"JOE revision\",",
+    "             baseline = readRDS(\"JOE revision/results-before-batch.rds\"))", "```", "",
     "The runner saves observations, full chains, retained draws, summaries, and R session details in [results.rds](results.rds). Seeds and settings are recorded above. It checks finite draws, normalized weights, PMF non-negativity and mass, and agreement between stored and independently recomputed log-likelihoods at ten retained draws per case. These numerical checks do not certify convergence.", "",
     sprintf("Report generated: %s. Sampling session: %s. BayesMultiMode %s loaded from the local working tree.",
       format(Sys.Date()), results[[1]]$session$R.version$version.string,
@@ -244,12 +277,18 @@ run_designs <- function(cases = names(designs)) {
   directory <- "JOE revision"
   cache <- file.path(directory, "results.rds")
   results <- if (file.exists(cache)) readRDS(cache) else list()
+  baseline_path <- file.path(directory, "results-before-batch.rds")
+  if (!file.exists(baseline_path) && length(results)) {
+    stopifnot(all(vapply(results, function(result) is.null(result$proposal_adaptation), logical(1))))
+    saveRDS(results, baseline_path)
+  }
+  baseline <- if (file.exists(baseline_path)) readRDS(baseline_path) else NULL
   for (name in cases) {
     cat("\nRunning", name, "with one chain\n")
     results[[name]] <- run_design(name)
     results <- results[intersect(names(designs), names(results))]
     saveRDS(results, cache)
-    write_report(results, directory)
+    write_report(results, directory, baseline)
     cat(sprintf("%s complete: TV = %.4f, CDF error = %.4f, elapsed = %.1f s\n",
       name, results[[name]]$tv, results[[name]]$cdf_error, results[[name]]$elapsed))
   }

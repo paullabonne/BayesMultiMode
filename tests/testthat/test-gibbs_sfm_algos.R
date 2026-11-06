@@ -211,7 +211,7 @@ test_that("shifted negative binomial sampler passes both joint draws to the next
     expect_equal(c(kappa, mu, r_tilde, mu_max), c(0, 6, 0.4, 8))
     list(kappa = 4, mu = 2)
   }
-  sampler_env$rneg_binom = function(Y, std, d_mu, d_rtilde, accept_ratio, burnin, mu_max) {
+  sampler_env$rneg_binom = function(Y, std, d_mu, d_rtilde, mu_max) {
     expect_equal(Y, c(1, 2, 4))
     expect_equal(d_mu, 2)
     expect_equal(mu_max, 8)
@@ -226,9 +226,9 @@ test_that("joint shifted negative binomial fits retain valid draws and log likel
   observations = c(5 + rnbinom(80, size = 3, mu = 10),
                     50 + rnbinom(80, size = 2, mu = 1))
   fit = bayes_fit(observations, K = 2, dist = "shifted_neg_binomial",
-                  nb_iter = 40, burnin = 10, print = FALSE)
-  expect_equal(dim(fit$mcmc_all), c(40, 8))
-  expect_equal(nrow(fit$mcmc), 30)
+                  nb_iter = 120, burnin = 75, print = FALSE)
+  expect_equal(dim(fit$mcmc_all), c(120, 8))
+  expect_equal(nrow(fit$mcmc), 45)
   expect_identical(colnames(fit$mcmc_all),
                    c("eta1", "eta2", "kappa1", "kappa2", "mu1", "mu2", "rtilde1", "rtilde2"))
   expect_true(all(is.finite(fit$mcmc_all)))
@@ -236,13 +236,13 @@ test_that("joint shifted negative binomial fits retain valid draws and log likel
   shifts = fit$mcmc_all[, c("kappa1", "kappa2")]
   means = fit$mcmc_all[, c("mu1", "mu2")]
   shapes = fit$mcmc_all[, c("rtilde1", "rtilde2")]
-  expect_equal(unname(rowSums(weights)), rep(1, 40))
+  expect_equal(unname(rowSums(weights)), rep(1, 120))
   expect_true(all(weights >= 0))
   expect_true(all(shifts >= 0 & shifts <= max(observations) & shifts %% 1 == 0))
   expect_true(all(means > 0 & means <= max(observations)))
   expect_true(all(shapes > 0 & shapes < 0.5))
   expect_true(all(shifts[, 1] <= shifts[, 2]))
-  for (draw in c(1, 20, 40)) {
+  for (draw in c(1, 50, 51, 75, 120)) {
     probabilities = vapply(1:2, function(component) {
       weights[draw, component] * dnbinom(observations - shifts[draw, component],
         size = 1 / shapes[draw, component] - 1, mu = means[draw, component])
@@ -321,13 +321,13 @@ test_that("negative binomial Gaussian proposals are rejected outside support", {
   observations = c(0, 1, 2, 3, 5, 8, 12)
   for (candidate in c(-0.1, 0, 0.5, 0.6)) {
     proposal_count = 0L
-    result = update(observations, 0.1, 5, 0.2, 0.2, mu_max = 12)
+    result = update(observations, 0.1, 5, 0.2, mu_max = 12)
     expect_equal(result[2:4], c(0.2, 0, 0.1))
     expect_equal(proposal_count, 1L)
   }
 
   candidate = 0.005
-  result = update(observations, 0.1, 5, 0.2, 0.2, mu_max = 12)
+  result = update(observations, 0.1, 5, 0.2, mu_max = 12)
   expect_equal(result[2:3], c(0.005, 1))
 })
 
@@ -345,31 +345,118 @@ test_that("negative binomial Gaussian acceptance follows the likelihood ratio", 
   expect_lt(acceptance_probability, 1)
 
   update_env$runif = function(...) acceptance_probability / 2
-  result = update(observations, 0.1, 5, 0.2, 0.2, mu_max = 5)
+  result = update(observations, 0.1, 5, 0.2, mu_max = 5)
   expect_equal(result[2:3], c(0.4, 1))
 
   update_env$runif = function(...) (1 + acceptance_probability) / 2
-  result = update(observations, 0.1, 5, 0.2, 0.2, mu_max = 5)
+  result = update(observations, 0.1, 5, 0.2, mu_max = 5)
   expect_equal(result[2:3], c(0.2, 0))
 })
 
-test_that("negative binomial Gaussian proposal tuning stops after burn-in", {
-  update = rneg_binom
-  update_env = new.env(parent = environment(update))
-  environment(update) = update_env
-  update_env$qgamma = function(...) 1 / 5
-  update_env$rnorm = function(...) 0.2
-  observations = c(0, 1, 2, 3, 5, 8, 12)
+test_that("rtilde batch adaptation targets 30 to 40 percent and diminishes", {
+  expect_equal(adapt_rtilde_proposals(rep(0.1, 6), c(0, 15, 17, 20, 50, 0),
+                                     c(rep(50, 5), 0), 1),
+               0.1 * exp(c(-0.1, 0, 0, 0, 0.1, 0)))
+  expect_equal(adapt_rtilde_proposals(c(0.1, 0.1), c(0, 50), c(50, 50), 400),
+               0.1 * exp(c(-0.05, 0.05)))
+  expect_lt(adapt_rtilde_proposals(0.005, 0, 50, 1), 0.005)
+})
 
-  for (acceptance_rate in c(0, 0.5)) {
-    result = update(observations, 0.1, 5, 0.2, acceptance_rate, mu_max = 12)
-    expect_equal(result[4], 0.1)
+test_that("negative binomial samplers adapt only at complete burn-in batches", {
+  for (sampler in list(gibbs_SFM_neg_binomial, gibbs_SFM_shifted_neg_binomial)) {
+    sampler_env = new.env(parent = environment(sampler))
+    environment(sampler) = sampler_env
+    sampler_env$draw_kap_mu = function(x, kappa, mu, ...) list(kappa = 0, mu = mu)
+    sampler_env$draw_e0 = function(e0, ...) list(e0, 0)
+    for (burnin in c(0, 49, 100, 125)) {
+      scales = numeric(0)
+      batches = list()
+      sampler_env$rneg_binom = function(Y, std, d_mu, d_rtilde, mu_max) {
+        scales <<- c(scales, std)
+        iteration = length(scales)
+        accepted = as.numeric(iteration <= 50 || iteration > 100)
+        c(d_mu, d_rtilde, accepted, std)
+      }
+      sampler_env$adapt_rtilde_proposals = function(std, accepted, proposed, batch) {
+        batches[[length(batches) + 1L]] <<- c(accepted, proposed, batch)
+        adapt_rtilde_proposals(std, accepted, proposed, batch)
+      }
+      sampler(c(2, 3, 4), 1, 180, burnin, list(a0 = 1, A0 = 200, sig = 0.1), FALSE)
+      expected = rep(0.1, 180)
+      if (burnin >= 100) expected[51:100] = 0.1 * exp(0.1)
+      expect_equal(scales, expected)
+      expect_equal(batches, if (burnin >= 100) list(c(50, 50, 1), c(0, 50, 2)) else list())
+    }
   }
+})
 
-  result = update(observations, 0.1, 5, 0.2, 0, burnin = TRUE, mu_max = 12)
-  expect_equal(result[4], 0.08)
-  result = update(observations, 0.1, 5, 0.2, 0.5, burnin = TRUE, mu_max = 12)
-  expect_equal(result[4], 0.12)
+test_that("rtilde batches exclude empty components and count only actual proposals", {
+  for (sampler in list(gibbs_SFM_neg_binomial, gibbs_SFM_shifted_neg_binomial)) {
+    sampler_env = new.env(parent = environment(sampler))
+    environment(sampler) = sampler_env
+    sampler_env$kmeans = function(y, ...) {
+      list(cluster = rep(1L, length(y)), centers = matrix(c(2, 3, 4), ncol = 1))
+    }
+    iteration = 0L
+    scales = numeric(0)
+    batches = list()
+    sampler_env$rdirichlet = function(n, alpha) {
+      iteration <<- iteration + 1L
+      matrix(if (iteration < 10) c(1, 0, 0) else c(0, 1, 0), nrow = n)
+    }
+    sampler_env$draw_e0 = function(e0, ...) list(e0, 0)
+    sampler_env$draw_kap_mu = function(x, kappa, mu, ...) list(kappa = 0, mu = mu)
+    sampler_env$sample.int = function(...) 1L
+    sampler_env$rneg_binom = function(Y, std, d_mu, d_rtilde, mu_max) {
+      scales <<- c(scales, std)
+      c(d_mu, d_rtilde, as.numeric(length(Y) > 0 && d_mu == 2), std)
+    }
+    sampler_env$adapt_rtilde_proposals = function(std, accepted, proposed, batch) {
+      batches[[length(batches) + 1L]] <<- list(accepted = accepted, proposed = proposed)
+      adapt_rtilde_proposals(std, accepted, proposed, batch)
+    }
+    sampler(0:5, 3, 60, 50, list(a0 = 1, A0 = 200, sig = 0.1), FALSE)
+    expect_equal(batches, list(list(accepted = c(10, 0, 0), proposed = c(10, 40, 0))))
+    scales = matrix(scales, ncol = 3, byrow = TRUE)
+    expect_equal(scales[1:50, ], matrix(0.1, nrow = 50, ncol = 3))
+    expect_equal(scales[51:60, ], matrix(0.1 * exp(c(0.1, -0.1, 0)),
+                                        nrow = 10, ncol = 3, byrow = TRUE))
+  }
+})
+
+test_that("shifted negative binomial sorting preserves proposal scales and batch histories", {
+  sampler = gibbs_SFM_shifted_neg_binomial
+  sampler_env = new.env(parent = environment(sampler))
+  environment(sampler) = sampler_env
+  sampler_env$kmeans = function(y, ...) {
+    list(cluster = c(1L, 1L, 2L, 2L), centers = matrix(c(2, 4), ncol = 1))
+  }
+  sampler_env$rdirichlet = function(n, alpha) matrix(c(0.5, 0.5), nrow = n)
+  sampler_env$draw_e0 = function(e0, ...) list(e0, 0)
+  allocation = 0L
+  sampler_env$rmultinom = function(n, size, prob) {
+    allocation <<- allocation %% 4L + 1L
+    if (allocation <= 2L) c(1, 0) else c(0, 1)
+  }
+  shift_calls = 0L
+  records = list()
+  sampler_env$draw_kap_mu = function(x, kappa, mu, ...) {
+    shift_calls <<- shift_calls + 1L
+    iteration = ceiling(shift_calls / 2)
+    reversed = iteration >= 25 && iteration < 75
+    shift = if (mu == 2) as.numeric(reversed) else as.numeric(!reversed)
+    list(kappa = shift, mu = mu)
+  }
+  sampler_env$rneg_binom = function(Y, std, d_mu, d_rtilde, mu_max) {
+    records[[length(records) + 1L]] <<- c(iteration = ceiling(shift_calls / 2),
+                                        identity = d_mu, scale = std)
+    c(d_mu, d_rtilde, as.numeric(d_mu == 2), std)
+  }
+  sampler(c(10, 11, 20, 21), 2, 160, 100, list(a0 = 1, A0 = 200, sig = 0.1), FALSE)
+  records = do.call(rbind, records)
+  direction = ifelse(records[, "identity"] == 2, 1, -1)
+  adjustments = as.numeric(records[, "iteration"] > 50) + as.numeric(records[, "iteration"] > 100)
+  expect_equal(unname(records[, "scale"]), 0.1 * exp(direction * adjustments * 0.1))
 })
 
 test_that("negative binomial mean draws use the fixed full-data bound", {
@@ -380,8 +467,8 @@ test_that("negative binomial mean draws use the fixed full-data bound", {
   update_env$rnorm = function(...) -1
   update_env$runif = function(...) 0.5
 
-  zeros = update(c(0, 0), 0.1, 2, 0.2, 0.2, mu_max = 10)
-  small_counts = update(c(0, 1), 0.1, 2, 0.2, 0.2, mu_max = 10)
+  zeros = update(c(0, 0), 0.1, 2, 0.2, mu_max = 10)
+  small_counts = update(c(0, 1), 0.1, 2, 0.2, mu_max = 10)
   log_probability = pgamma(1 / 10, shape = 7, scale = 1 / 8,
                            lower.tail = FALSE, log.p = TRUE) + log(0.5)
   expected_mean = 1 / qgamma(log_probability, shape = 7, scale = 1 / 8,
@@ -392,7 +479,7 @@ test_that("negative binomial mean draws use the fixed full-data bound", {
   expect_lt(expected_mean, 10)
 
   update_env$rgamma = function(n, ...) rep(1e5, n)
-  result = update(c(0, 0), 0.1, 2, 0.2, 0.2, mu_max = 10)
+  result = update(c(0, 0), 0.1, 2, 0.2, mu_max = 10)
   expect_gt(result[1], 0)
   expect_lte(result[1], 10)
 })
@@ -409,7 +496,7 @@ test_that("empty negative binomial components draw directly from their priors", 
   update_env$rgamma = function(...) stop("An empty component has no latent observations.")
   update_env$rnorm = function(...) stop("An empty component needs no MH proposal.")
 
-  result = update(numeric(0), 0.1, 2, 0.2, 0, burnin = TRUE, mu_max = 10)
+  result = update(numeric(0), 0.1, 2, 0.2, mu_max = 10)
   expect_equal(result, c(5, 0.25, 0, 0.1))
   expect_equal(uniform_bounds, list(c(0, 10), c(0, 0.5)))
 })
@@ -428,11 +515,11 @@ test_that("both negative binomial samplers pass fixed bounds and empty allocatio
     component_counts = numeric(0)
     prior_bounds = numeric(0)
     initial_means = numeric(0)
-    sampler_env$rneg_binom = function(Y, std, d_mu, d_rtilde, accept_ratio, burnin, mu_max) {
+    sampler_env$rneg_binom = function(Y, std, d_mu, d_rtilde, mu_max) {
       component_counts <<- c(component_counts, length(Y))
       prior_bounds <<- c(prior_bounds, mu_max)
       initial_means <<- c(initial_means, d_mu)
-      rneg_binom(Y, std, d_mu, d_rtilde, accept_ratio, burnin, mu_max = mu_max)
+      rneg_binom(Y, std, d_mu, d_rtilde, mu_max = mu_max)
     }
 
     result = sampler(c(0, 1, 2, 3, 4, 5), K = 2, nb_iter = 1, nb_burnin = 0,

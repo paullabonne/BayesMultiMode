@@ -535,8 +535,8 @@ gibbs_SFM_neg_binomial <- function(y,
   
   # Initial conditions
   cl_y <- kmeans(y, centers = K, nstart = 30)
-  accept_ratio = rep(0, K)
-  accept = rep(0, K)
+  batch_accept = rep(0, K)
+  batch_proposals = rep(0, K)
 
   S <- matrix(0,length(y),K)
   
@@ -565,18 +565,25 @@ gibbs_SFM_neg_binomial <- function(y,
       
       yk = y[S[, k]==1]
      
-      draw_pars = rneg_binom(yk, std_mh[k], mu_m[k], r_tilde_m[k], accept_ratio[k], m <= nb_burnin, mu_max = mu_max)
+      draw_pars = rneg_binom(yk, std_mh[k], mu_m[k], r_tilde_m[k], mu_max = mu_max)
       mu_m[k] = draw_pars[1]
       r_tilde_m[k] = draw_pars[2]
-      accept[k] = accept[k] + draw_pars[3]
-      std_mh[k] = draw_pars[4]
-      accept_ratio[k] = accept[k] / m
+      if (m <= nb_burnin && N[k] > 0) {
+        batch_accept[k] = batch_accept[k] + draw_pars[3]
+        batch_proposals[k] = batch_proposals[k] + 1
+      }
      # transform parameters
       r = (1-r_tilde_m[k])/r_tilde_m[k]
       p = mu_m[k] / (r + mu_m[k])
       
       #
       probs[,k]  = eta[m,k] * dnbinom(y, r, 1 - p)
+    }
+
+    if (m <= nb_burnin && m %% 50 == 0) {
+      std_mh = adapt_rtilde_proposals(std_mh, batch_accept, batch_proposals, m / 50)
+      batch_accept[] = 0
+      batch_proposals[] = 0
     }
     
     # 2. classification
@@ -652,7 +659,8 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
   
   # Initial conditions
   cl_y <- kmeans(y, centers = K, nstart = 30)
-  accept_ratio = rep(0, K)
+  batch_accept = rep(0, K)
+  batch_proposals = rep(0, K)
 
   S <- matrix(0,length(y),K)
   for (k in 1:K) {
@@ -693,17 +701,17 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
         mu_m[k] = draw_shift$mu
       }
 
-      draw_pars = rneg_binom(yk - kappa_m[k], std_mh[k], mu_m[k], r_tilde_m[k], accept_ratio[k], burnin, mu_max = mu_max)
+      draw_pars = rneg_binom(yk - kappa_m[k], std_mh[k], mu_m[k], r_tilde_m[k], mu_max = mu_max)
 
       mu_m[k] = draw_pars[1]
       r_tilde_m[k] = draw_pars[2]
       mu_m[k] = draw_pars[1]
       r_tilde_m[k] = draw_pars[2]
       accept[k] = accept[k] + draw_pars[3]
-      
-      # adaptive step
-      std_mh[k] = draw_pars[4]
-      accept_ratio[k] = mean(accept[k]/m)
+      if (burnin && N[k] > 0) {
+        batch_accept[k] = batch_accept[k] + draw_pars[3]
+        batch_proposals[k] = batch_proposals[k] + 1
+      }
 
       # transform parameters
       r = (1-r_tilde_m[k])/r_tilde_m[k]
@@ -715,6 +723,12 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
 
     }
 
+    if (burnin && m %% 50 == 0) {
+      std_mh = adapt_rtilde_proposals(std_mh, batch_accept, batch_proposals, m / 50)
+      batch_accept[] = 0
+      batch_proposals[] = 0
+    }
+
     # Ordering
     order_k = order(kappa_m)
     kappa_m = kappa_m[order_k]
@@ -722,6 +736,10 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
     r_tilde_m = r_tilde_m[order_k]
     eta[m, ] = eta[m, order_k]
     probs = probs[, order_k, drop = FALSE]
+    std_mh = std_mh[order_k]
+    batch_accept = batch_accept[order_k]
+    batch_proposals = batch_proposals[order_k]
+    accept = accept[order_k]
     
     # 2. classification
     pnorm = probs/rowSums(probs)
@@ -852,8 +870,15 @@ check_priors <- function(priors, dist, data) {
 
 ## functions used in the SFM MCMC algorithm
 
+adapt_rtilde_proposals <- function(std, accepted, proposed, batch) {
+  acceptance_rate = accepted / pmax(proposed, 1)
+  direction = as.numeric(proposed > 0 & acceptance_rate > 0.4) -
+    as.numeric(proposed > 0 & acceptance_rate < 0.3)
+  std * exp(min(0.1, 1 / sqrt(batch)) * direction)
+}
+
 #' @keywords internal
-rneg_binom <- function(Y, std, d_mu, d_rtilde, accept_ratio, burnin = FALSE, mu_max) {
+rneg_binom <- function(Y, std, d_mu, d_rtilde, mu_max) {
 
   #Y = Y[Y >= 0]
   
@@ -907,14 +932,6 @@ rneg_binom <- function(Y, std, d_mu, d_rtilde, accept_ratio, burnin = FALSE, mu_
   #d_log_l <- d_r * N * log(1 - d_p) - N * lgamma(d_r) + sum(lgamma(Y + d_r) + Y * log(d_p))
   
   d_log_l = sum(dnbinom(Y, size = d_r, prob = 1 - d_p, log = TRUE))
-
-  if (burnin) {
-    if (accept_ratio < 0.1) {
-      std = max(std * 0.8, 0.01)
-    } else if (accept_ratio > 0.4) {
-      std = std * 1.2
-    }
-  }
 
   d_rtilde_candidate = rnorm(1, mean = d_rtilde, sd = std)
   accept = 0

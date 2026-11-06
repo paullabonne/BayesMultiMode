@@ -1,4 +1,9 @@
 ## Development version
+* Negative binomial and shifted negative binomial mixtures now tune `rtilde`
+	proposal scales every 50 burn-in iterations, targeting 30-40% acceptance with
+	diminishing adjustments. Empty components do not contribute to proposal counts,
+	and adaptation stops after burn-in. Component sorting preserves proposal scales
+	and batch histories. Priors and the joint shift-mean update are unchanged.
 * Shifted negative binomial mixtures now jointly update the shift and mean of each
 	non-empty component. The update samples all valid integer shifts conditional on
 	`kappa + mu` and adjusts `mu` to preserve that sum, using the existing uniform
