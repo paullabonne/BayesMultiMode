@@ -3,9 +3,11 @@
 #' Estimation of a univariate mixture with unknown number of components using a sparse finite mixture Markov chain Monte Carlo (SFM MCMC) algorithm.
 #' 
 #' @param data Vector of observations.
-#' @param K Maximum number of mixture components.
+#' @param K Maximum number of count components when `zero_inflated = TRUE`;
+#' otherwise, maximum number of mixture components.
 #' @param dist String indicating the distribution of the mixture components;
-#' currently supports `"normal"`, `"skew_normal"`, `"poisson"` and `"shifted_poisson"`.
+#' currently supports `"normal"`, `"skew_normal"`, `"poisson"`, `"shifted_poisson"`,
+#' `"neg_binomial"` and `"shifted_neg_binomial"`.
 #' @param priors List of priors; default is an empty list which implies the following priors:\cr
 #' `a0 = 1`,\cr `A0 = 200`,\cr `b0 = median(y)`,\cr `B0 = (max(y) - min(y))^2` (normal),\cr
 #' `D_xi = 1`,\cr `D_psi =1`, (skew normal: `B0 = diag(D_xi,D_psi)`), \cr `c0 = 2.5`,\cr
@@ -15,13 +17,19 @@
 #' @param nb_iter Number of MCMC iterations; default is `2000`.
 #' @param burnin Number of MCMC iterations used as burnin; default is `nb_iter/2`.
 #' @param print Showing MCMC progression ? Default is `TRUE`.
+#' @param zero_inflated Add a structural-zero component to a `"poisson"` or
+#' `"neg_binomial"` mixture? Default is `FALSE`. Its probability has a
+#' Beta prior with positive shape parameters `priors$zero_a` and
+#' `priors$zero_b`, both defaulting to `1`.
 #' 
 #' @return A list of class \code{bayes_mixture} containing:
 #'  \item{data}{Same as argument.}
 #'  \item{mcmc}{Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
 #'  \item{mcmc_all}{Matrix of MCMC draws.}
 #'  \item{loglik}{Log likelihood at each MCMC draw.}
-#'  \item{K}{Number of components.}
+#'  \item{K}{Number of components, including the structural-zero component if enabled.}
+#'  \item{zero_inflated}{Present and `TRUE` when structural zeros are enabled.}
+#'  \item{count_K}{When zero inflation is enabled, the requested number of count components.}
 #'  \item{dist}{Same as argument.}
 #'  \item{pdf_func}{The pdf/pmf of the mixture components.}
 #'  \item{dist_type}{Type of the distribution, i.e. continuous or discrete.}
@@ -88,6 +96,26 @@
 #' \deqn{p(y_i|\lambda_k) = \frac{1}{y_i!} \, \lambda^{y_i}_k \,\exp(-\lambda_k).}
 #' The prior for \eqn{\lambda_k} follows from \insertCite{viallefont2002bayesian;textual}{BayesMultiMode}:
 #' \deqn{\lambda_k \sim \text{Gamma}(\text{l}_0,\text{L}_0).}
+#' When zero inflation is enabled, the default Poisson rate prior uses
+#' `L0 = 1.1/median(data[data > 0])`, or `1.1` for all-zero data.
+#'
+#' **Zero-inflated count mixtures**
+#'
+#' With `zero_inflated = TRUE`, the model is
+#' \deqn{p(y) = \pi_0 1\{y=0\} + (1-\pi_0)\sum_{k=1}^{K}\eta_k f_k(y).}
+#' The count weights sum to one and retain the sparse Dirichlet prior.
+#' The structural-zero probability has an independent Beta prior.
+#' Zeros may be allocated to either the zero atom or a count component;
+#' positive observations may only be allocated to count components.
+#' In the returned draws, component 1 is the zero atom and `eta1` is
+#' \eqn{\pi_0}; components 2 through `K + 1` have unconditional weights
+#' \eqn{(1-\pi_0)\eta_k}. The atom has `lambda1 = 0` for Poisson, or
+#' `mu1 = 0` and fixed `rtilde1 = 0.25` for negative binomial.
+#' The fixed negative-binomial dispersion is only a representation of the
+#' zero atom and is not estimated. Negative-binomial fits require at least
+#' one positive observation to define their existing mean prior.
+#' Plotting and mode inference include the zero atom; use `range = c(1, max(data))`
+#' in [bayes_mode()] to restrict reported modes to positive counts.
 #' 
 #' 
 #' **Mixture of shifted-Poisson distributions**
@@ -165,7 +193,8 @@ bayes_fit <- function(data,
                       priors = list(),
                       nb_iter = 2000,
                       burnin = nb_iter/2,
-                      print = TRUE) {
+                      print = TRUE,
+                      zero_inflated = FALSE) {
   
   assert_that(is.vector(data) & length(data) > K,
               msg = "data should be a vector of length greater than K")
@@ -180,6 +209,10 @@ bayes_fit <- function(data,
               msg = "nb_iter should be a positive integer lower than burnin")
   assert_that(is.scalar(K), round(K) == K, K > 0, msg = "K should be a positive integer")
   assert_that(is.logical(print), msg = "print should be either TRUE or FALSE")
+  assert_that(is.logical(zero_inflated), is.scalar(zero_inflated), !is.na(zero_inflated),
+              msg = "zero_inflated should be either TRUE or FALSE")
+  assert_that(!zero_inflated || dist %in% c("poisson", "neg_binomial"),
+              msg = "zero_inflated is supported only for poisson and neg_binomial mixtures.")
   
   if (dist %in% c("poisson", "shifted_poisson", "neg_binomial", "shifted_neg_binomial")) {
     assert_that(!any(!data%%1==0),
@@ -191,7 +224,7 @@ bayes_fit <- function(data,
     dist_type = "continuous"
   }
   
-  priors = check_priors(priors, dist, data)
+  priors = check_priors(priors, dist, data, zero_inflated)
   
   mcmc <- gibbs_SFM(y = data,
                     K = K,
@@ -199,7 +232,8 @@ bayes_fit <- function(data,
                     nb_burnin = burnin,
                     priors = priors,
                     print = print,
-                    dist = dist)
+                    dist = dist,
+                    zero_inflated = zero_inflated)
   
   # extract loglik from mcmc
   ll_id = which(colnames(mcmc) == "loglik")
@@ -212,6 +246,10 @@ bayes_fit <- function(data,
                                dist = dist,
                                dist_type = dist_type,
                                loglik = loglik)
+  if (zero_inflated) {
+    BayesMixture$zero_inflated = TRUE
+    BayesMixture$count_K = K
+  }
   
   return(BayesMixture)
 }

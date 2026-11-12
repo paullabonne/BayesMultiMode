@@ -234,7 +234,7 @@ bayes_mode <- function(BayesMix, rd = 1, tol_mixp = 0, tol_x = sd(BayesMix$data)
   p_nb_modes = rbind(unique_modes,prob_nb_modes)
   rownames(p_nb_modes) = c("number of modes", "posterior probability")
   # ordering
-  p_nb_modes = p_nb_modes[, order(unique_modes)]
+  p_nb_modes = p_nb_modes[, order(unique_modes), drop = FALSE]
 
   # mixture density
   mix_density = apply(mcmc,1, FUN = dmix, x = mode_range,

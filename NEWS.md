@@ -1,4 +1,11 @@
 ## Development version
+* Poisson and negative-binomial mixtures now support `zero_inflated = TRUE`,
+	adding a fixed zero atom with an independent Beta prior controlled by `zero_a`
+	and `zero_b`. `K` specifies the count components; returned component 1 is the
+	zero atom and `eta1` is its structural-zero probability. Count weights retain
+	the sparse-mixture prior. Existing fits are unchanged when the option is off.
+* Mode-count probabilities retain their matrix dimensions when every posterior
+	draw has the same number of modes, including zero-inflated fits.
 * Shifted Poisson mixtures now jointly update the shift and rate of each non-empty
 	component at fixed `kappa + lambda`, using the likelihood and existing Gamma rate
 	prior. The subsequent conditional Gamma update can change the total component

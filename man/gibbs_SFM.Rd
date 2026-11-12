@@ -4,7 +4,16 @@
 \alias{gibbs_SFM}
 \title{SFM MCMC algorithms to estimate mixtures.}
 \usage{
-gibbs_SFM(y, K, nb_iter, priors = list(), print = TRUE, dist)
+gibbs_SFM(
+	y,
+	K,
+	nb_iter,
+	nb_burnin,
+	priors = list(),
+	print = TRUE,
+	dist,
+	zero_inflated = FALSE
+)
 }
 \description{
 SFM MCMC algorithms to estimate mixtures.

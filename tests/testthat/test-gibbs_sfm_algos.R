@@ -1,3 +1,119 @@
+test_that("zero-inflated samplers recover structural mass and count means", {
+  for (distribution in c("poisson", "neg_binomial")) {
+    set.seed(616)
+    counts = if (distribution == "poisson") rpois(600, 8) else rnbinom(600, size = 5, mu = 8)
+    observations = c(rep(0, 250), counts)
+    fit = bayes_fit(observations, 1, distribution, nb_iter = 500, burnin = 250,
+                    print = FALSE, zero_inflated = TRUE)
+    expect_lt(abs(mean(fit$mcmc[, "eta1"]) - 250 / 850), 0.06)
+    mean_parameter = if (distribution == "poisson") "lambda2" else "mu2"
+    expect_lt(abs(mean(fit$mcmc[, mean_parameter]) - 8), 1)
+  }
+})
+
+test_that("zero-inflated count fits retain an exact atom and full likelihood", {
+  observations = c(rep(0, 40), rep(c(2, 5, 9), 10))
+  for (distribution in c("poisson", "neg_binomial")) {
+    set.seed(611)
+    fit = bayes_fit(observations, 2, distribution, nb_iter = 80, burnin = 40,
+                    print = FALSE, zero_inflated = TRUE)
+    expect_s3_class(fit, "bayes_mixture")
+    expect_true(fit$zero_inflated)
+    expect_equal(fit$count_K, 2)
+    expect_equal(fit$K, 3)
+    expect_identical(fit$data, observations)
+    expect_equal(nrow(fit$mcmc), 40)
+    expect_true(all(is.finite(fit$mcmc_all)))
+    expect_equal(unname(rowSums(fit$mcmc[, paste0("eta", 1:3)])), rep(1, 40))
+    atom = fit$mcmc[1, paste0(fit$pars_names, 1)]
+    names(atom) = fit$pars_names
+    expect_equal(fit$pdf_func(0:3, atom), c(1, 0, 0, 0))
+    for (iteration in c(1, 40, 80)) {
+      probabilities = vapply(1:3, function(component) {
+        parameters = fit$mcmc_all[iteration, paste0(fit$pars_names, component)]
+        names(parameters) = fit$pars_names
+        parameters[["eta"]] * fit$pdf_func(observations, parameters)
+      }, numeric(length(observations)))
+      expect_equal(fit$loglik[iteration], sum(log(rowSums(probabilities))))
+    }
+  }
+  for (invalid in list(NA, 1, c(TRUE, FALSE), NULL)) {
+    expect_error(bayes_fit(observations, 2, "poisson", zero_inflated = invalid),
+                 "zero_inflated")
+  }
+  for (distribution in c("normal", "skew_normal", "shifted_poisson", "shifted_neg_binomial")) {
+    expect_error(bayes_fit(observations, 2, distribution, zero_inflated = TRUE),
+                 "supported only")
+  }
+  expect_error(bayes_fit(rep(0, 10), 2, "neg_binomial", zero_inflated = TRUE),
+               "positive full-data maximum")
+})
+
+test_that("zero-inflated Poisson draws retain an exact atom and full likelihood", {
+  observations = c(rep(0, 40), rep(c(2, 5, 9), 10))
+  priors = check_priors(list(), "poisson", observations, zero_inflated = TRUE)
+  expect_equal(priors$L0, 1.1 / 5)
+  set.seed(612)
+  draws = gibbs_SFM(observations, 2, 80, 40, priors, FALSE, "poisson", TRUE)
+  expect_identical(colnames(draws), c(paste0("eta", 1:3), paste0("lambda", 1:3), "loglik"))
+  expect_true(all(is.finite(draws)))
+  expect_true(all(draws[, "lambda1"] == 0))
+  expect_true(all(draws[, "eta1"] > 0 & draws[, "eta1"] < 1))
+  expect_equal(unname(rowSums(draws[, paste0("eta", 1:3)])), rep(1, 80))
+  for (iteration in c(1, 40, 80)) {
+    probabilities = vapply(1:3, function(component) {
+      draws[iteration, paste0("eta", component)] *
+        dpois(observations, draws[iteration, paste0("lambda", component)])
+    }, numeric(length(observations)))
+    expect_equal(unname(draws[iteration, "loglik"]), sum(log(rowSums(probabilities))))
+  }
+})
+
+test_that("structural zeros have a separate Beta update from sparse count weights", {
+  sampler = gibbs_SFM_poisson
+  sampler_env = new.env(parent = environment(sampler))
+  environment(sampler) = sampler_env
+  count_history = list()
+  allocation_history = list()
+  sampler_env$draw_e0 = function(e0, nu0, S0, counts) {
+    count_history[[length(count_history) + 1]] <<- counts
+    list(e0, 0)
+  }
+  sampler_env$rdirichlet = function(n, alpha) matrix(c(1, 0), nrow = n)
+  sampler_env$draw_allocations = function(probabilities) {
+    allocation_history[[length(allocation_history) + 1]] <<- probabilities
+    result = matrix(0L, 6, 3)
+    result[1:3, 1] = 1L
+    result[4:6, 2] = 1L
+    result
+  }
+  priors = check_priors(list(zero_a = 2, zero_b = 4), "poisson", c(0, 2), TRUE)
+  set.seed(613)
+  draws = sampler(c(0, 0, 0, 2, 2, 2), 2, 2000, priors, FALSE, TRUE)
+  expect_true(all(vapply(count_history, function(counts) identical(counts, c(3, 0)), logical(1))))
+  expect_true(all(vapply(allocation_history, function(probabilities) {
+    all(probabilities[4:6, 1] == 0) && probabilities[1, 2] > 0
+  }, logical(1))))
+  expect_equal(mean(draws[, "eta1"]), 5 / 12, tolerance = 0.02)
+})
+
+test_that("zero-inflated initialization handles sparse and all-zero data", {
+  for (distribution in c("poisson", "neg_binomial")) {
+    for (observations in list(rep(0, 10), c(rep(0, 9), 3), rep(2, 10))) {
+      if (distribution == "neg_binomial" && all(observations == 0)) next
+      priors = check_priors(list(), distribution, observations, TRUE)
+      set.seed(614)
+      draws = gibbs_SFM(observations, 3, 30, 15, priors, FALSE, distribution, TRUE)
+      expect_true(all(is.finite(draws)))
+      expect_equal(ncol(draws), if (distribution == "poisson") 9 else 13)
+    }
+  }
+  for (invalid in list(0, -1, NA_real_, Inf, c(1, 2))) {
+    expect_error(check_priors(list(zero_a = invalid), "poisson", c(0, 2), TRUE))
+    expect_error(check_priors(list(zero_b = invalid), "poisson", c(0, 2), TRUE))
+  }
+})
+
 test_that("vectorized allocations respect zero probabilities and CDF boundaries", {
   draw = draw_allocations
   draw_env = new.env(parent = environment(draw))

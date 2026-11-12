@@ -1,3 +1,43 @@
+test_that("zero-inflated fits support full and positive-count modes and plots", {
+  observations = c(rep(0, 20), rep(4:12, 5))
+  for (distribution in c("poisson", "neg_binomial")) {
+    set.seed(615)
+    fit = bayes_fit(observations, 1, distribution, nb_iter = 60, burnin = 30,
+                    print = FALSE, zero_inflated = TRUE)
+    modes = bayes_mode(fit)
+    expect_s3_class(modes, "bayes_mode")
+    expect_true(all(modes$modes[, 1] == 0))
+    expect_true(all(is.finite(as.matrix(modes$mix_density))))
+    positive_modes = bayes_mode(fit, range = c(1, max(observations)))
+    expect_true(all(positive_modes$modes[!is.na(positive_modes$modes)] >= 1))
+    expect_equal(sum(positive_modes$p_nb_modes[2, ]), 1)
+    for (graph in list(plot(fit, draws = 3), plot(modes), plot(modes, graphs = "loc"))) {
+      expect_s3_class(graph, "ggplot")
+      expect_no_error(ggplot2::ggplot_build(graph))
+    }
+    expect_no_error(plot(fit, draw = 1))
+    expect_no_error(plot(modes, draw = 1))
+    expect_output(summary(fit), "Summary of MCMC output")
+    expect_output(summary(modes), "Posterior probability")
+  }
+})
+
+test_that("the zero atom is an ordinary discrete mode in imported draws", {
+  for (distribution in c("poisson", "neg_binomial")) {
+    parameters = if (distribution == "poisson") {
+      c(eta1 = 0.35, eta2 = 0.65, lambda1 = 0, lambda2 = 7.5)
+    } else {
+      c(eta1 = 0.35, eta2 = 0.65, mu1 = 0, mu2 = 8,
+         rtilde1 = 0.25, rtilde2 = 0.1)
+    }
+    fit = bayes_mixture(rbind(parameters, parameters), 0:25, dist = distribution)
+    modes = bayes_mode(fit)
+    expect_equal(unname(modes$modes[, 1:2]), matrix(c(0, 0, 7, 7), nrow = 2))
+    expect_true(all(is.na(modes$modes[, -(1:2), drop = FALSE])))
+    expect_equal(unname(modes$p_nb_modes), matrix(c(2, 1), ncol = 1))
+  }
+})
+
 test_that("bayes_mode works with external MCMC output", {
   set.seed(1)
   mu = c(0.5,6)

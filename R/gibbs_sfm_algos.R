@@ -15,7 +15,11 @@ gibbs_SFM <- function(y,
                       nb_burnin,
                       priors = list(),
                       print = TRUE,
-                      dist) {
+                      dist,
+                      zero_inflated = FALSE) {
+  if (zero_inflated && !dist %in% c("poisson", "neg_binomial")) {
+    stop("zero_inflated is supported only for poisson and neg_binomial mixtures.")
+  }
   
   if (dist == "normal") {
     mcmc = gibbs_SFM_normal(y, K, nb_iter, priors, print)
@@ -26,7 +30,7 @@ gibbs_SFM <- function(y,
   }
   
   if (dist == "poisson") {
-    mcmc = gibbs_SFM_poisson(y, K, nb_iter, priors, print)
+    mcmc = gibbs_SFM_poisson(y, K, nb_iter, priors, print, zero_inflated)
   }
   
   if (dist == "shifted_poisson") {
@@ -34,7 +38,7 @@ gibbs_SFM <- function(y,
   }
 
   if (dist == "neg_binomial") {
-    mcmc = gibbs_SFM_neg_binomial(y, K, nb_iter, nb_burnin, priors, print)
+    mcmc = gibbs_SFM_neg_binomial(y, K, nb_iter, nb_burnin, priors, print, zero_inflated)
   }
 
   if (dist == "shifted_neg_binomial") {
@@ -159,7 +163,8 @@ gibbs_SFM_poisson <- function(y,
                               K,
                               nb_iter,
                               priors = list(),
-                              print = TRUE){
+                              print = TRUE,
+                              zero_inflated = FALSE){
   
   # unpacking priors
   a0 = priors$a0
@@ -170,12 +175,14 @@ gibbs_SFM_poisson <- function(y,
   n_obs <- length(y)
   
   # Initial conditions
-  cl_y <- kmeans(y, centers = K, nstart = 30)
-  
-  S <- matrix(0,length(y),K)
-  
-  for (k in 1:K) {
-    S[cl_y$cluster==k ,k] = 1
+  if (zero_inflated) {
+    S = initialize_zero_inflated(y, K)$allocations
+  } else {
+    cl_y <- kmeans(y, centers = K, nstart = 30)
+    S <- matrix(0,length(y),K)
+    for (k in 1:K) {
+      S[cl_y$cluster==k ,k] = 1
+    }
   }
   
   e0 = a0/A0
@@ -185,12 +192,17 @@ gibbs_SFM_poisson <- function(y,
   eta = matrix(data=NA,nrow=nb_iter,ncol=K)   # probabilities
   probs = matrix(data=NaN,nrow=n_obs,ncol=K) # Storage for probabilities  
   lp = matrix(0, nb_iter, 1)
+  zero_prob = numeric(nb_iter)
   
   ## Sample lamda and S for each component, k=1,...,k
   for(m in 1:nb_iter){
     
     # Compute number of observations allocated in each component
     N = colSums(S)
+    if (zero_inflated) {
+      zero_prob[m] = stats::rbeta(1, priors$zero_a + n_obs - sum(N),
+                                 priors$zero_b + sum(N))
+    }
     
     ## sample component proportion
     e0 = draw_e0(e0, a0, 1/A0, counts = N)[[1]]
@@ -212,17 +224,23 @@ gibbs_SFM_poisson <- function(y,
       probs[,k] = eta[m,k]*dpois_unique(y,lambda[m,k])
     }
     
+    allocation_probs = if (zero_inflated) {
+      cbind(zero_prob[m] * (y == 0), (1 - zero_prob[m]) * probs)
+    } else {
+      probs
+    }
     # 2. classification
-    pnorm = probs/rowSums(probs) 
+    pnorm = allocation_probs/rowSums(allocation_probs)
     
     if (any(!is.finite(pnorm))) {
       stop("Non-finite count allocation probabilities; check support or numerical underflow.")
     }
     
     S = draw_allocations(pnorm)
+    if (zero_inflated) S = S[, -1, drop = FALSE]
     
     # compute log lik
-    lp[m] = sum(log(rowSums(probs)))
+    lp[m] = sum(log(rowSums(allocation_probs)))
     
     ## counter
     if(print){
@@ -233,6 +251,11 @@ gibbs_SFM_poisson <- function(y,
   }
   
   # output
+  if (zero_inflated) {
+    eta = cbind(zero_prob, eta * (1 - zero_prob))
+    lambda = cbind(0, lambda)
+    K = K + 1
+  }
   mcmc = cbind(eta, lambda, lp)
   colnames(mcmc) = 1:ncol(mcmc)
   
@@ -505,7 +528,8 @@ gibbs_SFM_neg_binomial <- function(y,
                               nb_iter,
                               nb_burnin,
                               priors = list(),
-                              print = TRUE){
+                              print = TRUE,
+                              zero_inflated = FALSE){
   
   # p in the code is the probability of failure
   # rtilde needs to be between 0 and 0.5
@@ -529,22 +553,27 @@ gibbs_SFM_neg_binomial <- function(y,
   probs = matrix(data=NaN,nrow=n_obs,ncol=K) # Storage for probabilities  
   lp = matrix(0, nb_iter, 1) # Storage for log likelihood  
   eta = matrix(data = NA, nrow = nb_iter, ncol = K)
+  zero_prob = numeric(nb_iter)
   
   # Initial conditions
-  cl_y <- kmeans(y, centers = K, nstart = 30)
+  if (zero_inflated) {
+    initialization = initialize_zero_inflated(y, K)
+    S = initialization$allocations
+    mu_m = initialization$centers
+  } else {
+    cl_y <- kmeans(y, centers = K, nstart = 30)
+    S <- matrix(0,length(y),K)
+    for (k in 1:K) {
+      S[cl_y$cluster==k ,k] = 1
+    }
+    mu_m <- cbind(t(cl_y$centers))
+  }
   batch_accept = rep(0, K)
   batch_proposals = rep(0, K)
-
-  S <- matrix(0,length(y),K)
-  
-  for (k in 1:K) {
-    S[cl_y$cluster==k ,k] = 1
-  }
   
   e0 = a0 / A0
   
   # initial value for the parameters
-  mu_m <- cbind(t(cl_y$centers))
   mu_m[mu_m == 0] = mu_max / 2
   r_tilde_m <- rep(0.09, K)
   
@@ -553,6 +582,10 @@ gibbs_SFM_neg_binomial <- function(y,
     
     # Compute number of observations allocated in each component
     N = colSums(S)
+    if (zero_inflated) {
+      zero_prob[m] = stats::rbeta(1, priors$zero_a + n_obs - sum(N),
+                                 priors$zero_b + sum(N))
+    }
     
     ## sample component proportion
     e0 = draw_e0(e0, a0, 1/A0, counts = N)[[1]]
@@ -583,17 +616,23 @@ gibbs_SFM_neg_binomial <- function(y,
       batch_proposals[] = 0
     }
     
+    allocation_probs = if (zero_inflated) {
+      cbind(zero_prob[m] * (y == 0), (1 - zero_prob[m]) * probs)
+    } else {
+      probs
+    }
     # 2. classification
-    pnorm = probs/rowSums(probs) 
+    pnorm = allocation_probs/rowSums(allocation_probs)
     
     if (any(!is.finite(pnorm))) {
       stop("Non-finite count allocation probabilities; check support or numerical underflow.")
     }
     
     S = draw_allocations(pnorm)
+    if (zero_inflated) S = S[, -1, drop = FALSE]
     
     # compute log lik
-    lp[m] = sum(log(rowSums(probs)))
+    lp[m] = sum(log(rowSums(allocation_probs)))
 
     # storing
     mu[m,] = mu_m
@@ -608,6 +647,12 @@ gibbs_SFM_neg_binomial <- function(y,
   }
 
   # output
+  if (zero_inflated) {
+    eta = cbind(zero_prob, eta * (1 - zero_prob))
+    mu = cbind(0, mu)
+    r_tilde = cbind(0.25, r_tilde)
+    K = K + 1
+  }
   mcmc = cbind(eta, mu, r_tilde, lp)
   colnames(mcmc) = 1:ncol(mcmc)
   
@@ -781,7 +826,7 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
 }
 
 #' @keywords internal
-check_priors <- function(priors, dist, data) {
+check_priors <- function(priors, dist, data, zero_inflated = FALSE) {
   assert_that(all(is.finite(unlist(priors))),
               msg = "All priors should be finite.")
   
@@ -804,7 +849,12 @@ check_priors <- function(priors, dist, data) {
     priors_labels = c("a0", "A0", "l0", "L0")
 
     priors$l0 = ifelse(is.null(priors$l0), 1.1, priors$l0)
-    priors$L0 = ifelse(is.null(priors$L0), 1.1 / median(data), priors$L0)
+    prior_mean = if (zero_inflated) {
+      if (any(data > 0)) median(data[data > 0]) else 1
+    } else {
+      median(data)
+    }
+    priors$L0 = ifelse(is.null(priors$L0), 1.1 / prior_mean, priors$L0)
   }
   
   if (dist %in% c("shifted_poisson", "poisson")) {
@@ -854,6 +904,16 @@ check_priors <- function(priors, dist, data) {
     assert_that(is.scalar(priors$G0), priors$G0 > 0, msg = "prior G0 should be a positive scalar")
   }
   
+  if (zero_inflated) {
+    priors$zero_a = if (is.null(priors$zero_a)) 1 else priors$zero_a
+    priors$zero_b = if (is.null(priors$zero_b)) 1 else priors$zero_b
+    assert_that(is.scalar(priors$zero_a), priors$zero_a > 0,
+                msg = "prior zero_a should be a positive scalar")
+    assert_that(is.scalar(priors$zero_b), priors$zero_b > 0,
+                msg = "prior zero_b should be a positive scalar")
+    priors_labels = c(priors_labels, "zero_a", "zero_b")
+  }
+
   isnot = which(!names(priors) %in% priors_labels)
   
   if (length(isnot) > 0) {
@@ -864,6 +924,24 @@ check_priors <- function(priors, dist, data) {
 }
 
 ## functions used in the SFM MCMC algorithm
+
+initialize_zero_inflated <- function(y, K) {
+  positive = y > 0
+  allocations = matrix(0L, length(y), K)
+  centers = rep(max(c(y, 1)) / 2, K)
+  if (any(positive)) {
+    active = min(K, length(unique(y[positive])))
+    if (active == 1) {
+      allocations[positive, 1] = 1L
+      centers[1] = mean(y[positive])
+    } else {
+      clustering = kmeans(y[positive], centers = active, nstart = 30)
+      allocations[cbind(which(positive), clustering$cluster)] = 1L
+      centers[seq_len(active)] = as.vector(clustering$centers)
+    }
+  }
+  list(allocations = allocations, centers = centers)
+}
 
 draw_allocations <- function(probabilities) {
   if (!is.matrix(probabilities) || ncol(probabilities) == 0L ||

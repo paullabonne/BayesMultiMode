@@ -11,16 +11,19 @@ bayes_fit(
   priors = list(),
   nb_iter = 2000,
   burnin = nb_iter/2,
-  print = TRUE
+  print = TRUE,
+  zero_inflated = FALSE
 )
 }
 \arguments{
 \item{data}{Vector of observations.}
 
-\item{K}{Maximum number of mixture components.}
+\item{K}{Maximum number of count components when \code{zero_inflated = TRUE};
+otherwise, maximum number of mixture components.}
 
 \item{dist}{String indicating the distribution of the mixture components;
-currently supports \code{"normal"}, \code{"skew_normal"}, \code{"poisson"} and \code{"shifted_poisson"}.}
+currently supports \code{"normal"}, \code{"skew_normal"}, \code{"poisson"}, \code{"shifted_poisson"},
+\code{"neg_binomial"} and \code{"shifted_neg_binomial"}.}
 
 \item{priors}{List of priors; default is an empty list which implies the following priors:\cr
 \code{a0 = 1},\cr \code{A0 = 200},\cr \code{b0 = median(y)},\cr \code{B0 = (max(y) - min(y))^2} (normal),\cr
@@ -34,6 +37,11 @@ currently supports \code{"normal"}, \code{"skew_normal"}, \code{"poisson"} and \
 \item{burnin}{Number of MCMC iterations used as burnin; default is \code{nb_iter/2}.}
 
 \item{print}{Showing MCMC progression ? Default is \code{TRUE}.}
+
+\item{zero_inflated}{Add a structural-zero component to a \code{"poisson"} or
+\code{"neg_binomial"} mixture? Default is \code{FALSE}. Its probability has a
+Beta prior with positive shape parameters \code{priors$zero_a} and
+\code{priors$zero_b}, both defaulting to \code{1}.}
 }
 \value{
 A list of class \code{bayes_mixture} containing:
@@ -41,7 +49,9 @@ A list of class \code{bayes_mixture} containing:
 \item{mcmc}{Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
 \item{mcmc_all}{Matrix of MCMC draws.}
 \item{loglik}{Log likelihood at each MCMC draw.}
-\item{K}{Number of components.}
+\item{K}{Number of components, including the structural-zero component if enabled.}
+\item{zero_inflated}{Present and \code{TRUE} when structural zeros are enabled.}
+\item{count_K}{When zero inflation is enabled, the requested number of count components.}
 \item{dist}{Same as argument.}
 \item{pdf_func}{The pdf/pmf of the mixture components.}
 \item{dist_type}{Type of the distribution, i.e. continuous or discrete.}
@@ -108,6 +118,26 @@ Poisson components take the form:
 \deqn{p(y_i|\lambda_k) = \frac{1}{y_i!} \, \lambda^{y_i}_k \,\exp(-\lambda_k).}
 The prior for \eqn{\lambda_k} follows from \insertCite{viallefont2002bayesian;textual}{BayesMultiMode}:
 \deqn{\lambda_k \sim \text{Gamma}(\text{l}_0,\text{L}_0).}
+When zero inflation is enabled, the default Poisson rate prior uses
+\code{L0 = 1.1/median(data[data > 0])}, or \code{1.1} for all-zero data.
+
+\strong{Zero-inflated count mixtures}
+
+With \code{zero_inflated = TRUE}, the model is
+\deqn{p(y) = \pi_0 1\{y=0\} + (1-\pi_0)\sum_{k=1}^{K}\eta_k f_k(y).}
+The count weights sum to one and retain the sparse Dirichlet prior.
+The structural-zero probability has an independent Beta prior.
+Zeros may be allocated to either the zero atom or a count component;
+positive observations may only be allocated to count components.
+In the returned draws, component 1 is the zero atom and \code{eta1} is
+\eqn{\pi_0}; components 2 through \code{K + 1} have unconditional weights
+\eqn{(1-\pi_0)\eta_k}. The atom has \code{lambda1 = 0} for Poisson, or
+\code{mu1 = 0} and fixed \code{rtilde1 = 0.25} for negative binomial.
+The fixed negative-binomial dispersion is only a representation of the
+zero atom and is not estimated. Negative-binomial fits require at least
+one positive observation to define their existing mean prior.
+Plotting and mode inference include the zero atom; use \code{range = c(1, max(data))}
+in \code{\link[=bayes_mode]{bayes_mode()}} to restrict reported modes to positive counts.
 
 \strong{Mixture of shifted-Poisson distributions}
 

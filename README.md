@@ -104,6 +104,30 @@ summary(bayesmode)
     ## [6,]           9.7                 0.117
     ## ... (246 more rows)
 
+#### Zero-inflated count mixtures
+
+Poisson and negative-binomial fits support a structural-zero component with
+`zero_inflated = TRUE`. Its probability has an independent Beta prior; set
+`zero_a` and `zero_b` in `priors` to change the default Beta(1, 1) prior.
+
+``` r
+set.seed(123)
+counts = c(rep(0, 100), rnbinom(300, size = 5, mu = 8))
+zi_fit = bayes_fit(counts, K = 5, dist = "neg_binomial",
+                   zero_inflated = TRUE,
+                   priors = list(zero_a = 1, zero_b = 1),
+                   nb_iter = 2000, burnin = 1000, print = FALSE)
+mean(zi_fit$mcmc[, "eta1"])
+zi_modes = bayes_mode(zi_fit)
+```
+
+`K` specifies the maximum number of count components. The returned fit has
+`K + 1` components: component 1 is the fixed zero atom, and `eta1` is its
+posterior probability in each draw. Count components can also generate zeros.
+Plots and mode inference include the atom. To report only positive-count modes,
+use `bayes_mode(zi_fit, range = c(1, max(counts)))`.
+Negative-binomial fits require at least one positive observation.
+
 ### BayesMultiMode for mode inference with external MCMC output
 
 `BayesMultiMode` also works on MCMC output generated using external
