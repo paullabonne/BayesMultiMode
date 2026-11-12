@@ -15,14 +15,29 @@ progress printing is disabled.
 | `neg_binomial` | Means (2, 12), size 4 | Means (1.5, 24), size 6 |
 | `shifted_neg_binomial` | Means (16, 6), size 6, shifts (0, 10) | Means (2, 7.5), size 4, shifts (0, 10) |
 
+An additional shifted-Poisson regression uses the C4 comparison population:
+equal weights, rates (5, 10), and shifts (10, 30). It generates 500 observations
+and fits four chains with `K = 6`, 5,000 iterations, and 2,500 warm-up draws.
+It uses the same recovery checks as the paired experiments, without running
+the full three-model comparison. It does not require an exact occupied-component
+count, which is distinct from the number of modes.
+
+Shifted-negative-binomial fits also use the C4 and C6 comparison populations.
+C4 is the shifted-Poisson mixture above. C6 replaces observations by zero with
+probability 0.35 and otherwise samples NB(mean 8, size 2). Both generate 500
+observations and fit four chains with `K = 6`, 5,000 iterations, and 2,500 warm-up
+draws. They appear below the unimodal and bimodal cases in the shifted-NB figure.
+
 Negative-binomial means are unshifted. In the shifted unimodal cases,
 post-shift means coincide despite the 10-unit separation. Reference checks
 verify mode counts, normalization, plateau handling, and sample CDFs.
 
 ## Data and fits
 
-Left: unimodal; right: bimodal. Grey bars show simulated data, black lines the
-truth, and coloured lines each chain's posterior-mean density. TV is
+The first row is unimodal on the left and bimodal on the right. The shifted-NB
+figure adds C4 on the lower left and C6 on the lower right. Grey bars show
+simulated data, black lines the truth, and coloured lines each chain's
+posterior-mean density. TV is
 total-variation error. Failed samplers are labelled "no fit"; no curve is
 substituted. A close density fit does not imply mode recovery or convergence.
 
@@ -61,8 +76,9 @@ testthat::set_max_fails(Inf)
 testthat::test_dir("tests/testthat", filter = "simulation")
 ```
 
-Set `BAYESMULTIMODE_SIMULATION_METHOD` to a `dist` value to regenerate one pair;
-unset it for all methods. Without the simulation flag, only reference checks
+Set `BAYESMULTIMODE_SIMULATION_METHOD` to a `dist` value to regenerate that method's
+panels; use `"shifted_neg_binomial"` for the four-panel figure, or unset it for all
+methods. Without the simulation flag, only reference checks
 run. R-hat/ESS tests remain disabled unless the convergence flag is `"true"`.
 They require mixture-level R-hat below 1.05 and bulk/tail ESS above 400.
 

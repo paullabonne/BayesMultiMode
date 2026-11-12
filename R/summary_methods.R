@@ -28,6 +28,10 @@ summary.bayes_mode <- function(object, ...) {
 #' @export
 summary.mix_mode <- function(object, ...) {
   Nb_m = length(object$mode_estimates)
+  if (object$dist_type == "discrete" && Nb_m > 0) {
+    mode_locations = sort(unique(object$mode_estimates))
+    Nb_m = 1L + sum(diff(mode_locations) > 1)
+  }
   algo = object$algo
   d = object$dist
   K = object$K

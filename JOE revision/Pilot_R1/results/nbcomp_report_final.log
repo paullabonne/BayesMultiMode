@@ -1,0 +1,44 @@
+2026-11-08 15:54:26 | runs: 120 
+Medians over chains. IF: log-lik, modes, dispersion | ESS per CPU second: log-lik, dispersion | CPU s | far (gap > 1 sd) | same top number | Pr(ref top) [reference]
+G1 
+  Ours                | IF   2.2   2.1    8.5 | ESS/s  102.3  26.87 | CPU   8.8 | far 0/5 | top 5/5 | Pr 1.00 [1.00] | acc 0.5 NA
+  (mu, rtilde) RW     | IF   1.7   1.0    1.8 | ESS/s  124.8 121.86 | CPU   9.8 | far 0/5 | top 5/5 | Pr 1.00 [1.00] | acc 0.57 0.69
+  (p, r) RW           | IF   4.8   1.0   34.1 | ESS/s   38.5   6.37 | CPU  11.3 | far 0/5 | top 5/5 | Pr 1.00 [1.00] | acc 0.44 0.56
+  Zhou, his prior     | IF   2.2   1.3    6.1 | ESS/s   74.0  28.49 | CPU  11.4 | far 0/5 | top 5/5 | Pr 0.99 [1.00] | acc NA NA
+  Zhou-MH, our prior  | IF   2.0   1.6    5.0 | ESS/s   89.5  34.93 | CPU  11.7 | far 0/5 | top 5/5 | Pr 1.00 [1.00] | acc 0.82 0.69
+G4 
+  Ours                | IF   1.3   1.3    1.5 | ESS/s  114.7 105.40 | CPU  13.9 | far 0/5 | top 5/5 | Pr 0.99 [1.00] | acc 0.42 NA
+  (mu, rtilde) RW     | IF   1.4   1.3    1.4 | ESS/s  104.3 104.84 | CPU  13.7 | far 0/5 | top 5/5 | Pr 1.00 [1.00] | acc 0.44 0.58
+  (p, r) RW           | IF  11.0   1.0   86.7 | ESS/s   13.0   1.45 | CPU  14.9 | far 0/5 | top 5/5 | Pr 1.00 [1.00] | acc 0.41 0.48
+  Zhou, his prior     | IF   3.6   7.7   16.9 | ESS/s   31.9   6.50 | CPU  17.5 | far 0/5 | top 5/5 | Pr 0.98 [1.00] | acc NA NA
+  Zhou-MH, our prior  | IF   2.8   1.3   19.9 | ESS/s   45.8   6.42 | CPU  15.7 | far 1/5 | top 5/5 | Pr 1.00 [1.00] | acc 0.8 0.71
+G5 
+  Ours                | IF   1.5   1.3    2.5 | ESS/s   51.1  30.41 | CPU  25.8 | far 0/5 | top 5/5 | Pr 0.99 [0.99] | acc 0.45 NA
+  (mu, rtilde) RW     | IF   1.5   1.5    4.7 | ESS/s   53.7  16.04 | CPU  25.4 | far 0/5 | top 5/5 | Pr 1.00 [0.99] | acc 0.42 0.59
+  (p, r) RW           | IF  14.2   2.1   65.0 | ESS/s    5.4   1.16 | CPU  26.5 | far 0/5 | top 5/5 | Pr 0.99 [0.99] | acc 0.42 0.54
+  Zhou, his prior     | IF  15.9   2.3   24.4 | ESS/s    4.0   2.54 | CPU  33.5 | far 0/5 | top 5/5 | Pr 0.96 [0.99] | acc NA NA
+  Zhou-MH, our prior  | IF   5.3   1.4   22.4 | ESS/s   12.6   2.95 | CPU  29.6 | far 0/5 | top 5/5 | Pr 0.99 [0.99] | acc 0.81 0.7
+G6 
+  Ours                | IF   3.3   1.0    7.6 | ESS/s   38.7  16.72 | CPU  16.1 | far 1/5 | top 5/5 | Pr 1.00 [0.99] | acc 0.45 NA
+  (mu, rtilde) RW     | IF   2.1   1.0    7.6 | ESS/s   54.8  16.08 | CPU  16.3 | far 2/5 | top 5/5 | Pr 1.00 [0.99] | acc 0.37 0.39
+  (p, r) RW           | IF  42.2   2.2  169.7 | ESS/s    2.7   0.67 | CPU  17.3 | far 0/5 | top 5/5 | Pr 1.00 [0.99] | acc 0.37 0.43
+  Zhou, his prior     | IF  33.4   2.5   48.3 | ESS/s    2.9   2.00 | CPU  21.0 | far 0/5 | top 5/5 | Pr 0.97 [0.99] | acc NA NA
+  Zhou-MH, our prior  | IF  12.5   1.8  170.8 | ESS/s    7.9   0.58 | CPU  19.6 | far 2/5 | top 5/5 | Pr 1.00 [0.99] | acc 0.83 0.75
+default 
+  Ours                | IF   7.9   2.2   10.3 | ESS/s   20.3  12.90 | CPU  15.3 | far 0/4 | top 4/4 | Pr 0.95 [0.93] | acc 0.4 NA
+  (mu, rtilde) RW     | IF  13.2   3.1    3.5 | ESS/s   10.7  39.49 | CPU  15.1 | far 0/4 | top 4/4 | Pr 0.96 [0.93] | acc 0.35 0.4
+  (p, r) RW           | IF   5.5   9.9  541.2 | ESS/s   23.1   0.25 | CPU  15.8 | far 1/4 | top 4/4 | Pr 0.88 [0.93] | acc 0.37 0.39
+  Zhou, his prior     | IF  24.8  20.0  134.4 | ESS/s    4.8   0.79 | CPU  18.9 | far 1/4 | top 4/4 | Pr 0.82 [0.93] | acc NA NA
+  Zhou-MH, our prior  | IF  35.3   4.0  266.3 | ESS/s    3.0   0.43 | CPU  18.4 | far 2/4 | top 4/4 | Pr 0.93 [0.93] | acc 0.84 0.75
+all 
+  Ours                | IF   2.0   1.3    5.8 | ESS/s   53.7  24.66 | CPU  15.4 | far 1/24 | top 24/24 | Pr 0.99 [0.98] | acc 0.44 NA
+  (mu, rtilde) RW     | IF   1.8   1.5    3.0 | ESS/s   57.0  40.61 | CPU  15.4 | far 2/24 | top 24/24 | Pr 0.99 [0.98] | acc 0.41 0.58
+  (p, r) RW           | IF   9.8   1.7  137.7 | ESS/s   11.3   1.02 | CPU  16.1 | far 1/24 | top 24/24 | Pr 0.98 [0.98] | acc 0.41 0.49
+  Zhou, his prior     | IF   7.5   2.3   30.8 | ESS/s   15.4   2.64 | CPU  18.9 | far 1/24 | top 24/24 | Pr 0.95 [0.98] | acc NA NA
+  Zhou-MH, our prior  | IF   5.1   1.4   32.7 | ESS/s   20.4   2.84 | CPU  18.4 | far 5/24 | top 24/24 | Pr 0.98 [0.98] | acc 0.82 0.72
+
+Ratio to ours of the median IF (log-lik, modes, dispersion) and of median ESS per CPU second (log-lik, dispersion), all chains
+  (mu, rtilde) RW     | IF x  0.9  1.1   0.5 | ESS/s x 1.06 1.65
+  (p, r) RW           | IF x  5.0  1.2  23.6 | ESS/s x 0.21 0.04
+  Zhou, his prior     | IF x  3.8  1.7   5.3 | ESS/s x 0.29 0.11
+  Zhou-MH, our prior  | IF x  2.6  1.1   5.6 | ESS/s x 0.38 0.11

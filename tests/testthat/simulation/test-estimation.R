@@ -20,12 +20,35 @@ simulation_experiments <- list(
   shifted_neg_binomial_unimodal = list(dist = "shifted_neg_binomial", mean = c(16, 6),
                                        size = 6, shift = c(0, 10), grid = 0:200, modes = 1L),
   shifted_neg_binomial_bimodal = list(dist = "shifted_neg_binomial", mean = c(2, 7.5),
-                                      size = 4, shift = c(0, 10), grid = 0:200, modes = 2L)
+                                      size = 4, shift = c(0, 10), grid = 0:200, modes = 2L),
+  shifted_poisson_comparison_c4 = list(dist = "shifted_poisson", rate = c(5, 10),
+                                       shift = c(10, 30), grid = 0:200, modes = 2L,
+                                       fit = list(count = 500L, K = 6L,
+                                                  nb_iter = 5000L, burnin = 2500L)),
+  shifted_neg_binomial_comparison_c4 = list(dist = "shifted_neg_binomial",
+                                            truth_dist = "shifted_poisson", rate = c(5, 10),
+                                            shift = c(10, 30), grid = 0:200, modes = 2L,
+                                            title = "C4: Poisson control",
+                                            fit = list(count = 500L, K = 6L,
+                                                       nb_iter = 5000L, burnin = 2500L)),
+  shifted_neg_binomial_comparison_c6 = list(dist = "shifted_neg_binomial",
+                                            truth_dist = "zero_inflated_neg_binomial",
+                                            zero_probability = 0.35, mean = 8, size = 2,
+                                            grid = 0:200, modes = 2L,
+                                            title = "C6: Excess zeros",
+                                            fit = list(count = 500L, K = 6L,
+                                                       nb_iter = 5000L, burnin = 2500L))
 )
 
 simulation_density <- function(experiment, x) {
+  distribution <- if (is.null(experiment$truth_dist)) experiment$dist else experiment$truth_dist
+  if (distribution == "zero_inflated_neg_binomial") {
+    return(experiment$zero_probability * (x == 0) +
+             (1 - experiment$zero_probability) * dnbinom(x, size = experiment$size,
+                                                        mu = experiment$mean))
+  }
   components <- vapply(1:2, function(component) {
-    switch(experiment$dist,
+    switch(distribution,
       normal = dnorm(x, experiment$location[component], experiment$scale),
       skew_normal = sn::dsn(x, experiment$location[component], experiment$scale,
                             experiment$shape[component]),
@@ -40,8 +63,15 @@ simulation_density <- function(experiment, x) {
 }
 
 simulation_sample <- function(experiment, count) {
+  distribution <- if (is.null(experiment$truth_dist)) experiment$dist else experiment$truth_dist
+  if (distribution == "zero_inflated_neg_binomial") {
+    zeros <- runif(count) < experiment$zero_probability
+    observations <- rnbinom(count, size = experiment$size, mu = experiment$mean)
+    observations[zeros] <- 0L
+    return(observations)
+  }
   component <- sample.int(2, count, replace = TRUE)
-  switch(experiment$dist,
+  switch(distribution,
     normal = rnorm(count, experiment$location[component], experiment$scale),
     skew_normal = vapply(component, function(selected) {
       as.numeric(sn::rsn(1, experiment$location[selected], experiment$scale,
@@ -117,6 +147,10 @@ if (nzchar(selected_method)) {
 for (experiment_name in experiment_names) {
   experiment <- simulation_experiments[[experiment_name]]
   experiment_index <- match(experiment_name, names(simulation_experiments))
+  fit_settings <- utils::modifyList(
+    list(count = 600L, K = 10L, nb_iter = 2000L, burnin = 1000L),
+    if (is.null(experiment$fit)) list() else experiment$fit
+  )
   chain_summaries <- new.env(parent = emptyenv())
   chain_summaries$draws <- vector("list", 4)
   chain_summaries$densities <- vector("list", 4)
@@ -132,24 +166,25 @@ for (experiment_name in experiment_names) {
       truth <- simulation_density(experiment, grid)
       true_modes <- simulation_modes(grid, truth)
       set.seed(202600 + experiment_index)
-      observations <- simulation_sample(experiment, 600)
+      observations <- simulation_sample(experiment, fit_settings$count)
       chain_summaries$observations <- observations
       set.seed(10000 * experiment_index + chain)
       if (nzchar(plot_directory)) cat("\nFitting", experiment_name, "chain", chain, "\n")
       fit <- tryCatch(
-        bayes_fit(observations, K = 10, dist = experiment$dist, print = FALSE),
+        bayes_fit(observations, K = fit_settings$K, dist = experiment$dist,
+                  nb_iter = fit_settings$nb_iter, burnin = fit_settings$burnin, print = FALSE),
         error = function(error) {
           chain_summaries$errors[chain] <- conditionMessage(error)
           stop(error)
         }
       )
       expect_s3_class(fit, "bayes_mixture")
-      expect_equal(nrow(fit$mcmc_all), 2000L)
-      expect_equal(nrow(fit$mcmc), 1000L)
+      expect_equal(nrow(fit$mcmc_all), fit_settings$nb_iter)
+      expect_equal(nrow(fit$mcmc), fit_settings$nb_iter - fit_settings$burnin)
       expect_true(all(is.finite(fit$mcmc)))
       expect_true(all(is.finite(tail(fit$loglik, nrow(fit$mcmc)))))
       weights <- fit$mcmc[, paste0("eta", seq_len(fit$K)), drop = FALSE]
-      expect_equal(fit$K, 10)
+      expect_equal(fit$K, fit_settings$K)
       expect_true(all(weights >= 0))
       expect_equal(rowSums(weights), rep(1, nrow(weights)), tolerance = 1e-10)
 
@@ -206,13 +241,9 @@ for (experiment_name in experiment_names) {
   if (nzchar(plot_directory) && Sys.getenv("BAYESMULTIMODE_RUN_SIMULATION") == "true") {
     plot_results[[experiment_name]] <- list(
       experiment = experiment, observations = chain_summaries$observations,
-      densities = chain_summaries$densities, errors = chain_summaries$errors
+      densities = chain_summaries$densities, errors = chain_summaries$errors,
+      fit = fit_settings
     )
-    if (grepl("_bimodal$", experiment_name)) {
-      paired_results <- mget(paste0(experiment$dist, c("_unimodal", "_bimodal")),
-                             envir = plot_results)
-      plot_simulation_method(paired_results, file.path(plot_directory, paste0(experiment$dist, ".png")))
-    }
   }
 
   test_that(paste(experiment_name, "has mixture-level R-hat and ESS diagnostics"), {
@@ -238,4 +269,17 @@ for (experiment_name in experiment_names) {
                   info = paste(quantity, "tail ESS =", round(diagnostics[["tail_ess"]])))
     }
   })
+}
+
+if (nzchar(plot_directory) && Sys.getenv("BAYESMULTIMODE_RUN_SIMULATION") == "true") {
+  methods <- unique(vapply(simulation_experiments[experiment_names], function(experiment) {
+    experiment$dist
+  }, character(1)))
+  for (method in methods) {
+    method_names <- experiment_names[vapply(simulation_experiments[experiment_names], function(experiment) {
+      experiment$dist == method
+    }, logical(1))]
+    method_results <- mget(method_names, envir = plot_results)
+    plot_simulation_method(method_results, file.path(plot_directory, paste0(method, ".png")))
+  }
 }

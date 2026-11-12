@@ -1,4 +1,9 @@
 ## Development version
+* Shifted Poisson mixtures now jointly update the shift and rate of each non-empty
+	component at fixed `kappa + lambda`, using the likelihood and existing Gamma rate
+	prior. The subsequent conditional Gamma update can change the total component
+	mean. Empty-component prior draws and output formats are unchanged; seeded draw
+	sequences change.
 * Normal, skew-normal, Poisson, and shifted Poisson samplers now use the same
 	vectorized allocation routine as the negative binomial samplers. Poisson PMFs
 	are evaluated at distinct counts and mapped back to the observations, including

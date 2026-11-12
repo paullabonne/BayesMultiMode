@@ -1,0 +1,214 @@
+﻿TABLE A. Fit and modes, chain 1, 50 data sets per row (means; hit = share of data sets whose most probable number of modes is the true one)
+ design    n model   group  hit  prL near    tv     els  K0
+     G1 2000   SNB control 1.00 0.99 1.00 0.011 -2.6443 1.1
+     G1 2000    SP control 0.80 0.73 0.99 0.026 -2.6466 4.6
+     G1  500   SNB control 1.00 0.98 1.00 0.021 -2.6459 1.1
+     G1  500    SP control 0.50 0.48 0.96 0.049 -2.6541 3.8
+     G2 2000   SNB control 1.00 0.99 1.00 0.016 -1.7560 2.1
+     G2 2000    SP control 0.86 0.72 0.95 0.021 -1.7573 4.5
+     G2  500   SNB control 1.00 0.98 0.98 0.028 -1.7590 2.2
+     G2  500    SP control 0.74 0.61 0.94 0.040 -1.7646 3.8
+     G3 2000   SNB control 1.00 0.98 0.87 0.020 -3.5196 2.1
+     G3 2000    SP control 0.00 0.03 0.67 0.040 -3.5246 7.7
+     G3  500   SNB control 1.00 0.93 0.72 0.040 -3.5244 2.2
+     G3  500    SP control 0.00 0.01 0.62 0.075 -3.5418 6.5
+     G4 2000   SNB   shift 1.00 0.99 1.00 0.017 -2.7848 2.2
+     G4 2000    SP   shift 0.92 0.88 0.99 0.029 -2.7880 5.0
+     G4  500   SNB   shift 0.98 0.97 1.00 0.038 -2.7892 2.2
+     G4  500    SP   shift 0.94 0.84 0.95 0.071 -2.8056 3.3
+     G5 2000   SNB   shift 1.00 0.99 1.00 0.017 -2.9775 2.1
+     G5 2000    SP   shift 1.00 0.85 0.85 0.029 -2.9799 5.7
+     G5  500   SNB   shift 1.00 0.99 0.98 0.035 -2.9820 2.1
+     G5  500    SP   shift 0.80 0.63 0.73 0.067 -2.9963 4.5
+     G6 2000   SNB   shift 1.00 0.99 1.00 0.025 -2.9798 3.2
+     G6 2000    SP   shift 0.94 0.95 1.00 0.039 -2.9836 4.5
+     G6  500   SNB   shift 1.00 0.99 1.00 0.047 -2.9862 3.2
+     G6  500    SP   shift 1.00 0.96 1.00 0.063 -2.9920 3.5
+     G7 2000   SNB   other 0.78 0.73 0.97 0.031 -2.4195 6.2
+     G7 2000    SP   other 0.60 0.53 0.96 0.033 -2.4204 8.0
+     G7  500   SNB   other 0.18 0.21 0.80 0.061 -2.4366 5.3
+     G7  500    SP   other 0.36 0.33 0.84 0.066 -2.4388 6.8
+     G8 2000   SNB   other 1.00 0.82 1.00 0.047 -2.6875 5.4
+     G8 2000    SP   other 1.00 0.95 1.00 0.044 -2.6860 5.0
+     G8  500   SNB   other 0.90 0.71 1.00 0.078 -2.7057 3.7
+     G8  500    SP   other 0.98 0.89 1.00 0.071 -2.6999 3.7
+     P1 2000   SNB poisson 1.00 1.00 1.00 0.026 -2.8848 3.2
+     P1 2000    SP poisson 1.00 0.99 1.00 0.021 -2.8839 3.3
+     P1  500   SNB poisson 1.00 0.99 1.00 0.051 -2.8921 3.2
+     P1  500    SP poisson 1.00 1.00 1.00 0.041 -2.8887 3.2
+     P2 2000   SNB poisson 1.00 1.00 1.00 0.019 -2.7432 2.1
+     P2 2000    SP poisson 1.00 0.99 1.00 0.016 -2.7427 2.1
+     P2  500   SNB poisson 1.00 0.99 1.00 0.037 -2.7498 2.1
+     P2  500    SP poisson 1.00 0.99 1.00 0.031 -2.7472 2.1
+
+TABLE B. Paired by data set, chain 1: SNB minus SP
+ G1 n 2000 | WAIC SNB lower in 50/50, median diff    -8.9 | expected log score SNB higher in 50/50, mean diff 0.0022 | TV SNB 0.011 SP 0.026 | hit SNB 1.00 SP 0.80
+ G1 n  500 | WAIC SNB lower in 47/50, median diff    -8.8 | expected log score SNB higher in 50/50, mean diff 0.0082 | TV SNB 0.021 SP 0.049 | hit SNB 1.00 SP 0.50
+ G2 n 2000 | WAIC SNB lower in 43/50, median diff    -6.5 | expected log score SNB higher in 46/50, mean diff 0.0013 | TV SNB 0.016 SP 0.021 | hit SNB 1.00 SP 0.86
+ G2 n  500 | WAIC SNB lower in 45/50, median diff    -5.1 | expected log score SNB higher in 50/50, mean diff 0.0056 | TV SNB 0.028 SP 0.040 | hit SNB 1.00 SP 0.74
+ G3 n 2000 | WAIC SNB lower in 50/50, median diff   -17.4 | expected log score SNB higher in 50/50, mean diff 0.0049 | TV SNB 0.020 SP 0.040 | hit SNB 1.00 SP 0.00
+ G3 n  500 | WAIC SNB lower in 48/50, median diff   -13.9 | expected log score SNB higher in 50/50, mean diff 0.0174 | TV SNB 0.040 SP 0.075 | hit SNB 1.00 SP 0.00
+ G4 n 2000 | WAIC SNB lower in 47/50, median diff   -11.1 | expected log score SNB higher in 50/50, mean diff 0.0032 | TV SNB 0.017 SP 0.029 | hit SNB 1.00 SP 0.92
+ G4 n  500 | WAIC SNB lower in 48/50, median diff   -16.3 | expected log score SNB higher in 50/50, mean diff 0.0165 | TV SNB 0.038 SP 0.071 | hit SNB 0.98 SP 0.94
+ G5 n 2000 | WAIC SNB lower in 49/50, median diff   -13.5 | expected log score SNB higher in 50/50, mean diff 0.0024 | TV SNB 0.017 SP 0.029 | hit SNB 1.00 SP 1.00
+ G5 n  500 | WAIC SNB lower in 49/50, median diff   -14.6 | expected log score SNB higher in 50/50, mean diff 0.0143 | TV SNB 0.035 SP 0.067 | hit SNB 1.00 SP 0.80
+ G6 n 2000 | WAIC SNB lower in 49/50, median diff   -13.8 | expected log score SNB higher in 49/50, mean diff 0.0037 | TV SNB 0.025 SP 0.039 | hit SNB 1.00 SP 0.94
+ G6 n  500 | WAIC SNB lower in 44/50, median diff    -6.2 | expected log score SNB higher in 48/50, mean diff 0.0058 | TV SNB 0.047 SP 0.063 | hit SNB 1.00 SP 1.00
+ G7 n 2000 | WAIC SNB lower in 40/50, median diff    -4.6 | expected log score SNB higher in 40/50, mean diff 0.0009 | TV SNB 0.031 SP 0.033 | hit SNB 0.78 SP 0.60
+ G7 n  500 | WAIC SNB lower in 36/50, median diff    -2.6 | expected log score SNB higher in 39/50, mean diff 0.0022 | TV SNB 0.061 SP 0.066 | hit SNB 0.18 SP 0.36
+ G8 n 2000 | WAIC SNB lower in 15/50, median diff     9.3 | expected log score SNB higher in 13/50, mean diff -0.0015 | TV SNB 0.047 SP 0.044 | hit SNB 1.00 SP 1.00
+ G8 n  500 | WAIC SNB lower in  8/50, median diff     4.8 | expected log score SNB higher in  4/50, mean diff -0.0057 | TV SNB 0.078 SP 0.071 | hit SNB 0.90 SP 0.98
+ P1 n 2000 | WAIC SNB lower in  4/50, median diff     4.3 | expected log score SNB higher in  3/50, mean diff -0.0009 | TV SNB 0.026 SP 0.021 | hit SNB 1.00 SP 1.00
+ P1 n  500 | WAIC SNB lower in  1/50, median diff     3.6 | expected log score SNB higher in  0/50, mean diff -0.0034 | TV SNB 0.051 SP 0.041 | hit SNB 1.00 SP 1.00
+ P2 n 2000 | WAIC SNB lower in  6/50, median diff     2.5 | expected log score SNB higher in  0/50, mean diff -0.0005 | TV SNB 0.019 SP 0.016 | hit SNB 1.00 SP 1.00
+ P2 n  500 | WAIC SNB lower in 10/50, median diff     2.1 | expected log score SNB higher in  1/50, mean diff -0.0026 | TV SNB 0.037 SP 0.031 | hit SNB 1.00 SP 1.00
+
+Most probable number of modes across the 50 data sets, n = 2000 and n = 500
+ G1 n 2000 SNB true 1: 1 x50
+ G1 n 2000 SP  true 1: 1 x40, 2 x10
+ G1 n  500 SNB true 1: 1 x50
+ G1 n  500 SP  true 1: 1 x25, 2 x23, 3 x2
+ G2 n 2000 SNB true 2: 2 x50
+ G2 n 2000 SP  true 2: 2 x43, 3 x7
+ G2 n  500 SNB true 2: 2 x50
+ G2 n  500 SP  true 2: 2 x37, 3 x12, 4 x1
+ G3 n 2000 SNB true 2: 2 x50
+ G3 n 2000 SP  true 2: 3 x5, 4 x30, 5 x15
+ G3 n  500 SNB true 2: 2 x50
+ G3 n  500 SP  true 2: 3 x2, 4 x20, 5 x26, 6 x2
+ G4 n 2000 SNB true 2: 2 x50
+ G4 n 2000 SP  true 2: 2 x46, 3 x4
+ G4 n  500 SNB true 2: 2 x49, 3 x1
+ G4 n  500 SP  true 2: 2 x47, 3 x3
+ G5 n 2000 SNB true 2: 2 x50
+ G5 n 2000 SP  true 2: 2 x50
+ G5 n  500 SNB true 2: 2 x50
+ G5 n  500 SP  true 2: 2 x40, 3 x10
+ G6 n 2000 SNB true 3: 3 x50
+ G6 n 2000 SP  true 3: 3 x47, 4 x3
+ G6 n  500 SNB true 3: 3 x50
+ G6 n  500 SP  true 3: 3 x50
+ G7 n 2000 SNB true 5: 4 x7, 5 x39, 6 x4
+ G7 n 2000 SP  true 5: 4 x7, 5 x30, 6 x13
+ G7 n  500 SNB true 5: 3 x8, 4 x33, 5 x9
+ G7 n  500 SP  true 5: 3 x1, 4 x29, 5 x18, 6 x2
+ G8 n 2000 SNB true 2: 2 x50
+ G8 n 2000 SP  true 2: 2 x50
+ G8 n  500 SNB true 2: 2 x45, 3 x5
+ G8 n  500 SP  true 2: 2 x49, 3 x1
+ P1 n 2000 SNB true 3: 3 x50
+ P1 n 2000 SP  true 3: 3 x50
+ P1 n  500 SNB true 3: 3 x50
+ P1 n  500 SP  true 3: 3 x50
+ P2 n 2000 SNB true 2: 2 x50
+ P2 n 2000 SP  true 2: 2 x50
+ P2 n  500 SNB true 2: 2 x50
+ P2 n  500 SP  true 2: 2 x50
+
+Where each model puts its modes, n = 2000: mean Pr(y is a mode), values at 0.2 or more
+ G1 SNB true at 2: 2:0.99
+ G1 SP  true at 2: 1:0.48  2:0.34  3:0.21
+ G2 SNB true at 0,5: 0:1  4:0.33  5:0.65
+ G2 SP  true at 0,5: 0:1  4:0.5  5:0.31
+ G3 SNB true at 1,23: 1:0.98  23:0.3  24:0.25
+ G3 SP  true at 1,23: 1:0.97
+ G4 SNB true at 1,13: 1:1  13:0.93
+ G4 SP  true at 1,13: 1:1  12:0.41  13:0.49
+ G5 SNB true at 13,50: 13:0.84  50:1
+ G5 SP  true at 13,50: 13:0.25  14:0.32  50:1
+ G6 SNB true at 1,9,16: 1:1  9:0.96  16:0.93
+ G6 SP  true at 1,9,16: 1:0.97  9:0.99  16:0.95
+ G7 SNB true at 0,5,10,15,20: 0:1  5:1  10:1  15:1  20:0.83
+ G7 SP  true at 0,5,10,15,20: 0:1  5:1  10:1  15:1  20:0.78
+ G8 SNB true at 10,25: 10:0.96  25:0.9
+ G8 SP  true at 10,25: 10:0.97  25:0.97
+ P1 SNB true at 2,9,16: 2:1  9:1  16:1
+ P1 SP  true at 2,9,16: 2:1  9:1  16:1
+ P2 SNB true at 3,24: 3:1  24:1
+ P2 SP  true at 3,24: 3:1  24:1
+
+TABLE C. Four chains, data sets 1 to 5
+ G1 n 2000 SNB | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.1
+ G1 n 2000 SP  | Rhat median 1.00 max 1.01 | chains agree on number of modes 5/5 | mean log-lik range max 0.5
+ G1 n  500 SNB | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.1
+ G1 n  500 SP  | Rhat median 1.01 max 1.06 | chains agree on number of modes 5/5 | mean log-lik range max 1.4
+ G2 n 2000 SNB | Rhat median 1.26 max 1.46 | chains agree on number of modes 5/5 | mean log-lik range max 4.4
+ G2 n 2000 SP  | Rhat median 1.00 max 1.01 | chains agree on number of modes 4/5 | mean log-lik range max 1.2
+ G2 n  500 SNB | Rhat median 1.00 max 1.01 | chains agree on number of modes 5/5 | mean log-lik range max 0.4
+ G2 n  500 SP  | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.3
+ G3 n 2000 SNB | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.1
+ G3 n 2000 SP  | Rhat median 1.01 max 1.02 | chains agree on number of modes 5/5 | mean log-lik range max 1.0
+ G3 n  500 SNB | Rhat median 1.00 max 1.24 | chains agree on number of modes 4/5 | mean log-lik range max 6.1
+ G3 n  500 SP  | Rhat median 1.00 max 1.09 | chains agree on number of modes 5/5 | mean log-lik range max 2.2
+ G4 n 2000 SNB | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.1
+ G4 n 2000 SP  | Rhat median 1.01 max 1.06 | chains agree on number of modes 5/5 | mean log-lik range max 1.6
+ G4 n  500 SNB | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.3
+ G4 n  500 SP  | Rhat median 1.02 max 1.03 | chains agree on number of modes 5/5 | mean log-lik range max 1.9
+ G5 n 2000 SNB | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.2
+ G5 n 2000 SP  | Rhat median 1.00 max 1.01 | chains agree on number of modes 5/5 | mean log-lik range max 0.9
+ G5 n  500 SNB | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.1
+ G5 n  500 SP  | Rhat median 1.01 max 1.09 | chains agree on number of modes 5/5 | mean log-lik range max 3.5
+ G6 n 2000 SNB | Rhat median 1.12 max 1.27 | chains agree on number of modes 5/5 | mean log-lik range max 3.5
+ G6 n 2000 SP  | Rhat median 1.08 max 1.24 | chains agree on number of modes 5/5 | mean log-lik range max 5.9
+ G6 n  500 SNB | Rhat median 1.00 max 1.01 | chains agree on number of modes 5/5 | mean log-lik range max 0.5
+ G6 n  500 SP  | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.4
+ G7 n 2000 SNB | Rhat median 1.02 max 1.02 | chains agree on number of modes 5/5 | mean log-lik range max 1.3
+ G7 n 2000 SP  | Rhat median 1.00 max 1.08 | chains agree on number of modes 5/5 | mean log-lik range max 14.0
+ G7 n  500 SNB | Rhat median 1.02 max 1.02 | chains agree on number of modes 5/5 | mean log-lik range max 1.4
+ G7 n  500 SP  | Rhat median 1.00 max 1.02 | chains agree on number of modes 5/5 | mean log-lik range max 1.3
+ G8 n 2000 SNB | Rhat median 1.63 max 1.85 | chains agree on number of modes 4/5 | mean log-lik range max 10.6
+ G8 n 2000 SP  | Rhat median 1.20 max 1.85 | chains agree on number of modes 5/5 | mean log-lik range max 9.1
+ G8 n  500 SNB | Rhat median 1.08 max 1.44 | chains agree on number of modes 5/5 | mean log-lik range max 7.1
+ G8 n  500 SP  | Rhat median 1.21 max 1.36 | chains agree on number of modes 5/5 | mean log-lik range max 6.7
+ P1 n 2000 SNB | Rhat median 1.00 max 1.21 | chains agree on number of modes 5/5 | mean log-lik range max 3.4
+ P1 n 2000 SP  | Rhat median 1.00 max 1.07 | chains agree on number of modes 5/5 | mean log-lik range max 1.5
+ P1 n  500 SNB | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.3
+ P1 n  500 SP  | Rhat median 1.00 max 1.02 | chains agree on number of modes 5/5 | mean log-lik range max 0.4
+ P2 n 2000 SNB | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.1
+ P2 n 2000 SP  | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.1
+ P2 n  500 SNB | Rhat median 1.00 max 1.01 | chains agree on number of modes 5/5 | mean log-lik range max 0.3
+ P2 n  500 SP  | Rhat median 1.00 max 1.00 | chains agree on number of modes 5/5 | mean log-lik range max 0.1
+
+TABLE D. Efficiency, chain 1 (ESS from 2,000 summarised draws = every 25th of 50,000; IF = 50,000 / (25 x ESS) is a lower bound when ESS = 2,000)
+ Timings: P1, P2 and all SP chains are CPU seconds from the same run; SNB on G1-G8 is elapsed seconds from the earlier res_full run.
+ design    n model ess_ll ess_L secs ess_ll_s ess_L_s
+     G1 2000   SNB   1889    NA   38     47.7      NA
+     G1 2000    SP    678  1715   79      9.0    21.1
+     G1  500   SNB   1890  1863   58     30.8    28.0
+     G1  500    SP    753  1671   40     18.9    38.7
+     G2 2000   SNB    304  1670   41      7.0    38.0
+     G2 2000    SP    840  1333   71     11.3    18.2
+     G2  500   SNB    456  1505   63      6.7    20.5
+     G2  500    SP   1356  1603   39     31.6    40.2
+     G3 2000   SNB   1413  1564   99     13.9    14.1
+     G3 2000    SP    243  1293  273      1.0     4.7
+     G3  500   SNB   1603  1478  141     11.4    10.8
+     G3  500    SP    559  1633  127      4.7    12.1
+     G4 2000   SNB   1776  1961   59     28.2    29.2
+     G4 2000    SP    204  1550   94      2.2    16.7
+     G4  500   SNB   1541  1693   84     17.5    19.4
+     G4  500    SP    129  1589   45      2.7    33.5
+     G5 2000   SNB   1832  2000   89     19.4    19.5
+     G5 2000    SP    623  1448  169      3.6     8.4
+     G5  500   SNB   1840  1848  129     13.6    13.4
+     G5  500    SP    254  1717   89      2.9    19.3
+     G6 2000   SNB   1567    NA   62     24.0      NA
+     G6 2000    SP     47    NA   83      0.5      NA
+     G6  500   SNB    965  1761   95      9.8    17.5
+     G6  500    SP    920  1778   44     18.0    34.9
+     G7 2000   SNB    150   123   71      2.0     1.7
+     G7 2000    SP    172   211  104      1.6     2.1
+     G7  500   SNB    229   224   97      2.0     2.1
+     G7  500    SP    780   992   56     12.3    17.7
+     G8 2000   SNB     39   813   90      0.4     7.8
+     G8 2000    SP     35  1343  105      0.4    12.0
+     G8  500   SNB    161   991  110      1.4     7.7
+     G8  500    SP    111  1504   54      1.8    26.9
+     P1 2000   SNB   1574    NA   85     18.0      NA
+     P1 2000    SP   1872    NA   68     26.1      NA
+     P1  500   SNB   1140    NA   50     17.9      NA
+     P1  500    SP   1311    NA   39     30.8      NA
+     P2 2000   SNB   1638    NA   82     19.5      NA
+     P2 2000    SP   1817    NA   64     28.3      NA
+     P2  500   SNB   1806  2000   48     34.6    39.0
+     P2  500    SP   1927  2000   38     49.9    52.4

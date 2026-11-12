@@ -27,7 +27,7 @@
       summary(modes)
     Output
       Modes of a shifted_poisson mixture with 2 components.
-      - Number of modes found: 3
+      - Number of modes found: 2
       - Mode estimation technique: discrete algorithm
       - Estimates of mode locations:
         mode_estimates (numeric vector, dim 3): 

@@ -102,7 +102,7 @@ test_that("Poisson PMF deduplication preserves seeded chains and shift updates",
   for (name in c("gibbs_SFM_poisson", "gibbs_SFM_shifted_poisson")) {
     sampler = get(name)
     reference_env = new.env(parent = environment(sampler))
-    for (symbol in c(name, "draw_kap", "post_kap")) {
+    for (symbol in c(name, "draw_kap_lambda")) {
       original = get(symbol, envir = environment(sampler))
       environment(original) = reference_env
       reference_env[[symbol]] = original
@@ -306,7 +306,14 @@ test_that("empty shifted Poisson components refresh shifts from their prior", {
   }
   sampler_env$rdirichlet = function(n, alpha) matrix(alpha / sum(alpha), nrow = n)
   sampler_env$draw_e0 = function(e0, ...) list(e0, 0)
-  sampler_env$draw_kap = function(...) list(0, 0)
+  sampler_env$draw_kap_lambda = function(...) list(kappa = 0, lambda = 1)
+  gamma_shapes = numeric(0)
+  gamma_scales = numeric(0)
+  sampler_env$rgamma = function(n, shape, scale) {
+    gamma_shapes <<- c(gamma_shapes, shape)
+    gamma_scales <<- c(gamma_scales, scale)
+    2
+  }
   prior_bound = NA_real_
   sampler_env$sample.int = function(n, size) {
     prior_bound <<- n
@@ -315,7 +322,126 @@ test_that("empty shifted Poisson components refresh shifts from their prior", {
   result = sampler(0:5, 2, 1, list(a0 = 1, A0 = 200, l0 = 2, L0 = 1), FALSE)
   expect_equal(prior_bound, 6)
   expect_equal(unname(result[1, "kappa2"]), 5)
+  expect_equal(gamma_shapes, c(17, 2))
+  expect_equal(gamma_scales, c(1/7, 1))
   expect_true(all(is.finite(result)))
+})
+
+test_that("joint Poisson shift-rate draws preserve the mean and include the Gamma prior", {
+  update = draw_kap_lambda
+  update_env = new.env(parent = environment(update))
+  environment(update) = update_env
+  observations = c(4, 4, 6, 7)
+  shifts = 0:4
+  rates = 6 - shifts
+  for (prior in list(c(2, 1.3), c(5, 0.2))) {
+    probabilities = vapply(seq_along(shifts), function(candidate) {
+      prod(dpois(observations - shifts[candidate], lambda = rates[candidate])) *
+        dgamma(rates[candidate], shape = prior[1], rate = prior[2])
+    }, numeric(1))
+    update_env$sample.int = function(n, size, prob) {
+      expect_equal(c(n, size), c(5, 1))
+      expect_equal(prob / sum(prob), probabilities / sum(probabilities), tolerance = 1e-12)
+      n
+    }
+    result = update(observations, kappa = 1, lambda = 5, l0 = prior[1], L0 = prior[2])
+    expect_equal(result, list(kappa = 4, lambda = 2))
+    expect_equal(result$kappa + result$lambda, 6)
+  }
+})
+
+test_that("joint Poisson shift-rate draws respect support without truncating the rate prior", {
+  update = draw_kap_lambda
+  update_env = new.env(parent = environment(update))
+  environment(update) = update_env
+  update_env$sample.int = function(n, size, prob) {
+    expect_equal(n, 4)
+    n
+  }
+  expect_equal(update(c(4, 5), 2, 2, 2, 1), list(kappa = 3, lambda = 1))
+  update_env$sample.int = function(n, size, prob) {
+    expect_equal(n, 5)
+    n
+  }
+  expect_equal(update(c(4, 5), 2, 12, 2, 1), list(kappa = 4, lambda = 10))
+  update_env$sample.int = function(...) stop("A singleton support needs no random draw.")
+  expect_equal(update(c(0, 1), 0, 2, 2, 1), list(kappa = 0, lambda = 2))
+  expect_equal(update(c(4, 5), 0, 0.5, 2, 1), list(kappa = 0, lambda = 0.5))
+  expect_error(update(c(0, 1), 0, 0, 2, 1), "conditional support")
+})
+
+test_that("joint Poisson shift-rate probabilities remain stable for small likelihoods", {
+  update = draw_kap_lambda
+  update_env = new.env(parent = environment(update))
+  environment(update) = update_env
+  observations = rep(c(4, 6, 7), 1000)
+  expect_equal(exp(sum(dpois(observations - 1, lambda = 5, log = TRUE))), 0)
+  update_env$sample.int = function(n, size, prob) {
+    expect_true(all(is.finite(prob)))
+    expect_equal(max(prob), 1)
+    which.max(prob)
+  }
+  result = update(observations, 1, 5, 2, 1)
+  expect_equal(result$kappa + result$lambda, 6)
+  update_env$dpois_unique = function(observations, ...) rep(-Inf, length(observations))
+  expect_error(update(observations, 1, 5, 2, 1), "Non-finite joint shift-rate")
+})
+
+test_that("shifted Poisson sampler follows joint moves with the conditional Gamma update", {
+  sampler = gibbs_SFM_shifted_poisson
+  sampler_env = new.env(parent = environment(sampler))
+  environment(sampler) = sampler_env
+  sampler_env$kmeans = function(y, ...) {
+    list(cluster = rep(1L, length(y)), centers = matrix(6, ncol = 1))
+  }
+  sampler_env$draw_kap = function(...) stop("The shift-only update must not be used.")
+  iteration = 0L
+  sampler_env$draw_kap_lambda = function(observations, kappa, lambda, l0, L0) {
+    iteration <<- iteration + 1L
+    expect_equal(observations, c(5, 6, 8))
+    expect_equal(c(l0, L0), c(2, 1))
+    if (iteration == 1) {
+      expect_equal(c(kappa, lambda), c(0, 1))
+      list(kappa = 0, lambda = 1)
+    } else {
+      expect_equal(c(kappa, lambda), c(0, 6))
+      list(kappa = 4, lambda = 2)
+    }
+  }
+  sampler_env$rgamma = function(n, shape, scale) {
+    expect_equal(c(n, shape, scale), c(1, if (iteration == 1) 21 else 9, 1/4))
+    if (iteration == 1) 6 else 3
+  }
+  result = sampler(c(5, 6, 8), 1, 2, list(a0 = 1, A0 = 200, l0 = 2, L0 = 1), FALSE)
+  expect_equal(unname(result[2, c("kappa1", "lambda1")]), c(4, 3))
+  expect_equal(unname(result[2, "loglik"]), sum(dpois(c(1, 2, 4), lambda = 3, log = TRUE)))
+})
+
+test_that("joint shifted Poisson fits retain valid draws and log likelihoods", {
+  set.seed(118)
+  observations = c(15 + rpois(80, 5), 45 + rpois(80, 2))
+  fit = bayes_fit(observations, K = 3, dist = "shifted_poisson",
+                  nb_iter = 120, burnin = 75, print = FALSE)
+  expect_equal(dim(fit$mcmc_all), c(120, 9))
+  expect_equal(nrow(fit$mcmc), 45)
+  expect_identical(colnames(fit$mcmc_all),
+                   c("eta1", "eta2", "eta3", "kappa1", "kappa2", "kappa3",
+                     "lambda1", "lambda2", "lambda3"))
+  expect_true(all(is.finite(fit$mcmc_all)))
+  weights = fit$mcmc_all[, paste0("eta", 1:3)]
+  shifts = fit$mcmc_all[, paste0("kappa", 1:3)]
+  rates = fit$mcmc_all[, paste0("lambda", 1:3)]
+  expect_equal(unname(rowSums(weights)), rep(1, 120))
+  expect_true(all(weights >= 0))
+  expect_true(all(shifts >= 0 & shifts <= max(observations) & shifts %% 1 == 0))
+  expect_true(all(rates > 0))
+  for (draw in c(1, 50, 75, 120)) {
+    probabilities = vapply(1:3, function(component) {
+      weights[draw, component] * dpois(observations - shifts[draw, component], rates[draw, component])
+    }, numeric(length(observations)))
+    expect_true(all(rowSums(probabilities) > 0))
+    expect_equal(fit$loglik[draw], sum(log(rowSums(probabilities))), tolerance = 1e-8)
+  }
 })
 
 test_that("joint shift-mean draws preserve the mean and use the conditional likelihood", {
@@ -440,6 +566,7 @@ test_that("count samplers never replace invalid allocations with uniform draws",
     environment(sampler) = sampler_env
     sampler_env$rdirichlet = function(n, alpha) matrix(c(0.5, 0.5), nrow = n)
     sampler_env$draw_kap = function(...) list(0, 0)
+    sampler_env$draw_kap_lambda = function(observations, kappa, lambda, ...) list(kappa = 0, lambda = lambda)
     sampler_env$draw_kap_mu = function(x, kappa, mu, ...) list(kappa = 0, mu = mu)
     sampler_env$rneg_binom = function(...) c(2, 0.2, 0, 0.1)
     zero_density = function(observations, ...) rep(0, length(observations))
@@ -471,6 +598,7 @@ test_that("samplers sum log mixture probabilities over observations", {
     sampler_env$rdirichlet = function(count, alpha) matrix(c(0.6, 0.4), nrow = 1)
     sampler_env$draw_e0 = function(e0, ...) list(e0, 0)
     sampler_env$draw_kap = function(...) list(0, 0)
+    sampler_env$draw_kap_lambda = function(observations, kappa, lambda, ...) list(kappa = 0, lambda = lambda)
     sampler_env$draw_kap_mu = function(x, kappa, mu, ...) list(kappa = 0, mu = mu)
     sampler_env$rtnorm = function(count, ...) rep(0, count)
     sampler_env$rmvnorm = function(count, mean, ...) matrix(mean, nrow = count)

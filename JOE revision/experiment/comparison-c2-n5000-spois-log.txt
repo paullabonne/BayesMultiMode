@@ -1,0 +1,42 @@
+C2.1.SPois chain 1 done (55.0 s)
+C2.1.SPois chain 2 done (56.9 s)
+C2.1.SPois chain 3 done (59.2 s)
+C2.1.SPois chain 4 done (43.7 s)
+C2.1.SPois analysed
+C2.2.SPois chain 1 done (50.7 s)
+C2.2.SPois chain 2 done (43.3 s)
+C2.2.SPois chain 3 done (37.1 s)
+C2.2.SPois chain 4 done (36.3 s)
+C2.2.SPois analysed
+
+Total elapsed (s): 402 
+Fits sampled this run: 2 
+Fits analysed: 2 of 2 
+Chain checks passed: 8 of 8 
+
+Diagnostic status counts:
+
+fail pass 
+   5    7 
+
+Summary:
+  setting dataset model         tv mean_log_score  tail_error
+1      C2       1 SPois 0.02738632      -3.827121 0.000954584
+2      C2       2 SPois 0.03037703      -3.813112 0.002945631
+  prob_true_mode_count true_modes mean_pmf_modes
+1               0.0676         13          10;17
+2               0.0097         13          10;17
+                          mode_count_distribution
+1 0=0.000 1=0.068 2=0.450 3=0.475 4=0.007 5=0.000
+2         0=0.000 1=0.010 2=0.668 3=0.321 4=0.001
+
+Paired differences:
+NULL
+Warning message:
+The `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0.
+ℹ Please use the `linewidth` argument instead.
+ℹ The deprecated feature was likely used in the BayesMultiMode package.
+  Please report the issue at
+  <https://github.com/paullabonne/BayesMultiMode/issues>. 
+
+Original comparison outputs and log are checksum-identical after the C2 rerun.

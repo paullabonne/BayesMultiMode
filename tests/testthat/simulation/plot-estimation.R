@@ -1,8 +1,11 @@
 plot_simulation_method <- function(results, file) {
   colors <- c("#0072B2", "#D55E00", "#009E73", "#CC79A7")
-  grDevices::png(file, width = 1800, height = 900, res = 150)
+  rows <- ceiling(length(results) / 2)
+  panels <- matrix(seq_len(2 * rows), nrow = rows, byrow = TRUE)
+  legend_panel <- 2 * rows + 1
+  grDevices::png(file, width = 1800, height = 800 * rows + 100, res = 150)
   on.exit(grDevices::dev.off())
-  graphics::layout(matrix(c(1, 2, 3, 3), nrow = 2, byrow = TRUE), heights = c(7, 1))
+  graphics::layout(rbind(panels, rep(legend_panel, 2)), heights = c(rep(7, rows), 1))
 
   for (result in results) {
     experiment <- result$experiment
@@ -24,7 +27,9 @@ plot_simulation_method <- function(results, file) {
     graphics::plot(histogram, freq = FALSE, col = "#DFE3E5", border = "white",
                     xlim = limits, ylim = c(0, 1.08 * maximum), xlab = "Observation",
                     ylab = if (step == 1) "Probability" else "Density",
-                    main = if (experiment$modes == 1L) "Unimodal" else "Bimodal")
+                    main = if (!is.null(experiment$title)) experiment$title else {
+                      if (experiment$modes == 1L) "Unimodal" else "Bimodal"
+                    })
     for (chain in seq_along(result$densities)) {
       density <- result$densities[[chain]]
       if (!is.null(density)) {
@@ -45,10 +50,16 @@ plot_simulation_method <- function(results, file) {
       message <- paste(strwrap(paste(errors, collapse = "; "), width = 85), collapse = "\n")
       graphics::mtext(message, side = 1, line = 5.2, cex = 0.58, col = "#A32F20")
     }
-    graphics::mtext(paste(experiment$dist, "| K = 10 | n = 600"), side = 3, line = 0.4,
+    fit_settings <- utils::modifyList(list(K = 10L, count = 600L), result$fit)
+    graphics::mtext(paste(experiment$dist, "| K =", fit_settings$K, "| n =", fit_settings$count),
+                      side = 3, line = 0.4,
                       cex = 0.8, col = "#555555")
   }
 
+  if (length(results) %% 2) {
+    graphics::par(mar = rep(0, 4))
+    graphics::plot.new()
+  }
   graphics::par(mar = rep(0, 4))
   graphics::plot.new()
   graphics::legend("center", legend = c("Simulated data", "Truth", paste("Chain", 1:4)),

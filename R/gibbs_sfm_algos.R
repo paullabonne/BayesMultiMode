@@ -446,10 +446,9 @@ gibbs_SFM_shifted_poisson <- function(y,
       if (N[k] == 0) {
         kappa_m[k] = sample.int(max(y) + 1, 1) - 1
       } else {
-        kapub = min(yk)
-        pars_m = c(kappa_m[k], lambda_m[k])
-        temp = draw_kap(yk, pars_m, kaplb = 0, kapub = kapub, dist = "shifted_poisson")
-        kappa_m[k] = temp[[1]]
+        draw_pars = draw_kap_lambda(yk, kappa_m[k], lambda_m[k], l0, L0)
+        kappa_m[k] = draw_pars$kappa
+        lambda_m[k] = draw_pars$lambda
       }
       
       # Sample lambda from Gamma distribution 
@@ -1021,6 +1020,31 @@ draw_kap_mu <- function(x, kappa, mu, r_tilde, mu_max) {
     sample.int(length(shifts), 1, prob = exp(log_probabilities - maximum))
   }
   list(kappa = shifts[selected], mu = means[selected])
+}
+
+draw_kap_lambda <- function(observations, kappa, lambda, l0, L0) {
+  component_mean = kappa + lambda
+  shifts = seq.int(0, min(observations))
+  rates = component_mean - shifts
+  supported = rates > 0
+  shifts = shifts[supported]
+  rates = rates[supported]
+  if (!length(shifts)) {
+    stop("Joint shift-rate update has no candidates within the conditional support.")
+  }
+
+  log_probabilities = vapply(seq_along(shifts), function(candidate) {
+    sum(dpois_unique(observations - shifts[candidate], lambda = rates[candidate], log = TRUE)) +
+      dgamma(rates[candidate], shape = l0, rate = L0, log = TRUE)
+  }, numeric(1))
+  maximum = max(log_probabilities)
+  if (!is.finite(maximum)) {
+    stop("Non-finite joint shift-rate conditional probabilities.")
+  }
+  selected = if (length(shifts) == 1) 1L else {
+    sample.int(length(shifts), 1, prob = exp(log_probabilities - maximum))
+  }
+  list(kappa = shifts[selected], lambda = rates[selected])
 }
 
 # Posterior of kappa 
