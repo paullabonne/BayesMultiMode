@@ -17,8 +17,8 @@ gibbs_SFM <- function(y,
                       print = TRUE,
                       dist,
                       zero_inflated = FALSE) {
-  if (zero_inflated && !dist %in% c("poisson", "neg_binomial")) {
-    stop("zero_inflated is supported only for poisson and neg_binomial mixtures.")
+  if (zero_inflated && !dist %in% c("poisson", "shifted_poisson", "neg_binomial", "shifted_neg_binomial")) {
+    stop("zero_inflated is supported only for count mixtures.")
   }
   
   if (dist == "normal") {
@@ -34,7 +34,7 @@ gibbs_SFM <- function(y,
   }
   
   if (dist == "shifted_poisson") {
-    mcmc = gibbs_SFM_shifted_poisson(y, K, nb_iter, priors, print)
+    mcmc = gibbs_SFM_shifted_poisson(y, K, nb_iter, priors, print, zero_inflated)
   }
 
   if (dist == "neg_binomial") {
@@ -42,7 +42,7 @@ gibbs_SFM <- function(y,
   }
 
   if (dist == "shifted_neg_binomial") {
-    mcmc = gibbs_SFM_shifted_neg_binomial(y, K, nb_iter, nb_burnin, priors, print)
+    mcmc = gibbs_SFM_shifted_neg_binomial(y, K, nb_iter, nb_burnin, priors, print, zero_inflated)
   }
   
   return(mcmc)
@@ -199,10 +199,7 @@ gibbs_SFM_poisson <- function(y,
     
     # Compute number of observations allocated in each component
     N = colSums(S)
-    if (zero_inflated) {
-      zero_prob[m] = stats::rbeta(1, priors$zero_a + n_obs - sum(N),
-                                 priors$zero_b + sum(N))
-    }
+    if (zero_inflated) zero_prob[m] = draw_zero_prob(priors, n_obs, N)
     
     ## sample component proportion
     e0 = draw_e0(e0, a0, 1/A0, counts = N)[[1]]
@@ -224,11 +221,7 @@ gibbs_SFM_poisson <- function(y,
       probs[,k] = eta[m,k]*dpois_unique(y,lambda[m,k])
     }
     
-    allocation_probs = if (zero_inflated) {
-      cbind(zero_prob[m] * (y == 0), (1 - zero_prob[m]) * probs)
-    } else {
-      probs
-    }
+    allocation_probs = if (zero_inflated) add_zero_atom(y, probs, zero_prob[m]) else probs
     # 2. classification
     pnorm = allocation_probs/rowSums(allocation_probs)
     
@@ -423,7 +416,8 @@ gibbs_SFM_shifted_poisson <- function(y,
                          K,
                          nb_iter,
                          priors = list(),
-                         print = TRUE){
+                         print = TRUE,
+                         zero_inflated = FALSE){
   
   # unpacking priors
   a0 = priors$a0
@@ -434,11 +428,15 @@ gibbs_SFM_shifted_poisson <- function(y,
   n_obs <- length(y)
   
   # Initial conditions
-  cl_y <- kmeans(y, centers = K, nstart = 30)
-  
-  S <- matrix(0,length(y),K)
-  for (k in 1:K) {
-    S[cl_y$cluster==k ,k] = 1
+  if (zero_inflated) {
+    S = initialize_zero_inflated(y, K)$allocations
+    zero_prob = numeric(nb_iter)
+  } else {
+    cl_y <- kmeans(y, centers = K, nstart = 30)
+    S <- matrix(0,length(y),K)
+    for (k in 1:K) {
+      S[cl_y$cluster==k ,k] = 1
+    }
   }
   
   e0 = a0/A0
@@ -458,6 +456,7 @@ gibbs_SFM_shifted_poisson <- function(y,
     
     # Compute number of observations allocated in each component
     N = colSums(S)
+    if (zero_inflated) zero_prob[m] = draw_zero_prob(priors, n_obs, N)
     
     ## sample component proportion
     e0 = draw_e0(e0, a0, 1/A0, counts = N)[[1]]
@@ -483,16 +482,18 @@ gibbs_SFM_shifted_poisson <- function(y,
     }
     
     # 2. classification
-    pnorm = probs/rowSums(probs)
+    allocation_probs = if (zero_inflated) add_zero_atom(y, probs, zero_prob[m]) else probs
+    pnorm = allocation_probs/rowSums(allocation_probs)
     
     if (any(!is.finite(pnorm))) {
       stop("Non-finite count allocation probabilities; check support or numerical underflow.")
     }
     
     S = draw_allocations(pnorm)
+    if (zero_inflated) S = S[, -1, drop = FALSE]
     
     # compute log lik
-    lp[m] = sum(log(rowSums(probs)))
+    lp[m] = sum(log(rowSums(allocation_probs)))
     
     # storing
     lambda[m,] = lambda_m
@@ -507,6 +508,12 @@ gibbs_SFM_shifted_poisson <- function(y,
   }
   
   # output
+  if (zero_inflated) {
+    eta = cbind(zero_prob, eta * (1 - zero_prob))
+    kappa = cbind(0, kappa)
+    lambda = cbind(0, lambda)
+    K = K + 1
+  }
   mcmc = cbind(eta, kappa, lambda, lp)
   colnames(mcmc) = 1:ncol(mcmc)
   
@@ -582,10 +589,7 @@ gibbs_SFM_neg_binomial <- function(y,
     
     # Compute number of observations allocated in each component
     N = colSums(S)
-    if (zero_inflated) {
-      zero_prob[m] = stats::rbeta(1, priors$zero_a + n_obs - sum(N),
-                                 priors$zero_b + sum(N))
-    }
+    if (zero_inflated) zero_prob[m] = draw_zero_prob(priors, n_obs, N)
     
     ## sample component proportion
     e0 = draw_e0(e0, a0, 1/A0, counts = N)[[1]]
@@ -616,11 +620,7 @@ gibbs_SFM_neg_binomial <- function(y,
       batch_proposals[] = 0
     }
     
-    allocation_probs = if (zero_inflated) {
-      cbind(zero_prob[m] * (y == 0), (1 - zero_prob[m]) * probs)
-    } else {
-      probs
-    }
+    allocation_probs = if (zero_inflated) add_zero_atom(y, probs, zero_prob[m]) else probs
     # 2. classification
     pnorm = allocation_probs/rowSums(allocation_probs)
     
@@ -677,7 +677,8 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
                          nb_iter,
                          nb_burnin,
                          priors = list(),
-                         print = TRUE){
+                         print = TRUE,
+                         zero_inflated = FALSE){
   
   # unpacking priors
   a0 = priors$a0
@@ -699,20 +700,26 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
   eta = matrix(data = NA, nrow = nb_iter, ncol = K)
   
   # Initial conditions
-  cl_y <- kmeans(y, centers = K, nstart = 30)
+  if (zero_inflated) {
+    initialization = initialize_zero_inflated(y, K)
+    S = initialization$allocations
+    mu_m = initialization$centers
+    zero_prob = numeric(nb_iter)
+  } else {
+    cl_y <- kmeans(y, centers = K, nstart = 30)
+    S <- matrix(0,length(y),K)
+    for (k in 1:K) {
+      S[cl_y$cluster==k ,k] = 1
+    }
+    mu_m <- cbind(t(cl_y$centers))
+  }
   batch_accept = rep(0, K)
   batch_proposals = rep(0, K)
-
-  S <- matrix(0,length(y),K)
-  for (k in 1:K) {
-    S[cl_y$cluster==k ,k] = 1
-  }
   
   e0 = a0/A0
   
   # initial value for the parameters
   kappa_m = rep(0, K)
-  mu_m <- cbind(t(cl_y$centers))
   mu_m[mu_m == 0] = mu_max / 2
   r_tilde_m <- rep(0.4, K)
   accept = rep(0, K)
@@ -727,6 +734,7 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
     
     # Compute number of observations allocated in each component
     N = colSums(S)
+    if (zero_inflated) zero_prob[m] = draw_zero_prob(priors, n_obs, N)
     
     ## sample component proportion
     e0 = draw_e0(e0, a0, 1/A0, counts = N)[[1]]
@@ -783,16 +791,18 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
     accept = accept[order_k]
     
     # 2. classification
-    pnorm = probs/rowSums(probs)
+    allocation_probs = if (zero_inflated) add_zero_atom(y, probs, zero_prob[m]) else probs
+    pnorm = allocation_probs/rowSums(allocation_probs)
     
     if (any(!is.finite(pnorm))) {
       stop("Non-finite count allocation probabilities; check support or numerical underflow.")
     }
     
     S = draw_allocations(pnorm)
+    if (zero_inflated) S = S[, -1, drop = FALSE]
     
     # compute log lik
-    lp[m] = sum(log(rowSums(probs)))
+    lp[m] = sum(log(rowSums(allocation_probs)))
     
     # storing
     mu[m,] = mu_m
@@ -808,6 +818,13 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
   }
   
   # output
+  if (zero_inflated) {
+    eta = cbind(zero_prob, eta * (1 - zero_prob))
+    kappa = cbind(0, kappa)
+    mu = cbind(0, mu)
+    r_tilde = cbind(0.25, r_tilde)
+    K = K + 1
+  }
   mcmc = cbind(eta, kappa, mu, r_tilde, lp)
   colnames(mcmc) = 1:ncol(mcmc)
   
@@ -820,7 +837,7 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
     )
   }
   colnames(mcmc)[ncol(mcmc)] = "loglik"
-  print(accept/nb_iter)
+  if (print) print(accept/nb_iter)
   # Return output   
   return(mcmc)
 }
@@ -924,6 +941,15 @@ check_priors <- function(priors, dist, data, zero_inflated = FALSE) {
 }
 
 ## functions used in the SFM MCMC algorithm
+
+draw_zero_prob <- function(priors, n_obs, counts) {
+  count_total = sum(counts)
+  stats::rbeta(1, priors$zero_a + n_obs - count_total, priors$zero_b + count_total)
+}
+
+add_zero_atom <- function(y, probs, zero_prob) {
+  cbind(zero_prob * (y == 0), (1 - zero_prob) * probs)
+}
 
 initialize_zero_inflated <- function(y, K) {
   positive = y > 0

@@ -1,6 +1,6 @@
 test_that("zero-inflated fits support full and positive-count modes and plots", {
   observations = c(rep(0, 20), rep(4:12, 5))
-  for (distribution in c("poisson", "neg_binomial")) {
+  for (distribution in c("poisson", "neg_binomial", "shifted_poisson", "shifted_neg_binomial")) {
     set.seed(615)
     fit = bayes_fit(observations, 1, distribution, nb_iter = 60, burnin = 30,
                     print = FALSE, zero_inflated = TRUE)

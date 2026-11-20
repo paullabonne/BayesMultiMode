@@ -1,19 +1,22 @@
 test_that("zero-inflated samplers recover structural mass and count means", {
-  for (distribution in c("poisson", "neg_binomial")) {
+  for (distribution in c("poisson", "neg_binomial", "shifted_poisson", "shifted_neg_binomial")) {
     set.seed(616)
-    counts = if (distribution == "poisson") rpois(600, 8) else rnbinom(600, size = 5, mu = 8)
-    observations = c(rep(0, 250), counts)
+    poisson = endsWith(distribution, "poisson")
+    shift = if (startsWith(distribution, "shifted_")) 4 else 0
+    counts = if (poisson) rpois(600, 8) else rnbinom(600, size = 5, mu = 8)
+    observations = c(rep(0, 250), shift + counts)
     fit = bayes_fit(observations, 1, distribution, nb_iter = 500, burnin = 250,
                     print = FALSE, zero_inflated = TRUE)
     expect_lt(abs(mean(fit$mcmc[, "eta1"]) - 250 / 850), 0.06)
-    mean_parameter = if (distribution == "poisson") "lambda2" else "mu2"
-    expect_lt(abs(mean(fit$mcmc[, mean_parameter]) - 8), 1)
+    count_mean = fit$mcmc[, if (poisson) "lambda2" else "mu2"]
+    if (shift > 0) count_mean = count_mean + fit$mcmc[, "kappa2"]
+    expect_lt(abs(mean(count_mean) - (shift + 8)), 1)
   }
 })
 
 test_that("zero-inflated count fits retain an exact atom and full likelihood", {
   observations = c(rep(0, 40), rep(c(2, 5, 9), 10))
-  for (distribution in c("poisson", "neg_binomial")) {
+  for (distribution in c("poisson", "neg_binomial", "shifted_poisson", "shifted_neg_binomial")) {
     set.seed(611)
     fit = bayes_fit(observations, 2, distribution, nb_iter = 80, burnin = 40,
                     print = FALSE, zero_inflated = TRUE)
@@ -41,12 +44,62 @@ test_that("zero-inflated count fits retain an exact atom and full likelihood", {
     expect_error(bayes_fit(observations, 2, "poisson", zero_inflated = invalid),
                  "zero_inflated")
   }
-  for (distribution in c("normal", "skew_normal", "shifted_poisson", "shifted_neg_binomial")) {
+  for (distribution in c("normal", "skew_normal")) {
     expect_error(bayes_fit(observations, 2, distribution, zero_inflated = TRUE),
                  "supported only")
   }
-  expect_error(bayes_fit(rep(0, 10), 2, "neg_binomial", zero_inflated = TRUE),
-               "positive full-data maximum")
+  for (distribution in c("neg_binomial", "shifted_neg_binomial")) {
+    expect_error(bayes_fit(rep(0, 10), 2, distribution, zero_inflated = TRUE),
+                 "positive full-data maximum")
+  }
+})
+
+test_that("shifted samplers allocate zeros only to the atom and zero-shift counts", {
+  observations = c(0, 1, 1, 3, 3)
+  for (distribution in c("shifted_poisson", "shifted_neg_binomial")) {
+    poisson = distribution == "shifted_poisson"
+    sampler = if (poisson) gibbs_SFM_shifted_poisson else gibbs_SFM_shifted_neg_binomial
+    sampler_env = new.env(parent = environment(sampler))
+    environment(sampler) = sampler_env
+    sampler_env$draw_kap_lambda = function(observations, kappa, lambda, ...) {
+      list(kappa = if (min(observations) == 1) 0 else 2, lambda = lambda)
+    }
+    sampler_env$draw_kap_mu = function(observations, kappa, mu, ...) {
+      list(kappa = if (min(observations) == 1) 0 else 2, mu = mu)
+    }
+    allocated = NULL
+    sampler_env$draw_allocations = function(probabilities) {
+      allocated <<- probabilities
+      draw_allocations(probabilities)
+    }
+    arguments = list(y = observations, K = 2, nb_iter = 1,
+                     priors = check_priors(list(), distribution, observations, TRUE),
+                     print = FALSE, zero_inflated = TRUE)
+    if (!poisson) arguments$nb_burnin = 0
+    set.seed(617)
+    draw = do.call(sampler, arguments)[1, ]
+
+    shifts = unname(draw[c("kappa2", "kappa3")])
+    expect_equal(sort(shifts), c(0, 2))
+    expect_gt(allocated[1, 1], 0)
+    expect_gt(allocated[1, 1 + which(shifts == 0)], 0)
+    expect_equal(unname(allocated[1, 1 + which(shifts == 2)]), 0)
+    expect_true(all(allocated[observations > 0, 1] == 0))
+
+    count_mass = vapply(2:3, function(component) {
+      residual = observations - draw[[paste0("kappa", component)]]
+      density = if (poisson) {
+        dpois(residual, lambda = draw[[paste0("lambda", component)]])
+      } else {
+        size = 1 / draw[[paste0("rtilde", component)]] - 1
+        dnbinom(residual, size = size, mu = draw[[paste0("mu", component)]])
+      }
+      draw[[paste0("eta", component)]] * density
+    }, numeric(length(observations)))
+    mass = cbind(draw[["eta1"]] * (observations == 0), count_mass)
+    expect_equal(unname(allocated), unname(mass / rowSums(mass)))
+    expect_equal(draw[["loglik"]], sum(log(rowSums(mass))))
+  }
 })
 
 test_that("zero-inflated Poisson draws retain an exact atom and full likelihood", {
@@ -98,14 +151,15 @@ test_that("structural zeros have a separate Beta update from sparse count weight
 })
 
 test_that("zero-inflated initialization handles sparse and all-zero data", {
-  for (distribution in c("poisson", "neg_binomial")) {
+  for (distribution in c("poisson", "neg_binomial", "shifted_poisson", "shifted_neg_binomial")) {
     for (observations in list(rep(0, 10), c(rep(0, 9), 3), rep(2, 10))) {
-      if (distribution == "neg_binomial" && all(observations == 0)) next
+      if (endsWith(distribution, "neg_binomial") && all(observations == 0)) next
       priors = check_priors(list(), distribution, observations, TRUE)
       set.seed(614)
       draws = gibbs_SFM(observations, 3, 30, 15, priors, FALSE, distribution, TRUE)
       expect_true(all(is.finite(draws)))
-      expect_equal(ncol(draws), if (distribution == "poisson") 9 else 13)
+      parameters = 2 + endsWith(distribution, "neg_binomial") + startsWith(distribution, "shifted_")
+      expect_equal(ncol(draws), 4 * parameters + 1)
     }
   }
   for (invalid in list(0, -1, NA_real_, Inf, c(1, 2))) {

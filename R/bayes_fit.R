@@ -17,8 +17,8 @@
 #' @param nb_iter Number of MCMC iterations; default is `2000`.
 #' @param burnin Number of MCMC iterations used as burnin; default is `nb_iter/2`.
 #' @param print Showing MCMC progression ? Default is `TRUE`.
-#' @param zero_inflated Add a structural-zero component to a `"poisson"` or
-#' `"neg_binomial"` mixture? Default is `FALSE`. Its probability has a
+#' @param zero_inflated Add a structural-zero component to a Poisson or negative-binomial
+#' mixture (shifted or unshifted)? Default is `FALSE`. Its probability has a
 #' Beta prior with positive shape parameters `priors$zero_a` and
 #' `priors$zero_b`, both defaulting to `1`.
 #' 
@@ -96,7 +96,7 @@
 #' \deqn{p(y_i|\lambda_k) = \frac{1}{y_i!} \, \lambda^{y_i}_k \,\exp(-\lambda_k).}
 #' The prior for \eqn{\lambda_k} follows from \insertCite{viallefont2002bayesian;textual}{BayesMultiMode}:
 #' \deqn{\lambda_k \sim \text{Gamma}(\text{l}_0,\text{L}_0).}
-#' When zero inflation is enabled, the default Poisson rate prior uses
+#' For `dist = "poisson"` with zero inflation, the default rate prior uses
 #' `L0 = 1.1/median(data[data > 0])`, or `1.1` for all-zero data.
 #'
 #' **Zero-inflated count mixtures**
@@ -106,11 +106,13 @@
 #' The count weights sum to one and retain the sparse Dirichlet prior.
 #' The structural-zero probability has an independent Beta prior.
 #' Zeros may be allocated to either the zero atom or a count component;
-#' positive observations may only be allocated to count components.
+#' positive observations may only be allocated to count components. A shifted
+#' count component can generate zero only when its shift is zero.
 #' In the returned draws, component 1 is the zero atom and `eta1` is
 #' \eqn{\pi_0}; components 2 through `K + 1` have unconditional weights
 #' \eqn{(1-\pi_0)\eta_k}. The atom has `lambda1 = 0` for Poisson, or
 #' `mu1 = 0` and fixed `rtilde1 = 0.25` for negative binomial.
+#' In either shifted family, the atom also has `kappa1 = 0`.
 #' The fixed negative-binomial dispersion is only a representation of the
 #' zero atom and is not estimated. Negative-binomial fits require at least
 #' one positive observation to define their existing mean prior.
@@ -211,8 +213,6 @@ bayes_fit <- function(data,
   assert_that(is.logical(print), msg = "print should be either TRUE or FALSE")
   assert_that(is.logical(zero_inflated), is.scalar(zero_inflated), !is.na(zero_inflated),
               msg = "zero_inflated should be either TRUE or FALSE")
-  assert_that(!zero_inflated || dist %in% c("poisson", "neg_binomial"),
-              msg = "zero_inflated is supported only for poisson and neg_binomial mixtures.")
   
   if (dist %in% c("poisson", "shifted_poisson", "neg_binomial", "shifted_neg_binomial")) {
     assert_that(!any(!data%%1==0),
@@ -221,6 +221,7 @@ bayes_fit <- function(data,
                 msg = "data should not include negative values when using Poisson, shifted Poisson, negative Binomial or shifted negative Binomial mixtures.")
     dist_type = "discrete"
   } else {
+    assert_that(!zero_inflated, msg = "zero_inflated is supported only for count mixtures.")
     dist_type = "continuous"
   }
   

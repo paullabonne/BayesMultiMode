@@ -1,5 +1,5 @@
 ## Development version
-* Poisson and negative-binomial mixtures now support `zero_inflated = TRUE`,
+* Shifted and unshifted Poisson and negative-binomial mixtures now support `zero_inflated = TRUE`,
 	adding a fixed zero atom with an independent Beta prior controlled by `zero_a`
 	and `zero_b`. `K` specifies the count components; returned component 1 is the
 	zero atom and `eta1` is its structural-zero probability. Count weights retain

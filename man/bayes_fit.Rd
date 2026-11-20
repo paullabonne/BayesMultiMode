@@ -38,8 +38,8 @@ currently supports \code{"normal"}, \code{"skew_normal"}, \code{"poisson"}, \cod
 
 \item{print}{Showing MCMC progression ? Default is \code{TRUE}.}
 
-\item{zero_inflated}{Add a structural-zero component to a \code{"poisson"} or
-\code{"neg_binomial"} mixture? Default is \code{FALSE}. Its probability has a
+\item{zero_inflated}{Add a structural-zero component to a Poisson or negative-binomial
+mixture (shifted or unshifted)? Default is \code{FALSE}. Its probability has a
 Beta prior with positive shape parameters \code{priors$zero_a} and
 \code{priors$zero_b}, both defaulting to \code{1}.}
 }
@@ -118,7 +118,7 @@ Poisson components take the form:
 \deqn{p(y_i|\lambda_k) = \frac{1}{y_i!} \, \lambda^{y_i}_k \,\exp(-\lambda_k).}
 The prior for \eqn{\lambda_k} follows from \insertCite{viallefont2002bayesian;textual}{BayesMultiMode}:
 \deqn{\lambda_k \sim \text{Gamma}(\text{l}_0,\text{L}_0).}
-When zero inflation is enabled, the default Poisson rate prior uses
+For \code{dist = "poisson"} with zero inflation, the default rate prior uses
 \code{L0 = 1.1/median(data[data > 0])}, or \code{1.1} for all-zero data.
 
 \strong{Zero-inflated count mixtures}
@@ -128,11 +128,13 @@ With \code{zero_inflated = TRUE}, the model is
 The count weights sum to one and retain the sparse Dirichlet prior.
 The structural-zero probability has an independent Beta prior.
 Zeros may be allocated to either the zero atom or a count component;
-positive observations may only be allocated to count components.
+positive observations may only be allocated to count components. A shifted
+count component can generate zero only when its shift is zero.
 In the returned draws, component 1 is the zero atom and \code{eta1} is
 \eqn{\pi_0}; components 2 through \code{K + 1} have unconditional weights
 \eqn{(1-\pi_0)\eta_k}. The atom has \code{lambda1 = 0} for Poisson, or
 \code{mu1 = 0} and fixed \code{rtilde1 = 0.25} for negative binomial.
+In either shifted family, the atom also has \code{kappa1 = 0}.
 The fixed negative-binomial dispersion is only a representation of the
 zero atom and is not estimated. Negative-binomial fits require at least
 one positive observation to define their existing mean prior.
