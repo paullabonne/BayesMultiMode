@@ -3,7 +3,7 @@
 #' This is wrapper around the [bayesplot::mcmc_trace()] function from package `bayesplot`.
 #'
 #' @param BayesMix An object of class `bayes_mixture`.
-#' @param mcmc_vars Variables to plot; default is all the variable in the MCMC output.
+#' @param mcmc_vars Variables to plot. For telescoping the default is `c("K", "Kplus", "concentration")`; component columns can also be selected. For SFM the default is all columns.
 #' @param with_burnin Plot all draws ?
 #' @param ... Additional arguments passed to function [bayesplot::mcmc_trace()].
 #' 
@@ -43,6 +43,11 @@ bayes_trace <- function(BayesMix,
     mcmc = BayesMix$mcmc_all
   } else {
     mcmc = BayesMix$mcmc
+  }
+  if (!is.null(BayesMix$state)) {
+    state <- if (with_burnin) BayesMix$state_all else BayesMix$state
+    if (is.null(mcmc_vars)) mcmc_vars <- colnames(state)
+    mcmc <- cbind(mcmc, state)[, mcmc_vars, drop = FALSE]
   }
   
   if (is.null(mcmc_vars)) {

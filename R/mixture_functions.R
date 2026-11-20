@@ -32,8 +32,8 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, loc) {
   pars_mat = vec_to_mat(p, pars_names)
   pars_mat = na.omit(pars_mat)
 
-  assert_that(nrow(pars_mat) > 1,
-              msg = paste("there must be at least two components per variable in",
+  assert_that(nrow(pars_mat) >= 1,
+              msg = paste("there must be at least one component per variable in",
                            par_type))
   
   assert_that(round(sum(pars_mat[, "eta"], na.rm = T),2)==1,
@@ -130,7 +130,7 @@ test_and_export <- function(p, pdf_func, dist, pars_names, dist_type, loc) {
   list_func$dist_type = dist_type
   list_func$pdf_func = pdf_func
   list_func$loc = loc
-  list_func$K = K
+  list_func$K = nrow(pars_mat)
   
   return(list_func)
 }

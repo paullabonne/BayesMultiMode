@@ -1,5 +1,13 @@
 ## Development version
-* Shifted and unshifted Poisson and negative-binomial mixtures now support `zero_inflated = TRUE`,
+* `bayes_fit(sampler = "telescoping")` samples the total component count and
+	records the occupied count for all six component families. `K` caps the
+	total count; `K_init` sets its initial value. `state` contains the retained
+	counts and concentration, and `cap_mass` reports the posterior mass at `K`.
+	The concentration defaults follow the `telescope` prior helpers: fixed at 1
+	for dynamic weights and Gamma(shape 1, rate 20) for static weights. Use
+	`concentration = "F_6_3"` for the paper's suggested dynamic clustering prior.
+	Empty components contribute to the saved density. SFM remains the default.
+* With `sampler = "sfm"` only, shifted and unshifted Poisson and negative-binomial mixtures support `zero_inflated = TRUE`,
 	adding a fixed zero atom with an independent Beta prior controlled by `zero_a`
 	and `zero_b`. `K` specifies the count components; returned component 1 is the
 	zero atom and `eta1` is its structural-zero probability. Count weights retain

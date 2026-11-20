@@ -31,7 +31,7 @@
 #'  \item{mcmc}{Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
 #'  \item{mcmc_all}{Matrix of MCMC draws.}
 #'  \item{loglik}{Log likelihood at each MCMC draw.}
-#'  \item{K}{Number of components.}
+#'  \item{K}{Number of component slots in the parameter matrix.}
 #'  \item{dist}{Same as argument.}
 #'  \item{pdf_func}{The pdf/pmf of the mixture components.}
 #'  \item{dist_type}{Type of the distribution, i.e. continuous or discrete.}
@@ -149,7 +149,7 @@ bayes_mixture <- function(mcmc,
                   mcmc = mcmc,
                   mcmc_all = mcmc_all,
                   loglik = loglik,
-                  K = list_func$K,
+                  K = ncol(mcmc) / length(pars_names),
                   dist = dist,
                   dist_type = list_func$dist_type,
                   pdf_func = list_func$pdf_func,

@@ -95,6 +95,13 @@ summary.bayes_mixture <- function(object, ...) {
   
   cat("Mixture estimated with a Bayesian MCMC method.")
   cat("\n- Mixture type:", object$dist_type)
+  if (!is.null(object$state)) {
+    cat("\n- Storage width (count cap):", object$K)
+    cat("\n- Posterior mass at the cap:", object$cap_mass)
+    cat("\nPosterior summaries of total K, occupied Kplus and concentration:\n")
+    print(summarise_draws(object$state))
+    return(invisible(NULL))
+  }
   cat("\n- Number of components:", object$K)
   cat("\n- Distribution family:", object$dist)
   cat("\n- Number of distribution variables:", object$nb_var)

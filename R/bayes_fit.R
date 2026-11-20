@@ -1,10 +1,10 @@
 #' Bayesian estimation of mixture distributions
 #' 
-#' Estimation of a univariate mixture with unknown number of components using a sparse finite mixture Markov chain Monte Carlo (SFM MCMC) algorithm.
+#' Fit a univariate mixture using sparse finite mixture (SFM) or telescoping MCMC.
 #' 
 #' @param data Vector of observations.
 #' @param K Maximum number of count components when `zero_inflated = TRUE`;
-#' otherwise, maximum number of mixture components.
+#' otherwise, number of SFM slots or upper bound on the sampled telescoping count.
 #' @param dist String indicating the distribution of the mixture components;
 #' currently supports `"normal"`, `"skew_normal"`, `"poisson"`, `"shifted_poisson"`,
 #' `"neg_binomial"` and `"shifted_neg_binomial"`.
@@ -20,14 +20,29 @@
 #' @param zero_inflated Add a structural-zero component to a Poisson or negative-binomial
 #' mixture (shifted or unshifted)? Default is `FALSE`. Its probability has a
 #' Beta prior with positive shape parameters `priors$zero_a` and
-#' `priors$zero_b`, both defaulting to `1`.
+#' `priors$zero_b`, both defaulting to `1`. Only `sampler = "sfm"` supports
+#' zero inflation; the telescoping sampler does not yet support it.
+#' @param sampler `"sfm"` (default) fixes the total number of components.
+#' `"telescoping"` samples that count for every supported `dist` and requires
+#' `zero_inflated = FALSE`.
+#' @param K_init Initial total count for telescoping, from 1 to `K`. May exceed the number of distinct observations.
+#' @param weight_model Telescoping Dirichlet model: `"dynamic"` uses concentration divided by the current count per component; `"static"` uses concentration per component.
+#' @param K_prior Telescoping count prior: `"bnb"` gives `K - 1` a beta-negative-binomial(1, 4, 3) prior; `"uniform"` gives every count equal mass. Both priors are truncated to the integers from 1 to the supplied cap.
+#' @param concentration `"default"` follows the prior helpers in the authors' `telescope` package.
+#' With dynamic weights it fixes concentration at 1; use `"F_6_3"` to sample it
+#' from the F(6, 3) prior suggested for clustering. With static weights,
+#' `"default"` and `"G_1_20"` both use a Gamma prior with shape 1 and rate 20.
+#' A positive number fixes concentration for either model; `NULL` samples it
+#' from the corresponding prior. SFM uses `a0` and `A0` instead.
 #' 
 #' @return A list of class \code{bayes_mixture} containing:
 #'  \item{data}{Same as argument.}
 #'  \item{mcmc}{Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
 #'  \item{mcmc_all}{Matrix of MCMC draws.}
 #'  \item{loglik}{Log likelihood at each MCMC draw.}
-#'  \item{K}{Number of components, including the structural-zero component if enabled.}
+#'  \item{K}{Storage width, including the structural-zero component if enabled. For telescoping this is the cap, not a draw of the count.}
+#'  \item{state_all, state}{For telescoping, matrices of total count (`K`), occupied count (`Kplus`) and concentration, before and after burn-in. Neither count is a count of modes.}
+#'  \item{cap_mass}{For telescoping, the fraction of retained draws at the cap. A large value warrants checking a larger cap.}
 #'  \item{zero_inflated}{Present and `TRUE` when structural zeros are enabled.}
 #'  \item{count_K}{When zero inflation is enabled, the requested number of count components.}
 #'  \item{dist}{Same as argument.}
@@ -38,6 +53,17 @@
 #'  \item{nb_var}{Number of variables/parameters in the mixture distribution.}
 #' 
 #' @details
+#' The telescoping sampler follows Algorithms 2 and 3 of
+#' \doi{10.1214/21-BA1294}. Each draw includes weights and parameters for
+#' occupied and empty components. Slots beyond its sampled count contain `NA`.
+#' For constant Gaussian data the range-based variance prior is undefined;
+#' telescoping uses `B0 = 1` unless a positive variance is supplied.
+#' For constant or single-observation skew-normal data, telescoping uses a
+#' variance of 1 to set the defaults for `C0` and `G0`.
+#' For shifted and unshifted negative binomial components the mean prior uses the maximum
+#' of the full data, not the cluster maximum. `priors$sig` sets the initial
+#' proposal scale (default 0.1); adaptation stops at the end of burn-in.
+#'
 #' 
 #' Let \eqn{y_i}, \eqn{i=1,\dots,n} denote observations.
 #' A general mixture of \eqn{K} distributions from the same 
@@ -80,7 +106,7 @@
 #' \deqn{z_i \sim TN_{[0,\infty)}(0, 1),}
 #' \deqn{y_i|(S_i = k) = \xi_k + \psi_k z_i + \epsilon_i, \quad \epsilon_i \sim N(0, \sigma^2_k),}
 #' where the parameters of the skew-Normal are recovered with
-#' \deqn{\omega_k = \frac{\psi_k}{\sigma_k}, \qquad \omega^2_k = \sigma^2_k + \psi^2_k.}
+#' \deqn{\alpha_k = \frac{\psi_k}{\sigma_k}, \qquad \omega^2_k = \sigma^2_k + \psi^2_k.}
 #' By defining a regressor \eqn{x_i = (1, z_i)'}, the skew-Normal mixture can be seen as
 #' random effect model and sampled using standard techniques. Thus we use priors similar to
 #' the Normal mixture model:
@@ -98,6 +124,7 @@
 #' \deqn{\lambda_k \sim \text{Gamma}(\text{l}_0,\text{L}_0).}
 #' For `dist = "poisson"` with zero inflation, the default rate prior uses
 #' `L0 = 1.1/median(data[data > 0])`, or `1.1` for all-zero data.
+#' Telescoping uses the same fallback when the sample median is zero.
 #'
 #' **Zero-inflated count mixtures**
 #'
@@ -135,6 +162,11 @@
 #' @importFrom assertthat is.string
 #' 
 #' @examples
+#' fit <- bayes_fit(galaxy, K = 30, dist = "normal", sampler = "telescoping",
+#'                  K_init = 3, nb_iter = 100, burnin = 50, print = FALSE)
+#' table(fit$state[, "K"], fit$state[, "Kplus"])
+#' fit$cap_mass
+#'
 #' # Example with galaxy data ================================================
 #' set.seed(123) 
 #' 
@@ -196,10 +228,41 @@ bayes_fit <- function(data,
                       nb_iter = 2000,
                       burnin = nb_iter/2,
                       print = TRUE,
-                      zero_inflated = FALSE) {
+                      zero_inflated = FALSE,
+                      sampler = c("sfm", "telescoping"),
+                      K_init = 1L,
+                      weight_model = c("dynamic", "static"),
+                      K_prior = c("bnb", "uniform"),
+                      concentration = "default") {
+  sampler <- match.arg(sampler)
+  if (sampler == "telescoping") {
+    weight_model <- match.arg(weight_model)
+    K_prior <- match.arg(K_prior)
+    assert_that(!isTRUE(zero_inflated),
+          msg = "Telescoping does not support zero inflation; use sampler = 'sfm' for zero-inflated count mixtures.")
+    assert_that(is.numeric(data), is.vector(data), length(data) > 0,
+                msg = "Telescoping requires a nonempty numeric vector.")
+    assert_that(is.scalar(K_init), is.numeric(K_init), is.finite(K_init), K_init == trunc(K_init),
+                K_init >= 1, K_init <= K, msg = "K_init must be an integer between 1 and K.")
+    if (is.character(concentration)) {
+      # Follow the authors' telescope::priorOnAlpha_spec() and telescope::priorOnE0_spec() defaults.
+      # For clustering, the paper suggests "F_6_3" instead of fixing dynamic alpha at 1.
+      sampled_prior <- if (weight_model == "dynamic") "F_6_3" else "G_1_20"
+      assert_that(is.string(concentration), concentration %in% c("default", sampled_prior),
+                  msg = paste0("For ", weight_model, " weights, use concentration = 'default', '",
+                               sampled_prior, "', NULL or a positive number."))
+      concentration <- if (weight_model == "dynamic" && concentration == "default") 1 else NULL
+    }
+    if (!is.null(concentration)) assert_that(is.numeric(concentration), is.scalar(concentration),
+      is.finite(concentration), concentration > 0, msg = "concentration must be positive and finite.")
+    if (any(c("a0", "A0") %in% names(priors))) stop("a0 and A0 are SFM priors; use concentration for telescoping.")
+  } else {
+    if (!missing(K_init) || !missing(weight_model) || !missing(K_prior) || !missing(concentration))
+      stop("K_init, weight_model, K_prior and concentration are telescoping controls.")
+    assert_that(is.vector(data) & length(data) > K,
+                msg = "data should be a vector of length greater than K")
+  }
   
-  assert_that(is.vector(data) & length(data) > K,
-              msg = "data should be a vector of length greater than K")
   assert_that(all(is.finite(data)),
               msg = "data should only include numeric finite values")
   assert_that(is.string(dist) & dist %in% c("normal", "skew_normal", "poisson", "shifted_poisson", "neg_binomial", "shifted_neg_binomial"),
@@ -207,9 +270,9 @@ bayes_fit <- function(data,
                            "dist should be either\n",
                            "'normal', 'skew_normal', 'poisson', 'shifted_poisson', 'neg_binomial' or 'shifted_neg_binomial'"))
   assert_that(is.scalar(nb_iter), round(nb_iter) == nb_iter, nb_iter > 0, msg = "nb_iter should be a positive integer")
-  assert_that(is.scalar(burnin), burnin > 0, burnin < nb_iter, round(burnin) == burnin,
-              msg = "nb_iter should be a positive integer lower than burnin")
-  assert_that(is.scalar(K), round(K) == K, K > 0, msg = "K should be a positive integer")
+  assert_that(is.scalar(burnin), burnin >= as.integer(sampler == "sfm"), burnin < nb_iter, round(burnin) == burnin,
+              msg = "burnin should be an integer smaller than nb_iter (and positive for SFM)")
+  assert_that(is.scalar(K), is.finite(K), round(K) == K, K > 0, msg = "K should be a positive integer")
   assert_that(is.logical(print), msg = "print should be either TRUE or FALSE")
   assert_that(is.logical(zero_inflated), is.scalar(zero_inflated), !is.na(zero_inflated),
               msg = "zero_inflated should be either TRUE or FALSE")
@@ -225,7 +288,25 @@ bayes_fit <- function(data,
     dist_type = "continuous"
   }
   
-  priors = check_priors(priors, dist, data, zero_inflated)
+  priors = check_priors(priors, dist, data, zero_inflated, telescoping = sampler == "telescoping")
+
+  if (sampler == "telescoping") {
+    family <- switch(dist, normal = tele_normal_family(data, priors),
+             skew_normal = tele_skew_normal_family(data, priors),
+             poisson = tele_poisson_family(data, priors, FALSE),
+             shifted_poisson = tele_poisson_family(data, priors, TRUE),
+             neg_binomial = tele_nb_family(data, priors, burnin, FALSE),
+             shifted_neg_binomial = tele_nb_family(data, priors, burnin, TRUE))
+    chain <- gibbs_telescoping(data, K, K_init, nb_iter, family, weight_model, K_prior, concentration, print)
+    fit <- bayes_mixture(chain$draws, data, burnin, dist, dist_type = dist_type, loglik = chain$loglik)
+    fit$sampler <- sampler
+    fit$weight_model <- weight_model
+    fit$K_prior <- K_prior
+    fit$state_all <- chain$state
+    fit$state <- chain$state[seq.int(burnin + 1L, nb_iter), , drop = FALSE]
+    fit$cap_mass <- mean(fit$state[, "K"] == K)
+    return(fit)
+  }
   
   mcmc <- gibbs_SFM(y = data,
                     K = K,

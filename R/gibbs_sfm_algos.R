@@ -97,20 +97,9 @@ gibbs_SFM_normal <- function(y,
     probs = matrix(NA, length(y), K)
     for (k in 1:K){
       
-      ## b. sample sigma
-      ck = c0 + N[k]/2
-      Ck = C0 + 0.5*sum((y[S[, k]==1]-mu[m-1, k])^2)
-      sigma2[m, k] = 1/rgamma(1, ck, Ck)
-      
-      ## c. sample mu
-      B = 1/(1/B0 + N[k]/sigma2[m, k])
-      if (N[k]!=0){
-        b = B*(b0/B0 + N[k]*mean(y[S[, k]==1])/sigma2[m, k])
-      } else {
-        b = B*(b0/B0)
-      }
-      
-      mu[m, k] = rnorm(1, b, sqrt(B))
+      component = draw_normal_component(y[S[, k]==1], mu[m-1, k], C0, priors)
+      sigma2[m, k] = component[2]
+      mu[m, k] = component[1]
       
       # 2. classification
       probs[, k] = eta[m, k] * dnorm(y, mu[m, k], sqrt(sigma2[m, k]))
@@ -131,7 +120,7 @@ gibbs_SFM_normal <- function(y,
     # 3. sample hyperparameters
     
     ## a. sample C0
-    C0 = rgamma(1, g0 + K*c0, G0 + sum(1/sigma2[m, ]))
+    C0 = draw_normal_rate(sigma2[m, ], priors)
     
     # compute log lik
     lp[m] = sum(log(rowSums(probs)))
@@ -156,6 +145,21 @@ gibbs_SFM_normal <- function(y,
   colnames(mcmc)[ncol(mcmc)] = "loglik"
   
   return(mcmc)
+}
+
+draw_normal_component <- function(values, previous_mu, rate, priors) {
+  count <- length(values)
+  variance <- 1 / rgamma(1, priors$c0 + count / 2,
+                         rate + 0.5 * sum((values - previous_mu)^2))
+  posterior_var <- 1 / (1 / priors$B0 + count / variance)
+  center <- priors$b0 / priors$B0
+  if (count) center <- center + count * mean(values) / variance
+  c(rnorm(1, posterior_var * center, sqrt(posterior_var)), variance)
+}
+
+draw_normal_rate <- function(variances, priors) {
+  rgamma(1, priors$g0 + length(variances) * priors$c0,
+         priors$G0 + sum(1 / variances))
 }
 
 #' @keywords internal
@@ -262,6 +266,18 @@ gibbs_SFM_poisson <- function(y,
   return(mcmc)
 }
 
+skew_normal_design <- function(values, xi, psi, variance) {
+  latent_var <- 1 / (1 + psi^2 / variance)
+  latent_mean <- latent_var * psi / variance * (values - xi)
+  cbind(1, rtnorm(length(values), latent_mean, sqrt(latent_var), lower = 0))
+}
+
+skew_normal_regression <- function(design, values, variance, prior_precision, prior_score) {
+  covariance <- solve(crossprod(design) / variance + prior_precision)
+  list(mean = covariance %*% (crossprod(design, values) / variance + prior_score),
+       covariance = covariance)
+}
+
 #' @keywords internal
 gibbs_SFM_skew_n <- function(y,
                              K,
@@ -301,6 +317,7 @@ gibbs_SFM_skew_n <- function(y,
   
   b0 = matrix(c(b0, 0),nrow=2)
   B0_inv = diag(1/c(D_xi,D_psi))
+  prior_score = B0_inv %*% b0
   e0 = a0/A0
   
   for (k in 1:K){
@@ -309,7 +326,6 @@ gibbs_SFM_skew_n <- function(y,
   sigma2 = rep(max(y)^2,K)
   beta = cbind(xi[1, ],0)
   
-  zk = matrix(0,n_obs,1)
   cnt_update_e0 = 0
   
   for (m in 1:nb_iter){
@@ -340,11 +356,7 @@ gibbs_SFM_skew_n <- function(y,
         yk = y[S[ ,k] == 1]
         
         # update z
-        Ak = 1/(1 + beta[k, 2]^2/sigma2[k])
-        ak = Ak*beta[k, 2]/sigma2[k]*(yk-beta[k, 1])
-        zk <- rtnorm(N[k], ak, sqrt(Ak), lower=0) 
-        
-        Xk = matrix(c(rep(1, N[k]), zk), nrow=N[k])
+        Xk = skew_normal_design(yk, beta[k, 1], beta[k, 2], sigma2[k])
       }
       
       ## a.1 sample Sigma
@@ -357,8 +369,9 @@ gibbs_SFM_skew_n <- function(y,
       
       ## a.2 sample xi and psi jointly
       if(!empty){
-        Bk = solve(crossprod(Xk)/sigma2[k] + B0_inv)
-        bk = Bk%*%(crossprod(Xk, yk)/sigma2[k] + B0_inv%*%b0)
+        regression = skew_normal_regression(Xk, yk, sigma2[k], B0_inv, prior_score)
+        Bk = regression$covariance
+        bk = regression$mean
       }
       beta[k, ] = rmvnorm(1, bk, Bk)
       
@@ -843,7 +856,7 @@ gibbs_SFM_shifted_neg_binomial <- function(y,
 }
 
 #' @keywords internal
-check_priors <- function(priors, dist, data, zero_inflated = FALSE) {
+check_priors <- function(priors, dist, data, zero_inflated = FALSE, telescoping = FALSE) {
   assert_that(all(is.finite(unlist(priors))),
               msg = "All priors should be finite.")
   
@@ -866,7 +879,7 @@ check_priors <- function(priors, dist, data, zero_inflated = FALSE) {
     priors_labels = c("a0", "A0", "l0", "L0")
 
     priors$l0 = ifelse(is.null(priors$l0), 1.1, priors$l0)
-    prior_mean = if (zero_inflated) {
+    prior_mean = if (zero_inflated || (telescoping && median(data) == 0)) {
       if (any(data > 0)) median(data[data > 0]) else 1
     } else {
       median(data)
@@ -887,6 +900,7 @@ check_priors <- function(priors, dist, data, zero_inflated = FALSE) {
   
   if (dist == "normal") {
     priors_labels = c("a0", "A0", "b0", "B0", "c0", "g0", "G0")
+    if (telescoping && is.null(priors$B0) && diff(range(data)) == 0) priors$B0 = 1
     
     priors$b0 = ifelse(is.null(priors$b0), median(data), priors$b0)
     priors$B0 = ifelse(is.null(priors$B0), (max(data) - min(data))^2, priors$B0)
@@ -903,12 +917,14 @@ check_priors <- function(priors, dist, data, zero_inflated = FALSE) {
   
   if (dist == "skew_normal") {
     priors_labels = c("a0", "A0", "b0", "c0", "C0", "g0", "G0", "D_xi", "D_psi")
+    data_var = var(data)
+    if (telescoping && (length(data) == 1L || data_var == 0)) data_var = 1
     
     priors$b0 = ifelse(is.null(priors$b0), median(data), priors$b0)
     priors$c0 = ifelse(is.null(priors$c0), 2.5, priors$c0)
-    priors$C0 = ifelse(is.null(priors$C0), 0.5*var(data), priors$C0)
+    priors$C0 = ifelse(is.null(priors$C0), 0.5*data_var, priors$C0)
     priors$g0 = ifelse(is.null(priors$g0), 0.5, priors$g0)
-    priors$G0 = ifelse(is.null(priors$G0), priors$g0/(0.5*var(data)), priors$G0)
+    priors$G0 = ifelse(is.null(priors$G0), priors$g0/(0.5*data_var), priors$G0)
     priors$D_xi = ifelse(is.null(priors$D_xi), 1, priors$D_xi)
     priors$D_psi = ifelse(is.null(priors$D_psi), 1, priors$D_psi)
     

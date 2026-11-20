@@ -12,14 +12,19 @@ bayes_fit(
   nb_iter = 2000,
   burnin = nb_iter/2,
   print = TRUE,
-  zero_inflated = FALSE
+  zero_inflated = FALSE,
+  sampler = c("sfm", "telescoping"),
+  K_init = 1L,
+  weight_model = c("dynamic", "static"),
+  K_prior = c("bnb", "uniform"),
+  concentration = "default"
 )
 }
 \arguments{
 \item{data}{Vector of observations.}
 
 \item{K}{Maximum number of count components when \code{zero_inflated = TRUE};
-otherwise, maximum number of mixture components.}
+otherwise, number of SFM slots or upper bound on the sampled telescoping count.}
 
 \item{dist}{String indicating the distribution of the mixture components;
 currently supports \code{"normal"}, \code{"skew_normal"}, \code{"poisson"}, \code{"shifted_poisson"},
@@ -41,7 +46,25 @@ currently supports \code{"normal"}, \code{"skew_normal"}, \code{"poisson"}, \cod
 \item{zero_inflated}{Add a structural-zero component to a Poisson or negative-binomial
 mixture (shifted or unshifted)? Default is \code{FALSE}. Its probability has a
 Beta prior with positive shape parameters \code{priors$zero_a} and
-\code{priors$zero_b}, both defaulting to \code{1}.}
+\code{priors$zero_b}, both defaulting to \code{1}. Only \code{sampler = "sfm"} supports
+zero inflation; the telescoping sampler does not yet support it.}
+
+\item{sampler}{\code{"sfm"} (default) fixes the total number of components.
+\code{"telescoping"} samples that count for every supported \code{dist} and requires
+\code{zero_inflated = FALSE}.}
+
+\item{K_init}{Initial total count for telescoping, from 1 to \code{K}. May exceed the number of distinct observations.}
+
+\item{weight_model}{Telescoping Dirichlet model: \code{"dynamic"} uses concentration divided by the current count per component; \code{"static"} uses concentration per component.}
+
+\item{K_prior}{Telescoping count prior: \code{"bnb"} gives \code{K - 1} a beta-negative-binomial(1, 4, 3) prior; \code{"uniform"} gives every count equal mass. Both priors are truncated to the integers from 1 to the supplied cap.}
+
+\item{concentration}{\code{"default"} follows the prior helpers in the authors' \code{telescope} package.
+With dynamic weights it fixes concentration at 1; use \code{"F_6_3"} to sample it
+from the F(6, 3) prior suggested for clustering. With static weights,
+\code{"default"} and \code{"G_1_20"} both use a Gamma prior with shape 1 and rate 20.
+A positive number fixes concentration for either model; \code{NULL} samples it
+from the corresponding prior. SFM uses \code{a0} and \code{A0} instead.}
 }
 \value{
 A list of class \code{bayes_mixture} containing:
@@ -49,7 +72,9 @@ A list of class \code{bayes_mixture} containing:
 \item{mcmc}{Matrix of MCMC draws where the rows corresponding to burnin have been discarded;}
 \item{mcmc_all}{Matrix of MCMC draws.}
 \item{loglik}{Log likelihood at each MCMC draw.}
-\item{K}{Number of components, including the structural-zero component if enabled.}
+\item{K}{Storage width, including the structural-zero component if enabled. For telescoping this is the cap, not a draw of the count.}
+\item{state_all, state}{For telescoping, matrices of total count (\code{K}), occupied count (\code{Kplus}) and concentration, before and after burn-in. Neither count is a count of modes.}
+\item{cap_mass}{For telescoping, the fraction of retained draws at the cap. A large value warrants checking a larger cap.}
 \item{zero_inflated}{Present and \code{TRUE} when structural zeros are enabled.}
 \item{count_K}{When zero inflation is enabled, the requested number of count components.}
 \item{dist}{Same as argument.}
@@ -60,9 +85,20 @@ A list of class \code{bayes_mixture} containing:
 \item{nb_var}{Number of variables/parameters in the mixture distribution.}
 }
 \description{
-Estimation of a univariate mixture with unknown number of components using a sparse finite mixture Markov chain Monte Carlo (SFM MCMC) algorithm.
+Fit a univariate mixture using sparse finite mixture (SFM) or telescoping MCMC.
 }
 \details{
+The telescoping sampler follows Algorithms 2 and 3 of
+\doi{10.1214/21-BA1294}. Each draw includes weights and parameters for
+occupied and empty components. Slots beyond its sampled count contain \code{NA}.
+For constant Gaussian data the range-based variance prior is undefined;
+telescoping uses \code{B0 = 1} unless a positive variance is supplied.
+For constant or single-observation skew-normal data, telescoping uses a
+variance of 1 to set the defaults for \code{C0} and \code{G0}.
+For shifted and unshifted negative binomial components the mean prior uses the maximum
+of the full data, not the cluster maximum. \code{priors$sig} sets the initial
+proposal scale (default 0.1); adaptation stops at the end of burn-in.
+
 Let \eqn{y_i}, \eqn{i=1,\dots,n} denote observations.
 A general mixture of \eqn{K} distributions from the same
 parametric family is given by:
@@ -103,7 +139,7 @@ the shape parameter introducing skewness. For Bayesian estimation, we adopt the 
 \deqn{z_i \sim TN_{[0,\infty)}(0, 1),}
 \deqn{y_i|(S_i = k) = \xi_k + \psi_k z_i + \epsilon_i, \quad \epsilon_i \sim N(0, \sigma^2_k),}
 where the parameters of the skew-Normal are recovered with
-\deqn{\omega_k = \frac{\psi_k}{\sigma_k}, \qquad \omega^2_k = \sigma^2_k + \psi^2_k.}
+\deqn{\alpha_k = \frac{\psi_k}{\sigma_k}, \qquad \omega^2_k = \sigma^2_k + \psi^2_k.}
 By defining a regressor \eqn{x_i = (1, z_i)'}, the skew-Normal mixture can be seen as
 random effect model and sampled using standard techniques. Thus we use priors similar to
 the Normal mixture model:
@@ -120,6 +156,7 @@ The prior for \eqn{\lambda_k} follows from \insertCite{viallefont2002bayesian;te
 \deqn{\lambda_k \sim \text{Gamma}(\text{l}_0,\text{L}_0).}
 For \code{dist = "poisson"} with zero inflation, the default rate prior uses
 \code{L0 = 1.1/median(data[data > 0])}, or \code{1.1} for all-zero data.
+Telescoping uses the same fallback when the sample median is zero.
 
 \strong{Zero-inflated count mixtures}
 
@@ -149,6 +186,11 @@ Shifted-Poisson components take the form
 where \eqn{\kappa_k} is a location or shift parameter with uniform prior, see \insertCite{Cross2024;textual}{BayesMultiMode}.
 }
 \examples{
+fit <- bayes_fit(galaxy, K = 30, dist = "normal", sampler = "telescoping",
+                 K_init = 3, nb_iter = 100, burnin = 50, print = FALSE)
+table(fit$state[, "K"], fit$state[, "Kplus"])
+fit$cap_mass
+
 # Example with galaxy data ================================================
 set.seed(123) 
 

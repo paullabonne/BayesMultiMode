@@ -9,7 +9,7 @@ bayes_trace(BayesMix, mcmc_vars = NULL, with_burnin = FALSE, ...)
 \arguments{
 \item{BayesMix}{An object of class \code{bayes_mixture}.}
 
-\item{mcmc_vars}{Variables to plot; default is all the variable in the MCMC output.}
+\item{mcmc_vars}{Variables to plot. For telescoping the default is \code{c("K", "Kplus", "concentration")}; component columns can also be selected. For SFM the default is all columns.}
 
 \item{with_burnin}{Plot all draws ?}
 

@@ -177,10 +177,9 @@ mix_mode <- function(mixture, tol_mixp = 0, tol_x = 1e-6, tol_conv = 1e-8, type 
   mode$nb_var = mixture$nb_var
   mode$range = range
   
-  pars_mat <- vec_to_mat(pars, pars_names)
-  tol_mixp_c = min(tol_mixp, pars_mat[, "eta"]) # the component with highest proportion cannot be excluded
-  pars_mat[, "eta"][pars_mat[, "eta"] < tol_mixp_c] = NA
-  pars_mat = na.omit(pars_mat) # remove empty components (a feature of some MCMC methods)
+  pars_mat <- na.omit(vec_to_mat(pars, pars_names))
+  tol_mixp_c <- min(tol_mixp, max(pars_mat[, "eta"]))
+  pars_mat <- pars_mat[pars_mat[, "eta"] >= tol_mixp_c, , drop = FALSE]
   if (dist_type == "continuous") {
     mode$dist_type = "continuous"
     
